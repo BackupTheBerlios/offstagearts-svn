@@ -48,7 +48,7 @@ public class FinishedWiz extends HtmlWiz {
 public FinishedWiz(java.awt.Frame owner)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Record", true);
+	super(owner);
 	addSubmitButton("next", "Finished");
 	loadHtml();
 }

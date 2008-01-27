@@ -38,6 +38,7 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.jschema.log.*;
+import java.awt.Component;
 
 /**
  *
@@ -56,9 +57,9 @@ addState(new State("", "", "") {
 });
 */
 
-public NewPersonWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
+public NewPersonWizard(offstage.FrontApp xfapp, Component comp)
 {
-	super("New Record", xfapp, xframe, "person");
+	super("New Record", xfapp, comp);
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
 //	public HtmlWiz newWiz(WizState.Context con) throws Exception

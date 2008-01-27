@@ -71,10 +71,16 @@ static class Acct
 	double scholarship_term;	// Scholarships over the term
 	List<Bill> unpaid = new LinkedList();	// Unpaid bills
 	
-	public Acct(int entityid, String lastname, String firstname) {
+	public Acct(int entityid, String lastname, String firstname,
+	String orgname, boolean isorg) {
 		this.entityid = entityid;
-		this.lastname = lastname;
-		this.firstname = firstname;
+		if (isorg) {
+			this.lastname = orgname;
+			this.firstname = "";
+		} else {
+			this.lastname = lastname;
+			this.firstname = firstname;
+		}
 	}
 	
 	/** @param termid current term */
@@ -181,6 +187,7 @@ java.util.Date xasOfDate, int lateDays)
 		// rss[0]
 		// Non-tuition transactions
 		" select ac.tableoid,klass.relname,ac.entityid, e.lastname, e.firstname," +
+		" e.orgname, e.isorg," +
 		" ac.date,ac.amount,ac.description,ac.actransid,-1 as termid" +
 		" from actrans ac, pg_class klass, actypes, entities e" +
 		" where klass.oid = ac.tableoid" +
@@ -190,12 +197,13 @@ java.util.Date xasOfDate, int lateDays)
 		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
 		"   UNION" +
 		// Tuition transactions
-		" select 0,'tuitiontrans',ac.entityid,e.lastname, e.firstname, ac.date," +
+		" select 0,'tuitiontrans',ac.entityid,e.lastname, e.firstname, " +
+		" e.orgname, e.isorg, ac.date," +
 		" ac.amount,ac.description,ac.actransid,ac.termid" +
 		" from tuitiontrans ac, entities e" +
 		" where e.entityid = ac.entityid and not e.obsolete" +
 		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
-		" order by lastname,firstname,entityid,date,amount desc;\n" +
+		" order by isorg desc,lastname,firstname,entityid,date,amount desc;\n" +
 		
 		// rss[1]
 		" select name from termids where groupid=" + termid + ";\n";
@@ -224,7 +232,8 @@ java.util.Date xasOfDate, int lateDays)
 					acct.payPayment(0);		// Use up any overpay that we can.
 					accts.add(acct);
 				}
-				acct = new Acct(entityid, rs.getString("lastname"), rs.getString("firstname"));
+				acct = new Acct(entityid, rs.getString("lastname"),
+					rs.getString("firstname"), rs.getString("orgname"), rs.getBoolean("isorg"));
 				lastEntityid = entityid;
 			}
 			
@@ -258,8 +267,10 @@ java.util.Date xasOfDate, int lateDays)
 				unpaid_all += b.amountUnpaid;
 				if (b.dt.getTime() < lateCutoff.getTime()) unpaid_late += b.amountUnpaid;
 			}
+			String lastname = ac.lastname;
+			String firstname = ac.firstname;
 			table.addRow(new Object[] {
-				ac.entityid, ac.lastname, ac.firstname,
+				ac.entityid, lastname, firstname,
 				ac.totalbilled_term,
 				ac.regfees_term,
 				(ac.totalbilled_term - unpaid_term - ac.rebates_term),

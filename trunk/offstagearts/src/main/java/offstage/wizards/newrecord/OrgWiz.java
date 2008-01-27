@@ -53,7 +53,7 @@ public class OrgWiz extends HtmlWiz {
 public OrgWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
-	super(owner, "New Org Record", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
 	addTextField("firstname");

@@ -57,7 +57,7 @@ public boolean getCacheWiz() { return false; }
 public CCBatchInitial(java.awt.Frame owner, SqlRunner str, FrontApp fapp)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
-	super(owner, "Insert Key", true);
+	super(owner);
 
 	final JTypedLabel npayments = new JTypedLabel(Integer.class, "#");
 //	npayments.setJType(Integer.class, "#");

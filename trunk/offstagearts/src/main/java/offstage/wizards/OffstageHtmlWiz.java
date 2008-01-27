@@ -36,8 +36,8 @@ import java.awt.*;
 public class OffstageHtmlWiz extends HtmlWiz
 {
 	
-public OffstageHtmlWiz(Frame owner, String title, boolean modal)
-{ super(owner, title, modal); }
+public OffstageHtmlWiz(Frame owner)
+{ super(owner); }
 
 //public EntitySelector addEntitySelector(String name, citibob.app.App app)
 //{ return addEntitySelector(name, new EntitySelector(), app); }

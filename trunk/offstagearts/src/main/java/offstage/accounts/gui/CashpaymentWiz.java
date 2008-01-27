@@ -52,7 +52,7 @@ public class CashpaymentWiz extends HtmlWiz {
 public CashpaymentWiz(java.awt.Frame owner, App app)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Cash Payment", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 	
 	Schema schema = app.getSchema("actrans");
 //	SwingerMap swingers = app.getSwingerMap();

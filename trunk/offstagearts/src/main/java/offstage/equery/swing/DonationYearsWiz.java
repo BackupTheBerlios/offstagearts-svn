@@ -45,7 +45,7 @@ public class DonationYearsWiz extends HtmlWiz {
 public DonationYearsWiz(java.awt.Frame owner, App app)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Query", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 	setSize(600,400);
 	JTypedTextField tw;
 	tw = new JTypedTextField();

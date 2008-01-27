@@ -37,6 +37,7 @@ import offstage.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import java.awt.Component;
 
 /**
  *
@@ -55,9 +56,9 @@ addState(new State("", "", "") {
 });
 */
 	
-public NewGroupidWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
+public NewGroupidWizard(offstage.FrontApp xfapp, Component component)
 {
-	super("New Category", xfapp, xframe, "grouplist");
+	super("New Category", xfapp, component);
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
 //	public HtmlWiz newWiz(WizState.Context con) throws Exception
@@ -70,7 +71,7 @@ public NewGroupidWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 //});
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
-addState(new AbstractWizState("grouplist", null, "catname") {
+addStartState(new AbstractWizState("grouplist", null, "catname") {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new GroupListWiz(frame); }
 	public void process(Wizard.Context con) throws Exception

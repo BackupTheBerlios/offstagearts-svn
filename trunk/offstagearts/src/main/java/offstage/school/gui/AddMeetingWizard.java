@@ -27,11 +27,11 @@ import offstage.wizards.*;
 public class AddMeetingWizard extends OffstageWizard {
 
 
-public AddMeetingWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
+public AddMeetingWizard(offstage.FrontApp xfapp, java.awt.Component comp)
 {
-	super("Add Meeting to Course", xfapp, xframe, "addmeeting");
+	super("Add Meeting to Course", xfapp, comp);
 // ---------------------------------------------
-addState(new AbstractWizState("addmeeting", null, "<end>") {
+addStartState(new AbstractWizState("addmeeting", null, "<end>") {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new AddMeetingWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception

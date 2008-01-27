@@ -48,7 +48,7 @@ public class TransTypeWiz extends HtmlWiz {
 public TransTypeWiz(java.awt.Frame owner, SqlRunner str, App app, TypedHashMap v)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "Enter Transaction", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 
 	setSize(600,460);
 	String sql = "select" +

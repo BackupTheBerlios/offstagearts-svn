@@ -47,7 +47,7 @@ public class AddMeetingWiz extends HtmlWiz {
 public AddMeetingWiz(java.awt.Frame owner, citibob.app.App app)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
-	super(owner, "", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 	setSize(600,460);
 	addWidget("date", app.getSwingerMap().newWidget(new JDate(app.getTimeZone(), false)));
 	loadHtml();

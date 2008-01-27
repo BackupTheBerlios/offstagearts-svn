@@ -64,9 +64,9 @@ addState(new State("", "", "") {
 //}
 //Params prm;
 
-public EnrollWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
+public EnrollWizard(offstage.FrontApp xfapp, java.awt.Component comp)
 {
-	super("Enrollments", xfapp, xframe, "person");
+	super("Enrollments", xfapp, comp);
 // ---------------------------------------------
 //addState(new State("init", "init", "init") {
 //	public HtmlWiz newWiz(WizState.Context con) throws Exception
@@ -79,7 +79,7 @@ public EnrollWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
 //});
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
-addState(new AbstractWizState("add", null, null) {
+addStartState(new AbstractWizState("add", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new AddEnrollWiz(frame, con.str, fapp, con.v); }
 	public void process(Wizard.Context con) throws Exception

@@ -52,7 +52,7 @@ public class CashRefundWiz extends HtmlWiz {
 public CashRefundWiz(java.awt.Frame owner, App app)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "Cash Refund", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 	
 	Schema schema = app.getSchema("actrans");
 //	SwingerMap swingers = app.getSwingerMap();

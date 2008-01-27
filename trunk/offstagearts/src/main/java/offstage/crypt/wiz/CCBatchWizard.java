@@ -49,11 +49,11 @@ import citibob.reports.*;
  */
 public class CCBatchWizard extends OffstageWizard {
 	
-public CCBatchWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
+public CCBatchWizard(offstage.FrontApp xfapp, java.awt.Component comp)
 {
-	super("New Key", xfapp, xframe, "initial");
+	super("New Key", xfapp, comp);
 
-addState(new AbstractWizState("initial", null, "insertkey1") {
+addStartState(new AbstractWizState("initial", null, "insertkey1") {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
 		return new CCBatchInitial(frame, con.str, fapp);
 	}
@@ -69,8 +69,7 @@ addState(new AbstractWizState("initial", null, "insertkey1") {
 // ---------------------------------------------
 addState(new AbstractWizState("insertkey1", null, "removekey1") {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Remove Key", true,
-			getResourceName("ccbatch_InsertKey1.html"));
+		return new HtmlWiz(frame, getResourceName("ccbatch_InsertKey1.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -89,8 +88,7 @@ addState(new AbstractWizState("insertkey1", null, "removekey1") {
 // ---------------------------------------------
 addState(new AbstractWizState("removekey1", null, "insertkey2") {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Remove Key", true,
-			getResourceName("ccbatch_RemoveKey1.html"));
+		return new HtmlWiz(frame, getResourceName("ccbatch_RemoveKey1.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -103,8 +101,7 @@ addState(new AbstractWizState("removekey1", null, "insertkey2") {
 // ---------------------------------------------
 addState(new AbstractWizState("keyerror", null, null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Key Error", true,
-			getResourceName("dupkey_KeyError.html"));
+		return new HtmlWiz(frame, getResourceName("dupkey_KeyError.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -113,8 +110,7 @@ addState(new AbstractWizState("keyerror", null, null) {
 // ---------------------------------------------
 addState(new AbstractWizState("keynotinserted", null, null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Key Not Inserted", true,
-			getResourceName("KeyNotInserted.html"));
+		return new HtmlWiz(frame, getResourceName("KeyNotInserted.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -123,8 +119,7 @@ addState(new AbstractWizState("keynotinserted", null, null) {
 // ---------------------------------------------
 addState(new AbstractWizState("keynotremoved", null, null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Key Not Removed", true,
-			getResourceName("KeyNotRemoved.html"));
+		return new HtmlWiz(frame, getResourceName("KeyNotRemoved.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{

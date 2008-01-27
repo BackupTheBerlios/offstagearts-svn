@@ -56,7 +56,7 @@ SearchViewer listView;
 public FindWiz(java.awt.Frame owner, SqlRunner str, FrontApp fapp)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
-	super(owner, "Possible Duplicate Name", true);
+	super(owner);
 
 	listView = new SearchViewer();
 	listView.initRuntime(str, fapp);

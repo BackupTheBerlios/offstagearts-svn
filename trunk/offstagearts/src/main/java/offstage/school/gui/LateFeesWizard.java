@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.school.gui;
 import citibob.swing.html.*;
 import citibob.wizard.*;
+import java.awt.Component;
 import offstage.wizards.*;
 
 /**
@@ -27,11 +28,11 @@ import offstage.wizards.*;
 public class LateFeesWizard extends OffstageWizard {
 
 
-public LateFeesWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
+public LateFeesWizard(offstage.FrontApp xfapp, Component comp)
 {
-	super("Late Fees", xfapp, xframe, "latefees");
+	super("Late Fees", xfapp, comp);
 // ---------------------------------------------
-addState(new AbstractWizState("latefees", null, "<end>") {
+addStartState(new AbstractWizState("latefees", null, "<end>") {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new LateFeesWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception

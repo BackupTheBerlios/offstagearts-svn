@@ -47,9 +47,9 @@ public class OffstageWizard extends citibob.swing.SwingWizard
 protected FrontApp fapp;
 
 /** Creates a new instance of OffstageWizard */
-public OffstageWizard(String wizardName, FrontApp fapp, java.awt.Frame frame, String startState)
+public OffstageWizard(String wizardName, FrontApp fapp, Component component)
 {
-	super(wizardName, fapp, frame, startState);
+	super(wizardName, fapp, component);
 	this.fapp = fapp;
 }
 	

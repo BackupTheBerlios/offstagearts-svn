@@ -52,7 +52,7 @@ public class AdjpaymentWiz extends HtmlWiz {
 public AdjpaymentWiz(java.awt.Frame owner, App app)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "Account Adjustment", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 	
 	Schema schema = app.getSchema("actrans");
 //	SwingerMap swingers = app.getSwingerMap();

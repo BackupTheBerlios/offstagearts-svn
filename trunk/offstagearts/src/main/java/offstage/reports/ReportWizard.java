@@ -39,6 +39,7 @@ import offstage.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import java.awt.Component;
 import offstage.equery.*;
 import offstage.reports.*;
 import java.io.*;
@@ -61,9 +62,9 @@ addState(new State("", "", "") {
 });
 */
 	
-public ReportWizard(offstage.FrontApp xfapp, javax.swing.JFrame xframe, String startState)
+public ReportWizard(offstage.FrontApp xfapp, Component component)
 {
-	super("Report Wizard", xfapp, xframe, startState);
+	super("Report Wizard", xfapp, component);
 // ---------------------------------------------
 addState(new AbstractWizState("ticketparams", null, "editquery") {
 	public Wiz newWiz(Wizard.Context con) throws Exception

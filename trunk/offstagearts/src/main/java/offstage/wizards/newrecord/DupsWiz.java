@@ -48,7 +48,7 @@ public boolean getCacheWiz() { return false; }
 public DupsWiz(java.awt.Frame owner, SqlRunner str, FrontApp fapp, String idSql)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
-	super(owner, "Possible Duplicate Name", true);
+	super(owner, "Possible Duplicate Name");
 
 	
 	IDListViewer listView = new IDListViewer();

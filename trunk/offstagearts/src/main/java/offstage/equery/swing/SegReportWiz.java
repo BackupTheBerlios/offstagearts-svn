@@ -54,7 +54,7 @@ JTypeTableModel segmod;
 public SegReportWiz(java.awt.Frame owner, App app)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Query", true);
+	super(owner);
 	setSize(600,400);
 //	TypedWidgetMap map = new TypedWidgetMap();
 	

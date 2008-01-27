@@ -26,7 +26,6 @@ package offstage.accounts.gui;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import citibob.app.App;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.html.*;
 import citibob.wizard.*;
@@ -39,6 +38,7 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.jschema.log.*;
+import java.awt.Component;
 import offstage.crypt.*;
 import offstage.swing.typed.*;
 
@@ -72,10 +72,10 @@ void vInsert(Wizard.Context con, String table) throws SQLException
 	con.str.execSql(sql.getSql());
 }
 
-public TransactionWizard(offstage.FrontApp xfapp, java.awt.Frame xframe,
+public TransactionWizard(offstage.FrontApp xfapp, Component comp,
 Integer xentityid, int xactypeid)
 {
-	super("Transactions", xfapp, xframe, "transtype");
+	super("Transactions", xfapp, comp);
 	this.entityid = xentityid;
 	this.actypeid = xactypeid;
 	sqlDate = new SqlDate(fapp.getTimeZone(), false);
@@ -90,7 +90,7 @@ Integer xentityid, int xactypeid)
 //	}
 //});
 // ---------------------------------------------
-addState(new AbstractWizState("transtype", null, null) {
+addStartState(new AbstractWizState("transtype", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new TransTypeWiz(frame, con.str, fapp, v); }
 	public void process(Wizard.Context con) throws Exception

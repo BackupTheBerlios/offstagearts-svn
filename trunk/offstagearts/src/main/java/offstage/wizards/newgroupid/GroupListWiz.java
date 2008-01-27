@@ -49,7 +49,7 @@ public class GroupListWiz extends HtmlWiz {
 public GroupListWiz(java.awt.Frame owner)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Category", true);
+	super(owner);
 //	KeyedModel kmodel = new KeyedModel();
 //		kmodel.addItem("donationids", "Donations");
 //	JKeyedComboBox combo = new JKeyedComboBox(kmodel);

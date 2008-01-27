@@ -26,7 +26,6 @@ package offstage.crypt.wiz;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.html.*;
 import citibob.swing.*;
 import citibob.wizard.*;
@@ -38,6 +37,7 @@ import offstage.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import java.awt.Component;
 import offstage.crypt.*;
 import java.util.*;
 
@@ -47,14 +47,13 @@ import java.util.*;
  */
 public class DupKeyWizard extends OffstageWizard {
 
-public DupKeyWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
+public DupKeyWizard(offstage.FrontApp xfapp, Component component)
 {
-	super("New Key", xfapp, xframe, "insertkey1");
+	super("New Key", xfapp, component);
 // ---------------------------------------------
-addState(new AbstractWizState("insertkey1", null, "removekey1") {
+addStartState(new AbstractWizState("insertkey1", null, "removekey1") {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Insert Key", true,
-			getResourceName("dupkey_InsertKey1.html"));
+		return new HtmlWiz(frame, getResourceName("dupkey_InsertKey1.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -74,8 +73,7 @@ addState(new AbstractWizState("insertkey1", null, "removekey1") {
 // ---------------------------------------------
 addState(new AbstractWizState("removekey1", null, "insertkey2") {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Remove Key", true,
-			getResourceName("dupkey_RemoveKey1.html"));
+		return new HtmlWiz(frame, getResourceName("dupkey_RemoveKey1.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -86,8 +84,7 @@ addState(new AbstractWizState("removekey1", null, "insertkey2") {
 // ---------------------------------------------
 addState(new AbstractWizState("insertkey2", null, "removekey2") {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Insert Key", true,
-			getResourceName("dupkey_InsertKey2.html"));
+		return new HtmlWiz(frame, getResourceName("dupkey_InsertKey2.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -105,8 +102,7 @@ addState(new AbstractWizState("insertkey2", null, "removekey2") {
 // ---------------------------------------------
 addState(new AbstractWizState("removekey2", null, null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Remove Key", true,
-			getResourceName("dupkey_RemoveKey2.html"));
+		return new HtmlWiz(frame, getResourceName("dupkey_RemoveKey2.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -117,8 +113,7 @@ addState(new AbstractWizState("removekey2", null, null) {
 // ---------------------------------------------
 addState(new AbstractWizState("keyerror", null, null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Key Error", true,
-			getResourceName("dupkey_KeyError.html"));
+		return new HtmlWiz(frame, getResourceName("dupkey_KeyError.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -127,8 +122,7 @@ addState(new AbstractWizState("keyerror", null, null) {
 // ---------------------------------------------
 addState(new AbstractWizState("keynotinserted", null, null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Key Not Inserted", true,
-			getResourceName("KeyNotInserted.html"));
+		return new HtmlWiz(frame, getResourceName("KeyNotInserted.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -137,8 +131,7 @@ addState(new AbstractWizState("keynotinserted", null, null) {
 // ---------------------------------------------
 addState(new AbstractWizState("keynotremoved", null, null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Key Not Removed", true,
-			getResourceName("KeyNotRemoved.html"));
+		return new HtmlWiz(frame, getResourceName("KeyNotRemoved.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{

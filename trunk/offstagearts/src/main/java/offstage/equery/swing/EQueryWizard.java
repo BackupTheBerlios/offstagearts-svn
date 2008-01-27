@@ -61,9 +61,9 @@ addState(new State("", "", "") {
 });
 */
 	
-public EQueryWizard(offstage.FrontApp xfapp, javax.swing.JFrame xframe, String startState)
+public EQueryWizard(offstage.FrontApp xfapp, java.awt.Component comp)
 {
-	super("Query Wizard", xfapp, xframe, startState);
+	super("Query Wizard", xfapp, comp);
 // ---------------------------------------------
 addState(new AbstractWizState("listquery", null, "editquery") {
 	public Wiz newWiz(Wizard.Context con) throws Exception

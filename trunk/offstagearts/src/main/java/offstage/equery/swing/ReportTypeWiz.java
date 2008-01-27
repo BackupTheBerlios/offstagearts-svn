@@ -48,7 +48,7 @@ public class ReportTypeWiz extends HtmlWiz {
 public ReportTypeWiz(java.awt.Frame owner)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "Report Selection", true);
+	super(owner);
 	setSize(600,400);
 //	TypedWidgetMap map = new TypedWidgetMap();
 //	addTextField("queryname", new JStringSwinger());

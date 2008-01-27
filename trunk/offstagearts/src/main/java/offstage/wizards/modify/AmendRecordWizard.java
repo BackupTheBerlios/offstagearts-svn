@@ -55,9 +55,9 @@ addState(new State("", "", "") {
 });
 */
 	
-public AmendRecordWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
+public AmendRecordWizard(offstage.FrontApp xfapp, java.awt.Component comp)
 {
-	super("New Person", xfapp, xframe, "find");
+	super("New Person", xfapp, comp);
 // ---------------------------------------------
 addState(new AbstractWizState("find", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception

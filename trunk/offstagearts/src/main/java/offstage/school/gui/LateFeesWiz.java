@@ -45,7 +45,7 @@ public class LateFeesWiz extends HtmlWiz {
 public LateFeesWiz(java.awt.Frame owner, citibob.app.App app)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
-	super(owner, "", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 
 //	JTypedTextField latedays = new JTypedTextField();
 //		latedays.setJType(Integer.class, new FormatSFormat(new NumberFormat("#")));

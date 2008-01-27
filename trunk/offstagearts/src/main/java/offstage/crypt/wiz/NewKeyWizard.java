@@ -26,19 +26,18 @@ package offstage.crypt.wiz;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.html.*;
 import citibob.swing.*;
 import citibob.wizard.*;
 import javax.swing.*;
 import java.sql.*;
-import offstage.crypt.wiz.NewKeyWizard;
 import offstage.db.*;
 import offstage.wizards.*;
 import offstage.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import java.awt.Component;
 import offstage.crypt.*;
 
 /**NewKeyWizardor citibob
@@ -47,14 +46,13 @@ public class NewKeyWizard extends OffstageWizard {
 
 //	StatemNewKeyWizardDatbase connection
 	
-public NewKeyWizard(offstage.FrontApp xfapp, java.awt.Frame xframe)
+public NewKeyWizard(offstage.FrontApp xfapp, Component xcomponent)
 {
-	super("New Key", xfapp, xframe, "insertkey");
+	super("New Key", xfapp, xcomponent);
 // ---------------------------------------------
-addState(new AbstractWizState("insertkey", null, "removekey") {
+addStartState(new AbstractWizState("insertkey", null, "removekey") {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Insert Key", true,
-			getResourceName("newkey_InsertKey.html"));
+		return new HtmlWiz(frame, getResourceName("newkey_InsertKey.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -75,8 +73,7 @@ addState(new AbstractWizState("insertkey", null, "removekey") {
 // ---------------------------------------------
 addState(new AbstractWizState("removekey", "insertkey", null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Remove Key", true,
-			getResourceName("newkey_RemoveKey.html"));
+		return new HtmlWiz(frame, getResourceName("newkey_RemoveKey.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -87,8 +84,7 @@ addState(new AbstractWizState("removekey", "insertkey", null) {
 // ---------------------------------------------
 addState(new AbstractWizState("keyerror", "insertkey", null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Key Error", true,
-			getResourceName("newkey_KeyError.html"));
+		return new HtmlWiz(frame, getResourceName("newkey_KeyError.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -97,8 +93,7 @@ addState(new AbstractWizState("keyerror", "insertkey", null) {
 // ---------------------------------------------
 addState(new AbstractWizState("keynotinserted", "insertkey", null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Key Not Inserted", true,
-			getResourceName("KeyNotInserted.html"));
+		return new HtmlWiz(frame, getResourceName("KeyNotInserted.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
@@ -107,8 +102,7 @@ addState(new AbstractWizState("keynotinserted", "insertkey", null) {
 // ---------------------------------------------
 addState(new AbstractWizState("keynotremoved", "removekey", null) {
 	public Wiz newWiz(Wizard.Context con) throws Exception {
-		return new HtmlWiz(frame, "Key Not Removed", true,
-			getResourceName("KeyNotRemoved.html"));
+		return new HtmlWiz(frame, getResourceName("KeyNotRemoved.html"));
 	}
 	public void process(Wizard.Context con) throws Exception
 	{

@@ -56,7 +56,7 @@ public class CcpaymentWiz extends HtmlWiz {
 public CcpaymentWiz(java.awt.Frame owner, SqlRunner str, int entityid, FrontApp app)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
-	super(owner, "New Cash Payment", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 	
 	Schema schema = app.getSchema("ccpayments");
 //	SwingerMap swingers = app.getSwingerMap();

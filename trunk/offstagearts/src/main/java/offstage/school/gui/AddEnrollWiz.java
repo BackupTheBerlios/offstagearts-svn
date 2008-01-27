@@ -47,7 +47,7 @@ public class AddEnrollWiz extends HtmlWiz {
 public AddEnrollWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app, TypedHashMap v)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
-	super(owner, "New Org Record", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 	setSize(600,460);
 	addComponent("sperson", new JTypedLabel((String)v.get("sperson")));
 //	addWidget("sterm", new JTypedLabel((String)v.get("sterm")));

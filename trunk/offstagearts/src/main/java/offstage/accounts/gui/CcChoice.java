@@ -54,7 +54,7 @@ public class CcChoice extends HtmlWiz {
 public CcChoice(java.awt.Frame owner, App app)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Cash Payment", app.getSwingerMap(), true);
+	super(owner, app.getSwingerMap());
 	
 	Schema schema = app.getSchema("ccpayments");
 //	SwingerMap swingers = app.getSwingerMap();
