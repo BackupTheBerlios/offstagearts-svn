@@ -32,11 +32,11 @@ public TermduedatesSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.
 throws SQLException{
 	
 	table = "termduedates";
-	cols = new Column[] {
-		new Column(new SqlInteger(false), "termid", true),
-		new Column(new SqlString(false), "name", false),
-		new Column(new SqlDate(tz, true), "duedate", false),
-		new Column(new SqlString(false), "description", false)
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(false), "termid", true),
+		new SqlCol(new SqlString(false), "name", false),
+		new SqlCol(new SqlDate(tz, true), "duedate", false),
+		new SqlCol(new SqlString(false), "description", false)
 	};
 }
 }

@@ -67,15 +67,15 @@ throws SQLException
 			" ('invoices', 'tuitiontrans', 'actrans', 'cashpayments'," +
 			" 'adjpayments', 'ccpayments', 'checkpayments')",
 			"oid", "relname");
-	cols = new Column[] {
-		new Column(new SqlInteger(false), "actransid", true),
-		new Column(new SqlEnum(tableoidKmodel, false), "tableoid"),
-		new Column(new SqlInteger(false), "entityid"),
-		new Column(new SqlEnum(actypeKmodel, false), "actypeid"),
-		new Column(new SqlDate(tz, false), "date"),
-		new Column(new SqlDate(tz, false), "datecreated"),
-		new Column(new SqlNumeric(9,2), "amount"),
-		new Column(new SqlString(300,true), "description")
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(false), "actransid", true),
+		new SqlCol(new SqlEnum(tableoidKmodel, false), "tableoid"),
+		new SqlCol(new SqlInteger(false), "entityid"),
+		new SqlCol(new SqlEnum(actypeKmodel, false), "actypeid"),
+		new SqlCol(new SqlDate(tz, false), "date"),
+		new SqlCol(new SqlDate(tz, false), "datecreated"),
+		new SqlCol(new SqlNumeric(9,2), "amount"),
+		new SqlCol(new SqlString(300,true), "description")
 	};
 }
 

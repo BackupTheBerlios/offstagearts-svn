@@ -27,11 +27,11 @@ public MeetingsSchema()
 {
 	super();
 	table = "meetings";
-	cols = new Column[] {
-		new Column(new SqlSerial("meetings_meetingid_seq"), "meetingid", true),
-		new Column(new SqlInteger(false), "courseid"),
-		new Column(new SqlTimestamp("GMT"), "dtstart"),
-		new Column(new SqlTimestamp("GMT"), "dtnext")
+	cols = new SqlCol[] {
+		new SqlCol(new SqlSerial("meetings_meetingid_seq"), "meetingid", true),
+		new SqlCol(new SqlInteger(false), "courseid"),
+		new SqlCol(new SqlTimestamp("GMT"), "dtstart"),
+		new SqlCol(new SqlTimestamp("GMT"), "dtnext")
 	};
 }
 

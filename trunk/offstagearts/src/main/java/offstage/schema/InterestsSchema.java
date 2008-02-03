@@ -37,11 +37,11 @@ throws SQLException
 	table = "interests";
 	kmodel = new DbKeyedModel(str, change,
 		"interestids", "groupid", "name", "name");
-	cols = new Column[] {
-		new Column(new SqlEnum(kmodel, false), "groupid", true),
-		new Column(new SqlInteger(false), "entityid", true),
-		new Column(new SqlBool(true), "byperson", false),
-		new Column(new SqlString(50,true), "referredby", false)
+	cols = new SqlCol[] {
+		new SqlCol(new SqlEnum(kmodel, false), "groupid", true),
+		new SqlCol(new SqlInteger(false), "entityid", true),
+		new SqlCol(new SqlBool(true), "byperson", false),
+		new SqlCol(new SqlString(50,true), "referredby", false)
 	};
 }
 

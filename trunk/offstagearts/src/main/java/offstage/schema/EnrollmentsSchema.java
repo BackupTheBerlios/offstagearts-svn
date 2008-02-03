@@ -33,15 +33,15 @@ throws SQLException
 	table = "enrollments";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"courseroles", "courseroleid", "name", "orderid,name");
-	cols = new Column[] {
-		new Column(new SqlInteger(false), "courseid", true),
-		new Column(new SqlInteger(false), "entityid", true),
-		new Column(new SqlEnum(kmodel, "<none>"), "courserole"),
-		new Column(new SqlDate(tz, true), "dstart"),
-		new Column(new SqlDate(tz, true), "dend"),
-		new Column(new SqlInteger(true), "pplanid"),
-		new Column(new SqlTimestamp("GMT"), "dtapproved"),
-		new Column(new SqlTimestamp("GMT"), "dtenrolled")
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(false), "courseid", true),
+		new SqlCol(new SqlInteger(false), "entityid", true),
+		new SqlCol(new SqlEnum(kmodel, "<none>"), "courserole"),
+		new SqlCol(new SqlDate(tz, true), "dstart"),
+		new SqlCol(new SqlDate(tz, true), "dend"),
+		new SqlCol(new SqlInteger(true), "pplanid"),
+		new SqlCol(new SqlTimestamp("GMT"), "dtapproved"),
+		new SqlCol(new SqlTimestamp("GMT"), "dtenrolled")
 	};
 }
 

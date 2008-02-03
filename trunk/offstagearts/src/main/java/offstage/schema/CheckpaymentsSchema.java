@@ -32,10 +32,10 @@ throws SQLException
 {
 	super(str, change,tz);
 	table = "checkpayments";
-	appendCols(new Column[] {
-		new Column(new SqlString(50), "name"),
-		new Column(new SqlString(15), "checknumber"),
-		new Column(new SqlString(30), "phone")
+	appendCols(new SqlCol[] {
+		new SqlCol(new SqlString(50), "name"),
+		new SqlCol(new SqlString(15), "checknumber"),
+		new SqlCol(new SqlString(30), "phone")
 	});
 
 }

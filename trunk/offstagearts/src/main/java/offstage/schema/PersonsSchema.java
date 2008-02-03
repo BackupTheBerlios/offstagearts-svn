@@ -32,12 +32,12 @@ throws SQLException
 {
 	super(str, change);
 	table = "persons";
-	appendCols(new Column[] {
+	appendCols(new SqlCol[] {
 //		new Column(new SqlString(1), "gender", false),
-		new Column(new SqlChar(), "gender", false),
-		new Column(new SqlDate(tz, true), "dob", false),
-		new Column(new SqlString(100), "email", false),
-		new Column(new SqlString(200), "url", false)
+		new SqlCol(new SqlChar(), "gender", false),
+		new SqlCol(new SqlDate(tz, true), "dob", false),
+		new SqlCol(new SqlString(100), "email", false),
+		new SqlCol(new SqlString(200), "url", false)
 	});
 }
 // ------------------------------------------

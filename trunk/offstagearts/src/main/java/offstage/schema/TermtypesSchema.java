@@ -28,10 +28,10 @@ public class TermtypesSchema extends ConstSchema
 public TermtypesSchema()
 {
 	table = "termtypes";
-	cols = new Column[] {
-		new Column(new SqlInteger(), "termtypeid", true),
-		new Column(new SqlString(), "name", false),
-		new Column(new SqlInteger(), "orderid", false)
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(), "termtypeid", true),
+		new SqlCol(new SqlString(), "name", false),
+		new SqlCol(new SqlInteger(), "orderid", false)
 	};
 }
 

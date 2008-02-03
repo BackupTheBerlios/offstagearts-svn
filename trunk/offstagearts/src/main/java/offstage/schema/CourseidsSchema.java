@@ -29,15 +29,15 @@ public CourseidsSchema()
 {
 	super();
 	table = "courseids";
-	cols = new Column[] {
-		new Column(new SqlSerial("courseids_courseid_seq"), "courseid", true),
-		new Column(new SqlString(), "name"),
-		new Column(new SqlInteger(false), "termid", false),
-		new Column(new SqlInteger(), "dayofweek", false),
-		new Column(new SqlTime(), "tstart", false),		// TimeZone is GMT
-		new Column(new SqlTime(), "tnext", false),		// TimeZone is GMT
-		new Column(new SqlNumeric(9,2), "price"),
-		new Column(new SqlInteger(true), "enrolllimit")
+	cols = new SqlCol[] {
+		new SqlCol(new SqlSerial("courseids_courseid_seq"), "courseid", true),
+		new SqlCol(new SqlString(), "name"),
+		new SqlCol(new SqlInteger(false), "termid", false),
+		new SqlCol(new SqlInteger(), "dayofweek", false),
+		new SqlCol(new SqlTime(), "tstart", false),		// TimeZone is GMT
+		new SqlCol(new SqlTime(), "tnext", false),		// TimeZone is GMT
+		new SqlCol(new SqlNumeric(9,2), "price"),
+		new SqlCol(new SqlInteger(true), "enrolllimit")
 	};
 }
 

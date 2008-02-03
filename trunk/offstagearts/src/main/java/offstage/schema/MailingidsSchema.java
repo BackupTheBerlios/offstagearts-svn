@@ -29,9 +29,9 @@ public MailingidsSchema()
 {
 	super();
 	table = "mailingids";
-	appendCols(new Column[] {
-		new Column(new SqlTimestamp("gmt",true), "created", false),
-		new Column(new SqlString(), "equery", false)
+	appendCols(new SqlCol[] {
+		new SqlCol(new SqlTimestamp("gmt",true), "created", false),
+		new SqlCol(new SqlString(), "equery", false)
 	});
 }
 

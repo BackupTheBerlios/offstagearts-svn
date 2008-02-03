@@ -30,10 +30,10 @@ public class DonationidsSchema extends ConstSchema
 public DonationidsSchema()
 {
 	table = "donationids";
-	cols = new Column[] {
-		new Column(new SqlInteger(false), "groupid", true),
-		new Column(new SqlString(true), "name", false),
-		new Column(new SqlInteger(true), "fiscalyear", false),
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(false), "groupid", true),
+		new SqlCol(new SqlString(true), "name", false),
+		new SqlCol(new SqlInteger(true), "fiscalyear", false),
 	};
 }
 // ------------------------------------------

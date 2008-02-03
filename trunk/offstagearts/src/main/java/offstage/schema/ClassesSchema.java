@@ -34,10 +34,10 @@ throws SQLException
 	table = "classes";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"classids", "groupid", "name", "name");
-	cols = new Column[] {
-		new Column(new SqlEnum(kmodel, false), "groupid", true),
-		new Column(new SqlInteger(false), "entityid", true),
-		new Column(new SqlString(300,true), "comments", false)
+	cols = new SqlCol[] {
+		new SqlCol(new SqlEnum(kmodel, false), "groupid", true),
+		new SqlCol(new SqlInteger(false), "entityid", true),
+		new SqlCol(new SqlString(300,true), "comments", false)
 	};
 }
 

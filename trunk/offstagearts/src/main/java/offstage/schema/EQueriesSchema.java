@@ -28,12 +28,12 @@ public class EQueriesSchema extends ConstSchema
 public EQueriesSchema()
 {
 	table = "equeries";
-	cols = new Column[] {
-		new Column(new SqlSerial("equeries_equeryid_seq", false), "equeryid", true),
-		new Column(new SqlString(), "equery", false),
-		new Column(new SqlTimestamp("GMT", true), "lastmodified", false),
+	cols = new SqlCol[] {
+		new SqlCol(new SqlSerial("equeries_equeryid_seq", false), "equeryid", true),
+		new SqlCol(new SqlString(), "equery", false),
+		new SqlCol(new SqlTimestamp("GMT", true), "lastmodified", false),
 //		new Column(new SqlTimestamp(), "lastaccessed", false),
-		new Column(new SqlString(100), "name", false)
+		new SqlCol(new SqlString(100), "name", false)
 	};
 }
 

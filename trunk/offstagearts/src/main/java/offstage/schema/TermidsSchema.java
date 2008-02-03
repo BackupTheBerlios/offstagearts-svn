@@ -33,13 +33,13 @@ throws SQLException{
 	table = "termids";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"termtypes", "termtypeid", "name", "orderid");
-	appendCols(new Column[] {
-		new Column(new SqlEnum(kmodel, false), "termtypeid", false),
+	appendCols(new SqlCol[] {
+		new SqlCol(new SqlEnum(kmodel, false), "termtypeid", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "firstdate", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "nextdate", false),
 		new ColumnDefaultNow(new SqlTimestamp("GMT", true), "billdtime", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "paymentdue", false),
-		new Column(new SqlBool(false), "iscurrent", false)
+		new SqlCol(new SqlBool(false), "iscurrent", false)
 	});
 }
 

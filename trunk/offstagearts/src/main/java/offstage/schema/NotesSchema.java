@@ -33,11 +33,11 @@ throws SQLException
 	table = "notes";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"noteids", "groupid", "name", "name");
-	cols = new Column[] {
-		new Column(new SqlEnum(kmodel, false), "groupid", true),
-		new Column(new SqlInteger(false), "entityid", true),
+	cols = new SqlCol[] {
+		new SqlCol(new SqlEnum(kmodel, false), "groupid", true),
+		new SqlCol(new SqlInteger(false), "entityid", true),
 		new ColumnDefaultNow(new SqlDate(tz, false), "date", false),
-		new Column(new SqlString(), "note", false)
+		new SqlCol(new SqlString(), "note", false)
 	};
 }
 

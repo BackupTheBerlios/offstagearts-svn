@@ -42,12 +42,12 @@ throws SQLException
 //	KeyedModel kmodel = new DbKeyedModel(st, change,
 //		"relprimarytypes", "relprimarytypeid", "name", "name");
 	// Populate levels (programs) for this term
-	cols = new Column[] {
-			new Column(new SqlInteger(false), "entityid", true),
-			new Column(new SqlInteger(), "adultid", false),
-			new Column(new SqlInteger(), "parentid", false),
-			new Column(new SqlInteger(), "parent2id", false),
-			new Column(new SqlString(1), "billingtype"),
+	cols = new SqlCol[] {
+			new SqlCol(new SqlInteger(false), "entityid", true),
+			new SqlCol(new SqlInteger(), "adultid", false),
+			new SqlCol(new SqlInteger(), "parentid", false),
+			new SqlCol(new SqlInteger(), "parent2id", false),
+			new SqlCol(new SqlString(1), "billingtype"),
 	};
 }	
 // ------------------------------------------

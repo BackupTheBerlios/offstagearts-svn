@@ -32,8 +32,8 @@ throws SQLException
 {
 	super(str, change);
 	table = "organizations";
-	appendCols(new Column[] {
-		new Column(new SqlString(100), "name", false)
+	appendCols(new SqlCol[] {
+		new SqlCol(new SqlString(100), "name", false)
 	});
 }
 // ------------------------------------------

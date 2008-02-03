@@ -33,12 +33,12 @@ throws SQLException
 	table = "donations";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"donationids", "groupid", "name", "name");
-	cols = new Column[] {
-		new Column(new SqlInteger(false), "serialid", true),
-		new Column(new SqlEnum(kmodel, false), "groupid", false),
-		new Column(new SqlInteger(false), "entityid", false),
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(false), "serialid", true),
+		new SqlCol(new SqlEnum(kmodel, false), "groupid", false),
+		new SqlCol(new SqlInteger(false), "entityid", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "date", false),
-		new Column(new SqlNumeric(9, 2), "amount", false)
+		new SqlCol(new SqlNumeric(9, 2), "amount", false)
 	};
 }
 // ------------------------------------------

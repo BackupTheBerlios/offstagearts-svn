@@ -34,16 +34,16 @@ throws SQLException
 	table = "termregs";
 	KeyedModel kmodel = new DbKeyedModel(str, change, "programids",
 		"select programid, name from programids order by name");
-	cols = new Column[] {
-		new Column(new SqlInteger(false), "groupid", true),	// links to termids; this should really be enum, except that's not needed...
-		new Column(new SqlInteger(false), "entityid", true),
-		new Column(new SqlNumeric(9,2, true), "tuition"),
-		new Column(new SqlNumeric(9,2, true), "defaulttuition"),
-		new Column(new SqlNumeric(9,2, false), "scholarship"),
-		new Column(new SqlNumeric(9,2, true), "tuitionoverride"),
-		new Column(new SqlDate(tz, true), "dtsigned"),
-		new Column(new SqlDate(tz, true), "dtregistered"),
-		new Column(new SqlEnum(kmodel, "<No Level Selected>"), "programid")		
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(false), "groupid", true),	// links to termids; this should really be enum, except that's not needed...
+		new SqlCol(new SqlInteger(false), "entityid", true),
+		new SqlCol(new SqlNumeric(9,2, true), "tuition"),
+		new SqlCol(new SqlNumeric(9,2, true), "defaulttuition"),
+		new SqlCol(new SqlNumeric(9,2, false), "scholarship"),
+		new SqlCol(new SqlNumeric(9,2, true), "tuitionoverride"),
+		new SqlCol(new SqlDate(tz, true), "dtsigned"),
+		new SqlCol(new SqlDate(tz, true), "dtregistered"),
+		new SqlCol(new SqlEnum(kmodel, "<No Level Selected>"), "programid")		
 	};
 }
 

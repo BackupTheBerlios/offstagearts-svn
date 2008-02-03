@@ -27,9 +27,9 @@ public class GroupidsSchema extends ConstSchema
 public GroupidsSchema()
 {
 	table = "groups";
-	cols = new Column[] {
-		new Column(new SqlInteger(false), "groupid", true),
-		new Column(new SqlString(50), "name", false)
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(false), "groupid", true),
+		new SqlCol(new SqlString(50), "name", false)
 	};
 }
 

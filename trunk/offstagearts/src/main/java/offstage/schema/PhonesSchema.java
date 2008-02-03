@@ -35,10 +35,10 @@ throws SQLException
 	table = "phones";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"phoneids", "groupid", "name", "name");
-	cols = new Column[] {
-		new Column(new SqlEnum(kmodel, false), "groupid", true),
-		new Column(new SqlInteger(false), "entityid", true),
-		new Column(new SqlPhone(), "phone", false),
+	cols = new SqlCol[] {
+		new SqlCol(new SqlEnum(kmodel, false), "groupid", true),
+		new SqlCol(new SqlInteger(false), "entityid", true),
+		new SqlCol(new SqlPhone(), "phone", false),
 	};
 }
 

@@ -32,12 +32,12 @@ throws SQLException
 {
 	super(str, change,tz);
 	table = "ccpayments";
-	appendCols(new Column[] {
-		new Column(new SqlString(50), "ccname"),
-		new Column(new SqlChar(), "cctype"),
-		new Column(new SqlString(4), "cclast4"),
-		new Column(new SqlString(4), "ccexpdate"),
-		new Column(new SqlString(255), "ccinfo")
+	appendCols(new SqlCol[] {
+		new SqlCol(new SqlString(50), "ccname"),
+		new SqlCol(new SqlChar(), "cctype"),
+		new SqlCol(new SqlString(4), "cclast4"),
+		new SqlCol(new SqlString(4), "ccexpdate"),
+		new SqlCol(new SqlString(255), "ccinfo")
 	});
 }
 

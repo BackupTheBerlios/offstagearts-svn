@@ -50,7 +50,7 @@ public static class Col
 {
 	public ColName cname;
 //	public String table;
-	public Column col;
+	public SqlCol col;
 	public JEnum comparators;
 	
 	

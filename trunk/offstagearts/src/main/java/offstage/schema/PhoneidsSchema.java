@@ -30,12 +30,12 @@ public class PhoneidsSchema extends ConstSchema
 public PhoneidsSchema()
 {
 	table = "phoneids";
-	cols = new Column[] {
-		new Column(new SqlInteger(false), "groupid", true),
-		new Column(new SqlString(true), "name", false),
-		new Column(new SqlInteger(false), "priority", false),
-		new Column(new SqlString(1, false), "letter", false),
-		new Column(new SqlString(false), "code", false)
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(false), "groupid", true),
+		new SqlCol(new SqlString(true), "name", false),
+		new SqlCol(new SqlInteger(false), "priority", false),
+		new SqlCol(new SqlString(1, false), "letter", false),
+		new SqlCol(new SqlString(false), "code", false)
 	};
 }
 // ------------------------------------------

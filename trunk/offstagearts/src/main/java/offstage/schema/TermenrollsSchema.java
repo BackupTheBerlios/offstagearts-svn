@@ -37,10 +37,10 @@ throws SQLException
 		"termids", "groupid", "name", "firstdate desc,name");	
 	KeyedModel courseroles_kmodel = new DbKeyedModel(str, change,
 		"courseroles", "courseroleid", "name", "orderid,name");
-	cols = new Column[] {
-		new Column(new SqlEnum(termids_kmodel, false), "groupid", true),
-		new Column(new SqlInteger(false), "entityid", true),
-		new Column(new SqlEnum(courseroles_kmodel, "<none>"), "courserole", false)
+	cols = new SqlCol[] {
+		new SqlCol(new SqlEnum(termids_kmodel, false), "groupid", true),
+		new SqlCol(new SqlInteger(false), "entityid", true),
+		new SqlCol(new SqlEnum(courseroles_kmodel, "<none>"), "courserole", false)
 	};
 }
 

@@ -32,12 +32,12 @@ public HolidaysSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util
 throws SQLException{
 	
 	table = "holidays";
-	cols = new Column[] {
-		new Column(new SqlSerial("holidays_holidayid_seq", false), "holidayid", true),
-		new Column(new SqlInteger(false), "termid", false),
-		new Column(new SqlDate(tz, false), "firstday", false),
-		new Column(new SqlDate(tz, true), "lastday", false),
-		new Column(new SqlString(false), "description", false)
+	cols = new SqlCol[] {
+		new SqlCol(new SqlSerial("holidays_holidayid_seq", false), "holidayid", true),
+		new SqlCol(new SqlInteger(false), "termid", false),
+		new SqlCol(new SqlDate(tz, false), "firstday", false),
+		new SqlCol(new SqlDate(tz, true), "lastday", false),
+		new SqlCol(new SqlString(false), "description", false)
 	};
 }
 }

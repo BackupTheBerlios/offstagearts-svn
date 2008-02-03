@@ -34,18 +34,18 @@ throws SQLException
 	table = "mailings";
 //	KeyedModel kmodel = new DbKeyedModel(st, change,
 //		"mailingids", "groupid", "name", "name");
-	cols = new Column[] {
+	cols = new SqlCol[] {
 //		new Column(new SqlEnum(kmodel, false), "groupid", true),
-		new Column(new SqlInteger(false), "groupid", true),
-		new Column(new SqlInteger(false), "oid", true),
-		new Column(new SqlInteger(true), "entityid", false),
-		new Column(new SqlString(), "addressto", false),
-		new Column(new SqlString(), "address1", false),
-		new Column(new SqlString(), "address2", false),
-		new Column(new SqlString(), "city", false),
-		new Column(new SqlString(), "state", false),
-		new Column(new SqlString(), "zip", false),
-		new Column(new SqlString(), "country", false)
+		new SqlCol(new SqlInteger(false), "groupid", true),
+		new SqlCol(new SqlInteger(false), "oid", true),
+		new SqlCol(new SqlInteger(true), "entityid", false),
+		new SqlCol(new SqlString(), "addressto", false),
+		new SqlCol(new SqlString(), "address1", false),
+		new SqlCol(new SqlString(), "address2", false),
+		new SqlCol(new SqlString(), "city", false),
+		new SqlCol(new SqlString(), "state", false),
+		new SqlCol(new SqlString(), "zip", false),
+		new SqlCol(new SqlString(), "country", false)
 	};
 }
 

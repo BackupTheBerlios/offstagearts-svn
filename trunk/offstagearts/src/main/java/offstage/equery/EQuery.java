@@ -66,7 +66,7 @@ public ArrayList<EClause> getClauses()
 	{ return clauses; }
 // -----------------------------------------------
 /** @param viewName The user's view of this column name */
-public String getSql(Column c, Element e, String viewName)
+public String getSql(SqlCol c, Element e, String viewName)
 throws IOException
 {
 	if ("=".equals(e.comparator) && e.value == null) {
@@ -115,7 +115,7 @@ throws IOException
 		Element e = (Element)jj.next();
 		ColName cn = e.colName;
 		QuerySchema.Col qsc = (QuerySchema.Col) schema.getCol(cn);
-		Column c = qsc.col;
+		SqlCol c = qsc.col;
 		addTableInnerJoin(schema, sql, cn);
 		if (ewhere == null) ewhere = new StringBuffer("(");
 		else ewhere.append(" and\n");
