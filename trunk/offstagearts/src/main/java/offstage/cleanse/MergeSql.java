@@ -151,7 +151,7 @@ public void mergeEntities(Object entityid0, Object entityid1)
 public void searchAndReplace(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
-	SqlCol entityCol = schema.getCol(entityColIx);
+	SqlCol entityCol = (SqlCol)schema.getCol(entityColIx);
 	String table = schema.getDefaultTable();
 //	StringBuffer sql = new StringBuffer();
 
@@ -166,7 +166,7 @@ String[] sUpdateCols,
 Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
-	SqlCol entityCol = schema.getCol(entityColIx);
+	SqlCol entityCol = (SqlCol)schema.getCol(entityColIx);
 	String table = schema.getDefaultTable();
 	int[] keyCols = getKeyCols(schema, entityColIx);
 //	StringBuffer sql = new StringBuffer();
@@ -174,7 +174,7 @@ Object entityid0, Object entityid1)
 	sql.append(" update " + table);
 	sql.append(" set\n");
 	for (int i=0; ;) {
-		SqlCol col = schema.getCol(sUpdateCols[i]);
+		SqlCol col = (SqlCol)schema.getCol(sUpdateCols[i]);
 		sql.append(col.getName() + " = " +
 			" (case when " + table + "." + col.getName() + " = " + table + "." + entityCol.getName() + " then " +
 			" t0." + col.getName() + " else " + table + "." + col.getName() + " end)");
@@ -193,7 +193,7 @@ Object entityid0, Object entityid1)
 public void mergeOneRow(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
-	SqlCol entityCol = schema.getCol(entityColIx);
+	SqlCol entityCol = (SqlCol)schema.getCol(entityColIx);
 	String table = schema.getDefaultTable();
 	int[] keyCols = getKeyCols(schema, entityColIx);
 //	StringBuffer sql = new StringBuffer();
@@ -201,7 +201,7 @@ public void mergeOneRow(Schema schema, String sEntityCol, Object entityid0, Obje
 	sql.append(" update " + table);
 	sql.append(" set\n");
 	for (int i=0; ;) {
-		SqlCol col = schema.getCol(i);
+		SqlCol col = (SqlCol)schema.getCol(i);
 		if (col.isKey()) {
 			++i;
 			continue;
@@ -225,10 +225,10 @@ public int[] getKeyCols(Schema schema, int entityColIx)
 	// Collect keys from schema
 	int ncols = schema.getColCount();
 	int nkeys = 0;
-	for (int i=0; i<ncols; ++i) if (i != entityColIx && schema.getCol(i).isKey()) ++nkeys;
+	for (int i=0; i<ncols; ++i) if (i != entityColIx && ((SqlCol)schema.getCol(i)).isKey()) ++nkeys;
 	int[] keyCols = new int[nkeys];
 	int k=0;
-	for (int i=0; i<ncols; ++i) if (i != entityColIx && schema.getCol(i).isKey()) keyCols[k++] = i;
+	for (int i=0; i<ncols; ++i) if (i != entityColIx && ((SqlCol)schema.getCol(i)).isKey()) keyCols[k++] = i;
 
 	return keyCols;
 }
@@ -292,7 +292,7 @@ public int[] getKeyCols(Schema schema, int entityColIx)
 public void moveRows(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
-	SqlCol entityCol = schema.getCol(entityColIx);
+	SqlCol entityCol = (SqlCol)schema.getCol(entityColIx);
 	String table = schema.getDefaultTable();
 	int[] keyCols = getKeyCols(schema, entityColIx);
 //	StringBuffer sql = new StringBuffer();
@@ -300,15 +300,15 @@ public void moveRows(Schema schema, String sEntityCol, Object entityid0, Object 
 	// Create list of keys in table 0 --- which we will transfer to table 1
 	sql.append("create temporary table keys0 (dummy int");
 	for (int i=0; i<keyCols.length; ++i) {
-		SqlCol col = schema.getCol(keyCols[i]);
-		sql.append(", " + col.getName() + " " + col.getType().sqlType());
+		SqlCol col = (SqlCol)schema.getCol(keyCols[i]);
+		sql.append(", " + col.getName() + " " + col.getSqlType().sqlType());
 	}
 	sql.append(");\n");
 
 	// Fill it in
 	sql.append("insert into keys0 select -1");
 	for (int i=0; i<keyCols.length; ++i) {
-		SqlCol col = schema.getCol(keyCols[i]);
+		SqlCol col = (SqlCol)schema.getCol(keyCols[i]);
 		sql.append(", " + col.getName());
 	}
 	sql.append(" from " + table +
@@ -318,7 +318,7 @@ public void moveRows(Schema schema, String sEntityCol, Object entityid0, Object 
 	sql.append("delete from keys0 using " + table);
 	sql.append(" where " + entityCol.getName() + " = " + entityCol.toSql(entityid1));
 	for (int i=0; i<keyCols.length; ++i) {
-		SqlCol col = schema.getCol(keyCols[i]);
+		SqlCol col = (SqlCol)schema.getCol(keyCols[i]);
 		sql.append(" and keys0." + col.getName() + " = " + table + "." + col.getName());
 	}
 	sql.append(";\n");
@@ -330,7 +330,7 @@ public void moveRows(Schema schema, String sEntityCol, Object entityid0, Object 
 		" where " + table + "." + entityCol.getName() + " = " + entityCol.toSql(entityid0));
 	sql.append(" and keys0.dummy = -1");
 	for (int i=0; i<keyCols.length; ++i) {
-		SqlCol col = schema.getCol(keyCols[i]);
+		SqlCol col = (SqlCol)schema.getCol(keyCols[i]);
 		sql.append(" and keys0." + col.getName() + " = " + table + "." + col.getName());
 	}
 	sql.append(";\n");

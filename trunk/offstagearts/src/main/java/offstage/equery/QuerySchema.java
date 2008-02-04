@@ -102,7 +102,7 @@ public Col getCol(ColName cname)
 //}
 private void addTypeComparator(Class klass, String[] vals)
 {
-	typeComparators.put(klass, new JEnum(new KeyedModel(vals)));
+	typeComparators.put(klass, new JEnum(KeyedModel.sameKeys(vals)));
 }
 // --------------------------------------------------
 protected void addSchema(Schema sc, String joinClause, String table)
@@ -115,7 +115,7 @@ protected void addSchema(Schema sc, String joinClause, String table)
 	tabs.put(table, tab);
 	for (int i=0; i<sc.getColCount(); ++i) {
 		Col col = new Col();
-		col.col = sc.getCol(i);
+		col.col = (SqlCol)sc.getCol(i);
 		Class colClass = col.col.getType().getClass();
 		col.comparators = (JEnum)typeComparators.get(colClass);
 		ColName cname = new ColName(table,  col.col.getName());

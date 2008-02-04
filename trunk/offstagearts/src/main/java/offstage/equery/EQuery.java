@@ -101,7 +101,7 @@ throws IOException
 		return e.colName.toString() + " " + comp + " (" + vals + ")";
 	} else {
 		return e.colName.toString() + " " + e.comparator + " " +
-			" (" + c.getType().toSql(e.value) + ")";
+			" (" + c.toSql(e.value) + ")";
 	}
 }
 // -----------------------------------------------
