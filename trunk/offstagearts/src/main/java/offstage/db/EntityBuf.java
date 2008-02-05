@@ -31,7 +31,7 @@ public class EntityBuf extends SchemaBuf
 {
 	
 /** Creates a new instance of EntitySchemaBuf.  schema is either PersonSchema or OrgSchema */
-public EntityBuf(Schema schema) {
+public EntityBuf(SqlSchema schema) {
 	super(schema);
 }
 	

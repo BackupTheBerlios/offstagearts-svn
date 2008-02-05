@@ -24,7 +24,7 @@ import citibob.sql.DbChangeModel;
 import java.sql.*;
 import citibob.types.*;
 
-public class ClassesSchema extends ConstSchema
+public class ClassesSchema extends ConstSqlSchema
 {
 
 public ClassesSchema(citibob.sql.SqlRunner str, DbChangeModel change)

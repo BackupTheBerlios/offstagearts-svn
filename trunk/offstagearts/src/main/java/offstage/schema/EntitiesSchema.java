@@ -23,7 +23,7 @@ import citibob.sql.*;
 import citibob.types.*;
 import java.sql.*;
 
-public class EntitiesSchema extends ConstSchema
+public class EntitiesSchema extends ConstSqlSchema
 {
 
 
@@ -81,7 +81,7 @@ throws SQLException
 // ------------------------------------------
 //// Singleton stuff
 //private static EntitiesSchema instance = new EntitiesSchema();
-//public static ConstSchema getInstance()
+//public static ConstSqlSchema getInstance()
 //	{ return instance; }
 
 }

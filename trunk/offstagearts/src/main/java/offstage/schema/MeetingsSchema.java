@@ -20,7 +20,7 @@ package offstage.schema;
 import citibob.jschema.*;
 import citibob.sql.pgsql.*;
 
-public class MeetingsSchema extends ConstSchema
+public class MeetingsSchema extends ConstSqlSchema
 {
 
 public MeetingsSchema()

@@ -25,7 +25,7 @@ import citibob.types.*;
 
 
 
-public class TermduedatesSchema extends ConstSchema
+public class TermduedatesSchema extends ConstSqlSchema
 {	
 	
 public TermduedatesSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)

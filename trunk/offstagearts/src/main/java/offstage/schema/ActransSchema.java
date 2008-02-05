@@ -24,7 +24,7 @@ import citibob.sql.DbChangeModel;
 import java.sql.*;
 import citibob.types.*;
 
-public class ActransSchema extends ConstSchema
+public class ActransSchema extends ConstSqlSchema
 {
 
 public static final int AC_SCHOOL = 1;

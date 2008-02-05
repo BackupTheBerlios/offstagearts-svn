@@ -22,7 +22,7 @@ import citibob.sql.pgsql.*;
 import citibob.sql.*;
 
 
-public class TermtypesSchema extends ConstSchema
+public class TermtypesSchema extends ConstSqlSchema
 {
 
 public TermtypesSchema()

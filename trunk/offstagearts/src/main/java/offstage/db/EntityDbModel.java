@@ -42,7 +42,7 @@ import citibob.sql.pgsql.*;
 public class EntityDbModel extends IntKeyedDbModel
 {
 	/** Creates a new instance of EntityDbModel */
-	public EntityDbModel(Schema schema, App app) {
+	public EntityDbModel(SqlSchema schema, App app) {
 		super(new EntityBuf(schema), "entityid", null, new IntKeyedDbModel.Params(false));
 	}
 

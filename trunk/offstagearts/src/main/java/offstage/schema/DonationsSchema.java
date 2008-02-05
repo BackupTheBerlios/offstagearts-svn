@@ -24,7 +24,7 @@ import citibob.sql.DbChangeModel;
 import java.sql.*;
 import citibob.types.*;
 
-public class DonationsSchema extends ConstSchema
+public class DonationsSchema extends ConstSqlSchema
 {
 
 public DonationsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
@@ -44,7 +44,7 @@ throws SQLException
 // ------------------------------------------
 // Singleton stuff
 //private static DonationsSchema instance = new DonationsSchema();
-//public static ConstSchema getInstance()
+//public static ConstSqlSchema getInstance()
 //	{ return instance; }
 
 }

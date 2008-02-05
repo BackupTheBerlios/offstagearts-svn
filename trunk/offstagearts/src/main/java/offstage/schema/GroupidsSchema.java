@@ -21,7 +21,7 @@ import citibob.jschema.*;
 import citibob.sql.pgsql.*;
 
 
-public class GroupidsSchema extends ConstSchema
+public class GroupidsSchema extends ConstSqlSchema
 {
 
 public GroupidsSchema()

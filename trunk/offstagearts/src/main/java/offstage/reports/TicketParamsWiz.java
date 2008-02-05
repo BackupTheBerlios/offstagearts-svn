@@ -51,7 +51,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner, app.getSwingerMap());
 	setSize(600,400);
-	citibob.jschema.Schema schema = app.getSchema("tickets");
+	citibob.jschema.SqlSchema schema = app.getSchema("tickets");
 	addWidget("groupid", schema);
 //.getCol("tickettypeid").getType()
 //	TypedWidgetMap map = new TypedWidgetMap();

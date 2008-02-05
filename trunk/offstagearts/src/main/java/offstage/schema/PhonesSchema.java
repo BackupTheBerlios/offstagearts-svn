@@ -25,7 +25,7 @@ import java.sql.*;
 import citibob.types.*;
 import offstage.types.*;
 
-public class PhonesSchema extends ConstSchema
+public class PhonesSchema extends ConstSqlSchema
 {
 
 public PhonesSchema(citibob.sql.SqlRunner str, DbChangeModel change)

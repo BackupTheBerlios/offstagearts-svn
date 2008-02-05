@@ -24,7 +24,7 @@ import citibob.sql.DbChangeModel;
 import java.sql.*;
 import citibob.types.*;
 
-public class EventsSchema extends ConstSchema
+public class EventsSchema extends ConstSqlSchema
 {
 
 public EventsSchema(citibob.sql.SqlRunner str, DbChangeModel change)

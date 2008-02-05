@@ -138,7 +138,7 @@ public void runGui(java.awt.Component c, String[] groups, CBRunnable r)
 //public void runGui(CBRunnable r) { guiRunner.doRun(null, r); }
 public void runApp(CBRunnable r) { appRunner.doRun(r); }
 public MailSender getMailSender() { return mailSender; }
-public Schema getSchema(String name) { return sset.get(name); }
+public SqlSchema getSchema(String name) { return sset.get(name); }
 public FrameSet getFrameSet() { return frameSet; }
 public citibob.sql.SqlTypeSet getSqlTypeSet() { return sqlTypeSet; }
 public citibob.reports.Reports getReports() { return reports; }

@@ -22,7 +22,7 @@ import citibob.sql.pgsql.*;
 import citibob.sql.*;
 
 
-public class EQueriesSchema extends ConstSchema
+public class EQueriesSchema extends ConstSqlSchema
 {
 
 public EQueriesSchema()

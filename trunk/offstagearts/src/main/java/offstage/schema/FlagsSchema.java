@@ -24,7 +24,7 @@ import citibob.sql.DbChangeModel;
 import java.sql.*;
 import citibob.types.*;
 
-public class FlagsSchema extends ConstSchema
+public class FlagsSchema extends ConstSqlSchema
 {
 
 public FlagsSchema(citibob.sql.SqlRunner str, DbChangeModel change)
@@ -42,7 +42,7 @@ throws SQLException
 // ------------------------------------------
 // Singleton stuff
 //private static flagsSchema instance = new flagsSchema();
-//public static ConstSchema getInstance()
+//public static ConstSqlSchema getInstance()
 //	{ return instance; }
 
 }

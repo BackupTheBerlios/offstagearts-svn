@@ -281,7 +281,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 
 	// ================================================================
 	// Account Transactions
-	Schema actransSchema = fapp.getSchema("actrans");
+	SqlSchema actransSchema = fapp.getSchema("actrans");
 	final int createdCol = actransSchema.findCol("datecreated");
 	final int tableoidCol = actransSchema.findCol("tableoid");
 	SchemaBuf actransSb = new SchemaBuf(actransSchema) {
@@ -329,7 +329,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 		new String[] {"courseids", "enrollments"},
 		null,
 		new String[] {"enrollments"}) {
-//	new Schema[] {fapp.getSchema("courseids"), fapp.getSchema("enrollments")},
+//	new SqlSchema[] {fapp.getSchema("courseids"), fapp.getSchema("enrollments")},
 //	null, fapp.getSqlTypeSet(),
 //	fapp.getSchema("enrollments"), null, fapp.getDbChange()) {
 	public String getSelectSql(boolean proto) {
@@ -2587,7 +2587,7 @@ void newAdultAction(final String colName)
 		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			enrolledDb.doUpdate(str);
-			Wizard wizard = new EnrollWizard(fapp, null);
+			Wizard wizard = new EnrollWizard(fapp, RegistrationPanel.this);
 //			TypedHashMap v = new TypedHashMap();
 //				wizard.setVal("sterm", vTermID.getKeyedModel().toString(vTermID.getValue()));
 				wizard.setVal("sperson", vStudentID.getText());

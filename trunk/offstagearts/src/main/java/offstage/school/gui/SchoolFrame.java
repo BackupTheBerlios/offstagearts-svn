@@ -85,7 +85,9 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 			// So we need the runApp() here.
 			fapp.runApp(new BatchRunnable() {
 			public void run(SqlRunner str) throws Exception {
+//System.out.println("a value = " + vTermID.getValue());
 				schoolModel.setTermID((Integer)(vTermID.getValue()));
+//System.out.println("b value = " + vTermID.getValue());
 			}});
 		}});
 		vTermID.setKeyedModel(tkmodel);

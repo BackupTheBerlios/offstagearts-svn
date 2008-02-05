@@ -23,7 +23,7 @@ import citibob.jschema.*;
 import java.sql.*;
 import citibob.types.*;
 
-public class NotesSchema extends ConstSchema
+public class NotesSchema extends ConstSqlSchema
 {
 
 public NotesSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)

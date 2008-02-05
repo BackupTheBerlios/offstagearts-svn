@@ -58,7 +58,7 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner, app.getSwingerMap());
 	
-	Schema schema = app.getSchema("ccpayments");
+	SqlSchema schema = app.getSchema("ccpayments");
 //	SwingerMap swingers = app.getSwingerMap();
 	
 	setSize(600,460);

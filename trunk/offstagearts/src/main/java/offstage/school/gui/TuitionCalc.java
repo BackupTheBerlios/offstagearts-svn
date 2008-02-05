@@ -23,11 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.school.gui;
 
-import citibob.app.App;
-import java.sql.*;
 import citibob.sql.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because
@@ -169,8 +169,10 @@ static class Enrollment
 		courseid = rs.getInt("courseid");
 		dstart = date.get(rs, "dstart");
 		dend = date.get(rs, "dend");
-		tstartMS = (int)time.get(rs, "tstart").getTime();
-		tnextMS = (int)time.get(rs, "tnext").getTime();
+		Date TstartMS = (Date)time.get(rs, "tstart");
+		tstartMS = (TstartMS == null ? 0 : (int)TstartMS.getTime());
+		Date TnextMS = (Date)time.get(rs, "tnext");
+		tnextMS = (TnextMS == null ? 0 : (int)TnextMS.getTime());
 		price = (Double)money.get(rs, "price");
 		locationid = rs.getInt("locationid");
 		

@@ -24,7 +24,7 @@ import java.sql.*;
 import citibob.types.*;
 import java.util.*;
 
-public class TicketeventsSchema extends ConstSchema
+public class TicketeventsSchema extends ConstSqlSchema
 {
 
 public TicketeventsSchema(citibob.sql.SqlRunner str, DbChangeModel change, TimeZone tz)

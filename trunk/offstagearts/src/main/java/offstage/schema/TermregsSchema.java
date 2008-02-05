@@ -24,7 +24,7 @@ import java.sql.*;
 import citibob.util.*;
 import citibob.types.*;
 
-public class TermregsSchema extends ConstSchema
+public class TermregsSchema extends ConstSqlSchema
 {
 
 public TermregsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)

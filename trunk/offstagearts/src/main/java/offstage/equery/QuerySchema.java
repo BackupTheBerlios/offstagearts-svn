@@ -74,7 +74,7 @@ public static class Col
 }
 public static class Tab
 {
-	public Schema schema;
+	public SqlSchema schema;
 	public String table;
 	public String joinClause;
 }
@@ -105,7 +105,7 @@ private void addTypeComparator(Class klass, String[] vals)
 	typeComparators.put(klass, new JEnum(KeyedModel.sameKeys(vals)));
 }
 // --------------------------------------------------
-protected void addSchema(Schema sc, String joinClause, String table)
+protected void addSchema(SqlSchema sc, String joinClause, String table)
 {
 	if (table == null) table = sc.getDefaultTable();
 	Tab tab = new Tab();
@@ -121,11 +121,11 @@ protected void addSchema(Schema sc, String joinClause, String table)
 		ColName cname = new ColName(table,  col.col.getName());
 		col.cname = cname;
 //		col.table = table;
-//if (cname.stable.equals("classes")) System.err.println("Adding to Schema: " + cname);
+//if (cname.stable.equals("classes")) System.err.println("Adding to SqlSchema: " + cname);
 		cols.addItem(cname, col);
 	}
 }
-protected void addSchema(Schema sc, String joinClause)
+protected void addSchema(SqlSchema sc, String joinClause)
 	{ addSchema(sc,joinClause,null); }
 
 // --------------------------------------------------------------------

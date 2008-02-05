@@ -25,7 +25,7 @@ import java.sql.*;
 import citibob.types.*;
 
 /** This is for a VIEW, not a table. */
-public class TermenrollsSchema extends ConstSchema
+public class TermenrollsSchema extends ConstSqlSchema
 {
 
 public TermenrollsSchema(citibob.sql.SqlRunner str, DbChangeModel change)

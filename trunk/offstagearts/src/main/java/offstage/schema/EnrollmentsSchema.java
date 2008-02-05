@@ -23,7 +23,7 @@ import citibob.sql.*;
 import java.sql.*;
 import citibob.types.*;
 
-public class EnrollmentsSchema extends ConstSchema
+public class EnrollmentsSchema extends ConstSqlSchema
 {
 
 public EnrollmentsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)

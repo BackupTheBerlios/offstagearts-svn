@@ -24,7 +24,7 @@ import citibob.sql.DbChangeModel;
 import java.sql.*;
 import citibob.types.*;
 
-public class MailingsSchema extends ConstSchema
+public class MailingsSchema extends ConstSqlSchema
 {
 
 public MailingsSchema(citibob.sql.SqlRunner str, DbChangeModel change)

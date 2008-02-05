@@ -148,7 +148,7 @@ public void mergeEntities(Object entityid0, Object entityid1)
 //}
 
 // -------------------------------------------------------------------
-public void searchAndReplace(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+public void searchAndReplace(SqlSchema schema, String sEntityCol, Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
 	SqlCol entityCol = (SqlCol)schema.getCol(entityColIx);
@@ -161,7 +161,7 @@ public void searchAndReplace(Schema schema, String sEntityCol, Object entityid0,
 // -------------------------------------------------------------------
 /** Merges the (one) row fully keyed by sKeyCol.  Only changes columns
  in sUpdateCols with value == sEntityCol (typically "entityid"). */
-public void mergeOneRowEntityID(Schema schema, String sEntityCol,
+public void mergeOneRowEntityID(SqlSchema schema, String sEntityCol,
 String[] sUpdateCols,
 Object entityid0, Object entityid1)
 {
@@ -190,7 +190,7 @@ Object entityid0, Object entityid1)
 }
 // -------------------------------------------------------------------
 /** Merges the (one) row fully keyed by sKeyCol.  Only changes columns with null values. */
-public void mergeOneRow(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+public void mergeOneRow(SqlSchema schema, String sEntityCol, Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
 	SqlCol entityCol = (SqlCol)schema.getCol(entityColIx);
@@ -220,7 +220,7 @@ public void mergeOneRow(Schema schema, String sEntityCol, Object entityid0, Obje
 	System.out.println(sql);
 }
 // -------------------------------------------------------------------
-public int[] getKeyCols(Schema schema, int entityColIx)
+public int[] getKeyCols(SqlSchema schema, int entityColIx)
 {
 	// Collect keys from schema
 	int ncols = schema.getColCount();
@@ -234,7 +234,7 @@ public int[] getKeyCols(Schema schema, int entityColIx)
 }
 // -------------------------------------------------------------------
 ///** Moves rows from keyCol=entityid0 to keyCol=entityid1 */
-//public static void moveRows(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+//public static void moveRows(SqlSchema schema, String sEntityCol, Object entityid0, Object entityid1)
 //{
 //	int entityColIx = schema.findCol(sEntityCol);
 //	Column entityCol = schema.getCol(entityColIx);
@@ -289,7 +289,7 @@ public int[] getKeyCols(Schema schema, int entityColIx)
 //}
 // -------------------------------------------------------------------
 /** Moves rows from keyCol=entityid0 to keyCol=entityid1 -- in which there are no other key columns */
-public void moveRows(Schema schema, String sEntityCol, Object entityid0, Object entityid1)
+public void moveRows(SqlSchema schema, String sEntityCol, Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
 	SqlCol entityCol = (SqlCol)schema.getCol(entityColIx);

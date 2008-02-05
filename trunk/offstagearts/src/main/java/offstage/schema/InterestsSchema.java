@@ -24,7 +24,7 @@ import citibob.sql.DbChangeModel;
 import java.sql.*;
 import citibob.types.*;
 
-public class InterestsSchema extends ConstSchema
+public class InterestsSchema extends ConstSqlSchema
 {
 
 KeyedModel kmodel;

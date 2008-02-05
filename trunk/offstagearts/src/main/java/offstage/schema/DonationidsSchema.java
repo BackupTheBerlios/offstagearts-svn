@@ -24,7 +24,7 @@ import citibob.sql.DbChangeModel;
 import java.sql.*;
 import citibob.types.*;
 
-public class DonationidsSchema extends ConstSchema
+public class DonationidsSchema extends ConstSqlSchema
 {
 
 public DonationidsSchema()
@@ -39,7 +39,7 @@ public DonationidsSchema()
 // ------------------------------------------
 // Singleton stuff
 //private static DonationsSchema instance = new DonationsSchema();
-//public static ConstSchema getInstance()
+//public static ConstSqlSchema getInstance()
 //	{ return instance; }
 
 }

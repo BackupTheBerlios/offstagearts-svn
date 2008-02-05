@@ -22,7 +22,7 @@ import citibob.sql.pgsql.*;
 import citibob.util.*;
 import citibob.sql.*;
 
-public class CourseidsSchema extends ConstSchema
+public class CourseidsSchema extends ConstSqlSchema
 {
 
 public CourseidsSchema()
