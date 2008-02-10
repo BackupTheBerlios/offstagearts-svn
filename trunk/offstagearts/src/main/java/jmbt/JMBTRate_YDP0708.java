@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*
- * TuitionRate.java
+ * JMBTRate_YDP0708.java
  *
  * Created on August 12, 2007, 5:09 PM
  *
@@ -24,13 +24,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * and open the template in the editor.
  */
 
-package offstage.school.gui;
+package jmbt;
 
 /**
  *
  * @author citibob
  */
-public class TuitionRate
+public class JMBTRate_YDP0708
 {
 	
 //// Calculate from first principles
@@ -83,7 +83,7 @@ static final int[] tuitionS2 = new int[] {
 48600,4575,
 50400,4745,
 52200,4915,
-52200*2,4915*2
+52200*2,4915*2		// Sentinel
 };
 static final int[] timeS;
 static final double[] rateY;

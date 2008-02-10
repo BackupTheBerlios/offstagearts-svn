@@ -31,7 +31,7 @@ import citibob.jschema.*;
 import citibob.swing.table.*;
 import java.util.prefs.*;
 import offstage.*;
-import citibob.multithread.*;
+import citibob.task.*;
 import offstage.gui.*;
 import citibob.swing.typed.*;
 import offstage.db.*;

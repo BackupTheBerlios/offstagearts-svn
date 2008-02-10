@@ -25,18 +25,21 @@ import citibob.types.*;
 
 
 
-public class TermduedatesSchema extends ConstSqlSchema
+public class DuedatesSchema extends ConstSqlSchema
 {	
 	
-public TermduedatesSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public final KeyedModel kmodel;
+
+public DuedatesSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException{
 	
-	table = "termduedates";
+	table = "duedates";
+	kmodel = new DbKeyedModel(str, change,
+		"duedateids", "duedateid", "description", "description");
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "termid", true),
-		new SqlCol(new SqlString(false), "name", false),
-		new SqlCol(new SqlDate(tz, true), "duedate", false),
-		new SqlCol(new SqlString(false), "description", false)
+		new SqlCol(new SqlEnum(kmodel, false), "duedateid", true),
+		new SqlCol(new SqlDate(tz, false), "duedate")
 	};
 }
 }

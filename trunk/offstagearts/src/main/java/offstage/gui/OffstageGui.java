@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.gui;
 import citibob.gui.FrameSet;
-import citibob.multithread.BatchRunnable;
+import citibob.task.BatchRunnable;
 import java.sql.*;
 import javax.swing.*;
 import java.util.prefs.*;
@@ -117,7 +117,7 @@ FrontApp fapp;
     }// </editor-fold>//GEN-END:initComponents
 
 private void miThrowExceptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miThrowExceptionActionPerformed
-	fapp.runGui(this, new citibob.multithread.StRunnable() {
+	fapp.runGui(this, new citibob.task.StRunnable() {
 	public void run(Statement st) throws Exception {
 		throw new Exception("Hello");
 	}});

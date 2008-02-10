@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.wizards.newrecord;
 
 import offstage.db.*;
-import citibob.multithread.*;
+import citibob.task.*;
 import java.sql.*;
 import citibob.swing.*;
 import citibob.swing.table.*;

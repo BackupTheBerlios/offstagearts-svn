@@ -26,7 +26,7 @@ package offstage.school.gui;
 import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.swing.typed.*;
-import citibob.multithread.*;
+import citibob.task.*;
 import javax.swing.JOptionPane;
 import offstage.*;
 import java.beans.PropertyChangeListener;
@@ -44,6 +44,7 @@ import offstage.db.*;
 import offstage.reports.*;
 import citibob.types.*;
 //import citibob.swingers.*;
+import offstage.school.tuition.TuitionCalc;
 
 /**
  *
@@ -54,6 +55,7 @@ public class RegistrationPanel extends javax.swing.JPanel
 
 FrontApp fapp;
 SchoolModel smod;
+AccountTaskMaker accountHelper;
 
 //public JoinedSchemaBufDbModel enrolledDb;
 public SqlBufDbModel enrolledDb;
@@ -148,7 +150,11 @@ class AllDbModel extends MultiDbModel
 				// Changed from a payer to no payer.
 				payerIdSql = "select " + Oldadultid;
 			}
-			if (payerIdSql != null) TuitionCalc.w_recalc(str, fapp.getTimeZone(), termid, payerIdSql);
+			if (payerIdSql != null) {
+				TuitionCalc tc = new TuitionCalc(fapp.getTimeZone(), termid);
+					tc.setPayerIDs(payerIdSql);
+					tc.recalcTuition(str);
+			}
 //			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Oldadultid, null);
 //			if (Adultid != null && !Adultid.equals(Oldadultid)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Adultid, null);
 		}});
@@ -171,7 +177,12 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 {
 	this.fapp = xfapp;
 	this.smod = xschoolModel;
-
+	accountHelper = new AccountTaskMaker(fapp, this) {
+	public void refresh(SqlRunner str) {
+		refreshAccount(str);
+	}};
+	
+	
 	all.add(smod.studentDm);
 	all.add(smod.payerDm);
 //	all.add(householdDm);
@@ -421,7 +432,8 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 	}});
 
 	
-	smod.addListener(new SchoolModelMVC.Adapter() {
+
+	smod.addListener(new SchoolModel.Adapter() {
     public void termIDChanged(int oldTermID, int termID)  {
 		SqlRunner str = fapp.getBatchSet();
 		Integer eid = (Integer)smod.studentRm.get("entityid");
@@ -431,6 +443,9 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 		str.execSql(SchoolDB.registerStudentSql(termID, eid, fapp.sqlDate));
 
 		smod.termregsDm.doUpdate(str);
+		
+		all.setKey(all.getIntKey());
+		all.doSelect(str);
 	}});
 }
 
@@ -2468,16 +2483,8 @@ void setIDDirty(boolean dirty)
 
 	private void bOtherTransActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bOtherTransActionPerformed
 	{//GEN-HEADEREND:event_bOtherTransActionPerformed
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
-			Integer EntityID = (Integer)entityid.getValue();
-			Wizard wizard = new TransactionWizard(fapp, null,
-				EntityID, ActransSchema.AC_SCHOOL);
-			wizard.setVal("entityid", EntityID);
-			wizard.runWizard("transtype");
-			refreshAccount(str);
-			// actransDb.doSelect(str);
-		}});
+		accountHelper.accountAction(
+			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "transtype");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bOtherTransActionPerformed
 
@@ -2669,42 +2676,20 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 
 	private void bCcActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCcActionPerformed
 	{//GEN-HEADEREND:event_bCcActionPerformed
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable()
-		{
-			public void run(SqlRunner str) throws Exception
-			{
-				Wizard wizard = new TransactionWizard(fapp, null,
-					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
-				wizard.runWizard("ccpayment");
-				refreshAccount(str);
-			}});
+		accountHelper.accountAction(
+			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "ccpayment");
 	}//GEN-LAST:event_bCcActionPerformed
 
 	private void bCheckActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCheckActionPerformed
 	{//GEN-HEADEREND:event_bCheckActionPerformed
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable()
-		{
-			public void run(SqlRunner str) throws Exception
-			{
-				Wizard wizard = new TransactionWizard(fapp, null,
-					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
-				wizard.runWizard("checkpayment");
-				refreshAccount(str);
-			}});
-// TODO add your handling code here:
+		accountHelper.accountAction(
+			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "checkpayment");
 	}//GEN-LAST:event_bCheckActionPerformed
 
 	private void bCashActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCashActionPerformed
 	{//GEN-HEADEREND:event_bCashActionPerformed
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable()
-		{
-			public void run(SqlRunner str) throws Exception
-			{
-				Wizard wizard = new TransactionWizard(fapp, null,
-					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
-				wizard.runWizard("cashpayment");
-				refreshAccount(str);
-			}});
+		accountHelper.accountAction(
+			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "cashpayment");
 	}//GEN-LAST:event_bCashActionPerformed
 	
 	

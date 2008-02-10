@@ -19,7 +19,7 @@ package offstage;
 import java.sql.*;
 import java.util.*;
 import offstage.equery.*;
-import citibob.multithread.*;
+import citibob.task.*;
 import citibob.sql.*;
 import citibob.swing.typed.*;
 import offstage.schema.*;
@@ -67,7 +67,7 @@ FrameSet frameSet;
 //EQueryModel2 equeries;
 //MailingModel2 mailings;
 //EntityListTableModel simpleSearchResults;
-SwingActionRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
+SwingTaskRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
 	// This will put on queue, etc.
 ActionRunner appRunner;		// Run secondary events, in response to other events.  Just run immediately
 MailSender mailSender;	// Way to send mail (TODO: make this class MVC.)
@@ -144,7 +144,7 @@ public citibob.sql.SqlTypeSet getSqlTypeSet() { return sqlTypeSet; }
 public citibob.reports.Reports getReports() { return reports; }
 
 //// Legacy...
-//public SwingActionRunner getGuiRunner() { return guiRunner; }
+//public SwingTaskRunner getGuiRunner() { return guiRunner; }
 public ActionRunner getAppRunner() { return appRunner; }
 
 /** @returns Root user preferences node for this application */

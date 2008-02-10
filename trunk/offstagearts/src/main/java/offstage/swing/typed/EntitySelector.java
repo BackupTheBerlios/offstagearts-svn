@@ -27,7 +27,7 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
-import citibob.multithread.*;
+import citibob.task.*;
 import offstage.FrontApp;
 import offstage.devel.gui.DevelModel;
 import offstage.db.*;

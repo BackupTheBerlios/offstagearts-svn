@@ -27,8 +27,8 @@ import citibob.jschema.DayOfWeekKeyedModel;
 import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.SchemaBuf;
 import citibob.jschema.SchemaInfo;
-import citibob.multithread.BatchRunnable;
-import citibob.multithread.ERunnable;
+import citibob.task.BatchRunnable;
+import citibob.task.ERunnable;
 import citibob.sql.ConsSqlQuery;
 import citibob.sql.SqlRunner;
 import citibob.sql.UpdRunnable;
@@ -157,7 +157,7 @@ void courseChanged(SqlRunner str)
 void all_doSelect(SqlRunner str)
 {
 	final int id = courseid;
-	meetingsDb.doSelect(str);
+	meetingsDb.doSelect(str);d
 	coursesDb.doSelect(str);
 
 	str.execUpdate(new UpdRunnable() {

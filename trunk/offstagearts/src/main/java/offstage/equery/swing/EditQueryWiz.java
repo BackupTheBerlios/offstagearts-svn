@@ -32,7 +32,7 @@ import offstage.*;
 import offstage.devel.gui.DevelModel;
 import offstage.db.EntityListTableModel;
 import offstage.equery.*;
-import citibob.multithread.*;
+import citibob.task.*;
 import offstage.gui.*;
 import citibob.swing.typed.*;
 import offstage.db.*;

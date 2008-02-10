@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.school.gui;
 
-import citibob.multithread.BatchRunnable;
+import citibob.task.BatchRunnable;
 import citibob.reports.Reports;
 import citibob.sql.DbKeyedModel;
 import citibob.sql.RsRunnable;
@@ -33,7 +33,6 @@ import citibob.swing.table.JTypeTableModel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
-import java.util.Calendar;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import offstage.reports.AcctStatement;
@@ -43,6 +42,7 @@ import offstage.reports.SchoolAccounts;
 import offstage.reports.YDPConfirmationLetter;
 import offstage.*;
 import offstage.reports.StudentSchedule;
+import offstage.school.tuition.TuitionCalc;
 
 /**
  *
@@ -497,7 +497,9 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 		{
 			public void run(SqlRunner str) throws Exception
 			{
-				TuitionCalc.w_recalcAll(str, fapp.getTimeZone(), schoolModel.getTermID());
+				TuitionCalc tc = new TuitionCalc(fapp.getTimeZone(), schoolModel.getTermID());
+					tc.setAllPayerIDs();
+					tc.recalcTuition(str);
 			}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_miRecalcAllTuitionActionPerformed

@@ -31,7 +31,7 @@ import citibob.wizard.Wizard;
 import offstage.*;
 import citibob.swing.html.*;
 import java.util.*;
-import citibob.multithread.*;
+import citibob.task.*;
 import offstage.wizards.newrecord.*;
 import citibob.swing.*;
 import javax.swing.*;

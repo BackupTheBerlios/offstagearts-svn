@@ -35,7 +35,7 @@ import citibob.swing.typed.*;
 import citibob.swing.table.*;
 import offstage.FrontApp;
 import offstage.devel.gui.DevelModel;
-import citibob.multithread.*;
+import citibob.task.*;
 import citibob.app.App;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;

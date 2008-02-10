@@ -22,7 +22,7 @@ import citibob.jschema.*;
 import citibob.swing.*;
 import java.sql.*;
 import citibob.sql.*;
-import citibob.multithread.*;
+import citibob.task.*;
 import citibob.app.*;
 
 /**

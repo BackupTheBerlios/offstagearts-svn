@@ -29,19 +29,19 @@ import citibob.jschema.RSSchema;
 import citibob.jschema.SchemaBuf;
 import citibob.jschema.SchemaInfo;
 import citibob.jschema.SqlBufDbModel;
-import citibob.multithread.BatchRunnable;
-import citibob.multithread.ERunnable;
+import citibob.task.BatchRunnable;
+import citibob.task.ERunnable;
 import citibob.sql.ConsSqlQuery;
 import citibob.sql.SqlRunner;
 import citibob.sql.UpdRunnable;
 import citibob.sql.pgsql.SqlInteger;
-import citibob.swing.WidgetTree;
 import citibob.wizard.Wizard;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import offstage.FrontApp;
+import offstage.school.tuition.TuitionCalc;
 
 /**
  *
@@ -387,7 +387,9 @@ void all_doSelect(SqlRunner str)
 			for (int i=0; i<sb.getRowCount(); ++i) payers.add((Integer)sb.getValueAt(i, "adultid"));
 			enrolledDb.doUpdate(str);
 			coursesDb.doUpdate(str);
-			TuitionCalc.w_recalc(str, fapp.getTimeZone(), smod.getTermID(), payers);
+			TuitionCalc tc = new TuitionCalc(fapp.getTimeZone(), smod.getTermID());
+				tc.setPayerIDs(payers);
+				tc.recalcTuition(str);
 			str.flush();
 			all_doSelect(str);
 		}});
@@ -413,11 +415,14 @@ void all_doSelect(SqlRunner str)
 				wizard.setVal("courseid", courseid);
 				wizard.setVal("termid", smod.getTermID());
 
-			wizard.runWizard("addbycourse");
-			TuitionCalc.w_recalc(str, fapp.getTimeZone(), smod.getTermID(),
-				" select adultid from entities_school es" +
-				" where entityid = " + wizard.getVal("entityid"));
-			enrolledDb.doSelect(str);
+			if (wizard.runWizard("addbycourse")) {
+				TuitionCalc tc = new TuitionCalc(fapp.getTimeZone(), smod.getTermID());
+					tc.setPayerIDs(
+						" select adultid from entities_school es" +
+						" where entityid = " + wizard.getVal("entityid"));
+					tc.recalcTuition(str);
+				enrolledDb.doSelect(str);
+			}
 		}});
 
 //		fapp.runGui(CourseListPanel.this, new ERunnable()

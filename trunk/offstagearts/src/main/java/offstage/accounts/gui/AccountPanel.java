@@ -6,7 +6,7 @@
 
 package offstage.accounts.gui;
 
-import citibob.multithread.BatchRunnable;
+import citibob.task.BatchRunnable;
 import citibob.sql.SqlRunner;
 import citibob.wizard.TypedHashMap;
 import citibob.wizard.Wizard;
@@ -173,7 +173,7 @@ public class AccountPanel extends javax.swing.JPanel
 
 	private void bOtherTrans2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bOtherTrans2ActionPerformed
 	{//GEN-HEADEREND:event_bOtherTrans2ActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable()
+		fapp.runGui(AccountPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{
@@ -191,7 +191,7 @@ public class AccountPanel extends javax.swing.JPanel
 
 	private void bCc1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCc1ActionPerformed
 	{//GEN-HEADEREND:event_bCc1ActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable()
+		fapp.runGui(AccountPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{
@@ -204,7 +204,7 @@ public class AccountPanel extends javax.swing.JPanel
 
 	private void bCheck1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCheck1ActionPerformed
 	{//GEN-HEADEREND:event_bCheck1ActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable()
+		fapp.runGui(AccountPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{
@@ -218,7 +218,7 @@ public class AccountPanel extends javax.swing.JPanel
 
 	private void bCash1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCash1ActionPerformed
 	{//GEN-HEADEREND:event_bCash1ActionPerformed
-		fapp.runGui(SchoolPanel.this, new BatchRunnable()
+		fapp.runGui(AccountPanel.this, new BatchRunnable()
 		{
 			public void run(SqlRunner str) throws Exception
 			{

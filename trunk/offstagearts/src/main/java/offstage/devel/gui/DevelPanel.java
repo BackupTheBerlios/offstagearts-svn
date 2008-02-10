@@ -34,7 +34,7 @@ import java.awt.*;
 import java.awt.event.*;
 import offstage.FrontApp;
 import offstage.devel.gui.DevelModel;
-import citibob.multithread.*;
+import citibob.task.*;
 import offstage.school.gui.*;
 import citibob.sql.*;
 

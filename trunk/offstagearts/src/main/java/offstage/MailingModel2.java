@@ -32,7 +32,7 @@ import javax.swing.event.*;
 import offstage.db.DB;
 import offstage.schema.MailingsSchema;
 import offstage.schema.MailingidsSchema;
-import citibob.multithread.*;
+import citibob.task.*;
 import offstage.schema.*;
 import net.sf.jasperreports.engine.export.*;
 import javax.print.*;

@@ -26,8 +26,8 @@ package offstage.school.gui;
 import citibob.jschema.DbModel;
 import citibob.jschema.MultiDbModel;
 import citibob.jschema.SchemaBufDbModel;
-import citibob.multithread.BatchRunnable;
-import citibob.multithread.ERunnable;
+import citibob.task.BatchRunnable;
+import citibob.task.ERunnable;
 import citibob.sql.SqlRunner;
 import citibob.types.JEnum;
 import offstage.FrontApp;
@@ -75,8 +75,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 	termsDm.setOrderClause("firstdate desc");
 		
 	terms.setModelU(termsDm.getSchemaBuf(),
-		new String[] {"Status", "Type", "Name", "From", "To (+1)", "Is Current"},
-		new String[] {"__status__", "termtypeid", "name", "firstdate", "nextdate", "iscurrent"},
+		new String[] {"Status", "Type", "Name", "From", "To (+1)", "Calc Tuition", "Is Current"},
+		new String[] {"__status__", "termtypeid", "name", "firstdate", "nextdate", "calctuition", "iscurrent"},
 		null, fapp.getSwingerMap());
 
 	allDm = new MultiDbModel(new DbModel[] {termsDm});

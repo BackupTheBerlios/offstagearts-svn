@@ -39,7 +39,9 @@ throws SQLException{
 		new ColumnDefaultNow(new SqlDate(tz, false), "nextdate", false),
 		new ColumnDefaultNow(new SqlTimestamp("GMT", true), "billdtime", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "paymentdue", false),
-		new SqlCol(new SqlBool(false), "iscurrent", false)
+		new SqlCol(new SqlBool(false), "iscurrent", false),
+		new SqlCol(new SqlBool(false), "calctuition", false),
+		new SqlCol(new SqlString(200), "tuitionclass")
 	});
 }
 
