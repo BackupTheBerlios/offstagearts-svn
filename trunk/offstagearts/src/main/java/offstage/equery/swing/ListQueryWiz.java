@@ -47,7 +47,7 @@ citibob.app.App fapp;
 //EQueryModel2 app;
 EntityListTableModel testResults;
 //SqlRunner str;
-ActionRunner runner;
+TaskRunner runner;
 
 SchemaBufDbModel equeriesDm;
 public boolean ok = false;		// Did user exit by pressing OK?

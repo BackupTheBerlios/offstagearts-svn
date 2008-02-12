@@ -72,7 +72,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 		fapp.getSchema("termids"), fapp.getDbChange());
 //	termsDm.setWhereClause("(firstdate > now() - interval '2 years' or iscurrent or firstdate is null)");
 //	termsDm.setWhereClause("");
-	termsDm.setOrderClause("firstdate desc");
+	termsDm.setOrderClause("firstdate desc, name");
 		
 	terms.setModelU(termsDm.getSchemaBuf(),
 		new String[] {"Status", "Type", "Name", "From", "To (+1)", "Calc Tuition", "Is Current"},

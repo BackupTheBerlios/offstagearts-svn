@@ -48,7 +48,7 @@ public class CatNameWiz extends HtmlWiz {
 public CatNameWiz(java.awt.Frame owner, String cattype)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Category (2 of 2)");
+	super(owner);
 //	setSize(600,460);
 	addComponent("cattype", new JLabel(cattype));
 	addTextField("catname");

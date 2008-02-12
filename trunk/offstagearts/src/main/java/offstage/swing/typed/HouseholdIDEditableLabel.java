@@ -35,7 +35,6 @@ import citibob.sql.*;
 import citibob.swing.typed.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
-import citibob.multithread.*;
 import citibob.sql.*;
 
 public class HouseholdIDEditableLabel extends EntityIDEditableLabel

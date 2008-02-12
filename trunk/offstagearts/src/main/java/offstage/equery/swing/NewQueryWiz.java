@@ -48,7 +48,7 @@ public class NewQueryWiz extends HtmlWiz {
 public NewQueryWiz(java.awt.Frame owner)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Query");
+	super(owner);
 	setSize(600,400);
 //	TypedWidgetMap map = new TypedWidgetMap();
 	addTextField("queryname");

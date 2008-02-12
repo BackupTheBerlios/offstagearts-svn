@@ -123,9 +123,10 @@ String dupType;
 		public void run(SqlRunner str) throws Exception {
 			dupTable.setModelU(dupModel,
 				new String[] {"#", "Score", "ID-0", "Name-0", "ID-1", "Name-1"},
+//				new String[] {"score", "score", "entityid0", "string0", "entityid1", "string1"},
 				new String[] {"__rowno__", "score", "entityid0", "string0", "entityid1", "string1"},
-				new String[] {null, "string0", "string0", "string1", "string1"},
-				new boolean[] {false,false,false,false,false},
+				new String[] {null, null, "string0", "string0", "string1", "string1"},
+				new boolean[] {false, false,false,false,false,false},
 				app.getSwingerMap());
 //			dupTable.setRenderEditU("score", new java.text.DecimalFormat("#.00"));
 			dupTable.setRenderEditU("score", "#.00");

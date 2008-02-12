@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.cleanse;
 
 import citibob.jschema.*;
-import citibob.multithread.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.SqlInteger;
 import java.util.*;

@@ -69,7 +69,7 @@ FrameSet frameSet;
 //EntityListTableModel simpleSearchResults;
 SwingTaskRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
 	// This will put on queue, etc.
-ActionRunner appRunner;		// Run secondary events, in response to other events.  Just run immediately
+TaskRunner appRunner;		// Run secondary events, in response to other events.  Just run immediately
 MailSender mailSender;	// Way to send mail (TODO: make this class MVC.)
 SqlTypeSet sqlTypeSet;		// Conversion between SQL types and SqlType objects
 ExpHandler expHandler;
@@ -109,7 +109,7 @@ public ExpHandler getExpHandler() { return expHandler; }
 public File getConfigDir() { return configDir; }
 public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
 /** Only runs the action if logged-in user is a member of the correct group.
- TODO: This functionality should be maybe in the ActionRunner? */
+ TODO: This functionality should be maybe in the TaskRunner? */
 public void runGui(java.awt.Component c, String group, CBRunnable r) {
 	runGui(c,r);
 //	if (loginGroups.contains(group)) {
@@ -145,7 +145,7 @@ public citibob.reports.Reports getReports() { return reports; }
 
 //// Legacy...
 //public SwingTaskRunner getGuiRunner() { return guiRunner; }
-public ActionRunner getAppRunner() { return appRunner; }
+public TaskRunner getAppRunner() { return appRunner; }
 
 /** @returns Root user preferences node for this application */
 public java.util.prefs.Preferences userRoot()
@@ -247,9 +247,9 @@ throws Exception
 	MailSender sender = new GuiMailSender();
 	expHandler = new MailExpHandler(sender,
 			new InternetAddress("citibob@comcast.net"), "OffstageArts", consoleFrame.getDocument());
-	guiRunner = new BusybeeDbActionRunner(this, expHandler);
-	appRunner = new SimpleDbActionRunner(this, expHandler);
-	//guiRunner = new SimpleDbActionRunner(pool);
+	guiRunner = new BusybeeDbTaskRunner(this, expHandler);
+	appRunner = new SimpleDbTaskRunner(this, expHandler);
+	//guiRunner = new SimpleDbTaskRunner(pool);
 	
 	// Figure out who we're logged in as
 	String sql = "select entityid from dblogins where username = " +

@@ -32,8 +32,6 @@ import citibob.app.*;
 import java.sql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
-import citibob.multithread.*;
-import static citibob.sql.RSTableModel.Col;
 import java.util.*;
 import citibob.swing.typed.*;
 import citibob.sql.*;
@@ -73,9 +71,9 @@ public TicketSalesReport(App app, String idSql)
 
 	// Outer Join the Fiscal Year summaries
 	final int[] years = new int[] {1989, 1990, 1991, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007};
-	Col[] cols = new Col[years.length];
+	Column[] cols = new Column[years.length];
 //	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new JavaJType(Double.class));
-	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new SqlNumeric(10,2,true));
+	for (int i=0; i<years.length; ++i) cols[i] = new Column(""+years[i], new SqlNumeric(10,2,true));
 	sql =
 		" select d.entityid, di.fiscalyear, sum(amount) as amount" +
 		" from donations d, donationids di, ids_donor ids" +

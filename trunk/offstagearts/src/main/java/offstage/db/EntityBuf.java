@@ -36,14 +36,14 @@ public EntityBuf(SqlSchema schema) {
 }
 	
 /** Automatically set lastupdated every time row saved to DB. */
-public void getUpdateCols(int row, ConsSqlQuery q, boolean updateUnchanged, SchemaInfo qs)
+public void getUpdateCols(int row, ConsSqlQuery q, boolean updateUnchanged, SqlSchemaInfo qs)
 {
 	super.getUpdateCols(row, q, updateUnchanged, qs);
 	q.addColumn("lastupdated", "now()");
 }
 
 /** Automatically set lastupdated every time row saved to DB. */
-public void getInsertCols(int row, ConsSqlQuery q, boolean insertUnchanged, SchemaInfo qs)
+public void getInsertCols(int row, ConsSqlQuery q, boolean insertUnchanged, SqlSchemaInfo qs)
 {
 	super.getInsertCols(row, q, insertUnchanged, qs);
 	q.addColumn("lastupdated", "now()");

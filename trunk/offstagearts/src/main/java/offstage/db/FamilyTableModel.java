@@ -56,7 +56,8 @@ throws SQLException
 	
 //System.out.println("*****************\n" + sql);
 	// ResultSet rs = st.executeQuery(sql);
-	setRows(str, idSql, orderBy);
+	setIdSql(idSql, orderBy);
+	executeQuery(str);
 }
 // ===============================================================
 /** Binds this widget to listen/edit a particular column in a RowModel, using the type for that column derived from the associated Schema.  NOTE: This requires a correspondence in the numbering of columns in the Schema and in the RowModel.  No permutions inbetween are allowed!  This should not be a problem, just make sure the TableRowModel binds DIRECTLY to the source SchemaBuf, not to some permutation thereof. */

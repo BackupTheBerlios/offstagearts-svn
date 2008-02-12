@@ -32,8 +32,6 @@ import citibob.app.*;
 import java.sql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
-import citibob.multithread.*;
-import static citibob.sql.RSTableModel.Col;
 import java.util.*;
 import citibob.swing.typed.*;
 import citibob.sql.*;
@@ -107,7 +105,7 @@ System.out.println(sql);
 	this.add(new SqlDbModel(main));
 
 	// Outer Join the "Day Registered" stuff
-	Col[] cols = new Col[] {new Col("days", new SqlString(true))};
+	Column[] cols = new Column[] {new Column("days", new SqlString(true))};
 	sql =
 		" select distinct p.entityid, c.dayofweek, dow.lettername\n" +
 		" from enrollments en, courseids c, entities p, daysofweek dow\n" +

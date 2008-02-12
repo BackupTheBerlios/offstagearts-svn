@@ -23,10 +23,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.db;
 
+import citibob.jschema.Column;
+import citibob.jschema.ConstSchema;
+import citibob.jschema.SqlCol;
 import citibob.swing.*;
 import java.sql.*;
 import citibob.sql.SqlTableModel;
 import citibob.sql.*;
+import citibob.sql.pgsql.*;
 
 /**
  *
@@ -36,34 +40,72 @@ public class EntityListTableModel extends SqlTableModel {
 
 
 public EntityListTableModel(SqlTypeSet tset)
-{ super(tset); }
+{
+	super(tset);
+	setSchema(new ConstSchema(new Column[] {
+		new SqlCol("entityid", new SqlInteger(false)),
+		new SqlCol("relation", new SqlInteger(true)),
+		new SqlCol("name", new SqlString(true))
+	}));
+}
+public void setIdSql(String idSql, String orderBy)
+{
+	if (orderBy == null) orderBy = "relation, name";
+	sql =
+		" create temporary table _ids (id int); delete from _ids;\n" +
+
+		" delete from _ids;\n" +
+
+		" insert into _ids (id) " + idSql + ";\n" +
+		
+		" (select o.entityid, 'organizations' as relation, name as name" +
+		" , o.entityid = o.primaryentityid as isprimary" +
+		" from organizations o, _ids" +
+		" where o.entityid = _ids.id\n" +
+		"   union\n" +
+		" select p.entityid, 'persons' as relation," +
+		" (case when lastname is null then '' else lastname || ', ' end ||" +
+		" case when firstname is null then '' else firstname || ' ' end ||" +
+		" case when middlename is null then '' else middlename end ||" +
+		" case when orgname is null then '' else ' (' || orgname || ')' end) as name" +
+		" , p.entityid = p.primaryentityid as isprimary" +
+		" from persons p, _ids" +
+		" where p.entityid = _ids.id" +
+		" ) order by " + orderBy + ";\n" +
+		
+		" drop table _ids";
+	
+}
+
 //	super();
 //	setPrototypes(new String[] {"101010", "organizations", "Johan Sebastian Bach"});
 //}
 // --------------------------------------------------
-/** idSql is Sql statement to select a bunch of IDs */
-private void addAllRows(SqlRunner str, String idSql, String orderBy) throws SQLException
-{
-	DB.rs_entities_namesByIDList(str, idSql, orderBy, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws SQLException {
-		setColHeaders(rs);
-		addAllRows(rs);
-		rs.close();
-	}});
-}
+///** idSql is Sql statement to select a bunch of IDs */
+//private void addAllRows(SqlRunner str, String idSql, String orderBy) throws SQLException
+//{
+//	DB.rs_entities_namesByIDList(str, idSql, orderBy, new RsRunnable() {
+//	public void run(SqlRunner str, ResultSet rs) throws SQLException {
+//		executeQuery(rs);
+////		setRowsAndCols(rs);
+////		setColHeaders(rs);
+////		addAllRows(rs);
+////		rs.close();
+//	}});
+//}
 // --------------------------------------------------
-/** Hardwire the column names, so they can exist even before data has been put in. */
-public String getColumnName(int columnIndex) 
-{
-	switch(columnIndex) {
-		case 0 : return "entityid";
-		case 1 : return "relation";
-		case 2 : return "name";
-	}
-	return null;
-}
-public int getColumnCount()
-{ return 3; }
+///** Hardwire the column names, so they can exist even before data has been put in. */
+//public String getColumnName(int columnIndex) 
+//{
+//	switch(columnIndex) {
+//		case 0 : return "entityid";
+//		case 1 : return "relation";
+//		case 2 : return "name";
+//	}
+//	return null;
+//}
+//public int getColumnCount()
+//{ return 3; }
 // --------------------------------------------------
 /** Appends a row in the data */
 /*
@@ -85,11 +127,11 @@ public void addAllRows(Statement st, ResultSet rs) throws java.sql.SQLException
 }
  */
 // --------------------------------------------------
-public void setRows(SqlRunner str, String idSql, String orderBy) throws java.sql.SQLException
-{
-	setRowCount(0);
-	addAllRows(str, idSql, orderBy);
-}
+//public void setRows(SqlRunner str, String idSql, String orderBy) throws java.sql.SQLException
+//{
+//	setRowCount(0);
+//	addAllRows(str, idSql, orderBy);
+//}
 // --------------------------------------------------
 public int getEntityID(int row)
 {

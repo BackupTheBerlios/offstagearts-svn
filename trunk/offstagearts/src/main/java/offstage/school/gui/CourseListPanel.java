@@ -27,7 +27,7 @@ import citibob.jschema.DayOfWeekKeyedModel;
 import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.RSSchema;
 import citibob.jschema.SchemaBuf;
-import citibob.jschema.SchemaInfo;
+import citibob.jschema.SqlSchemaInfo;
 import citibob.jschema.SqlBufDbModel;
 import citibob.task.BatchRunnable;
 import citibob.task.ERunnable;
@@ -91,7 +91,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 	coursesDb = new IntKeyedDbModel(fapp.getSchema("courseids"),
 		"termid", fapp.getDbChange(), new IntKeyedDbModel.Params(false)) {
 	/** Override stuff to delete from enrollments table when we delete from courseids table. */
-	protected ConsSqlQuery doSimpleDeleteNoRemoveRow(int row, SqlRunner str, SchemaInfo qs) {
+	protected ConsSqlQuery doSimpleDeleteNoRemoveRow(int row, SqlRunner str, SqlSchemaInfo qs) {
 		ConsSqlQuery q = super.doSimpleDeleteNoRemoveRow(row, str, qs);
 		int courseid = (Integer)getSchemaBuf().getValueAt(row, "courseid");
 		String sql =

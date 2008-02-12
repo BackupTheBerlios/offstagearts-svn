@@ -48,7 +48,7 @@ public class InitWiz extends HtmlWiz {
 public InitWiz(java.awt.Frame owner)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Record");
+	super(owner);
 	
 	KeyedButtonGroup type = new KeyedButtonGroup();
 	JRadioButton b;

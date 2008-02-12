@@ -48,7 +48,7 @@ public class DonationNameWiz extends HtmlWiz {
 public DonationNameWiz(java.awt.Frame owner)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, "New Category (2 of 2)");
+	super(owner);
 //	setSize(600,460);
 	addTextField("catname");
 	addTextField("fiscalyear", Integer.class, "#");

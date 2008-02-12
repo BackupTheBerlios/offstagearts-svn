@@ -39,7 +39,7 @@ import java.beans.PropertyChangeEvent;
 import citibob.util.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
-import citibob.swing.pgsql.*;
+import citibob.swing.sql.*;
 import citibob.sql.*;
 import citibob.types.*;
 

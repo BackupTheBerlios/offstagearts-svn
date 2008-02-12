@@ -26,7 +26,6 @@ package offstage.wizard.editcourses;
 import citibob.app.*;
 import citibob.jschema.*;
 import citibob.jschema.gui.*;
-import citibob.multithread.*;
 import java.sql.*;
 import citibob.sql.*;
 

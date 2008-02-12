@@ -30,7 +30,6 @@ import citibob.sql.AdhocOJSqlTableModel;
 import citibob.app.*;
 import java.sql.*;
 import citibob.jschema.*;
-import static citibob.sql.RSTableModel.Col;
 import java.util.*;
 import citibob.sql.*;
 import offstage.db.*;
@@ -75,9 +74,9 @@ public DonationReport(App app, String idSql, int minYear, int maxYear)
 	final int[] years = new int[nyear];
 	for (int i=0; i<nyear; ++i) years[i] = minYear + i;
 
-	Col[] cols = new Col[years.length];
+	Column[] cols = new Column[years.length];
 //	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new JavaJType(Double.class));
-	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new SqlNumeric(10,2,true));
+	for (int i=0; i<years.length; ++i) cols[i] = new Column(""+years[i], new SqlNumeric(10,2,true));
 	sql =
 		" select d.entityid, di.fiscalyear, sum(amount) as amount" +
 		" from donations d, donationids di, ids_donor ids" +

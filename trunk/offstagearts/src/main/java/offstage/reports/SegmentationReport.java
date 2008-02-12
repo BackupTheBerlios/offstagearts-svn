@@ -32,8 +32,6 @@ import citibob.app.*;
 import java.sql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
-import citibob.multithread.*;
-import static citibob.sql.RSTableModel.Col;
 import java.util.*;
 import citibob.swing.typed.*;
 import citibob.sql.*;

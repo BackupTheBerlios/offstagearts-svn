@@ -26,7 +26,7 @@ package offstage.school.gui;
 import citibob.jschema.DayOfWeekKeyedModel;
 import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.SchemaBuf;
-import citibob.jschema.SchemaInfo;
+import citibob.jschema.SqlSchemaInfo;
 import citibob.task.BatchRunnable;
 import citibob.task.ERunnable;
 import citibob.sql.ConsSqlQuery;
@@ -90,7 +90,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 	coursesDb = new IntKeyedDbModel(fapp.getSchema("courseids"),
 		"termid", fapp.getDbChange(), new IntKeyedDbModel.Params(false)) {
 	/** Override stuff to delete from meetings table when we delete from courseids table. */
-	protected ConsSqlQuery doSimpleDeleteNoRemoveRow(int row, SqlRunner str, SchemaInfo qs) {
+	protected ConsSqlQuery doSimpleDeleteNoRemoveRow(int row, SqlRunner str, SqlSchemaInfo qs) {
 		ConsSqlQuery q = super.doSimpleDeleteNoRemoveRow(row, str, qs);
 		int courseid = (Integer)getSchemaBuf().getValueAt(row, "courseid");
 		String sql =
@@ -157,7 +157,7 @@ void courseChanged(SqlRunner str)
 void all_doSelect(SqlRunner str)
 {
 	final int id = courseid;
-	meetingsDb.doSelect(str);d
+	meetingsDb.doSelect(str);
 	coursesDb.doSelect(str);
 
 	str.execUpdate(new UpdRunnable() {

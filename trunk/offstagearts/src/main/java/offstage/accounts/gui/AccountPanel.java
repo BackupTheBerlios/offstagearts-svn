@@ -173,60 +173,60 @@ public class AccountPanel extends javax.swing.JPanel
 
 	private void bOtherTrans2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bOtherTrans2ActionPerformed
 	{//GEN-HEADEREND:event_bOtherTrans2ActionPerformed
-		fapp.runGui(AccountPanel.this, new BatchRunnable()
-		{
-			public void run(SqlRunner str) throws Exception
-			{
-				Integer EntityID = (Integer)entityid.getValue();
-				Wizard wizard = new TransactionWizard(fapp, null,
-					EntityID, ActransSchema.AC_SCHOOL);
-				TypedHashMap v = new TypedHashMap();
-				v.put("entityid", EntityID);
-				wizard.runWizard("transtype", v);
-				refreshAccount(str);
-				// actransDb.doSelect(str);
-			}});
+//		fapp.runGui(AccountPanel.this, new BatchRunnable()
+//		{
+//			public void run(SqlRunner str) throws Exception
+//			{
+//				Integer EntityID = (Integer)entityid.getValue();
+//				Wizard wizard = new TransactionWizard(fapp, null,
+//					EntityID, ActransSchema.AC_SCHOOL);
+//				TypedHashMap v = new TypedHashMap();
+//				v.put("entityid", EntityID);
+//				wizard.runWizard("transtype", v);
+//				refreshAccount(str);
+//				// actransDb.doSelect(str);
+//			}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bOtherTrans2ActionPerformed
 
 	private void bCc1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCc1ActionPerformed
 	{//GEN-HEADEREND:event_bCc1ActionPerformed
-		fapp.runGui(AccountPanel.this, new BatchRunnable()
-		{
-			public void run(SqlRunner str) throws Exception
-			{
-				Wizard wizard = new TransactionWizard(fapp, null,
-					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
-				wizard.runWizard("ccpayment");
-				refreshAccount(str);
-			}});
+//		fapp.runGui(AccountPanel.this, new BatchRunnable()
+//		{
+//			public void run(SqlRunner str) throws Exception
+//			{
+//				Wizard wizard = new TransactionWizard(fapp, null,
+//					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
+//				wizard.runWizard("ccpayment");
+//				refreshAccount(str);
+//			}});
 	}//GEN-LAST:event_bCc1ActionPerformed
 
 	private void bCheck1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCheck1ActionPerformed
 	{//GEN-HEADEREND:event_bCheck1ActionPerformed
-		fapp.runGui(AccountPanel.this, new BatchRunnable()
-		{
-			public void run(SqlRunner str) throws Exception
-			{
-				Wizard wizard = new TransactionWizard(fapp, null,
-					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
-				wizard.runWizard("checkpayment");
-				refreshAccount(str);
-			}});
+//		fapp.runGui(AccountPanel.this, new BatchRunnable()
+//		{
+//			public void run(SqlRunner str) throws Exception
+//			{
+//				Wizard wizard = new TransactionWizard(fapp, null,
+//					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
+//				wizard.runWizard("checkpayment");
+//				refreshAccount(str);
+//			}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bCheck1ActionPerformed
 
 	private void bCash1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCash1ActionPerformed
 	{//GEN-HEADEREND:event_bCash1ActionPerformed
-		fapp.runGui(AccountPanel.this, new BatchRunnable()
-		{
-			public void run(SqlRunner str) throws Exception
-			{
-				Wizard wizard = new TransactionWizard(fapp, null,
-					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
-				wizard.runWizard("cashpayment");
-				refreshAccount(str);
-			}});
+//		fapp.runGui(AccountPanel.this, new BatchRunnable()
+//		{
+//			public void run(SqlRunner str) throws Exception
+//			{
+//				Wizard wizard = new TransactionWizard(fapp, null,
+//					(Integer)entityid.getValue(), ActransSchema.AC_SCHOOL);
+//				wizard.runWizard("cashpayment");
+//				refreshAccount(str);
+//			}});
 	}//GEN-LAST:event_bCash1ActionPerformed
 	
 	

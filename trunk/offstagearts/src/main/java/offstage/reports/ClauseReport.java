@@ -28,7 +28,6 @@ package offstage.reports;
 
 import offstage.*;
 import citibob.swing.table.*;
-import static citibob.sql.RSTableModel.Col;
 import java.util.*;
 import citibob.sql.*;
 import citibob.types.JType;
@@ -84,8 +83,10 @@ throws IOException
 		
 		// rss[0]: The main query
 		RSTableModel mod0 = new RSTableModel(tset);
-		mod0.setColHeaders(rss[n]);
-		mod0.addAllRows(rss[n]);
+		mod0.executeQuery(rss[n]);
+//		mod0.setRowsAndCols(rss[n]);
+//		mod0.setColHeaders(rss[n]);
+//		mod0.addAllRows(rss[n]);
 		models[n++] = mod0;
 		int nrow = mod0.getRowCount();
 		

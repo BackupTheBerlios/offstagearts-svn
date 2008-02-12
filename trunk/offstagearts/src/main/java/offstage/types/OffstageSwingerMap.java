@@ -30,7 +30,7 @@ package offstage.types;
 import citibob.swing.typed.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
-import citibob.swing.pgsql.*;
+import citibob.swing.sql.*;
 import citibob.types.*;
 import citibob.swingers.*;
 import java.util.*;
@@ -39,7 +39,7 @@ import java.util.*;
  *
  * @author citibob
  */
-public class OffstageSwingerMap extends citibob.sql.pgsql.SqlSwingerMap
+public class OffstageSwingerMap extends citibob.sql.pgsql.PgsqlSwingerMap
 {
 	
 /** Creates a new instance of OffstageSwingerMap */

@@ -19,6 +19,7 @@ import offstage.FrontApp;
 public abstract class AccountTaskMaker {
 
 FrontApp fapp;
+Component component;
 
 public AccountTaskMaker(FrontApp xfapp, Component component)
 {
@@ -29,15 +30,19 @@ public AccountTaskMaker(FrontApp xfapp, Component component)
 /** Implement this to refresh the appropriate stuff on your panel. */
 public abstract void refresh(SqlRunner str);
 
-/** @param startState in {"cashpayment", "checkpayment", "ccpayment", "transtype"} */
-public void newTransaction(final int actypeid, final int entityid, final String startSate)
+///** @param startState in {"cashpayment", "checkpayment", "ccpayment", "transtype"} */
+//public void newTransaction(final int actypeid, final int entityid, final String startSate)
+//{
+//	return new Task()
+//accountHelper.accountAction(
+//	ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "transtype");
+public void accountAction(final int actypeid, final int entityid, final String startState)
 {
-	return new Task()
 	fapp.runGui(component, new BatchRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		Wizard wizard = new TransactionWizard(fapp, component, entityid, actypeid);
 		wizard.setVal("entityid", entityid);
-		wizard.runWizard("checkpayment");
+		wizard.runWizard(startState);
 		refresh(str);
 	}});
 }

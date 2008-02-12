@@ -307,36 +307,35 @@ public static void countIDList(final String retVar, SqlRunner str, String idSql)
 //	return sql;
 //}
 // -------------------------------------------------------------------------------
-public static void rs_entities_namesByIDList(SqlRunner str, String idSql, String orderBy, final RsRunnable rr)
-//throws SQLException
-{
-	if (orderBy == null) orderBy = "relation, name";
-	String sql =
-		" create temporary table _ids (id int); delete from _ids;\n" +
-
-		" delete from _ids;\n" +
-
-		" insert into _ids (id) " + idSql + ";\n" +
-		
-		" (select o.entityid, 'organizations' as relation, name as name" +
-		" , o.entityid = o.primaryentityid as isprimary" +
-		" from organizations o, _ids" +
-		" where o.entityid = _ids.id\n" +
-		"   union\n" +
-		" select p.entityid, 'persons' as relation," +
-		" (case when lastname is null then '' else lastname || ', ' end ||" +
-		" case when firstname is null then '' else firstname || ' ' end ||" +
-		" case when middlename is null then '' else middlename end ||" +
-		" case when orgname is null then '' else ' (' || orgname || ')' end) as name" +
-		" , p.entityid = p.primaryentityid as isprimary" +
-		" from persons p, _ids" +
-		" where p.entityid = _ids.id" +
-		" ) order by " + orderBy + ";\n" +
-		
-		" drop table _ids";
-
-	str.execSql(sql, rr);
-}
+//public static String rs_entities_namesByIDList(SqlRunner str, String idSql, String orderBy, final RsRunnable rr)
+////throws SQLException
+//{
+//	if (orderBy == null) orderBy = "relation, name";
+//	String sql =
+//		" create temporary table _ids (id int); delete from _ids;\n" +
+//
+//		" delete from _ids;\n" +
+//
+//		" insert into _ids (id) " + idSql + ";\n" +
+//		
+//		" (select o.entityid, 'organizations' as relation, name as name" +
+//		" , o.entityid = o.primaryentityid as isprimary" +
+//		" from organizations o, _ids" +
+//		" where o.entityid = _ids.id\n" +
+//		"   union\n" +
+//		" select p.entityid, 'persons' as relation," +
+//		" (case when lastname is null then '' else lastname || ', ' end ||" +
+//		" case when firstname is null then '' else firstname || ' ' end ||" +
+//		" case when middlename is null then '' else middlename end ||" +
+//		" case when orgname is null then '' else ' (' || orgname || ')' end) as name" +
+//		" , p.entityid = p.primaryentityid as isprimary" +
+//		" from persons p, _ids" +
+//		" where p.entityid = _ids.id" +
+//		" ) order by " + orderBy + ";\n" +
+//		
+//		" drop table _ids";
+//	return sql;
+//}
 // -------------------------------------------------------------------------------
 public static String sql_entities_namesByIDList2(String idSql, String orderBy)
 //throws SQLException

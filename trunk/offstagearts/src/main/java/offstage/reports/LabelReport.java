@@ -29,7 +29,6 @@ package offstage.reports;
 import citibob.app.*;
 import java.sql.*;
 import citibob.reports.Reports;
-import static citibob.sql.RSTableModel.Col;
 import citibob.sql.*;
 
 /**

@@ -53,7 +53,7 @@ IntKeyedDbModel mailings;		// Set to entire mailing info
 //IntKeyedDbModel oneMailingid;		// Set to entire mailing info
 //int mailingID;					// Current mailing ID
 //SqlRunner str;
-ActionRunner runner;
+TaskRunner runner;
 citibob.app.App app;
 
 public IntKeyedDbModel getMailingsDb()

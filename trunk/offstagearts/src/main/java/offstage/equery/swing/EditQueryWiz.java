@@ -219,7 +219,8 @@ throws SQLException
 			// Main table
 			String sql0_all = eqy.getSql(fapp.getEquerySchema(), false);
 			String sql0_primaryOnly = eqy.getSql(fapp.getEquerySchema(), true);
-			testResults.setRows(str, sql0_primaryOnly, null);
+			testResults.setIdSql(sql0_primaryOnly, null);
+			testResults.executeQuery(str);
 			
 			// Summary counts
 			String sql =

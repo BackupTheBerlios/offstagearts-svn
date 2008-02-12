@@ -31,7 +31,6 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
-import citibob.multithread.*;
 import offstage.FrontApp;
 import offstage.devel.gui.DevelModel;
 import offstage.db.*;
@@ -51,12 +50,12 @@ public IdSqlTableModel()
 {
 	// PostgreSQL doesn't properly return data types of headings above, given
 	// the computed columns.  So we must set the column types ourselves.
-	setColHeaders(new RSTableModel.Col[] {
-		new RSTableModel.Col("entityid", new SqlInteger(true)),
-		new RSTableModel.Col("name", new SqlString(true)),
-		new RSTableModel.Col("tooltip", new SqlString(true)),
-		new RSTableModel.Col("isprimary", new SqlBool(true))
-	});
+	setSchema(new ConstSchema(new Column[] {
+		new SqlCol("entityid", new SqlInteger(true)),
+		new SqlCol("name", new SqlString(true)),
+		new SqlCol("tooltip", new SqlString(true)),
+		new SqlCol("isprimary", new SqlBool(true))
+	}));
 }
 
 //public void executeQuery(SqlRunner str, String idSql) throws SQLException {
@@ -96,13 +95,16 @@ public void executeQuery(SqlRunner str, String idSql, String orderBy)
 		" order by " + orderBy + ";" +
 
 		" drop table _ids";
-System.out.println(sql);
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws SQLException {
-		setNumRows(0);
-		addAllRows(rs);
-		rs.close();
-	}});
+	super.executeQuery(str, sql);
+//System.out.println(sql);
+//	str.execSql(sql, new RsRunnable() {
+//	public void run(SqlRunner str, ResultSet rs) throws SQLException {
+//		setRowsAndCols(rs);
+////		clear();
+////		setNumRows(0);
+////		addAllRows(rs);
+//		rs.close();
+//	}});
 }
 
 }

@@ -30,7 +30,6 @@ package offstage.db;
 import java.sql.*;
 import citibob.sql.*;
 import citibob.jschema.*;
-import citibob.multithread.*;
 import citibob.swing.table.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;

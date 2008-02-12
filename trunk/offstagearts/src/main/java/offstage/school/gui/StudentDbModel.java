@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.school.gui;
 
 import citibob.jschema.*;
-import citibob.multithread.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.SqlInteger;
 import java.util.*;

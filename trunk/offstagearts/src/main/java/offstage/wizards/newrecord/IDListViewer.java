@@ -64,7 +64,9 @@ throws SQLException
 //	final App app = xapp;
 //	final ActionRunner guiRunner = app.getGuiRunner();
 	dupsModel = new EntityListTableModel(app.getSqlTypeSet());
-	dupsModel.setRows(str, idSql, orderBy);
+	dupsModel.setIdSql(idSql, orderBy);
+	dupsModel.executeQuery(str);
+	
 	this.entityDb = xentityDb;
 	dupsTable.initRuntime(dupsModel);
 	mainEntityPanel.initRuntime(str, app, entityDb);
