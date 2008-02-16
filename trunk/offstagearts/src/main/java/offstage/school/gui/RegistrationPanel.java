@@ -178,18 +178,6 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 	this.fapp = xfapp;
 	this.smod = xschoolModel;
 	
-	// Bind our account actions
-	ActionTaskBinder tbinder = new ActionTaskBinder(
-		this, fapp.getGuiRunner(), transRegister.getTaskMap());
-//		new AccountTaskMap(fapp, this) {
-//			public void refresh(SqlRunner str) { refreshAccount(str); }
-//			public int getEntityID() { return (Integer)entityid.getValue(); }
-//			public int getAcTypeID() { return ActransSchema.AC_SCHOOL; }
-//	});
-	tbinder.bind(this.bCash, "cash");
-	tbinder.bind(this.bCheck, "check");
-	tbinder.bind(this.bCc, "cc");
-	tbinder.bind(this.bOtherTrans, "other");
 
 	all.add(smod.studentDm);
 	all.add(smod.payerDm);
@@ -313,7 +301,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 		java.util.Date now = new java.util.Date();
 		return (now.getTime() - created.getTime() < 86400 * 1000L);
 	}};
-	transRegister.initRuntime(fapp, actransSb, ActransSchema.AC_SCHOOL);
+	transRegister.initRuntime(fapp, actransSb, ActransSchema.AC_SCHOOL, false);
 //	actransDb = new IntKeyedDbModel(actransSb, "entityid", new IntKeyedDbModel.Params(true));
 //	actransDb.setWhereClause(
 //		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
@@ -327,6 +315,21 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 ////		new boolean[] {false, false, false, false},
 //		fapp.getSwingerMap());
 
+	
+	// Bind our account actions
+	ActionTaskBinder tbinder = new ActionTaskBinder(
+		this, fapp.getGuiRunner(), transRegister.getTaskMap());
+//		new AccountTaskMap(fapp, this) {
+//			public void refresh(SqlRunner str) { refreshAccount(str); }
+//			public int getEntityID() { return (Integer)entityid.getValue(); }
+//			public int getAcTypeID() { return ActransSchema.AC_SCHOOL; }
+//	});
+	tbinder.bind(this.bCash, "cash");
+	tbinder.bind(this.bCheck, "check");
+	tbinder.bind(this.bCc, "cc");
+	tbinder.bind(this.bOtherTrans, "other");
+
+	
 	// Refresh account when payer changes
 	smod.schoolRm.addColListener("adultid", new RowModel.ColListener() {
 		// Do nothing when user just changes values; it must be saved first.

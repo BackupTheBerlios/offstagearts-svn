@@ -31,6 +31,7 @@ import citibob.gui.FrameSet.Maker;
 import citibob.sql.SqlRunner;
 import javax.swing.*;
 import offstage.FrontApp;
+import offstage.accounts.gui.AccountFrame;
 import offstage.cleanse.CleanseFrame;
 import offstage.devel.gui.DevelFrame;
 import offstage.school.gui.SchoolFrame;
@@ -114,6 +115,12 @@ public JFrame newFrame() throws Exception {
 	OffstageGui offstageGui = new OffstageGui();
 	offstageGui.initRuntime(fapp);
 	return offstageGui;
+}});
+addMaker("accounting", new Maker() {
+public JFrame newFrame() throws Exception {
+	AccountFrame frame = new AccountFrame();
+	frame.initRuntime(fapp);
+	return frame;
 }});
 // ----------------------------------------
 //addMaker("mailprefs", new Maker() {

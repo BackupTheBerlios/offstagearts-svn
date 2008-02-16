@@ -36,22 +36,24 @@ public TransRegPanel()
 
 public IntsKeyedDbModel getDbModel() { return actransDb; }
 
-public void initRuntime(FrontApp fapp, SchemaBuf actransSb, int actransid)
+/** @param superuser Should we allow superuser access to this stuff? */
+public void initRuntime(FrontApp fapp, SchemaBuf actransSb, int actypeid, boolean superuser)
 {
 	this.fapp = fapp;
 	actransDb = new IntsKeyedDbModel(actransSb, new String[] {"entityid", "actypeid"}, true);
-	actransDb.getIntsKey()[1] = actransid;
+	actransDb.getIntsKey()[1] = actypeid;
 	actransDb.setWhereClause(
 //		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
 		" now()-date < '450 days'");
 	actransDb.setOrderClause("date desc, actransid desc");
 	trans.setModelU(actransDb.getSchemaBuf(),
-		new String[] {"Type", "Date", "Amount", "Description"},
-		new String[] {"tableoid", "date", "amount", "description"},
-		new String[] {null, null, null, "description"},
-		null,
+		new String[] {"Status", "Type", "Date", "Amount", "Description"},
+		new String[] {"__status__", "tableoid", "date", "amount", "description"},
+		new String[] {null, null, null, null, "description"},
+		superuser ? new boolean[] {false,true,true,true,true} : null,
 //		new boolean[] {false, false, false, false},
 		fapp.getSwingerMap());
+	actransDb.setLogger(fapp.getLogger());
 
 	// Set up the task map, which will be used to bind actions to buttons
 	taskMap = new TaskMap();
@@ -60,6 +62,12 @@ public void initRuntime(FrontApp fapp, SchemaBuf actransSb, int actransid)
 	taskMap.add("check", permissions, new RunWizard("checkpayment"));
 	taskMap.add("cc", permissions, new RunWizard("ccpayment"));
 	taskMap.add("other", permissions, new RunWizard("transtype"));
+	taskMap.add("delete", permissions, new BatchRunnable() {
+	public void run(SqlRunner str) throws Exception {
+		SchemaBuf sb = actransDb.getSchemaBuf();
+		sb.deleteRow(trans.getSelectedRow());
+	}});
+
 }
 
 public TaskMap getTaskMap() { return taskMap; }
@@ -72,9 +80,9 @@ public void setEntityID(SqlRunner str, int entityid) // throws SQLException
 	actransDb.getIntsKey()[0] = entityid;
 	refresh(str);
 }
-public void setAcTransID(SqlRunner str, int actransid)
+public void setAcTypeID(SqlRunner str, int actypeid)
 {
-	actransDb.getIntsKey()[1] = actransid;
+	actransDb.getIntsKey()[1] = actypeid;
 	refresh(str);	
 }
 public void refresh(SqlRunner str) // throws SQLException
