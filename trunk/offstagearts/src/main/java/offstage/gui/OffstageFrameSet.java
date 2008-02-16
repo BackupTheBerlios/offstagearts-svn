@@ -29,10 +29,9 @@ package offstage.gui;
 import citibob.gui.ConsoleFrame;
 import citibob.gui.FrameSet.Maker;
 import citibob.sql.SqlRunner;
-import citibob.sql.UpdRunnable;
 import javax.swing.*;
 import offstage.FrontApp;
-import offstage.cleanse.CleansePanel;
+import offstage.cleanse.CleanseFrame;
 import offstage.devel.gui.DevelFrame;
 import offstage.school.gui.SchoolFrame;
 
@@ -90,13 +89,18 @@ public JFrame newFrame() throws Exception {
 // ----------------------------------------
 addMaker("dups", new Maker() {
 public JFrame newFrame() throws Exception {
+	final CleanseFrame f = new CleanseFrame();
 	SqlRunner str = fapp.getBatchSet();
-	final offstage.cleanse.CleansePanel panel = new CleansePanel();
-	panel.initRuntime(str, fapp, "n");
-	final JFrame frame = new JFrame("Duplicate Names");
-	frame.getContentPane().add(panel);
+	f.initRuntime(str, fapp, "n");
 	str.flush();
-	return frame;
+	return f;
+//	SqlRunner str = fapp.getBatchSet();
+//	final offstage.cleanse.CleansePanel panel = new CleansePanel();
+//	panel.initRuntime(str, fapp, "n");
+//	final JFrame frame = new JFrame("Duplicate Names");
+//	frame.getContentPane().add(panel);
+//	str.flush();
+//	return frame;
 }});
 // ----------------------------------------
 addMaker("console", new Maker() {

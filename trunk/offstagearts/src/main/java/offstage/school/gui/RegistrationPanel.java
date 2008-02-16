@@ -55,11 +55,10 @@ public class RegistrationPanel extends javax.swing.JPanel
 
 FrontApp fapp;
 SchoolModel smod;
-AccountTaskMaker accountHelper;
 
 //public JoinedSchemaBufDbModel enrolledDb;
 public SqlBufDbModel enrolledDb;
-public IntKeyedDbModel actransDb;
+//public IntKeyedDbModel actransDb;
 
 
 boolean studentDirty;		// Does the student record needs saving?
@@ -132,7 +131,8 @@ class AllDbModel extends MultiDbModel
 			Integer Oldadultid = (Integer)smod.schoolRm.getOrigValue(col);
 			Integer Adultid = (Integer)smod.schoolRm.get(col);
 
-			actransDb.doUpdate(str);
+			transRegister.getDbModel().doUpdate(str);
+			
 			int termid = smod.getTermID(); //(Integer)vTermID.getValue();
 			String payerIdSql = null;
 			if (Oldadultid != null && Adultid != null) {
@@ -177,12 +177,20 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 {
 	this.fapp = xfapp;
 	this.smod = xschoolModel;
-	accountHelper = new AccountTaskMaker(fapp, this) {
-	public void refresh(SqlRunner str) {
-		refreshAccount(str);
-	}};
 	
-	
+	// Bind our account actions
+	ActionTaskBinder tbinder = new ActionTaskBinder(
+		this, fapp.getGuiRunner(), transRegister.getTaskMap());
+//		new AccountTaskMap(fapp, this) {
+//			public void refresh(SqlRunner str) { refreshAccount(str); }
+//			public int getEntityID() { return (Integer)entityid.getValue(); }
+//			public int getAcTypeID() { return ActransSchema.AC_SCHOOL; }
+//	});
+	tbinder.bind(this.bCash, "cash");
+	tbinder.bind(this.bCheck, "check");
+	tbinder.bind(this.bCc, "cc");
+	tbinder.bind(this.bOtherTrans, "other");
+
 	all.add(smod.studentDm);
 	all.add(smod.payerDm);
 //	all.add(householdDm);
@@ -305,18 +313,19 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 		java.util.Date now = new java.util.Date();
 		return (now.getTime() - created.getTime() < 86400 * 1000L);
 	}};
-	actransDb = new IntKeyedDbModel(actransSb, "entityid", new IntKeyedDbModel.Params(true));
-	actransDb.setWhereClause(
-		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
-		" and now()-date < '450 days'");
-	actransDb.setOrderClause("date desc, actransid desc");
-	trans.setModelU(actransDb.getSchemaBuf(),
-		new String[] {"Type", "Date", "Amount", "Description"},
-		new String[] {"tableoid", "date", "amount", "description"},
-		new String[] {null, null, null, "description"},
-		null,
-//		new boolean[] {false, false, false, false},
-		fapp.getSwingerMap());
+	transRegister.initRuntime(fapp, actransSb, ActransSchema.AC_SCHOOL);
+//	actransDb = new IntKeyedDbModel(actransSb, "entityid", new IntKeyedDbModel.Params(true));
+//	actransDb.setWhereClause(
+//		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
+//		" and now()-date < '450 days'");
+//	actransDb.setOrderClause("date desc, actransid desc");
+//	trans.setModelU(actransDb.getSchemaBuf(),
+//		new String[] {"Type", "Date", "Amount", "Description"},
+//		new String[] {"tableoid", "date", "amount", "description"},
+//		new String[] {null, null, null, "description"},
+//		null,
+////		new boolean[] {false, false, false, false},
+//		fapp.getSwingerMap());
 
 	// Refresh account when payer changes
 	smod.schoolRm.addColListener("adultid", new RowModel.ColListener() {
@@ -487,7 +496,7 @@ public void changeStudent(SqlRunner str, int entityid)// throws SQLException
         JDialog dialog = pane.createDialog(RegistrationPanel.this, "Student not Saved");
 
         //pane.selectInitialValue();
-        dialog.show();
+        dialog.setVisible(true);
         dialog.dispose();
 		
 		if (pane.getValue() == options[0]) {
@@ -523,34 +532,35 @@ public void changeStudent(SqlRunner str, int entityid)// throws SQLException
 
 public void changeAccount(SqlRunner str, int payerid) // throws SQLException
 {
-
-	actransDb.setKey(payerid);
-	refreshAccount(str);
+	transRegister.setEntityID(str, payerid);
 }
 public void refreshAccount(SqlRunner str) // throws SQLException
 {
-	actransDb.doSelect(str);
-	
-	// Set up account balance
-	acbal.setJType(Double.class, java.text.NumberFormat.getCurrencyInstance());
-	int entityid = actransDb.getIntKey();
-	String sql =
-		AccountsDB.w_tmp_acct_balance_sql("select " + entityid + " as id", ActransSchema.AC_SCHOOL) +
-		" select bal from _bal;\n" +
-		" drop table _bal;";
-	str.execSql(sql, new RsRunnable() {
-	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
-		rs.next();
-		acbal.setValue(rs.getDouble(1));
-	}});
-	
-//	
-//	
-//	DB.r_acct_balance("bal", str, , ,
-//	new UpdRunnable() { public void run(SqlRunner str) throws Exception {
-//		acbal.setValue(str.get("bal"));
-//	}});
+	transRegister.refresh(str);
 }
+//{
+//	actransDb.doSelect(str);
+//	
+//	// Set up account balance
+//	acbal.setJType(Double.class, java.text.NumberFormat.getCurrencyInstance());
+//	int entityid = actransDb.getIntKey();
+//	String sql =
+//		AccountsDB.w_tmp_acct_balance_sql("select " + entityid + " as id", ActransSchema.AC_SCHOOL) +
+//		" select bal from _bal;\n" +
+//		" drop table _bal;";
+//	str.execSql(sql, new RsRunnable() {
+//	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
+//		rs.next();
+//		acbal.setValue(rs.getDouble(1));
+//	}});
+//	
+////	
+////	
+////	DB.r_acct_balance("bal", str, , ,
+////	new UpdRunnable() { public void run(SqlRunner str) throws Exception {
+////		acbal.setValue(str.get("bal"));
+////	}});
+//}
 
 //void termChanged(SqlRunner str) throws SQLException
 ////public void setTermID(SqlRunner str, Integer Termid)
@@ -706,8 +716,6 @@ void setIDDirty(boolean dirty)
         lGender = new javax.swing.JLabel();
         AccountTab = new javax.swing.JTabbedPane();
         AccountPane = new javax.swing.JPanel();
-        GroupScrollPanel1 = new javax.swing.JScrollPane();
-        trans = new citibob.jschema.swing.SchemaBufTable();
         controller1 = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
@@ -715,9 +723,7 @@ void setIDDirty(boolean dirty)
         bCheck = new javax.swing.JButton();
         bCc = new javax.swing.JButton();
         bOtherTrans = new javax.swing.JButton();
-        jPanel14 = new javax.swing.JPanel();
-        jLabel18 = new javax.swing.JLabel();
-        acbal = new citibob.swing.typed.JTypedLabel();
+        transRegister = new offstage.accounts.gui.TransRegPanel();
         jTabbedPane6 = new javax.swing.JTabbedPane();
         FamilyScrollPanel = new javax.swing.JScrollPane();
         familyTable = new offstage.school.gui.SchoolFamilySelectorTable();
@@ -1016,7 +1022,7 @@ void setIDDirty(boolean dirty)
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel6Layout.createSequentialGroup()
                 .add(jPanel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(103, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Misc.", jPanel6);
@@ -1294,7 +1300,7 @@ void setIDDirty(boolean dirty)
             jPanel21Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel21Layout.createSequentialGroup()
                 .add(jPanel22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addContainerGap(94, Short.MAX_VALUE))
         );
 
         jTabbedPane4.addTab("Misc.", jPanel21);
@@ -1534,7 +1540,7 @@ void setIDDirty(boolean dirty)
             jPanel25Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel25Layout.createSequentialGroup()
                 .add(jPanel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addContainerGap(94, Short.MAX_VALUE))
         );
 
         jTabbedPane5.addTab("Misc.", jPanel25);
@@ -1777,21 +1783,6 @@ void setIDDirty(boolean dirty)
         AccountPane.setPreferredSize(new java.awt.Dimension(484, 100));
         AccountPane.setLayout(new java.awt.BorderLayout());
 
-        trans.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        GroupScrollPanel1.setViewportView(trans);
-
-        AccountPane.add(GroupScrollPanel1, java.awt.BorderLayout.CENTER);
-
         controller1.setLayout(new java.awt.BorderLayout());
 
         jPanel13.setPreferredSize(new java.awt.Dimension(484, 35));
@@ -1839,25 +1830,7 @@ void setIDDirty(boolean dirty)
         controller1.add(jPanel13, java.awt.BorderLayout.CENTER);
 
         AccountPane.add(controller1, java.awt.BorderLayout.SOUTH);
-
-        jPanel14.setLayout(new java.awt.GridBagLayout());
-
-        jLabel18.setText("Balance: ");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        jPanel14.add(jLabel18, gridBagConstraints);
-
-        acbal.setText("2500");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel14.add(acbal, gridBagConstraints);
-
-        AccountPane.add(jPanel14, java.awt.BorderLayout.NORTH);
+        AccountPane.add(transRegister, java.awt.BorderLayout.CENTER);
 
         AccountTab.addTab("Account History", AccountPane);
 
@@ -2027,7 +2000,7 @@ void setIDDirty(boolean dirty)
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 2524, Short.MAX_VALUE)
+            .add(0, 2529, Short.MAX_VALUE)
         );
 
         jTabbedPane3.addTab("Family", jPanel9);
@@ -2072,7 +2045,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(2486, Short.MAX_VALUE))
+                .addContainerGap(2491, Short.MAX_VALUE))
         );
 
         jTabbedPane3.addTab("Misc.", jPanel10);
@@ -2483,8 +2456,8 @@ void setIDDirty(boolean dirty)
 
 	private void bOtherTransActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bOtherTransActionPerformed
 	{//GEN-HEADEREND:event_bOtherTransActionPerformed
-		accountHelper.accountAction(
-			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "transtype");
+//		accountHelper.accountAction(
+//			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "transtype");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bOtherTransActionPerformed
 
@@ -2676,20 +2649,20 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 
 	private void bCcActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCcActionPerformed
 	{//GEN-HEADEREND:event_bCcActionPerformed
-		accountHelper.accountAction(
-			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "ccpayment");
+//		accountHelper.accountAction(
+//			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "ccpayment");
 	}//GEN-LAST:event_bCcActionPerformed
 
 	private void bCheckActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCheckActionPerformed
 	{//GEN-HEADEREND:event_bCheckActionPerformed
-		accountHelper.accountAction(
-			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "checkpayment");
+//		accountHelper.accountAction(
+//			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "checkpayment");
 	}//GEN-LAST:event_bCheckActionPerformed
 
 	private void bCashActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCashActionPerformed
 	{//GEN-HEADEREND:event_bCashActionPerformed
-		accountHelper.accountAction(
-			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "cashpayment");
+//		accountHelper.accountAction(
+//			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "cashpayment");
 	}//GEN-LAST:event_bCashActionPerformed
 	
 	
@@ -2709,7 +2682,6 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JPanel FirstMiddleLast3;
     private javax.swing.JPanel FirstMiddleLast4;
     private javax.swing.JScrollPane GroupScrollPanel;
-    private javax.swing.JScrollPane GroupScrollPanel1;
     private javax.swing.JPanel HouseholdPanel;
     private javax.swing.JPanel ObsoleteStuff;
     private javax.swing.JPanel Org;
@@ -2725,7 +2697,6 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JPanel StudentPane;
     private javax.swing.JTabbedPane StudentTab;
     private javax.swing.JPanel TermRegPanel;
-    private citibob.swing.typed.JTypedLabel acbal;
     private citibob.swing.typed.JTypedTextField address1;
     private citibob.swing.typed.JTypedTextField address2;
     private citibob.swing.typed.JTypedTextField address3;
@@ -2792,7 +2763,6 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
@@ -2819,7 +2789,6 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
-    private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel18;
@@ -2891,7 +2860,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private citibob.swing.typed.JTypedTextField state1;
     private citibob.swing.typed.JTypedTextField state2;
     private citibob.swing.typed.JTypedTextField state3;
-    private citibob.jschema.swing.SchemaBufTable trans;
+    private offstage.accounts.gui.TransRegPanel transRegister;
     private citibob.swing.typed.JTypedTextField tuitionOverride;
     private offstage.swing.typed.EntityIDEditableLabel vParent2ID;
     private offstage.swing.typed.EntityIDEditableLabel vParentID;

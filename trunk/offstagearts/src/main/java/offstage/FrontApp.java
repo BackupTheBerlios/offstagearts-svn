@@ -143,8 +143,7 @@ public FrameSet getFrameSet() { return frameSet; }
 public citibob.sql.SqlTypeSet getSqlTypeSet() { return sqlTypeSet; }
 public citibob.reports.Reports getReports() { return reports; }
 
-//// Legacy...
-//public SwingTaskRunner getGuiRunner() { return guiRunner; }
+public SwingTaskRunner getGuiRunner() { return guiRunner; }
 public TaskRunner getAppRunner() { return appRunner; }
 
 /** @returns Root user preferences node for this application */
