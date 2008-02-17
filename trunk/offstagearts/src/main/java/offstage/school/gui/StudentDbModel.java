@@ -39,10 +39,10 @@ public StudentDbModel(citibob.app.App app)
 {
 	super(app);
 	QueryLogger logger = app.getLogger();
-	logadd(logger, schoolDb = new IntKeyedDbModel(app.getSchema("entities_school"), "entityid",
-		new IntKeyedDbModel.Params(true)));
-	logadd(logger, notesDb = new IntKeyedDbModel(app.getSchema("notes"), "entityid",
-		new IntKeyedDbModel.Params(true)));
+	logadd(logger, schoolDb = new IntKeyedDbModel(app.getSchema("entities_school"), "entityid"));
+		schoolDb.setDoInsertKeys(true);
+	logadd(logger, notesDb = new IntKeyedDbModel(app.getSchema("notes"), "entityid"));
+		notesDb.setDoInsertKeys(true);	
 }
 public Integer getAdultID()
 	{ return (Integer)schoolDb.getSchemaBuf().getValueAt(0, "adultid"); }

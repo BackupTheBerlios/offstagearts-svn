@@ -23,11 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.school.tuition;
 
-import bsh.Interpreter;
+import citibob.app.App;
 import citibob.sql.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
-import java.io.IOException;
+import citibob.types.JEnum;
+import citibob.types.KeyedModel;
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because
@@ -43,12 +44,14 @@ SqlDate date;
 String payerIdSql;
 TuitionData tdata;
 TuitionScale scale;
+App app;
 
 /** @param payerIdSql IdSql that selects the payers for which we want to recalc tuition. */
-public TuitionCalc(TimeZone tz, int termid)
+public TuitionCalc(App app, int termid)
 {
 	this.termid = termid;
-	date = new SqlDate(tz, true);
+	this.app = app;
+	date = new SqlDate(app.getTimeZone(), true);
 }
 
 public void setPayerIDs(String payerIdSql)
@@ -171,10 +174,12 @@ String writeTuitionSql()
 void insertTransaction(StringBuffer sql, int entityid,
 java.util.Date duedate, double amount, String description, int studentid)		
 {
+	KeyedModel transtypes = app.getSchemaSet().getKeyedModel("actrans", "actranstypeid");
 	sql.append(
-		" insert into tuitiontrans " +
-		" (entityid, actypeid, date, amount, description, studentid, termid)" +
+		" insert into actrans " +
+		" (entityid, actranstypeid, actypeid, date, amount, description, studentid, termid)" +
 		" values (" + SqlInteger.sql(entityid) + ", " +
+		SqlInteger.sql(transtypes.getIntKey("tuition")) + ", " +
 		" (select actypeid from actypes where name = 'school'), " +
 		date.toSql(duedate) + ", " + TuitionData.money.toSql(amount) + "," +
 		SqlString.sql(description) + ", " + SqlInteger.sql(studentid) + ", " +

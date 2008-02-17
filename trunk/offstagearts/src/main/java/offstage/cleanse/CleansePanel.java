@@ -373,8 +373,8 @@ String dupType;
 	{//GEN-HEADEREND:event_bDupOKActionPerformed
 		app.runGui(CleansePanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			int entityid0 = dm[0].getIntKey();
-			int entityid1 = dm[1].getIntKey();
+			Integer entityid0 = (Integer)dm[0].getKey();
+			Integer entityid1 = (Integer)dm[1].getKey();
 			allDm.doUpdate(str);
 			allDm.doSelect(str);
 			str.execSql(
@@ -397,7 +397,7 @@ String dupType;
 			// Change around household...
 			MergeSql merge = new MergeSql(app.getSchemaSet());
 			Integer pid = (Integer)dm[1-eix].getEntitySb().getValueAt(0, "primaryentityid");
-			merge.subordinateEntities(dm[eix].getIntKey(), pid); //dm[1-eix].getIntKey());
+			merge.subordinateEntities(dm[eix].getKey(), pid); //dm[1-eix].getIntKey());
 			String sql = merge.toSql();
 			str.execSql(sql);
 
@@ -459,7 +459,7 @@ private void deleteAction(final int eix)
 // TODO add your handling code here:
 	}//GEN-LAST:event_bSaveActionPerformed
 
-private void mergeAction(final int entityid0, final int entityid1)
+private void mergeAction(final Integer entityid0, final Integer entityid1)
 {
 	app.runGui(CleansePanel.this, new BatchRunnable() {
 	public void run(SqlRunner str) throws Exception {
@@ -479,12 +479,12 @@ private void mergeAction(final int entityid0, final int entityid1)
 	
 	private void bMerge1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bMerge1ActionPerformed
 	{//GEN-HEADEREND:event_bMerge1ActionPerformed
-		mergeAction(dm[1].getIntKey(), dm[0].getIntKey());
+		mergeAction((Integer)dm[1].getKey(), (Integer)dm[0].getKey());
 	}//GEN-LAST:event_bMerge1ActionPerformed
 
 	private void bMerge0ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bMerge0ActionPerformed
 	{//GEN-HEADEREND:event_bMerge0ActionPerformed
-		mergeAction(dm[0].getIntKey(), dm[1].getIntKey());
+		mergeAction((Integer)dm[0].getKey(), (Integer)dm[1].getKey());
 	}//GEN-LAST:event_bMerge0ActionPerformed
 
 	private void bSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSearchActionPerformed

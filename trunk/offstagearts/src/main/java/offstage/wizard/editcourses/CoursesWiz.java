@@ -80,7 +80,7 @@ throws SQLException
 
 		// Set up courses editor
 		coursesSb = new IntKeyedDbModel(fapp.getSchema("courseids"),
-			"termid", fapp.getDbChange(), new IntKeyedDbModel.Params());
+			"termid", fapp.getDbChange());
 		coursesSb.setOrderClause("dayofweek, tstart, name");
 
 		terms.setValue(termid);

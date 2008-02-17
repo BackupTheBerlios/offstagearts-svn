@@ -88,7 +88,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 
 	// Set up courses editor
 	coursesDb = new IntKeyedDbModel(fapp.getSchema("courseids"),
-		"termid", fapp.getDbChange(), new IntKeyedDbModel.Params(false)) {
+		"termid", fapp.getDbChange()) {
 	/** Override stuff to delete from meetings table when we delete from courseids table. */
 	protected ConsSqlQuery doSimpleDeleteNoRemoveRow(int row, SqlRunner str, SqlSchemaInfo qs) {
 		ConsSqlQuery q = super.doSimpleDeleteNoRemoveRow(row, str, qs);
@@ -99,7 +99,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 		str.execSql(sql);
 		return q;
 	}};
-	
+	coursesDb.setDoInsertKeys(false);
 	coursesDb.setOrderClause("dayofweek, tstart, name");
 
 	courses.setModelU(coursesDb.getSchemaBuf(),
@@ -123,7 +123,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 	
 	// Set up meetings editor
 	meetingsDb = new IntKeyedDbModel(fapp.getSchema("meetings"),
-		"courseid", fapp.getDbChange(), new IntKeyedDbModel.Params(false));
+		"courseid", fapp.getDbChange());
+	meetingsDb.setDoInsertKeys(false);
 	meetingsDb.setOrderClause("dtstart");
 	meetings.setModelU(meetingsDb.getSchemaBuf(),
 		new String[] {"Status", "#", "Start", "End"},

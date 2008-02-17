@@ -89,7 +89,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 
 	// Set up courses editor
 	coursesDb = new IntKeyedDbModel(fapp.getSchema("courseids"),
-		"termid", fapp.getDbChange(), new IntKeyedDbModel.Params(false)) {
+		"termid", fapp.getDbChange()) {
 	/** Override stuff to delete from enrollments table when we delete from courseids table. */
 	protected ConsSqlQuery doSimpleDeleteNoRemoveRow(int row, SqlRunner str, SqlSchemaInfo qs) {
 		ConsSqlQuery q = super.doSimpleDeleteNoRemoveRow(row, str, qs);
@@ -100,7 +100,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 		str.execSql(sql);
 		return q;
 	}};
-	
+	coursesDb.setDoInsertKeys(false);
 	coursesDb.setOrderClause("dayofweek, tstart, name");
 
 	courses.setModelU(coursesDb.getSchemaBuf(),
@@ -387,7 +387,7 @@ void all_doSelect(SqlRunner str)
 			for (int i=0; i<sb.getRowCount(); ++i) payers.add((Integer)sb.getValueAt(i, "adultid"));
 			enrolledDb.doUpdate(str);
 			coursesDb.doUpdate(str);
-			TuitionCalc tc = new TuitionCalc(fapp.getTimeZone(), smod.getTermID());
+			TuitionCalc tc = new TuitionCalc(fapp, smod.getTermID());
 				tc.setPayerIDs(payers);
 				tc.recalcTuition(str);
 			str.flush();
@@ -416,7 +416,7 @@ void all_doSelect(SqlRunner str)
 				wizard.setVal("termid", smod.getTermID());
 
 			if (wizard.runWizard("addbycourse")) {
-				TuitionCalc tc = new TuitionCalc(fapp.getTimeZone(), smod.getTermID());
+				TuitionCalc tc = new TuitionCalc(fapp, smod.getTermID());
 					tc.setPayerIDs(
 						" select adultid from entities_school es" +
 						" where entityid = " + wizard.getVal("entityid"));

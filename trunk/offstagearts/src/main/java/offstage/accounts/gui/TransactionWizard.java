@@ -62,10 +62,11 @@ addState(new AbstractWizState("", "", "") {
 */
 
 /** Does an insert, using all the field names in v automatically. */
-void vInsert(Wizard.Context con, String table) throws SQLException
+void vInsert(Wizard.Context con, String actranstype) throws SQLException
 {
-	ConsSqlQuery sql = newInsertQuery(table, con.v);
+	ConsSqlQuery sql = newInsertQuery("actrans", con.v);
 	if (!sql.containsColumn("entityid")) sql.addColumn("entityid", SqlInteger.sql(entityid));
+	sql.addColumn("actranstypeid", "(select actranstypeid from actranstypes where name = '" + actranstype + "')");
 	sql.addColumn("actypeid", SqlInteger.sql(actypeid));
 //	sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
 	sql.addColumn("datecreated", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
@@ -103,7 +104,7 @@ addState(new AbstractWizState("cashpayment", null, null) {
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		con.v.put("amount", new Double(-namount));
-		vInsert(con, "cashpayments");
+		vInsert(con, "cash");
 	}
 });
 addState(new AbstractWizState("cashrefund", null, null) {
@@ -111,7 +112,7 @@ addState(new AbstractWizState("cashrefund", null, null) {
 		{ return new CashRefundWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		vInsert(con, "cashpayments");
+		vInsert(con, "cash");
 	}
 });
 addState(new AbstractWizState("adjpayment", null, null) {
@@ -121,7 +122,7 @@ addState(new AbstractWizState("adjpayment", null, null) {
 	{
 //		double namount = ((Number)v.get("namount")).doubleValue();
 //		con.v.put("amount", new Double(-namount));
-		vInsert(con, "adjpayments");
+		vInsert(con, "adj");
 	}
 });
 addState(new AbstractWizState("checkpayment", null, null) {
@@ -131,7 +132,7 @@ addState(new AbstractWizState("checkpayment", null, null) {
 	{
 		double namount = ((Number)v.get("namount")).doubleValue();
 		v.put("amount", new Double(-namount));
-		vInsert(con, "checkpayments");
+		vInsert(con, "check");
 	}
 });
 addState(new AbstractWizState("checkrefund", null, null) {
@@ -139,7 +140,7 @@ addState(new AbstractWizState("checkrefund", null, null) {
 		{ return new CheckRefundWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		vInsert(con, "checkpayments");
+		vInsert(con, "check");
 	}
 });
 addState(new AbstractWizState("ccpayment", null, null) {
@@ -153,7 +154,8 @@ addState(new AbstractWizState("ccpayment", null, null) {
 		// TODO: Log change to credit card # on file (or should I?)
 		cc.saveNewCardIfNeeded(con.str);
 		
-		ConsSqlQuery sql = new ConsSqlQuery("ccpayments", ConsSqlQuery.INSERT);
+		ConsSqlQuery sql = new ConsSqlQuery("actrans", ConsSqlQuery.INSERT);
+		sql.addColumn("actranstypeid", "(select actranstypeid from actranstypes where name = 'credit')");
 		cc.getCard(sql);
 		sql.addColumn("amount", SqlDouble.sql(-((Number)v.get("namount")).doubleValue()));
 		sql.addColumn("description", SqlString.sql((String)v.get("description")));

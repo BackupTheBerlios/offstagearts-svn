@@ -79,7 +79,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRunner str)
 
 	
 	oneTermDm = new IntKeyedDbModel(fapp.getSchema("termids"),
-		"groupid", fapp.getDbChange(), new IntKeyedDbModel.Params(false));
+		"groupid", fapp.getDbChange());//, new IntKeyedDbModel.Params(false));
+	oneTermDm.setDoInsertKeys(false);
 	oneTermRm = new SchemaBufRowModel(oneTermDm.getSchemaBuf());
 	
 	termInfo.setSwingerMap(fapp.getSwingerMap());
@@ -109,7 +110,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRunner str)
 	}});
 	
 	holidaysDm = new IntKeyedDbModel(fapp.getSchema("holidays"),
-		"termid", fapp.getDbChange(), new IntKeyedDbModel.Params(false));
+		"termid", fapp.getDbChange()); //, new IntKeyedDbModel.Params(false));
+	holidaysDm.setDoInsertKeys(false);
 	holidays.setModelU(holidaysDm.getSchemaBuf(),
 		new String[] {"Status", "First Day", "Last Day", "Description"},
 		new String[] {"__status__", "firstday", "lastday", "description"},

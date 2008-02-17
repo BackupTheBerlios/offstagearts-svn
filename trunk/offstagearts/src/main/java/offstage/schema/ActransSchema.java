@@ -31,17 +31,9 @@ public static final int AC_SCHOOL = 1;
 public static final int AC_TICKET = 2;
 public static final int AC_PLEDGE = 3;
 public static final int AC_OPENCLASS = 4;
+public static final int AC_EXPENSE = 5;
 	
-public static final int T_ACTRANS = 0;
-public static final int T_INVOICES = 1;
-public static final int T_TUITIONTRANS = 2;
-public static final int T_ACADJUSTMENTS = 3;
-public static final int T_CASHPAYMENTS = 4;
-public static final int T_CCPAYMENTS = 5;
-public static final int T_CHECKPAYMENTS = 6;
-
-public final KeyedModel tableKmodel;
-public final KeyedModel tableoidKmodel;
+public final KeyedModel actranstypeKmodel;
 public final KeyedModel actypeKmodel;
 
 public ActransSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
@@ -49,33 +41,29 @@ throws SQLException
 {
 	super();
 	
-	tableKmodel = new KeyedModel();
-	tableKmodel.addItem(new Integer(T_ACTRANS), "transaction");
-	tableKmodel.addItem(new Integer(T_INVOICES), "invoice");
-	tableKmodel.addItem(new Integer(T_TUITIONTRANS), "tuition invoice");
-	tableKmodel.addItem(new Integer(T_ACADJUSTMENTS), "adjustment");
-	tableKmodel.addItem(new Integer(T_CASHPAYMENTS), "cash payment");
-	tableKmodel.addItem(new Integer(T_CCPAYMENTS), "credit card payment");
-	tableKmodel.addItem(new Integer(T_CHECKPAYMENTS), "check payment");
-	
 	table = "actrans";
 	actypeKmodel = new DbKeyedModel(str, change,
 		"actypes", "actypeid", "name", "name");
-	tableoidKmodel = new KeyedModel();
-	tableoidKmodel.addAllItems(str,
-			"select oid,relname from pg_class where relname in" +
-			" ('invoices', 'tuitiontrans', 'actrans', 'cashpayments'," +
-			" 'adjpayments', 'ccpayments', 'checkpayments')",
-			"oid", "relname");
+	actranstypeKmodel = new DbKeyedModel(str, change,
+		"actranstypes", "actranstypeid", "name", "name");
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "actransid", true),
-		new SqlCol(new SqlEnum(tableoidKmodel, false), "tableoid"),
+		new SqlCol(new SqlEnum(actranstypeKmodel, false), "actranstypeid"),
 		new SqlCol(new SqlInteger(false), "entityid"),
 		new SqlCol(new SqlEnum(actypeKmodel, false), "actypeid"),
 		new SqlCol(new SqlDate(tz, false), "date"),
 		new SqlCol(new SqlDate(tz, false), "datecreated"),
 		new SqlCol(new SqlNumeric(9,2), "amount"),
-		new SqlCol(new SqlString(300,true), "description")
+		new SqlCol(new SqlString(300,true), "description"),
+		new SqlCol(new SqlInteger(true), "studentid"),
+		new SqlCol(new SqlInteger(true), "termid"),
+		new SqlCol(new SqlString(50), "py_name"),
+		new SqlCol(new SqlChar(), "cc_type"),
+		new SqlCol(new SqlString(4), "cc_last4"),
+		new SqlCol(new SqlString(4), "cc_expdate"),
+		new SqlCol(new SqlString(255), "cc_info"),
+		new SqlCol(new SqlString(15), "ck_number"),
+		new SqlCol(new SqlString(30), "py_phone")
 	};
 }
 

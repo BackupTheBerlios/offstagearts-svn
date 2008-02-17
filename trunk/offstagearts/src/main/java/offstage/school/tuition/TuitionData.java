@@ -85,9 +85,11 @@ public TuitionData(SqlRunner str, int termid, String payerIdSql, TimeZone tz)
 		" and not e.obsolete;\n" +
 		
 		// Delete previous tuition records in account
-		" delete from tuitiontrans using _payers" +
-		" where tuitiontrans.entityid = _payers.entityid\n" +
-		" and tuitiontrans.termid = " + SqlInteger.sql(termid) + ";\n" +
+		" delete from actrans using _payers,actranstypes" +
+		" where actrans.entityid = _payers.entityid\n" +
+		" and actrans.actranstypeid = actranstypes.actranstypeid\n" +
+		" and actranstypes.name = 'tuition'\n" +
+		" and actrans.termid = " + SqlInteger.sql(termid) + ";\n" +
 
 		// Zero out previous tuitions
 		" update termregs" +

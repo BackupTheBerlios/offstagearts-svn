@@ -86,7 +86,8 @@ public MailingModel2(final SqlRunner str, citibob.app.App app) //OffstageSchemaS
 	this.app = app;
 	SchemaSet sset = app.getSchemaSet();
 	this.runner = runner;
-	mailings = new IntKeyedDbModel(sset.get("mailings"), "groupid", null, new IntKeyedDbModel.Params(false));
+	mailings = new IntKeyedDbModel(sset.get("mailings"), "groupid", null); //, new IntKeyedDbModel.Params(false));
+	mailings.setDoInsertKeys(false);
 	add(mailings);
 //	oneMailingid = new IntKeyedDbModel(sset.mailingids, "groupid", false, null);
 //	add(oneMailingid);

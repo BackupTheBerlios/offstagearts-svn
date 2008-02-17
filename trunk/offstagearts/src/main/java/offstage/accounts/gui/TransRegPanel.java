@@ -14,7 +14,6 @@ import citibob.sql.pgsql.*;
 import citibob.task.BatchRunnable;
 import citibob.task.TaskMap;
 import citibob.wizard.Wizard;
-import java.awt.Component;
 import offstage.FrontApp;
 
 /**
@@ -41,16 +40,16 @@ public void initRuntime(FrontApp fapp, SchemaBuf actransSb, int actypeid, boolea
 {
 	this.fapp = fapp;
 	actransDb = new IntsKeyedDbModel(actransSb, new String[] {"entityid", "actypeid"}, true);
-	actransDb.getIntsKey()[1] = actypeid;
+	actransDb.setKey(1, actypeid);
 	actransDb.setWhereClause(
 //		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
 		" now()-date < '450 days'");
 	actransDb.setOrderClause("date desc, actransid desc");
 	trans.setModelU(actransDb.getSchemaBuf(),
 		new String[] {"Status", "Type", "Date", "Amount", "Description"},
-		new String[] {"__status__", "tableoid", "date", "amount", "description"},
+		new String[] {"__status__", "actranstypeid", "date", "amount", "description"},
 		new String[] {null, null, null, null, "description"},
-		superuser ? new boolean[] {false,true,true,true,true} : null,
+		superuser ? new boolean[] {false,false,true,true,true} : null,
 //		new boolean[] {false, false, false, false},
 		fapp.getSwingerMap());
 	actransDb.setLogger(fapp.getLogger());
@@ -71,18 +70,18 @@ public void initRuntime(FrontApp fapp, SchemaBuf actransSb, int actypeid, boolea
 }
 
 public TaskMap getTaskMap() { return taskMap; }
-public int getEntityID() { return actransDb.getIntsKey()[0]; }
-public int getAcTypeID() { return actransDb.getIntsKey()[1]; }
+public Integer getEntityID() { return actransDb.getIntKey(0); }
+public Integer getAcTypeID() { return actransDb.getIntKey(1); }
 
 
-public void setEntityID(SqlRunner str, int entityid) // throws SQLException
+public void setEntityID(SqlRunner str, Integer entityid) // throws SQLException
 {
-	actransDb.getIntsKey()[0] = entityid;
+	actransDb.setKey(0, entityid);
 	refresh(str);
 }
 public void setAcTypeID(SqlRunner str, int actypeid)
 {
-	actransDb.getIntsKey()[1] = actypeid;
+	actransDb.setKey(1, actypeid);
 	refresh(str);	
 }
 public void refresh(SqlRunner str) // throws SQLException
@@ -91,8 +90,8 @@ public void refresh(SqlRunner str) // throws SQLException
 	
 	// Set up account balance
 	acbal.setJType(Double.class, java.text.NumberFormat.getCurrencyInstance());
-	int entityid = actransDb.getIntsKey()[0];
-	int actransid = actransDb.getIntsKey()[1];
+	Integer entityid = actransDb.getIntKey(0);
+	Integer actransid = actransDb.getIntKey(1);
 	String sql =
 		AccountsDB.w_tmp_acct_balance_sql("select " + entityid + " as id", actransid) +
 		" select bal from _bal;\n" +

@@ -93,19 +93,19 @@ public void saveNewCard(SqlRunner str) throws SQLException
 
 public void getNewCard(ConsSqlQuery sql)
 {
-	sql.addColumn("ccname", SqlString.sql(newCard.getCCName()));
-	sql.addColumn("cctype", SqlString.sql(newCard.getCCType()));
-	sql.addColumn("cclast4", SqlString.sql(newCard.getLast4()));
-	sql.addColumn("ccexpdate", SqlString.sql(newCard.getExpDate()));
-	sql.addColumn("ccinfo", SqlString.sql(newCard.getValue()));
+	sql.addColumn("py_name", SqlString.sql(newCard.getCCName()));
+	sql.addColumn("cc_type", SqlString.sql(newCard.getCCType()));
+	sql.addColumn("cc_last4", SqlString.sql(newCard.getLast4()));
+	sql.addColumn("cc_expdate", SqlString.sql(newCard.getExpDate()));
+	sql.addColumn("cc_info", SqlString.sql(newCard.getValue()));
 }
 public void getOldCard(ConsSqlQuery sql)
 {
-	sql.addColumn("ccname", SqlString.sql((String)oldCard.lccname.getValue()));
-	sql.addColumn("cctype", SqlString.sql((String)oldCard.lcctype.getValue()));
-	sql.addColumn("cclast4", SqlString.sql((String)oldCard.llast4.getValue()));
-	sql.addColumn("ccexpdate", SqlString.sql((String)oldCard.lexpdate.getValue()));
-	sql.addColumn("ccinfo", SqlString.sql((String)oldCard.lccinfo.getValue()));
+	sql.addColumn("py_name", SqlString.sql((String)oldCard.lccname.getValue()));
+	sql.addColumn("cc_type", SqlString.sql((String)oldCard.lcctype.getValue()));
+	sql.addColumn("cc_last4", SqlString.sql((String)oldCard.llast4.getValue()));
+	sql.addColumn("cc_expdate", SqlString.sql((String)oldCard.lexpdate.getValue()));
+	sql.addColumn("cc_info", SqlString.sql((String)oldCard.lccinfo.getValue()));
 }
 public void getCard(ConsSqlQuery sql)
 {

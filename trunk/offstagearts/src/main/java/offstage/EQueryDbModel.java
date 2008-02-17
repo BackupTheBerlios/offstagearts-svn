@@ -38,7 +38,8 @@ public class EQueryDbModel extends IntKeyedDbModel
 {
 	
 public EQueryDbModel(SchemaSet dbSchemaSet) {
-	super(new SchemaBuf(dbSchemaSet.get("equeries")), "equeryid", new Params(false));
+	super(dbSchemaSet.get("equeries"), "equeryid");
+	super.setDoInsertKeys(false); //;, new Params(false));
 }
 
 

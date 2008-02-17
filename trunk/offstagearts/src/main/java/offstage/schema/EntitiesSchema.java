@@ -71,11 +71,11 @@ throws SQLException
 		new SqlCol(new SqlEnum(
 			new DbKeyedModel(str, change, "mailprefids", "mailprefid", "name", "mailprefid"),
 			"<No Preference>"), "mailprefid"),
-		new SqlCol(new SqlString(50), "ccname"),
-		new SqlCol(new SqlString(1), "cctype"),
-		new SqlCol(new SqlString(4), "cclast4", false),
-		new SqlCol(new SqlString(4), "ccexpdate", false),
-		new SqlCol(new SqlString(255), "ccinfo", false)
+		new SqlCol(new SqlString(50), "py_name"),
+		new SqlCol(new SqlString(1), "cc_type"),
+		new SqlCol(new SqlString(4), "cc_last4", false),
+		new SqlCol(new SqlString(4), "cc_expdate", false),
+		new SqlCol(new SqlString(255), "cc_info", false)
 	};
 }	
 // ------------------------------------------

@@ -462,7 +462,7 @@ protected static String simpleSearchSql(String text, String join, String whereCl
 	if (numeric) {
 		// entityid
 		return "select persons.entityid from persons" + join +
-		" where persons.entityid = " + text + " and not obsolete" + whereClause;
+		" where persons.entityid = " + text; // + " and not obsolete" + whereClause;
 	} else if (at >= 0) {
 		return "select persons.entityid from persons" + join +
 			" where email ilike '%" + text.trim() + "%'" + whereClause;

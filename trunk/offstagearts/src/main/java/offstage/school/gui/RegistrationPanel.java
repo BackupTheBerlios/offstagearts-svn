@@ -92,9 +92,8 @@ class AllDbModel extends MultiDbModel
 	}
 	public void setKey(int entityid)
 	{
-		intKey = entityid;
-		smod.studentDm.setKey(new Integer[] {entityid});
-		smod.termregsDm.setKey(new int[] {smod.getTermID(), entityid});
+		smod.studentDm.setKey(entityid); //new Integer[] {entityid});
+		smod.termregsDm.setKey("entityid", entityid);
 		
 		// Set "key" for enrollments
 		int termid = smod.getTermID();
@@ -151,7 +150,7 @@ class AllDbModel extends MultiDbModel
 				payerIdSql = "select " + Oldadultid;
 			}
 			if (payerIdSql != null) {
-				TuitionCalc tc = new TuitionCalc(fapp.getTimeZone(), termid);
+				TuitionCalc tc = new TuitionCalc(fapp, termid);
 					tc.setPayerIDs(payerIdSql);
 					tc.recalcTuition(str);
 			}
@@ -361,7 +360,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 			" from enrollments e, courseids c" +
 			" where e.courseid = c.courseid" +
 			" and c.termid = " + SqlInteger.sql(smod.getTermID()) +
-			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(intKey)) +
+			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql((Integer)smod.studentDm.getKey())) +
 			" order by dayofweek, tstart, name";
 	}};
 	str.execUpdate(new UpdRunnable() {
@@ -456,7 +455,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 
 		smod.termregsDm.doUpdate(str);
 		
-		all.setKey(all.getIntKey());
+		all.setKey(all.getKey());
 		all.doSelect(str);
 	}});
 }
@@ -2598,7 +2597,7 @@ void newAdultAction(final String colName)
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
 		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			smod.studentRm.set("primaryentityid", all.getIntKey());
+			smod.studentRm.set("primaryentityid", all.getKey());
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bEmancipateActionPerformed

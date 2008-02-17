@@ -38,10 +38,12 @@ public PayerDbModel(citibob.app.App app)
 {
 	super(app);
 	QueryLogger logger = app.getLogger();
-	logadd(logger, phoneDb = new IntKeyedDbModel(app.getSchema("phones"), "entityid",
-		new IntKeyedDbModel.Params(true)));
-	logadd(logger, schoolDb = new IntKeyedDbModel(app.getSchema("entities_school"), "entityid",
-		new IntKeyedDbModel.Params(true)));
+	logadd(logger, phoneDb = new IntKeyedDbModel(app.getSchema("phones"), "entityid"));
+	phoneDb.setDoInsertKeys(true);
+//		new IntKeyedDbModel.Params(true)));
+	logadd(logger, schoolDb = new IntKeyedDbModel(app.getSchema("entities_school"), "entityid"));
+	schoolDb.setDoInsertKeys(true);
+//		new IntKeyedDbModel.Params(true)));
 }
 
 }

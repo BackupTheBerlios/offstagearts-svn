@@ -42,7 +42,8 @@ public class EntityDbModel extends IntKeyedDbModel
 {
 	/** Creates a new instance of EntityDbModel */
 	public EntityDbModel(SqlSchema schema, App app) {
-		super(new EntityBuf(schema), "entityid", null, new IntKeyedDbModel.Params(false));
+		super(new EntityBuf(schema), "entityid", null);
+		setDoInsertKeys(false);
 	}
 
 	/** Override insert stuff */

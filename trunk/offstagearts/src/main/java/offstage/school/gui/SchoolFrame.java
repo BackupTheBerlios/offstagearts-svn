@@ -497,7 +497,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 		{
 			public void run(SqlRunner str) throws Exception
 			{
-				TuitionCalc tc = new TuitionCalc(fapp.getTimeZone(), schoolModel.getTermID());
+				TuitionCalc tc = new TuitionCalc(fapp, schoolModel.getTermID());
 					tc.setAllPayerIDs();
 					tc.recalcTuition(str);
 			}});

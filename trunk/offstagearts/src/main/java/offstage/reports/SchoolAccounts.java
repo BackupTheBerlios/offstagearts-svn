@@ -186,23 +186,22 @@ java.util.Date xasOfDate, int lateDays)
 	String sql =
 		// rss[0]
 		// Non-tuition transactions
-		" select ac.tableoid,klass.relname,ac.entityid, e.lastname, e.firstname," +
+		" select ac.actranstypeid,actt.name as transtype,ac.entityid, e.lastname, e.firstname," +
 		" e.orgname, e.isorg," +
-		" ac.date,ac.amount,ac.description,ac.actransid,-1 as termid" +
-		" from actrans ac, pg_class klass, actypes, entities e" +
-		" where klass.oid = ac.tableoid" +
+		" ac.date,ac.amount,ac.description,ac.actransid,ac.termid" +
+		" from actrans ac, actypes, entities e, actranstypes actt" +
+		" where actt.actranstypeid = ac.actranstypeid" +
 		" and e.entityid = ac.entityid and not e.obsolete" +
-		" and klass.relname <> 'tuitiontrans'" +
 		" and ac.actypeid = actypes.actypeid and actypes.name = 'school'\n" +
 		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
-		"   UNION" +
-		// Tuition transactions
-		" select 0,'tuitiontrans',ac.entityid,e.lastname, e.firstname, " +
-		" e.orgname, e.isorg, ac.date," +
-		" ac.amount,ac.description,ac.actransid,ac.termid" +
-		" from tuitiontrans ac, entities e" +
-		" where e.entityid = ac.entityid and not e.obsolete" +
-		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
+//		"   UNION" +
+//		// Tuition transactions
+//		" select 0,'tuitiontrans',ac.entityid,e.lastname, e.firstname, " +
+//		" e.orgname, e.isorg, ac.date," +
+//		" ac.amount,ac.description,ac.actransid,ac.termid" +
+//		" from tuitiontrans ac, entities e" +
+//		" where e.entityid = ac.entityid and not e.obsolete" +
+//		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
 		" order by isorg desc,lastname,firstname,entityid,date,amount desc;\n" +
 		
 		// rss[1]
@@ -245,8 +244,8 @@ java.util.Date xasOfDate, int lateDays)
 				acct.addBill(b, termid);
 			} else {
 				// It's a payment
-				String relname = rs.getString("relname");
-				if ("tuitiontrans".equals(relname) || "adjpayments".equals(relname)) {
+				String relname = rs.getString("transtype");
+				if ("tuition".equals(relname) || "adj".equals(relname)) {
 					// Rebates pay off the newest charges.
 					acct.payRebate(-amount, rs.getString("description"), rs.getInt("termid") == termid);
 				} else {
@@ -305,8 +304,9 @@ public void applyLateFees(SqlRunner str, double multiplier)
 		double lateFee = unpaidLate * multiplier;
 		String description = "Late fee on " + lateDays + "-day overdue balance of " + nfmt.format(unpaidLate);
 		sql.append(
-			" insert into actrans (entityid, actypeid, date, amount, description, datecreated) values (" +
+			" insert into actrans (entityid, actypeid, actranstypeid, date, amount, description, datecreated) values (" +
 			entityid + ",(select actypeid from actypes where name = 'school')," +
+			"(select actranstypeid from actranstypes where name = 'latefee')," +
 			sqlDate.toSql(asOfDate) + "," + lateFee + "," +
 			SqlString.sql(description) + ",now());\n");
 	}
