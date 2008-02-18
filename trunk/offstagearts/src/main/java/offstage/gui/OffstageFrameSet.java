@@ -52,8 +52,11 @@ public JFrame newFrame(FrameRec rec) throws Exception
 	if ("maintenance".equals(rec.name)) {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+	frame.setTitle(frame.getTitle() + " --- OffstageArts " + fapp.getVersion().toString());
 	return frame;
 }
+
+
 
 
 /** Creates a new instance of OffstageFrameSet */

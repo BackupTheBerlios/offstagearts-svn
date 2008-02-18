@@ -60,7 +60,7 @@ System.out.println("Loading template from filesystem: " + f);
 //	Class klass = offstage.config.OffstageVersion.class;
 //	String resourceName = klass.getPackage().getName().replace('.', '/') + "/" + name;
 //	return klass.getClassLoader().getResourceAsStream(resourceName);
-	String resourceName = "offstage/reports/" + name;
+	String resourceName = "offstage/config/reports/" + name;
 System.out.println("Loading template as resource: " + resourceName);
 	return OffstageReports.class.getClassLoader().getResourceAsStream(resourceName);
 }

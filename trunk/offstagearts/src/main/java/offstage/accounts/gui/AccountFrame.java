@@ -39,6 +39,7 @@ public class AccountFrame extends javax.swing.JFrame
         jMenu1 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Accounting");
 
         jTabbedPane1.addTab("Account Editor", accountPanel1);
 

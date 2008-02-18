@@ -212,12 +212,12 @@ System.out.println("Done getting names (" + nameMap.size() + " records)");
 //		process(orgMap, .8, "o");
 	}});
 }
-public static void main(String[] args) throws Exception
-{
-	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-	SqlBatchSet str = new SqlBatchSet(pool);
-	new MergePurge(str);
-	str.runBatches();
-}
+//public static void main(String[] args) throws Exception
+//{
+//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
+//	SqlBatchSet str = new SqlBatchSet(pool);
+//	new MergePurge(str);
+//	str.runBatches();
+//}
 
 }

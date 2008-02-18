@@ -29,7 +29,6 @@ import java.util.*;
 import citibob.sql.pgsql.*;
 import java.util.prefs.*;
 import offstage.config.*;
-import citibob.gui.DBPrefsDialog;
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because
@@ -39,20 +38,44 @@ import citibob.gui.DBPrefsDialog;
 public class DB {
 
 // -------------------------------------------------------------------------------
-public static ConnPool newConnPool()
+public static ConnPool newConnPool(Properties props)
 throws java.util.prefs.BackingStoreException, java.sql.SQLException, ClassNotFoundException
 {
-		// Open the Database
-		Preferences dbPref = OffstageVersion.prefs.node("db");
-		Preferences dbGuiPref = OffstageVersion.prefs.node("db/gui");
-		DBPrefsDialog d = new DBPrefsDialog(null, dbPref, dbGuiPref);
-		d.setVisible(true);
-		if (!d.isOkPressed()) {	// User cancelled DB open
-			System.exit(0);
-		}
-		ConnPool pool = d.newConnPool();
-		return pool;
+
+final Properties p2 = new Properties();
+final String url;
+
+	Class.forName(props.getProperty("db.driverclass", null));
+	p2.setProperty("user", props.getProperty("db.user", null));
+
+	// PostgreSQL interprets any setting of the "ssl" property
+	// as a request for SSL.
+	// See: http://archives.free.net.ph/message/20080128.165732.7c127d6b.en.html
+	String sssl = props.getProperty("db.ssl", "false");
+	boolean ssl = (sssl.toLowerCase().equals("true"));
+	if (ssl) p2.setProperty("ssl", "true");
+	
+	String pwd = props.getProperty("db.password", null);
+	p2.setProperty("password", pwd);
+
+	url = "jdbc:" + props.getProperty("db.drivertype", null) + "://" +
+		props.getProperty("db.host", null) +
+		":" + props.getProperty("db.port", null) +
+		"/" + props.getProperty("db.database", null);
+	return new RealConnPool(url, p2);
 }
+
+//		// Open the Database
+//		Preferences dbPref = OffstageVersion.prefs.node("db");
+//		Preferences dbGuiPref = OffstageVersion.prefs.node("db/gui");
+//		DBPrefsDialog d = new DBPrefsDialog(null, dbPref, dbGuiPref);
+//		d.setVisible(true);
+//		if (!d.isOkPressed()) {	// User cancelled DB open
+//			System.exit(0);
+//		}
+//		ConnPool pool = d.newConnPool();
+//		return pool;
+//}
 // -------------------------------------------------------------------------------
 ///** Gets the next value from a sequence. */
 //public static int r_nextval(SqlRunner str, String sequence) throws SQLException

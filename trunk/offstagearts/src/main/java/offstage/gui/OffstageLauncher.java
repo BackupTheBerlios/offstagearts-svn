@@ -34,6 +34,7 @@ import citibob.swing.prefs.*;
 import citibob.jschema.swing.*;
 import citibob.gui.*;
 import citibob.sql.*;
+import java.io.File;
 import offstage.FrontApp;
 import offstage.config.*;
 //import com.jgoodies.looks.plastic.theme.*;
@@ -55,7 +56,7 @@ protected ConsoleFrame consoleFrame;
     public OffstageLauncher() throws Exception {
 new com.Ostermiller.util.CSVPrinter(System.out);
 
-		ConnPool pool = offstage.db.DB.newConnPool();
+//		ConnPool pool = offstage.db.DB.newConnPool();
 //		Connection dbb = pool.checkout();
 //
 //		// Get database version
@@ -71,7 +72,7 @@ new com.Ostermiller.util.CSVPrinter(System.out);
 		
 		
 //		FrontApp app = new FrontApp(pool, consoleFrame.getDocument());
-		FrontApp app = new FrontApp(pool);
+		FrontApp app = new FrontApp(); //new File("/export/home/citibob/svn/offstage/config"));
 		app.getFrameSet().openFrame("maintenance");
 //		offstageGui = new OffstageGui();
 //		offstageGui.initRuntime(app);
@@ -92,7 +93,12 @@ new com.Ostermiller.util.CSVPrinter(System.out);
 		System.setProperty("swing.metalTheme", "ocean");
 		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 		
-	 new OffstageLauncher();
+		try {
+			new OffstageLauncher();
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
     }
 
 }

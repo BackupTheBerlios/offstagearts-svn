@@ -36,9 +36,13 @@ import citibob.swing.prefs.*;
 import java.io.*;
 import offstage.crypt.*;
 import citibob.gui.*;
+import citibob.swingers.JavaSwingerMap;
+import citibob.version.Version;
+import offstage.config.ConfigChooser;
 
 public class FrontApp extends citibob.app.App
 {
+Version version;
 
 
 public static final int ACTIONS_SCREEN = 0;
@@ -48,6 +52,8 @@ public static final int MAILINGS_SCREEN = 2;
 int screen = PEOPLE_SCREEN;
 
 final File configDir;
+final String configName;
+
 /** Connection to our SQL database. */
 //Connection db;
 Properties props;
@@ -86,6 +92,7 @@ public static final SqlTimestamp sqlTimestamp = new SqlTimestamp("GMT", true);
 //public static final TimeZone timeZone = TimeZone.getTimeZone("US/Pacific");
 //public static final TimeZone timeZone = TimeZone.getTimeZone("Americas/Chicago");
 // -------------------------------------------------------
+public Version getVersion() { return version; }
 public Properties getProps() { return props; }
 public KeyRing getKeyRing() { return keyRing; }
 public TimeZone getTimeZone() { return timeZone; }
@@ -107,6 +114,7 @@ public void popBatchSet() throws Exception
 }
 public ExpHandler getExpHandler() { return expHandler; }
 public File getConfigDir() { return configDir; }
+public String getConfigName() { return configName; }
 public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
 /** Only runs the action if logged-in user is a member of the correct group.
  TODO: This functionality should be maybe in the TaskRunner? */
@@ -146,21 +154,43 @@ public citibob.reports.Reports getReports() { return reports; }
 public SwingTaskRunner getGuiRunner() { return guiRunner; }
 public TaskRunner getAppRunner() { return appRunner; }
 
+// ----------------------------------------------------------------------
+Preferences pUserRoot;
+
 /** @returns Root user preferences node for this application */
 public java.util.prefs.Preferences userRoot()
 {
-	Preferences p = Preferences.userRoot();
-	p = p.node("offstage");
-	return p;
+	return pUserRoot;
 }
 
-/** @returns Root system preferences node for this application */
-public java.util.prefs.Preferences systemRoot()
+/** Make sure preferences are initialized on first run. */
+private void initPrefs()
+throws BackingStoreException, IOException, InvalidPreferencesFormatException
 {
-	return null;
-//	Preferences p = Preferences.systemRoot();
-//	p = p.node("offstage");
+	Preferences prefs = Preferences.userRoot().node("offstage").node("gui");
+	Version[] pvers = Version.getAvailablePrefVersions(prefs);
+	pUserRoot = prefs.node(version.toString());
+	
+	// Ignore versions greater than our version
+	for (int iver = pvers.length - 1; iver >= 0; --iver) {
+		if (version.compareTo(pvers[iver]) == 0) {
+			// We have the version we want.  Use it!
+			return;
+		}
+	}
+	
+	// Our version does not exist; create it.
+	Preferences.importPreferences(getClass().getClassLoader().getResourceAsStream(
+		"offstage/config/prefs.xml"));
 }
+// ------------------------------------------------------------------
+
+
+
+
+
+
+
 
 //public Connection createConnection()
 //throws SQLException
@@ -169,50 +199,88 @@ public java.util.prefs.Preferences systemRoot()
 //}
 // -------------------------------------------------------
 
-InputStream openPropFile(String name) throws IOException
+void loadPropFile(Properties props, String name) throws IOException
 {
-	// First: try loading external file
-//	File dir = new File(System.getProperty("user.dir"), "config");
+	InputStream in;
+	
+	// First: load JAR-based properties
+	in = getClass().getClassLoader().getResourceAsStream("offstage/config/" + name);
+	props.load(in);
+	in.close();
+
+	// Next: Override with anything in user-created overrides
 	File f = new File(configDir, name);
-	if (f.exists()) return new FileInputStream(f);
+	if (f.exists()) {
+		in = new FileInputStream(f);
+		props.load(in);
+		in.close();
+	}
+}	
+	
+//	// First: try loading external file
+////	File dir = new File(System.getProperty("user.dir"), "config");
+//	File f = new File(configDir, name);
+//	if (f.exists()) return new FileInputStream(f);
+//
+//	// File doesn't exist; read from inside JAR file instead.
+//	Class klass = offstage.config.OffstageVersion.class;
+//	String resourceName = klass.getPackage().getName().replace('.', '/') + "/" + name;
+//	return klass.getClassLoader().getResourceAsStream(resourceName);
 
-	// File doesn't exist; read from inside JAR file instead.
-	Class klass = offstage.config.OffstageVersion.class;
-	String resourceName = klass.getPackage().getName().replace('.', '/') + "/" + name;
-	return klass.getClassLoader().getResourceAsStream(resourceName);
-
-}
 Properties loadProps() throws IOException
 {
-	Properties props;
+	Properties props = new Properties();
 
-	props = new Properties();
-	InputStream in = openPropFile("app.properties");
-	props.load(in);
+	loadPropFile(props, "app.properties");
+//	props = new Properties();
+//	InputStream in = openPropFile("app.properties");
+//	props.load(in);
 
 
 //	props = new Properties(props);
 //	props.load(openPropFile("site.properties"));
 
-	props = new Properties(props);
+//	props = new Properties(props);
 	String os = System.getProperty("os.name");
         int space = os.indexOf(' ');
         if (space >= 0) os = os.substring(0,space);
-	InputStream inn = openPropFile(os + ".properties");
-	if (inn != null) props.load(inn);
+	loadPropFile(props, os + ".properties");
+	//if (inn != null) props.load(inn);
 
 	return props;
 }
 // -------------------------------------------------------
-public FrontApp(ConnPool pool)
+public FrontApp()
 throws Exception
 //SQLException, java.io.IOException, javax.mail.internet.AddressException,
 //java.security.GeneralSecurityException
 {
+	// Make sure we have the right version
+	version = new Version("1.0.0");
+
+	// Set up Swing GUI preferences, so we can display stuff
+	initPrefs();
+	
+	// Choose the configuration directory, so we can get the rest of
+	// the configuration
+	Preferences configPrefs = Preferences.userRoot().node("offstage").node("config");
+	ConfigChooser dialog = new ConfigChooser(configPrefs,
+		new JavaSwingerMap(TimeZone.getDefault()), userRoot(), version);
+	dialog.setVisible(true);
+	System.out.println(dialog.getFile());
+	configDir = dialog.getFile();
+	configName = dialog.getName();
+	if (configDir == null) System.exit(0);
+	
+	// Load up properties from the configuration
+	props = loadProps();
+	
+	// Set up database connections, etc.
+	this.pool = DB.newConnPool(props);
 	frameSet = new offstage.gui.OffstageFrameSet(this);
 	ConsoleFrame consoleFrame = (ConsoleFrame)frameSet.getFrame("console");
-	configDir = new File(System.getProperty("user.dir"), "config");
-	props = loadProps();
+//	configDir = new File(System.getProperty("user.dir"), "config");
+//configDir = new File("/export/home/citibob/svn/offstage/config");
 
 	// Load the crypto keys
 //	File userDir = new File(System.getProperty("user.dir"));
@@ -231,7 +299,7 @@ throws Exception
 			"You will be unable to enter credit card details.");
 	}
 
-	this.mailSender = new citibob.mail.GuiMailSender();
+	this.mailSender = new citibob.mail.ConstMailSender(props);
 //	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
 	this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
 	this.swingerMap = new offstage.types.OffstageSwingerMap(getTimeZone());
@@ -243,9 +311,11 @@ throws Exception
 	// ================
 	SqlBatchSet str = new SqlBatchSet(pool);
 	//pool = new DBConnPool();
-	MailSender sender = new GuiMailSender();
-	expHandler = new MailExpHandler(sender,
-			new InternetAddress("citibob@comcast.net"), "OffstageArts", consoleFrame.getDocument());
+//	MailSender sender = new GuiMailSender();
+	expHandler = new MailExpHandler(this, //mailSender,
+		new InternetAddress(props.getProperty("mail.recipient.bugs")),
+//		new InternetAddress("citibob@citibob.net"),
+		"OffstageArts", consoleFrame.getDocument());
 	guiRunner = new BusybeeDbTaskRunner(this, expHandler);
 	appRunner = new SimpleDbTaskRunner(this, expHandler);
 	//guiRunner = new SimpleDbTaskRunner(pool);
