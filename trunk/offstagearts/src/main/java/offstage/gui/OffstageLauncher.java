@@ -33,8 +33,8 @@ import java.util.prefs.*;
 import citibob.swing.prefs.*;
 import citibob.jschema.swing.*;
 import citibob.gui.*;
+import citibob.mail.MailExpDialog;
 import citibob.sql.*;
-import java.io.File;
 import offstage.FrontApp;
 import offstage.config.*;
 //import com.jgoodies.looks.plastic.theme.*;
@@ -97,6 +97,8 @@ new com.Ostermiller.util.CSVPrinter(System.out);
 			new OffstageLauncher();
 		} catch(Exception e) {
 			e.printStackTrace();
+			MailExpDialog dialog = new MailExpDialog(null, "OffstageArts", e);
+			dialog.setVisible(true);
 			System.exit(-1);
 		}
     }

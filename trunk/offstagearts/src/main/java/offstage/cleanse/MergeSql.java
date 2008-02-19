@@ -211,12 +211,27 @@ public void mergeOneRow(SqlSchema schema, String sEntityCol, Object entityid0, O
 		if (++i >= schema.getColCount()) break;
 		sql.append(",\n");
 	}
+	
+	
 	sql.append("\n");
 	sql.append(" from " + table + " as t0");
 	sql.append(" where " + table + "." + entityCol.getName() + " = " + entityCol.toSql(entityid1) +
 		" and t0." + entityCol.getName() + " = " + entityCol.toSql(entityid0));
 	sql.append(";\n");
-	System.out.println(sql);
+
+	// Take care of lastupdated
+	if (schema.findCol("lastupdated") >= 0) {
+		sql.append(" update " + table);
+		sql.append(" set\n");
+		sql.append(" lastupdated = (case when " + table + ".lastupdated > t0.lastupdated or t0.lastupdated is null" +
+			" then " + table + ".lastupdated else t0.lastupdated end)");
+		sql.append(" from " + table + " as t0");
+		sql.append(" where " + table + "." + entityCol.getName() + " = " + entityCol.toSql(entityid1) +
+			" and t0." + entityCol.getName() + " = " + entityCol.toSql(entityid0));
+		sql.append(";\n");
+	}
+	
+//	System.out.println(sql);
 }
 // -------------------------------------------------------------------
 public int[] getKeyCols(SqlSchema schema, int entityColIx)

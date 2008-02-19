@@ -169,17 +169,19 @@ throws BackingStoreException, IOException, InvalidPreferencesFormatException
 {
 	Preferences prefs = Preferences.userRoot().node("offstage").node("gui");
 	Version[] pvers = Version.getAvailablePrefVersions(prefs);
-	pUserRoot = prefs.node(version.toString());
 	
 	// Ignore versions greater than our version
 	for (int iver = pvers.length - 1; iver >= 0; --iver) {
-		if (version.compareTo(pvers[iver]) == 0) {
+		if (pvers[iver].size() < 2) continue;	// Ignore
+		if (version.compareTo(pvers[iver], 2) == 0) {
 			// We have the version we want.  Use it!
+			pUserRoot = prefs.node(pvers[iver].toString());
 			return;
 		}
 	}
 	
 	// Our version does not exist; create it.
+	pUserRoot = prefs.node(version.toString(2));
 	Preferences.importPreferences(getClass().getClassLoader().getResourceAsStream(
 		"offstage/config/prefs.xml"));
 }
@@ -256,7 +258,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {
 	// Make sure we have the right version
-	version = new Version("1.0.0");
+	version = new Version("1.0.1");
 
 	// Set up Swing GUI preferences, so we can display stuff
 	initPrefs();
@@ -267,103 +269,115 @@ throws Exception
 	ConfigChooser dialog = new ConfigChooser(configPrefs,
 		new JavaSwingerMap(TimeZone.getDefault()), userRoot(), version);
 	dialog.setVisible(true);
-	System.out.println(dialog.getFile());
-	configDir = dialog.getFile();
-	configName = dialog.getName();
+	System.out.println(dialog.getConfigFile());
+	configDir = dialog.getConfigFile();
+	configName = dialog.getConfigName();
 	if (configDir == null) System.exit(0);
 	
 	// Load up properties from the configuration
 	props = loadProps();
-	
-	// Set up database connections, etc.
-	this.pool = DB.newConnPool(props);
+
+	// Re-direct (and cache recent) STDOUT
 	frameSet = new offstage.gui.OffstageFrameSet(this);
 	ConsoleFrame consoleFrame = (ConsoleFrame)frameSet.getFrame("console");
-//	configDir = new File(System.getProperty("user.dir"), "config");
-//configDir = new File("/export/home/citibob/svn/offstage/config");
 
-	// Load the crypto keys
-//	File userDir = new File(System.getProperty("user.dir"));
-//	File pubDir = new File(userDir, props.getProperty("crypt.pubdir"));
-	String pubLeaf = props.getProperty("crypt.pubdir");
-	File pubDir = (pubLeaf.charAt(0) == File.separatorChar ?
-		new File(pubLeaf) : new File(configDir, pubLeaf)); 
-
-	String privLeaf = props.getProperty("crypt.privdir");
-	File privDir = (privLeaf.charAt(0) == File.separatorChar ?
-		new File(privLeaf) : new File(configDir, privLeaf)); 
-	keyRing = new KeyRing(pubDir, privDir);
-	if (!keyRing.pubKeyLoaded()) {
-		javax.swing.JOptionPane.showMessageDialog(null,
-			"The public key failed to load.\n" +
-			"You will be unable to enter credit card details.");
-	}
-
-	this.mailSender = new citibob.mail.ConstMailSender(props);
-//	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
-	this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
-	this.swingerMap = new offstage.types.OffstageSwingerMap(getTimeZone());
-//	this.sFormatterMap = new offstage.types.OffstageSFormatMap();
-	
-	this.pool = pool;
-	this.batchSets = new Stack();
-	pushBatchSet();
-	// ================
-	SqlBatchSet str = new SqlBatchSet(pool);
-	//pool = new DBConnPool();
-//	MailSender sender = new GuiMailSender();
+	// Set up exception handler
 	expHandler = new MailExpHandler(this, //mailSender,
-		new InternetAddress(props.getProperty("mail.recipient.bugs")),
+		new InternetAddress(props.getProperty("mail.bugs.recipient")),
 //		new InternetAddress("citibob@citibob.net"),
 		"OffstageArts", consoleFrame.getDocument());
-	guiRunner = new BusybeeDbTaskRunner(this, expHandler);
-	appRunner = new SimpleDbTaskRunner(this, expHandler);
-	//guiRunner = new SimpleDbTaskRunner(pool);
 	
-	// Figure out who we're logged in as
-	String sql = "select entityid from dblogins where username = " +
-		SqlString.sql(System.getProperty("user.name"));
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws SQLException {
-		if (rs.next()) {
-			loginID = rs.getInt("entityid");
-		} else {
-			loginID = -1;
+	// Use the exception handler
+	try {
+	
+		// Set up database connections, etc.
+		this.pool = DB.newConnPool(props);
+	//	configDir = new File(System.getProperty("user.dir"), "config");
+	//configDir = new File("/export/home/citibob/svn/offstage/config");
+
+		// Load the crypto keys
+	//	File userDir = new File(System.getProperty("user.dir"));
+	//	File pubDir = new File(userDir, props.getProperty("crypt.pubdir"));
+		String pubLeaf = props.getProperty("crypt.pubdir");
+		File pubDir = (pubLeaf.charAt(0) == File.separatorChar ?
+			new File(pubLeaf) : new File(configDir, pubLeaf)); 
+
+		String privLeaf = props.getProperty("crypt.privdir");
+		File privDir = (privLeaf.charAt(0) == File.separatorChar ?
+			new File(privLeaf) : new File(configDir, privLeaf)); 
+		keyRing = new KeyRing(pubDir, privDir);
+		if (!keyRing.pubKeyLoaded()) {
+			javax.swing.JOptionPane.showMessageDialog(null,
+				"The public key failed to load.\n" +
+				"You will be unable to enter credit card details.");
 		}
-		rs.close();
-	}});
 
-	// Figure out what groups we belong to (for action permissions)
-	loginGroups = new TreeSet();
-	sql = " select distinct name from dblogingroups g, dblogingroupids gid" +
-		" where g.entityid=" + SqlInteger.sql(loginID) +
-		" and g.groupid = gid.groupid";
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws SQLException {
-		while (rs.next()) loginGroups.add(rs.getString("name"));
-		rs.close();
-	}});
-	
-	dbChange = new DbChangeModel();
-	this.sset = new OffstageSchemaSet(str, dbChange, getTimeZone());
-	str.runBatches();		// Our SchemaSet must be set up before we go on.
-	// ================
-	
-	// ================
-	str = new SqlBatchSet(pool);
-	logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
-//	fullEntityDm = new FullEntityDbModel(this);
-//	mailings = new MailingModel2(str, this);//, appRunner);
+		this.mailSender = new citibob.mail.ConstMailSender(props);
+	//	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
+		this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
+		this.swingerMap = new offstage.types.OffstageSwingerMap(getTimeZone());
+	//	this.sFormatterMap = new offstage.types.OffstageSFormatMap();
 
-//	mailings.refreshMailingids();
-//		equeries = new EQueryModel2(st, mailings, sset);
-//	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
-	
-	equerySchema = new EQuerySchema(getSchemaSet());
-	str.runBatches();
-	// ================
-	
-	reports = new offstage.reports.OffstageReports(this);
+		this.pool = pool;
+		this.batchSets = new Stack();
+		pushBatchSet();
+		// ================
+		SqlBatchSet str = new SqlBatchSet(pool);
+		//pool = new DBConnPool();
+	//	MailSender sender = new GuiMailSender();
+		guiRunner = new BusybeeDbTaskRunner(this, expHandler);
+		appRunner = new SimpleDbTaskRunner(this, expHandler);
+		//guiRunner = new SimpleDbTaskRunner(pool);
+
+		// Figure out who we're logged in as
+		String sql = "select entityid from dblogins where username = " +
+			SqlString.sql(System.getProperty("user.name"));
+		str.execSql(sql, new RsRunnable() {
+		public void run(SqlRunner str, ResultSet rs) throws SQLException {
+			if (rs.next()) {
+				loginID = rs.getInt("entityid");
+			} else {
+				loginID = -1;
+			}
+			rs.close();
+		}});
+
+		// Figure out what groups we belong to (for action permissions)
+		loginGroups = new TreeSet();
+		sql = " select distinct name from dblogingroups g, dblogingroupids gid" +
+			" where g.entityid=" + SqlInteger.sql(loginID) +
+			" and g.groupid = gid.groupid";
+		str.execSql(sql, new RsRunnable() {
+		public void run(SqlRunner str, ResultSet rs) throws SQLException {
+			while (rs.next()) loginGroups.add(rs.getString("name"));
+			rs.close();
+		}});
+
+		dbChange = new DbChangeModel();
+		this.sset = new OffstageSchemaSet(str, dbChange, getTimeZone());
+		str.runBatches();		// Our SchemaSet must be set up before we go on.
+		// ================
+
+		// ================
+		str = new SqlBatchSet(pool);
+		logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
+	//	fullEntityDm = new FullEntityDbModel(this);
+	//	mailings = new MailingModel2(str, this);//, appRunner);
+
+	//	mailings.refreshMailingids();
+	//		equeries = new EQueryModel2(st, mailings, sset);
+	//	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
+
+		equerySchema = new EQuerySchema(getSchemaSet());
+		str.runBatches();
+		// ================
+
+		reports = new offstage.reports.OffstageReports(this);
+	} catch(Exception e) {
+		expHandler.consume(e);
+//		e.printStackTrace();
+		System.exit(-1);
+	}
 }
 //public EntityListTableModel getSimpleSearchResults()
 //	{ return simpleSearchResults; }

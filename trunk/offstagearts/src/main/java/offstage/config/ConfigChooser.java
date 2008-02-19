@@ -46,8 +46,8 @@ public class ConfigChooser extends javax.swing.JDialog
 		setup = new ConfigSetup(model, smap, userRoot, version);
 	}
 	
-	public File getFile() { return (File)configs.getValue(); }
-	public String getName() { return (String)configs.getValue("Name"); }
+	public File getConfigFile() { return (File)configs.getValue(); }
+	public String getConfigName() { return (String)configs.getValue("Name"); }
 	
 	/** This method is called from within the constructor to
 	 initialize the form.
@@ -190,7 +190,7 @@ public class ConfigChooser extends javax.swing.JDialog
 //	Preferences prefs = Preferences.userRoot().node("offstage").node("config");
 //	ConfigChooser dialog = new ConfigChooser(prefs, new JavaSwingerMap(TimeZone.getDefault()));
 //	dialog.setVisible(true);
-//	System.out.println(dialog.getFile());
+//	System.out.println(dialog.getConfigFile());
 //
 //}
 }
