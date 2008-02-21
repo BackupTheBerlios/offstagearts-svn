@@ -33,11 +33,11 @@ throws SQLException
 	super(str, change,tz);
 	table = "ccpayments";
 	appendCols(new SqlCol[] {
-		new SqlCol(new SqlString(50), "ccname"),
-		new SqlCol(new SqlChar(), "cctype"),
-		new SqlCol(new SqlString(4), "cclast4"),
-		new SqlCol(new SqlString(4), "ccexpdate"),
-		new SqlCol(new SqlString(255), "ccinfo")
+		new SqlCol(new SqlString(50), "py_name"),
+		new SqlCol(new SqlChar(), "cc_type"),
+		new SqlCol(new SqlString(4), "cc_last4"),
+		new SqlCol(new SqlString(4), "cc_expdate"),
+		new SqlCol(new SqlString(255), "cc_info")
 	});
 }
 

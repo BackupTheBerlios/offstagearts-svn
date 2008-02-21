@@ -90,7 +90,7 @@ class AllDbModel extends MultiDbModel
 			setIDDirty(false);
 		}});
 	}
-	public void setKey(int entityid)
+	public void setKey(Object entityid)
 	{
 		smod.studentDm.setKey(entityid); //new Integer[] {entityid});
 		smod.termregsDm.setKey("entityid", entityid);
@@ -446,6 +446,8 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 
 	smod.addListener(new SchoolModel.Adapter() {
     public void termIDChanged(int oldTermID, int termID)  {
+		smod.termregsDm.setKey("groupid", termID);
+
 		SqlRunner str = fapp.getBatchSet();
 		Integer eid = (Integer)smod.studentRm.get("entityid");
 		if (eid == null) return;
@@ -455,9 +457,10 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 
 		smod.termregsDm.doUpdate(str);
 		
-		all.setKey(all.getKey());
+//		all.setKey(all.getKey());
 		all.doSelect(str);
 	}});
+	smod.setTermID(smod.getTermID());
 }
 
 	
@@ -2345,9 +2348,10 @@ void setIDDirty(boolean dirty)
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 2, 0);
         TermRegPanel.add(lDtregistered, gridBagConstraints);
 
         jLabel31.setText("Registration Signed:");
@@ -2372,7 +2376,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         TermRegPanel.add(programs, gridBagConstraints);
@@ -2400,9 +2404,10 @@ void setIDDirty(boolean dirty)
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 0, 2, 0);
         TermRegPanel.add(lTuition1, gridBagConstraints);
 
         jLabel33.setText("Scholarship:");
@@ -2419,7 +2424,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         TermRegPanel.add(tuitionOverride, gridBagConstraints);
@@ -2429,7 +2434,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         TermRegPanel.add(scholarship, gridBagConstraints);
@@ -2439,7 +2444,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         TermRegPanel.add(dtSigned, gridBagConstraints);

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.0" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.2" maxVersion="1.2" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
-    <Menu class="javax.swing.JPopupMenu" name="popup">
-    </Menu>
+    <Container class="javax.swing.JPopupMenu" name="popup">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+        <Property name="useNullLayout" type="boolean" value="true"/>
+      </Layout>
+    </Container>
     <Container class="javax.swing.JPanel" name="popupPanel">
       <Properties>
         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -52,7 +56,9 @@
     </Component>
   </NonVisualComponents>
   <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="2"/>
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
@@ -74,8 +80,8 @@
     </Component>
     <Component class="citibob.swing.typed.JTypedLabel" name="lcctype">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jTypedLabel1"/>
-        <Property name="colName" type="java.lang.String" value="cctype"/>
+        <Property name="text" type="java.lang.String" value="cc_type"/>
+        <Property name="colName" type="java.lang.String" value="cc_type"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -95,8 +101,8 @@
     </Component>
     <Component class="citibob.swing.typed.JTypedLabel" name="llast4">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jTypedLabel1"/>
-        <Property name="colName" type="java.lang.String" value="cclast4"/>
+        <Property name="text" type="java.lang.String" value="cc_last4"/>
+        <Property name="colName" type="java.lang.String" value="cc_last4"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -116,8 +122,8 @@
     </Component>
     <Component class="citibob.swing.typed.JTypedLabel" name="lexpdate">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jTypedLabel1"/>
-        <Property name="colName" type="java.lang.String" value="ccexpdate"/>
+        <Property name="text" type="java.lang.String" value="cc_expdate"/>
+        <Property name="colName" type="java.lang.String" value="cc_expdate"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -137,8 +143,8 @@
     </Component>
     <Component class="citibob.swing.typed.JTypedLabel" name="lccname">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jTypedLabel1"/>
-        <Property name="colName" type="java.lang.String" value="ccname"/>
+        <Property name="text" type="java.lang.String" value="py_name"/>
+        <Property name="colName" type="java.lang.String" value="py_name"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

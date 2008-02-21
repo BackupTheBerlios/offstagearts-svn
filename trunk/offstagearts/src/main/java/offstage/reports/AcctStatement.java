@@ -80,7 +80,7 @@ void getStudentNames(SqlRunner str, App app, int termid, String payerIdSql)
 //		(payerid < 0 ? "" : " and es.adultid = " + SqlInteger.sql(payerid)) +
 		(payerIdSql == null ? "" : " and es.adultid = xx.id") +
 		" order by es.adultid";
-System.out.println("sql");
+System.out.println(sql);
 	final RSTableModel mod = new RSTableModel(app.getSqlTypeSet());
 	mod.executeQuery(str, sql);
 	str.execUpdate(new UpdRunnable() {
@@ -89,7 +89,7 @@ System.out.println("sql");
 		TableModelGrouper grouper = new TableModelGrouper(mod,
 			new String[][] {{"adultid"}});
 		List<Map> groups = grouper.groupRowsList();
-		for (Map gmap : groups) {
+		if (groups != null) for (Map gmap : groups) {
 			JTypeTableModel tt = (JTypeTableModel)gmap.get("rs");
 			for (int i=0; i<tt.getRowCount(); ++i) {
 				String fname = (String)tt.getValueAt(i,2) + " " + (String)tt.getValueAt(i,1);
@@ -127,7 +127,7 @@ int termid, String payerIdSql, final java.util.Date today)
 	int actypeid = ActransSchema.AC_SCHOOL;
 	String sql =
 		" select act.*," +
-		" p.cclast4,\n" +
+		" p.cc_last4,\n" +
 		" (case when p.firstname is null then '' else p.firstname || ' ' end ||" +
 		" case when p.lastname is null then '' else p.lastname end) as payername\n" +
 //		" case when p.orgname is null then '' else ' (' || p.orgname || ')' end) as name" +
@@ -201,7 +201,7 @@ int termid, String payerIdSql, final java.util.Date today)
 				}
 
 				// Set payment type
-				if (sb.getValueAt(i, sb.findColumn("cclast4")) != null) {
+				if (sb.getValueAt(i, "cc_last4") != null) {
 					paymenttype = "cc";
 				}
 			}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.0" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.2" maxVersion="1.2" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
     <Component class="citibob.swing.typed.JTypedTextField" name="lccinfo">
       <Properties>
@@ -13,7 +13,9 @@
     </Component>
   </NonVisualComponents>
   <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="2"/>
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
@@ -36,7 +38,7 @@
     <Component class="citibob.swing.typed.JTypedLabel" name="lcctype">
       <Properties>
         <Property name="text" type="java.lang.String" value="jTypedLabel1"/>
-        <Property name="colName" type="java.lang.String" value="cctype"/>
+        <Property name="colName" type="java.lang.String" value="cc_type"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -60,7 +62,7 @@
     <Component class="citibob.swing.typed.JTypedLabel" name="llast4">
       <Properties>
         <Property name="text" type="java.lang.String" value="jTypedLabel1"/>
-        <Property name="colName" type="java.lang.String" value="cclast4"/>
+        <Property name="colName" type="java.lang.String" value="cc_last4"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -84,7 +86,7 @@
     <Component class="citibob.swing.typed.JTypedLabel" name="lexpdate">
       <Properties>
         <Property name="text" type="java.lang.String" value="jTypedLabel1"/>
-        <Property name="colName" type="java.lang.String" value="ccexpdate"/>
+        <Property name="colName" type="java.lang.String" value="cc_expdate"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -108,7 +110,7 @@
     <Component class="citibob.swing.typed.JTypedLabel" name="lccname">
       <Properties>
         <Property name="text" type="java.lang.String" value="jTypedLabel1"/>
-        <Property name="colName" type="java.lang.String" value="ccname"/>
+        <Property name="colName" type="java.lang.String" value="py_name"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
