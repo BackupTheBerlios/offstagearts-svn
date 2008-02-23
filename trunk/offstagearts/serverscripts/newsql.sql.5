@@ -1,0 +1,109 @@
+start transaction;
+
+ALTER TABLE actrans RENAME TO actrans_old;
+
+CREATE TABLE actrans
+(
+  actransid serial PRIMARY KEY,
+  actranstypeid int4 not null,
+  entityid int4 NOT NULL,
+  actypeid int4 NOT NULL,
+  date date NOT NULL,
+  datecreated date,
+  amount numeric(9,2), -- like a credit card; >0 means customer owes
+  description varchar(300),
+  studentid int4, -- Student for whom this is a tuition record
+  termid int4,
+  py_name varchar(50),
+  py_phone varchar(30),
+  cc_type char(1),
+  cc_info varchar(255),
+  cc_last4 varchar(4),
+  cc_expdate varchar(4),
+  cc_batchid int4, -- Batch the credit card payment was processed 
+  ck_number varchar(15)
+) WITHOUT OIDS;
+COMMENT ON COLUMN actrans.py_name IS 'Name on check or credit card --- or name check was written to.';
+COMMENT ON COLUMN actrans.py_phone IS 'Contact phone # on check or credit card.';
+COMMENT ON COLUMN actrans.amount IS 'like a credit card; >0 means customer owes';
+COMMENT ON COLUMN actrans.studentid IS 'Student for whom this is a tuition record';
+COMMENT ON COLUMN actrans.cc_batchid IS 'Batch the credit card payment was processed';
+
+create table actranstypes (actranstypeid serial primary key, name varchar(30), description varchar(30));
+
+insert into actranstypes (name) values ('tuition');
+insert into actranstypes (name) values ('latefee');
+insert into actranstypes (name) values ('adj');
+insert into actranstypes (name) values ('cash');
+insert into actranstypes (name) values ('credit');
+insert into actranstypes (name) values ('check');
+
+insert into actypes (name) values ('expense');
+
+ALTER TABLE entities RENAME ccname  TO py_name;
+ALTER TABLE entities RENAME cctype  TO cc_type;
+ALTER TABLE entities RENAME cclast4  TO cc_last4;
+ALTER TABLE entities RENAME ccinfo  TO cc_info;
+ALTER TABLE entities RENAME ccexpdate  TO cc_expdate;
+ALTER TABLE entities ALTER COLUMN py_name SET STATISTICS -1;
+ALTER TABLE entities ALTER COLUMN cc_type SET STATISTICS -1;
+ALTER TABLE entities ALTER COLUMN cc_last4 SET STATISTICS -1;
+ALTER TABLE entities ALTER COLUMN cc_info SET STATISTICS -1;
+ALTER TABLE entities ALTER COLUMN cc_expdate SET STATISTICS -1;
+
+ALTER TABLE ccpayments RENAME TO ccpayments_old;
+ALTER TABLE checkpayments RENAME TO checkpayments_old;
+ALTER TABLE tuitiontrans RENAME TO tuitiontrans_old;
+ALTER TABLE adjpayments RENAME TO adjpayments_old;
+ALTER TABLE cashpayments RENAME TO cashpayments_old;
+
+commit
+
+-- The following was used to convert from old accounting format to new:
+-- 
+-- select tableoid,* from actrans_old as old
+-- 
+-- select * from actrans_old where tableoid = 24947
+-- 
+-- select oid,* from pg_class where relname = 'actrans_old'
+-- select oid,* from pg_class where relname = 'tuitiontrans_old'
+-- 
+-- select count(*) from actrans_old;
+-- select count(*) from ccpayments_old;
+-- select count(*) from checkpayments_old;
+-- select count(*) from tuitiontrans_old;
+-- select count(*) from adjpayments_old;
+-- select count(*) from cashpayments_old;
+-- 
+-- insert into actrans (actranstypeid,entityid,actypeid,date,amount,description,actransid,datecreated,
+-- cc_type,cc_info,py_name,cc_last4,cc_expdate,cc_batchid)
+-- select actranstypeid,entityid,actypeid,date,amount,t.description,actransid,datecreated,
+-- cctype,ccinfo,ccname,cclast4,ccexpdate,ccbatchid
+-- from ccpayments_old t, actranstypes
+-- where actranstypes.name = 'credit'
+-- 
+-- insert into actrans (actranstypeid,entityid,actypeid,date,amount,description,actransid,datecreated)
+-- select actranstypeid,entityid,actypeid,date,amount,t.description,actransid,datecreated
+-- from cashpayments_old t, actranstypes
+-- where actranstypes.name = 'cash'
+-- 
+-- insert into actrans (actranstypeid,entityid,actypeid,date,amount,description,actransid,datecreated,
+-- py_name,ck_number,py_phone)
+-- select actranstypeid,entityid,actypeid,date,amount,t.description,actransid,datecreated,
+-- t.name,checknumber,phone
+-- from checkpayments_old t, actranstypes
+-- where actranstypes.name = 'check'
+-- 
+-- insert into actrans (actranstypeid,entityid,actypeid,date,amount,description,actransid,datecreated,
+-- studentid,termid)
+-- select actranstypeid,entityid,actypeid,date,amount,t.description,actransid,datecreated,
+-- studentid,termid
+-- from tuitiontrans_old t, actranstypes
+-- where actranstypes.name = 'tuition'
+-- 
+-- insert into actrans (actranstypeid,entityid,actypeid,date,amount,description,actransid,datecreated)
+-- select actranstypeid,entityid,actypeid,date,amount,t.description,actransid,datecreated
+-- from adjpayments_old t, actranstypes
+-- where actranstypes.name = 'adj'
+-- 
+-- 
