@@ -33,6 +33,7 @@ import citibob.swing.table.JTypeTableModel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
+import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import offstage.reports.AcctStatement;
@@ -366,7 +367,10 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 		public void run(SqlRunner str) throws Exception {
 			Integer eid = (Integer)schoolModel.studentRm.get("entityid");
 			int termid = schoolModel.getTermID();
-			YDPConfirmationLetter.viewReport(str, fapp, termid, eid);
+			if (eid == null)
+				JOptionPane.showMessageDialog(SchoolFrame.this,
+					"You must have a student selected for this report!", "", JOptionPane.OK_OPTION);
+			else YDPConfirmationLetter.viewReport(str, fapp, termid, eid);
 		}});
 
 // TODO add your handling code here:
@@ -378,7 +382,9 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 		public void run(SqlRunner str) throws Exception {
 			int termid = schoolModel.getTermID();
 			Integer payerid = (Integer)schoolModel.schoolRm.get("adultid");
-			AcctStatement.doAccountStatementsAndLabels(str, fapp, termid, payerid, new java.util.Date());
+			if (payerid == null) JOptionPane.showMessageDialog(SchoolFrame.this,
+				"You must have a student selected for this report!", "", JOptionPane.OK_OPTION);
+			else AcctStatement.doAccountStatementsAndLabels(str, fapp, termid, payerid, new java.util.Date());
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_miAccountStatementActionPerformed
@@ -388,7 +394,9 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			Integer eid = (Integer)schoolModel.studentRm.get("entityid");
-			StudentSchedule.viewStudentSchedules(fapp, str, schoolModel.getTermID(), eid);
+			if (eid == null) JOptionPane.showMessageDialog(SchoolFrame.this,
+				"You must have a student selected for this report!", "", JOptionPane.OK_OPTION);
+			else StudentSchedule.viewStudentSchedules(fapp, str, schoolModel.getTermID(), eid);
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_miScheduleActionPerformed
