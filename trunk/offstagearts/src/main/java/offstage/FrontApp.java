@@ -36,9 +36,13 @@ import citibob.swing.prefs.*;
 import java.io.*;
 import offstage.crypt.*;
 import citibob.gui.*;
+import citibob.resource.ResKey;
+import citibob.resource.ResSet;
+import citibob.resource.ResUtil;
 import citibob.swingers.JavaSwingerMap;
 import citibob.version.Version;
 import offstage.config.ConfigChooser;
+import offstage.resource.OffstageResSet;
 
 public class FrontApp extends citibob.app.App
 {
@@ -57,6 +61,8 @@ final String configName;
 /** Connection to our SQL database. */
 //Connection db;
 Properties props;
+ResSet resSet;
+int sysVersion;
 KeyRing keyRing;
 DbChangeModel dbChange;
 ConnPool pool;
@@ -93,7 +99,9 @@ public static final SqlTimestamp sqlTimestamp = new SqlTimestamp("GMT", true);
 //public static final TimeZone timeZone = TimeZone.getTimeZone("Americas/Chicago");
 // -------------------------------------------------------
 public Version getVersion() { return version; }
+public int getSysVersion() { return sysVersion; }
 public Properties getProps() { return props; }
+public ResSet getResSet() { return resSet; }
 public KeyRing getKeyRing() { return keyRing; }
 public TimeZone getTimeZone() { return timeZone; }
 
@@ -259,6 +267,7 @@ throws Exception
 {
 	// Make sure we have the right version
 	version = new Version("1.0.1");
+	sysVersion = 17;			// Internal version number
 
 	// Set up Swing GUI preferences, so we can display stuff
 	initPrefs();
@@ -321,8 +330,16 @@ throws Exception
 		this.pool = pool;
 		this.batchSets = new Stack();
 		pushBatchSet();
+		
 		// ================
 		SqlBatchSet str = new SqlBatchSet(pool);
+		dbChange = new DbChangeModel();
+
+		// Set up resource set
+		resSet = new OffstageResSet(str, dbChange);
+		resSet.createAllResourceIDs(str);
+		str.flush();
+
 		//pool = new DBConnPool();
 	//	MailSender sender = new GuiMailSender();
 		guiRunner = new BusybeeDbTaskRunner(this, expHandler);
@@ -353,7 +370,6 @@ throws Exception
 			rs.close();
 		}});
 
-		dbChange = new DbChangeModel();
 		this.sset = new OffstageSchemaSet(str, dbChange, getTimeZone());
 		str.runBatches();		// Our SchemaSet must be set up before we go on.
 		// ================

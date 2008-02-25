@@ -38,6 +38,7 @@ import citibob.sql.*;
 import offstage.FrontApp;
 import offstage.config.*;
 //import com.jgoodies.looks.plastic.theme.*;
+import offstage.resource.OffstageResSet;
 //import com.jgoodies.looks.plastic.*;
 
 /**
@@ -54,7 +55,7 @@ protected ConsoleFrame consoleFrame;
 
     /** Creates a new instance of FrameSetX */
     public OffstageLauncher() throws Exception {
-new com.Ostermiller.util.CSVPrinter(System.out);
+//new com.Ostermiller.util.CSVPrinter(System.out);
 
 //		ConnPool pool = offstage.db.DB.newConnPool();
 //		Connection dbb = pool.checkout();
@@ -95,6 +96,7 @@ new com.Ostermiller.util.CSVPrinter(System.out);
 		
 		try {
 			new OffstageLauncher();
+//OffstageResSet.main(args);
 		} catch(Exception e) {
 			e.printStackTrace();
 			MailExpDialog dialog = new MailExpDialog(null, "OffstageArts", e);

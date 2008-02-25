@@ -68,6 +68,7 @@ void setWindowMenu(JFrame f)
 	menu.add(new JSeparator());
 	addFrameMenuItem(menu, "Duplicates", "dups");
 	addFrameMenuItem(menu, "Console", "console");
+	addFrameMenuItem(menu, "Configuration", "config");
 
 }
 

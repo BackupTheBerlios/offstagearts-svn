@@ -57,7 +57,7 @@ ALTER TABLE tuitiontrans RENAME TO tuitiontrans_old;
 ALTER TABLE adjpayments RENAME TO adjpayments_old;
 ALTER TABLE cashpayments RENAME TO cashpayments_old;
 
-commit
+
 
 -- The following was used to convert from old accounting format to new:
 -- 
@@ -105,5 +105,6 @@ commit
 -- select actranstypeid,entityid,actypeid,date,amount,t.description,actransid,datecreated
 -- from adjpayments_old t, actranstypes
 -- where actranstypes.name = 'adj'
--- 
--- 
+
+
+commit

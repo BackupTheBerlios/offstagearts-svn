@@ -33,6 +33,7 @@ import javax.swing.*;
 import offstage.FrontApp;
 import offstage.accounts.gui.AccountFrame;
 import offstage.cleanse.CleanseFrame;
+import offstage.config.ConfigFrame;
 import offstage.devel.gui.DevelFrame;
 import offstage.school.gui.SchoolFrame;
 
@@ -123,6 +124,14 @@ addMaker("accounting", new Maker() {
 public JFrame newFrame() throws Exception {
 	AccountFrame frame = new AccountFrame();
 	frame.initRuntime(fapp);
+	return frame;
+}});
+addMaker("config", new Maker() {
+public JFrame newFrame() throws Exception {
+	ConfigFrame frame = new ConfigFrame();
+	SqlRunner str = fapp.getBatchSet();
+	frame.initRuntime(str, fapp);
+	str.flush();
 	return frame;
 }});
 // ----------------------------------------
