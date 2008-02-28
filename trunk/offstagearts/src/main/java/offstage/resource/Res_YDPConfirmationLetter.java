@@ -19,7 +19,7 @@ public class Res_YDPConfirmationLetter extends DataResource
 
 public Res_YDPConfirmationLetter(ResSet rset)
 {
-	super(rset, "school/terms/YDPConfirmationLetter.odt");
+	super(rset, "termids", "YDPConfirmationLetter.odt");
 
 	add(new JarInstaller(this, 2));
 	add(new JarInstaller(this, 3));

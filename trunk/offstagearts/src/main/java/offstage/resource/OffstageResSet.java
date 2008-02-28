@@ -5,7 +5,7 @@
 
 package offstage.resource;
 
-import citibob.resource.ResKey;
+import citibob.resource.RtResKey;
 import citibob.resource.ResSet;
 import citibob.resource.ResUtil;
 import citibob.resource.Resource;
@@ -67,58 +67,58 @@ void refreshTerms(SqlRunner str)
 	}});
 }
 
-public SortedSet<ResKey> newRelevant()
+public SortedSet<RtResKey> newRelevant()
 {
-	SortedSet<ResKey> ret = super.newRelevant();
+	SortedSet<RtResKey> ret = super.newRelevant();
 
 	// Process term-only resources
 	for (Resource res : resources.values()) {
-		if (!res.getName().contains("/terms/")) continue;
+		if (!res.getUversionType().equals("termids")) continue;
 		for (UVersion uv : terms) {
-			ret.add(new ResKey(res, uv.uversionid, uv.name));
+			ret.add(new RtResKey(res, uv.uversionid, uv.name));
 		}
 	}
 	return ret;
 }
 
-public static void main(String[] args) throws Exception
-{
-	FrontApp app = new FrontApp(); 
-	SqlBatchSet str = app.getBatchSet();
-	System.out.println("========================================");
-	OffstageResSet rset = new OffstageResSet(str, app.getDbChange());
-	rset.createAllResourceIDs(str);
-	str.flush();
-
-	SortedSet<ResKey> rel = rset.newRelevant();
-	ResUtil.fetchAvailableVersions(str, rel);		// Puts into rel...
-	str.flush();
-
-//	rset.getA
-	for (ResKey rk : rel) {
-		System.out.println("Relevant (Resource,uversionid): " + rk);
-		int reqVersion = rk.res.getRequiredVersion(rset.sysVersion);
-		System.out.println("   required version = " + reqVersion);
-
-		if (rk.availVersions != null) {
-			System.out.print  ("   avail versions =");
-			for (int v : rk.availVersions) System.out.println(" " + v);
-		}
-		
-//		ResResult rr = rk.res.loadJar(3);
-//		System.out.println("    Read bytes: " + rr.bytes.length);
-//		rk.res.get
-		UpgradePlan uplan = rk.getCreatorPlan(reqVersion);
-//		Upgrader[] path = rk.res.getUpgradePlan(2, reqVersion);
-//		for (Upgrader up : path) { System.out.println("        " + up); }
-		System.out.println("    " + uplan);
-		rk.res.applyPlan(str, app.getPool(), uplan);
-		System.out.println();
-	}
-	str.flush();
-	
-	System.out.println("Done!");
-	System.exit(0);
-}
+//public static void main(String[] args) throws Exception
+//{
+//	FrontApp app = new FrontApp(); 
+//	SqlBatchSet str = app.getBatchSet();
+//	System.out.println("========================================");
+//	OffstageResSet rset = new OffstageResSet(str, app.getDbChange());
+//	rset.createAllResourceIDs(str);
+//	str.flush();
+//
+//	SortedSet<RtResKey> rel = rset.newRelevant();
+//	ResUtil.fetchAvailableVersions(str, rel);		// Puts into rel...
+//	str.flush();
+//
+////	rset.getA
+//	for (RtResKey rk : rel) {
+//		System.out.println("Relevant (Resource,uversionid): " + rk);
+//		int reqVersion = rk.res.getRequiredVersion(rset.sysVersion);
+//		System.out.println("   required version = " + reqVersion);
+//
+//		if (rk.availVersions != null) {
+//			System.out.print  ("   avail versions =");
+//			for (int v : rk.availVersions) System.out.println(" " + v);
+//		}
+//		
+////		ResResult rr = rk.res.loadJar(3);
+////		System.out.println("    Read bytes: " + rr.bytes.length);
+////		rk.res.get
+//		UpgradePlan uplan = rk.getCreatorPlan(reqVersion);
+////		Upgrader[] path = rk.res.getUpgradePlan(2, reqVersion);
+////		for (Upgrader up : path) { System.out.println("        " + up); }
+//		System.out.println("    " + uplan);
+//		rk.res.applyPlan(str, app.getPool(), uplan);
+//		System.out.println();
+//	}
+//	str.flush();
+//	
+//	System.out.println("Done!");
+//	System.exit(0);
+//}
 
 }

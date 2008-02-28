@@ -36,7 +36,7 @@ import citibob.swing.prefs.*;
 import java.io.*;
 import offstage.crypt.*;
 import citibob.gui.*;
-import citibob.resource.ResKey;
+import citibob.resource.RtResKey;
 import citibob.resource.ResSet;
 import citibob.resource.ResUtil;
 import citibob.swingers.JavaSwingerMap;

@@ -8,10 +8,13 @@ package offstage.config;
 
 import citibob.resource.ResModels;
 import citibob.app.App;
-import citibob.resource.ResKey;
+import citibob.resource.ResData;
+import citibob.resource.RtResKey;
 import citibob.resource.ResSet;
 import citibob.resource.ResUtil;
 import citibob.resource.Resource;
+import citibob.resource.RtRes;
+import citibob.resource.RtVers;
 import citibob.resource.UpgradePlan;
 import citibob.sql.SqlRunner;
 import citibob.sql.UpdRunnable;
@@ -30,12 +33,13 @@ public class ResourcePanel extends javax.swing.JPanel
 {
 
 App app;
-	
+
 Resource curResource;
-ResKey curResKey;
+RtResKey curResKey;
 //Integer curVersion;
 UpgradePlan curUPlan;
 
+ResData rdata;
 ResModels rmods;
 boolean inUpdate;
 
@@ -49,19 +53,21 @@ boolean inUpdate;
 	{
 		this.app = xapp;
 		ResSet rset = app.getResSet();
-		rmods = new ResModels(str, app, app.getSysVersion());
+		rdata = new ResData(str, rset, app.getSqlTypeSet());
+		rmods = new ResModels(rdata, app, app.getSysVersion());
 
 		// Set up tables
 		tResources.setModelU(rmods.resMod,
 			new String[] {"Resource", "Required Version"},
 			new String[] {"name", "reqversion"},
 			null, app.getSwingerMap());
+//		tResources.setValueColU("RtRes");
 
 		this.tResKeys.setModelU(rmods.rkMod,
 			new String[] {"Name"},
 			new String[] {"name"},
 			null, app.getSwingerMap());
-		tResKeys.setValueColU("ResKey");
+//		tResKeys.setValueColU("ResKey");
 		
 		tAvailVersions.setModelU(rmods.availMod,
 			new String[] {"Version", "Last Modified"},
@@ -79,34 +85,32 @@ boolean inUpdate;
 		// Select a Resource
 		tResources.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-			Object val = tResources.getValue();
-			if (val == null) return;
-			setCurResource((Resource)val);
+			setCurResource((RtRes)evt.getNewValue());
 		}});
 		
 		// Select a UVersionID
 		tResKeys.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-			Object val = tResKeys.getValue();
-			if (val == null) return;
-			setCurResKey((ResKey)val);
+			setCurResKey((RtResKey)evt.getNewValue());
 		}});
 
-		// Select a version
-		tAvailVersions.addPropertyChangeListener("value", new PropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent evt) {
-			Object val = tAvailVersions.getValue();
-			if (evt.getNewValue() == null) return;
-//			setCurVersion((Integer)rmods.availMod.getValueAt(irow, "version"));
-		}});
+//		// Select a version
+//		tAvailVersions.addPropertyChangeListener("value", new PropertyChangeListener() {
+//		public void propertyChange(PropertyChangeEvent evt) {
+//			Object val = tAvailVersions.getValue();
+//			if (evt.getNewValue() == null) return;
+////			setCurVersion((Integer)rmods.availMod.getValueAt(irow, "version"));
+//		}});
 
 		// Select an upgrade plan to inspect and maybe execute
 		tUpgradePlans.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-			Object val = tUpgradePlans.getValue();
-			if (evt.getNewValue() == null) upgradeSteps.setText("");
-			UpgradePlan uplan = (UpgradePlan)val;
-			upgradeSteps.setText(uplan.getDescription());
+			Object val = evt.getNewValue();
+			if (val == null) upgradeSteps.setText("");
+			else {
+				UpgradePlan uplan = (UpgradePlan)val;
+				upgradeSteps.setText(uplan.getDescription());
+			}
 //			setCurVersion((Integer)rmods.availMod.getValueAt(irow, "version"));
 		}});
 
@@ -117,7 +121,7 @@ boolean inUpdate;
 //			if (irow < 0) return;
 //			// setCurUpgradePlan((UpgradePlan)rmods.availMod.getValueAt(irow, "UpgradePlan"));
 //		}});
-		
+
 		version1.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
 			if (!inUpdate) refreshPaths();
@@ -129,44 +133,46 @@ boolean inUpdate;
 	};
 	
 	
-	void setCurResource(Resource r)
+	void setCurResource(RtRes rr)
 	{
 		inUpdate = true;
-		
-		ResSet rset = app.getResSet();
-		curResource = r;
-		ArrayList<ResKey> keys = rmods.getKeys(r);
-		
-		// Set up the dropdown
-		KeyedModel kmodel = new KeyedModel();
-		if (r == null) {
+		if (rr == null) {
+			curResource = null;
+			KeyedModel kmodel = new KeyedModel();	// for dropdown
 			rmods.rkMod.clear();
+			srckeys.setKeyedModel(kmodel);
+			version1.setKeyedModel(kmodel);
 		} else {
-			rmods.rkMod.setData(r);
-			for (ResKey rk : keys) {
+			curResource = rr.res;
+			rmods.rkMod.setData(rr);
+			
+			// Set up dropdown
+			KeyedModel kmodel = new KeyedModel();	// for dropdown
+			for (RtResKey rk : rr.relevant) {
 				kmodel.addItem(rk, rk.uversionName);
+			}	
+			srckeys.setKeyedModel(kmodel);
+			
+			// Set up the other dropdown for the total versions
+			kmodel = new KeyedModel();
+			for (Integer v : rr.res.getAllPossibleVersions()) {
+				if (v.intValue() > 0) kmodel.addItem(v,v);
 			}
-		}
-		srckeys.setKeyedModel(kmodel);
-		
-		// Set up the table
-		rmods.rkMod.setData(r);
-		
-		// Set up the other dropdown for the total versions
-		kmodel = new KeyedModel();
-		for (Integer v : r.getAllPossibleVersions()) {
-			if (v.intValue() > 0) kmodel.addItem(v,v);
-		}
-		version1.setKeyedModel(kmodel);
-		version1.setValue(r.getRequiredVersion(app.getSysVersion()));
+			version1.setKeyedModel(kmodel);
+			version1.setValue(rr.res.getRequiredVersion(app.getSysVersion()));
 
-		tResKeys.setValue(keys.get(0));
+			tResKeys.setValue(rr.relevant.get(0));
+
+		}
+		
+		
+		
 //		setCurResKey(keys.get(0));	// should be the <Base> uversionid
 		
 		inUpdate = false;
 	}
 
-	void setCurResKey(ResKey rk)
+	void setCurResKey(RtResKey rk)
 	{
 		curResKey = rk;
 		srckeys.setValue(rk);
@@ -180,9 +186,8 @@ boolean inUpdate;
 
 	void refreshVersions()
 	{
-		ResKey rk = curResKey;
-		if (rk == null || rk.availVersions == null) rmods.availMod.clear();
-		else rmods.availMod.setData(rk.availVersions);
+		RtResKey rk = curResKey;
+		rmods.availMod.setData(rk);
 	}
 	
 	void refreshPaths()
@@ -190,8 +195,8 @@ boolean inUpdate;
 		ResSet rset = app.getResSet();
 
 		int ver1 = (Integer)version1.getValue();
-		ResKey srcRk = (ResKey)srckeys.getValue();
-		ResKey destRk = curResKey;
+		RtResKey srcRk = (RtResKey)srckeys.getValue();
+		RtResKey destRk = curResKey;
 	
 		
 		ArrayList<UpgradePlan> plans = new ArrayList();
@@ -201,9 +206,9 @@ boolean inUpdate;
 		if (uplan != null) plans.add(uplan);
 
 		// Get upgrade paths
-		for (int ver0 : srcRk.availVersions) {
-			if (ver0 == ver1 && srcRk.equals(destRk)) continue;	// Skip trivial nop plans
-			uplan = srcRk.getUpgradePlan(ver0, ver1);
+		for (RtVers ver0 : srcRk.availVersions) {
+			if (ver0.version == ver1 && srcRk.equals(destRk)) continue;	// Skip trivial nop plans
+			uplan = srcRk.getUpgradePlan(ver0.version, ver1);
 			if (uplan != null) plans.add(uplan);
 		}
 
@@ -499,7 +504,8 @@ boolean inUpdate;
 
 	void refreshVersionPaths(SqlRunner str)
 	{
-		rmods.refreshVersions(str);
+//		rmods.refreshVersions(str);
+		rdata.readData(str);
 		str.execUpdate(new UpdRunnable() {
 		public void run(SqlRunner str) {
 //				setCurResKey(curResKey);
@@ -522,9 +528,9 @@ boolean inUpdate;
 	private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
 		app.runGui(ResourcePanel.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
-			Integer ver = (Integer)tAvailVersions.getValue();
+			RtVers ver = (RtVers)tAvailVersions.getValue();
 			if (ver == null) return;
-			ResUtil.delResource(str, curResKey.res.getName(), curResKey.uversionid, ver);
+			ResUtil.delResource(str, curResKey.res.getName(), curResKey.uversionid, ver.version);
 			refreshVersionPaths(str);
 		}});
 		// TODO add your handling code here:
