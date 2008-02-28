@@ -67,9 +67,9 @@ void refreshTerms(SqlRunner str)
 	}});
 }
 
-public SortedSet<ResKey> getRelevant()
+public SortedSet<ResKey> newRelevant()
 {
-	SortedSet<ResKey> ret = super.getRelevant();
+	SortedSet<ResKey> ret = super.newRelevant();
 
 	// Process term-only resources
 	for (Resource res : resources.values()) {
@@ -90,7 +90,7 @@ public static void main(String[] args) throws Exception
 	rset.createAllResourceIDs(str);
 	str.flush();
 
-	SortedSet<ResKey> rel = rset.getRelevant();
+	SortedSet<ResKey> rel = rset.newRelevant();
 	ResUtil.fetchAvailableVersions(str, rel);		// Puts into rel...
 	str.flush();
 

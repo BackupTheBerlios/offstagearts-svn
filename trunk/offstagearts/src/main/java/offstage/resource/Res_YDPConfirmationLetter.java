@@ -24,8 +24,11 @@ public Res_YDPConfirmationLetter(ResSet rset)
 	add(new JarInstaller(this, 2));
 	add(new JarInstaller(this, 3));
 	add(new JarInstaller(this, 4));
+	add(new JarInstaller(this, 6));
 //	add(new JarInstaller(this, 17));
+	add(new CopyUpgrader(this, 2,3));
 	add(new CopyUpgrader(this, 3,4));
+	add(new CopyUpgrader(this, 4,6));
 }
 	
 }
