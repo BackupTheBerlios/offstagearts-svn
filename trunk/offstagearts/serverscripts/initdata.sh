@@ -103,11 +103,11 @@ COPY mailprefids (mailprefid, name) FROM stdin;
 
 -- ========================================================
 INSERT INTO duedateids (name, description) VALUES ('q2', 'Second Quarter Tuition');
-INSERT INTO termduedates (name, description) VALUES ('q3', 'Third Quarter Tuition');
-INSERT INTO termduedates (name, description) VALUES ('q4', 'Fourth Quarter Tuition');
-INSERT INTO termduedates (name, description) VALUES ('q1', 'First Quarter Tuition');
-INSERT INTO termduedates (name, description) VALUES ('y', 'Yearly Tuition');
-INSERT INTO termduedates (name, description) VALUES ('r', 'Registration Fee');
+INSERT INTO duedateids (name, description) VALUES ('q3', 'Third Quarter Tuition');
+INSERT INTO duedateids (name, description) VALUES ('q4', 'Fourth Quarter Tuition');
+INSERT INTO duedateids (name, description) VALUES ('q1', 'First Quarter Tuition');
+INSERT INTO duedateids (name, description) VALUES ('y', 'Yearly Tuition');
+INSERT INTO duedateids (name, description) VALUES ('r', 'Registration Fee');
 
 
 insert into locations (name) values ('Main');

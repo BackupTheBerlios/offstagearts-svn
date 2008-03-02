@@ -56,7 +56,7 @@ final String url;
 	if (ssl) p2.setProperty("ssl", "true");
 	
 	String pwd = props.getProperty("db.password", null);
-	p2.setProperty("password", pwd);
+	if (pwd != null) p2.setProperty("password", pwd);
 
 	url = "jdbc:" + props.getProperty("db.drivertype", null) + "://" +
 		props.getProperty("db.host", null) +

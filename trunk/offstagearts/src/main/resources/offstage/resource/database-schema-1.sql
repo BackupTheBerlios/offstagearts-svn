@@ -1059,15 +1059,6 @@ COMMENT ON COLUMN attendance.dtime IS 'Time attendance was noted';
 
 
 --
--- Name: bob2; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
---
-
-CREATE TABLE bob2 (
-    col integer
-);
-
-
---
 -- Name: cashpayments_old; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 

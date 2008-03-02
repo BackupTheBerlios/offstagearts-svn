@@ -34,12 +34,15 @@ import citibob.swing.prefs.*;
 import citibob.jschema.swing.*;
 import citibob.gui.*;
 import citibob.mail.MailExpDialog;
+import citibob.resource.ResData;
+import citibob.resource.UpgradePlan;
+import citibob.resource.UpgradePlanSet;
 import citibob.sql.*;
+import citibob.task.BatchRunnable;
+import java.io.IOException;
 import offstage.FrontApp;
 import offstage.config.*;
 //import com.jgoodies.looks.plastic.theme.*;
-import offstage.resource.OffstageResSet;
-//import com.jgoodies.looks.plastic.*;
 
 /**
  *
@@ -73,7 +76,13 @@ protected ConsoleFrame consoleFrame;
 		
 		
 //		FrontApp app = new FrontApp(pool, consoleFrame.getDocument());
-		FrontApp app = new FrontApp(); //new File("/export/home/citibob/svn/offstage/config"));
+		final FrontApp app = new FrontApp(); //new File("/export/home/citibob/svn/offstage/config"));
+		app.checkResources();
+		app.initWithDatabase();
+		
+
+		
+		
 		app.getFrameSet().openFrame("maintenance");
 //		offstageGui = new OffstageGui();
 //		offstageGui.initRuntime(app);

@@ -36,12 +36,15 @@ import citibob.swing.prefs.*;
 import java.io.*;
 import offstage.crypt.*;
 import citibob.gui.*;
-import citibob.resource.RtResKey;
+import citibob.resource.ResData;
 import citibob.resource.ResSet;
-import citibob.resource.ResUtil;
+import citibob.resource.UpgradePlan;
+import citibob.resource.UpgradePlanSet;
 import citibob.swingers.JavaSwingerMap;
 import citibob.version.Version;
+import javax.swing.JOptionPane;
 import offstage.config.ConfigChooser;
+import offstage.config.UpgradesDialog;
 import offstage.resource.OffstageResSet;
 
 public class FrontApp extends citibob.app.App
@@ -295,7 +298,9 @@ throws Exception
 		new InternetAddress(props.getProperty("mail.bugs.recipient")),
 //		new InternetAddress("citibob@citibob.net"),
 		"OffstageArts", consoleFrame.getDocument());
-	
+	guiRunner = new BusybeeDbTaskRunner(this, expHandler);
+	appRunner = new SimpleDbTaskRunner(this, expHandler);
+
 	// Use the exception handler
 	try {
 	
@@ -316,9 +321,9 @@ throws Exception
 			new File(privLeaf) : new File(configDir, privLeaf)); 
 		keyRing = new KeyRing(pubDir, privDir);
 		if (!keyRing.pubKeyLoaded()) {
-			javax.swing.JOptionPane.showMessageDialog(null,
-				"The public key failed to load.\n" +
-				"You will be unable to enter credit card details.");
+//			javax.swing.JOptionPane.showMessageDialog(null,
+//				"The public key failed to load.\n" +
+//				"You will be unable to enter credit card details.");
 		}
 
 		this.mailSender = new citibob.mail.ConstMailSender(props);
@@ -332,18 +337,76 @@ throws Exception
 		pushBatchSet();
 		
 		// ================
-		SqlBatchSet str = new SqlBatchSet(pool);
-		dbChange = new DbChangeModel();
+	} catch(Exception e) {
+		expHandler.consume(e);
+//		e.printStackTrace();
+		System.exit(-1);
+	}
+}
 
-		// Set up resource set
+private void createResSet(SqlBatchSet str)
+throws Exception
+{
+		// Set up resource set and read from database
 		resSet = new OffstageResSet(str, dbChange);
+		str.flush();
 		resSet.createAllResourceIDs(str);
 		str.flush();
+}
 
+public void checkResources()  throws Exception
+{
+	try {
+		final FrontApp app = this;
+
+		dbChange = new DbChangeModel();
+		final SqlBatchSet str = app.getBatchSet();
+		createResSet(str);
+		ResData rdata = new ResData(str, resSet, getSqlTypeSet());
+		str.flush();	
+
+		// See if resources need upgrading
+		final UpgradePlanSet upset = new UpgradePlanSet(rdata, app.getSysVersion());
+		if (upset.reqCannotCreate.size() != 0 || upset.reqNotUpgradeable.size() != 0) {
+			upset.print(System.out);
+			throw new IOException("Cannot upgrade resources!");
+		}
+		if (upset.uplans.size() != 0) {
+			UpgradesDialog udialog = new UpgradesDialog(null, true);
+			udialog.initRuntime(str, app, upset.uplans);
+			udialog.setVisible(true);
+			if (udialog.doUpgrade) {
+//				app.runApp(new BatchRunnable() {
+//				public void run(SqlRunner xstr) throws Exception {
+					for (UpgradePlan up : upset.uplans) {
+						up.applyPlan(str, app.getPool());
+					}
+					createResSet(str);		// We might now have a database!
+//				}});
+
+			} else {
+				if (udialog.required) {
+					JOptionPane.showMessageDialog(null,
+						"OffstageArts cannot run without the required upgrades.\n");
+					System.exit(0);
+				}
+			}
+		}
+		str.flush();
+	} catch(Exception e) {
+		expHandler.consume(e);
+		System.exit(-1);
+	}
+}
+
+/** Finishes initialization, things that require a functional database. */
+public void initWithDatabase()
+{
+	try {
+		SqlBatchSet str = new SqlBatchSet(pool);
+		
 		//pool = new DBConnPool();
 	//	MailSender sender = new GuiMailSender();
-		guiRunner = new BusybeeDbTaskRunner(this, expHandler);
-		appRunner = new SimpleDbTaskRunner(this, expHandler);
 		//guiRunner = new SimpleDbTaskRunner(pool);
 
 		// Figure out who we're logged in as
@@ -395,6 +458,7 @@ throws Exception
 		System.exit(-1);
 	}
 }
+
 //public EntityListTableModel getSimpleSearchResults()
 //	{ return simpleSearchResults; }
 //public Statement createStatement() throws java.sql.SQLException

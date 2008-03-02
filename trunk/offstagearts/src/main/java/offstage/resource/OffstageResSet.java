@@ -5,20 +5,17 @@
 
 package offstage.resource;
 
-import citibob.resource.RtResKey;
 import citibob.resource.ResSet;
-import citibob.resource.ResUtil;
+import citibob.resource.RtResKey;
 import citibob.resource.Resource;
-import citibob.resource.UpgradePlan;
-import citibob.resource.Upgrader;
 import citibob.sql.DbChangeModel;
 import citibob.sql.RsRunnable;
-import citibob.sql.SqlBatchSet;
 import citibob.sql.SqlRunner;
+import citibob.sql.UpdRunnable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
-import offstage.FrontApp;
 
 /**
  *
@@ -36,34 +33,41 @@ static class UVersion {
 		this.name = name;
 	}
 }
-List<UVersion> terms;
+List<UVersion> terms = new ArrayList();
 //List<UVersion> shows;
 
 public OffstageResSet(SqlRunner str, DbChangeModel dbChange)
+throws SQLException
 {
-	super(17, OffstageResSet.class.getClassLoader(),  "offstage/resources/");
+	super(str, 17, OffstageResSet.class.getClassLoader(),  "offstage/resource/");
 
 	dbChange.addListener("termids", new DbChangeModel.Listener() {
     public void tableWillChange(SqlRunner str, String table) {
 		refreshTerms(str);
 	}});
-	refreshTerms(str);
+	str.execUpdate(new UpdRunnable() {
+	public void run(SqlRunner str) {
+		if (dbbExists()) refreshTerms(str);
+	}});
 
 	// Add the resources!!!
 	add(new Res_YDPConfirmationLetter(this));
+	add(new Res_Database(this));
 	
 }
 
-void refreshTerms(SqlRunner str)
+private void refreshTerms(SqlRunner str)
 {
+	
 	String sql = "select groupid, name from termids where iscurrent";
 	str.execSql(sql, new RsRunnable() {
 	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
-		terms = new ArrayList();
+		terms.clear();
 		while (rs.next()) {
 			UVersion uv = new UVersion(rs.getInt("groupid"), rs.getString("name"));
 			terms.add(uv);
 		}
+		dbbExists = true;
 	}});
 }
 
@@ -73,7 +77,8 @@ public SortedSet<RtResKey> newRelevant()
 
 	// Process term-only resources
 	for (Resource res : resources.values()) {
-		if (!res.getUversionType().equals("termids")) continue;
+		String uvType = res.getUversionType();
+		if (uvType == null || !uvType.equals("termids")) continue;
 		for (UVersion uv : terms) {
 			ret.add(new RtResKey(res, uv.uversionid, uv.name));
 		}
