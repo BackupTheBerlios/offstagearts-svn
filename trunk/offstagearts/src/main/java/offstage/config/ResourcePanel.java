@@ -8,6 +8,7 @@ package offstage.config;
 
 import citibob.resource.ResModels;
 import citibob.app.App;
+import citibob.gui.GuiUtil;
 import citibob.resource.ResData;
 import citibob.resource.RtResKey;
 import citibob.resource.ResSet;
@@ -16,14 +17,17 @@ import citibob.resource.Resource;
 import citibob.resource.RtRes;
 import citibob.resource.RtVers;
 import citibob.resource.UpgradePlan;
+import citibob.sql.ConnPool;
 import citibob.sql.SqlRunner;
 import citibob.sql.UpdRunnable;
 import citibob.task.BatchRunnable;
 import citibob.types.KeyedModel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.lang.Integer;
 import java.util.ArrayList;
+import javax.swing.JFileChooser;
 
 /**
  
@@ -188,6 +192,9 @@ boolean inUpdate;
 	{
 		RtResKey rk = curResKey;
 		rmods.availMod.setData(rk);
+		int nrow = rmods.availMod.getRowCount();
+		if (nrow > 0) tAvailVersions.getSelectionModel().
+			setSelectionInterval(nrow-1,nrow-1);
 	}
 	
 	void refreshPaths()
@@ -483,11 +490,25 @@ boolean inUpdate;
         jPanel7.setLayout(new java.awt.GridBagLayout());
 
         bEdit.setText("Edit");
+        bEdit.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bEditActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel7.add(bEdit, gridBagConstraints);
 
         bExport.setText("Export");
+        bExport.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bExportActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -510,6 +531,13 @@ boolean inUpdate;
         jPanel7.add(bDelete, gridBagConstraints);
 
         bImport.setText("Import");
+        bImport.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bImportActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -560,6 +588,57 @@ boolean inUpdate;
 		}});
 		// TODO add your handling code here:
 	}//GEN-LAST:event_bDeleteActionPerformed
+
+	private void bEditActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEditActionPerformed
+	{//GEN-HEADEREND:event_bEditActionPerformed
+		app.runGui(ResourcePanel.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			final RtVers ver = (RtVers)tAvailVersions.getValue();
+			ConnPool pool = app.getPool();
+			ResUtil.editResource(str, pool, ResourcePanel.this, curResKey, ver.version);
+		}});
+	}//GEN-LAST:event_bEditActionPerformed
+
+	private void bExportActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bExportActionPerformed
+	{//GEN-HEADEREND:event_bExportActionPerformed
+		app.runGui(ResourcePanel.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			// Get the file to export to
+			String suffix = curResKey.res.getSuffix();
+			JFileChooser chooser = GuiUtil.newChooser(suffix);
+			chooser.setDialogTitle("Export Resource");
+			File file = GuiUtil.chooseSaveFileCheckOverwrite(ResourcePanel.this,
+				chooser, suffix,
+				app.userRoot(), "resourceExportDir");
+			if (file == null) return;
+
+			// Save it
+			final RtVers ver = (RtVers)tAvailVersions.getValue();
+			ResUtil.saveResource(str, curResKey, ver.version, file);
+		}});
+		// TODO add your handling code here:
+	}//GEN-LAST:event_bExportActionPerformed
+
+	private void bImportActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bImportActionPerformed
+	{//GEN-HEADEREND:event_bImportActionPerformed
+		app.runGui(ResourcePanel.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			// Get the file to export to
+			String suffix = curResKey.res.getSuffix();
+			JFileChooser chooser = GuiUtil.newChooser(suffix);
+			chooser.setDialogTitle("Import Resource");
+			chooser.showOpenDialog(ResourcePanel.this);
+			File file = chooser.getSelectedFile();
+			if (file == null) return;
+
+			// Import it
+			final RtVers ver = (RtVers)tAvailVersions.getValue();
+			ResUtil.uploadResource(app.getPool(), curResKey, ver.version, file);
+		}});
+
+		
+		// TODO add your handling code here:
+	}//GEN-LAST:event_bImportActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables

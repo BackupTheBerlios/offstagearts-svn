@@ -52,7 +52,7 @@ throws SQLException
 
 	// Add the resources!!!
 	add(new Res_YDPConfirmationLetter(this));
-	add(new Res_Database(this));
+//	add(new Res_Database(this));
 	
 }
 
