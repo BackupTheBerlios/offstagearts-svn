@@ -23,12 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.school.tuition;
 
-import citibob.app.App;
 import citibob.sql.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
-import citibob.types.JEnum;
+import citibob.text.DayConv;
 import citibob.types.KeyedModel;
+import offstage.FrontApp;
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because
@@ -43,15 +43,18 @@ int termid;
 SqlDate date;
 String payerIdSql;
 TuitionData tdata;
-TuitionScale scale;
-App app;
+TuitionCon tcon;
+RBPlanSet rbPlanSet;
+FrontApp app;
+DayConv dconv;
 
 /** @param payerIdSql IdSql that selects the payers for which we want to recalc tuition. */
-public TuitionCalc(App app, int termid)
+public TuitionCalc(FrontApp app, int termid)
 {
 	this.termid = termid;
 	this.app = app;
 	date = new SqlDate(app.getTimeZone(), true);
+	dconv = new DayConv(app.getTimeZone());
 }
 
 public void setPayerIDs(String payerIdSql)
@@ -74,7 +77,7 @@ public void recalcTuition(SqlRunner str)
 	tdata = new TuitionData(str, termid, payerIdSql, date.getTimeZone());
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
-		if (tdata.calcTuition) {
+		if (tdata.calcTuition()) {
 			calcTuition();
 			String sql = writeTuitionSql();
 			str.execSql(sql);
@@ -84,16 +87,17 @@ public void recalcTuition(SqlRunner str)
 
 // ==========================================================================
 
-void calcTuition() throws bsh.EvalError
+void calcTuition()
+throws InstantiationException, IllegalAccessException, ClassNotFoundException
 {
-//	Interpreter ii = new bsh.Interpreter();
-//	scale = (TuitionScale)ii.eval("new " + tdata.tuitionClass);
-	scale = new jmbt.JMBTTuitionScale();
-	scale.setData(tdata);
+	rbPlanSet = (RBPlanSet)app.getSiteCode().loadClass(tdata.rbPlanSetClass).newInstance();
+//	rbPlanSet = (RBPlanSet)Class.forName(tdata.rbPlanSetClass).newInstance();
+	tcon = new MyTuitionCon();
 
 	// Go through family by family
 	for (Payer payer : tdata.payers.values()) {
-		scale.calcTuition(payer);
+		RBPlan rbplan = rbPlanSet.getPlan(payer.rbplan);
+		rbplan.getRatePlan().setTuition(tcon, payer);
 	}
 }
 	
@@ -103,89 +107,29 @@ String writeTuitionSql()
 	StringBuffer sql = new StringBuffer();
 	
 	// Produce the SQL to store this tuition calculation
-	for (Payer pp : tdata.payers.values()) {
-		for (Student ss : pp.students) {
+	for (Payer payer : tdata.payers.values()) {
+		RBPlan rbplan = rbPlanSet.getPlan(payer.rbplan);
+		for (Student ss : payer.students) {
+			double tuition = ss.getTuition();
+				
 			// Main tuition in student record
 			sql.append(
 				" update termregs" +
 				" set defaulttuition=" + TuitionData.money.sql(ss.defaulttuition) + "," +
-				" tuition=" + (ss.tuition == 0 ? "null" : TuitionData.money.sql(ss.tuition)) +
+				" tuition=" + TuitionData.money.sql(tuition) + "," +
 				" where groupid = " + SqlInteger.sql(tdata.termid) +
 				" and entityid = " + SqlInteger.sql(ss.entityid) +
 				";\n");
 
-			// Don't mess with accounts if there's no tuition to be charged
-			if (ss.tuition == 0) continue;
-			
-			// Registration fee
-			DueDate reg = tdata.duedates.get("r");
-			if (reg != null) {
-				insertTransaction(sql, pp.entityid, reg.duedate,
-					scale.getRegistrationFee(),
-					"Registration Fee for " + ss.getName(),
-					ss.entityid);
-			}
+//			// Don't mess with accounts if there's no tuition to be charged
+//			if (tuition == 0) continue;
 
-			// Main fees
-			switch(pp.billingtype) {
-				case 'q' : {
-					for (int i=1; i<=scale.numQuarters(); ++i) {
-						DueDate dd = tdata.duedates.get("q"+i);
-						
-						// Main tuition
-						insertTransaction(sql, pp.entityid, dd.duedate,
-							ss.tuition * .25,
-							ss.tuitionDesc + " --- " + dd.description,
-							ss.entityid);
-						
-						// Scholarships
-						if (ss.scholarship > 0) {
-							insertTransaction(sql, pp.entityid, dd.duedate,
-								-ss.scholarship * .25,
-								tdata.termName + ": Scholarship for " + ss.getName() + " --- " + dd.description,
-								ss.entityid);
-						}
-					}
-				} break;
-				case 'y' : {
-					DueDate dd = tdata.duedates.get("y");
-					
-					// Main tuition
-					insertTransaction(sql, pp.entityid, dd.duedate,
-						ss.tuition,
-							ss.tuitionDesc + " --- " + dd.description,
-						ss.entityid);
-					
-					// Scholarships
-					if (ss.scholarship > 0) {
-						insertTransaction(sql, pp.entityid, dd.duedate,
-							-ss.scholarship,
-							tdata.termName + ": Scholarship for " + ss.getName() + " --- " + dd.description,
-							ss.entityid);
-					}
-				} break;
-			}
+			rbplan.getBillingPlan().billAccount(tcon, ss);
 		}
 	}
 	
 	return sql.toString();
 }
-
-void insertTransaction(StringBuffer sql, int entityid,
-java.util.Date duedate, double amount, String description, int studentid)		
-{
-	KeyedModel transtypes = app.getSchemaSet().getKeyedModel("actrans", "actranstypeid");
-	sql.append(
-		" insert into actrans " +
-		" (entityid, actranstypeid, actypeid, date, amount, description, studentid, termid)" +
-		" values (" + SqlInteger.sql(entityid) + ", " +
-		SqlInteger.sql(transtypes.getIntKey("tuition")) + ", " +
-		" (select actypeid from actypes where name = 'school'), " +
-		date.toSql(duedate) + ", " + TuitionData.money.toSql(amount) + "," +
-		SqlString.sql(description) + ", " + SqlInteger.sql(studentid) + ", " +
-		SqlInteger.sql(termid) + ");\n");
-	
-}		
 
 //public static void main(String[] args) throws Exception
 //{
@@ -195,5 +139,48 @@ java.util.Date duedate, double amount, String description, int studentid)
 //		"select 24822 as id");
 //	fapp.getBatchSet().runBatches();
 //}
+// ===============================================================
+class MyTuitionCon implements TuitionCon
+{
+	
+StringBuffer sql;
 
+/** Sets the calculated tuition for a particular student */
+public void setCalcTuition(Student student, double amount, String desc)
+{
+	student.defaulttuition = amount;
+//	if (student.tuitionoverride != null) {
+//		// Manual override of tuition --- just set it
+//		student.tuition = student.tuitionoverride;
+//	} else {
+//		// No override, use the tuition we calculated.
+//		student.tuition = student.defaulttuition;
+//	}
+	student.tuitionDesc = desc;//data.termName + ": Tuition for " + ss.getName();
+}
+	
+/** Adds a tuition record to be written to the database. */
+public void addTransaction(Student student,
+int duedateDN, double amount, String description)
+{
+	java.util.Date duedate = dconv.toDate(duedateDN);
+	int payerid = student.payerid;
+	int studentid = student.entityid;
+	
+	KeyedModel transtypes = app.getSchemaSet().getKeyedModel("actrans", "actranstypeid");
+	sql.append(
+		" insert into actrans " +
+		" (entityid, actranstypeid, actypeid, date, amount, description, studentid, termid)" +
+		" values (" + SqlInteger.sql(payerid) + ", " +
+		SqlInteger.sql(transtypes.getIntKey("tuition")) + ", " +
+		" (select actypeid from actypes where name = 'school'), " +
+		date.toSql(duedate) + ", " + TuitionData.money.toSql(amount) + "," +
+		SqlString.sql(description) + ", " + SqlInteger.sql(studentid) + ", " +
+		SqlInteger.sql(termid) + ");\n");
+}
+
+/** Gives us the data set, in case we need it. */
+public TuitionData getData() { return tdata; }
+
+}
 }

@@ -15,13 +15,12 @@ public class Payer
 {
 	public int entityid;
 	public boolean isorg;
-	public char billingtype;
+	public String rbplan;
 	public List<Student> students;
 	public Payer(ResultSet rs) throws SQLException
 	{
 		entityid = rs.getInt("entityid");
-		String sBillingType = rs.getString("billingtype");
-		billingtype = (sBillingType == null ? 'y' : sBillingType.charAt(0));
+		rbplan = rs.getString("rbplan");
 		isorg = rs.getBoolean("isorg");
 		students = new ArrayList(1);
 	}

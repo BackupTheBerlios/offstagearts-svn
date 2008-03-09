@@ -43,6 +43,7 @@ throws SQLException
 		new SqlCol(new SqlNumeric(9,2, true), "tuitionoverride"),
 		new SqlCol(new SqlDate(tz, true), "dtsigned"),
 		new SqlCol(new SqlDate(tz, true), "dtregistered"),
+		new SqlCol(new SqlString(true), "rbplan"),
 		new SqlCol(new SqlEnum(kmodel, "<No Level Selected>"), "programid")		
 	};
 }

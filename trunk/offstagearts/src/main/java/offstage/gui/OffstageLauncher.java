@@ -77,23 +77,15 @@ protected ConsoleFrame consoleFrame;
 		
 //		FrontApp app = new FrontApp(pool, consoleFrame.getDocument());
 		final FrontApp app = new FrontApp(); //new File("/export/home/citibob/svn/offstage/config"));
-		app.checkResources();
+		boolean resGood = app.checkResources();
 		app.initWithDatabase();
 		
-
-		
-		
-		app.getFrameSet().openFrame("maintenance");
-//		offstageGui = new OffstageGui();
-//		offstageGui.initRuntime(app);
-
+		if (resGood) {
+			app.getFrameSet().openFrame("maintenance");
+		} else {
+			app.getFrameSet().openFrame("config");
+		}
 		app.getBatchSet().flush();
-//app.getFullEntityDm().setKey(12633);	// Go to Bob's record (for debuggin)'
-//app.getFullEntityDm().doSelect(app.getBatchSet());
-//		app.getBatchSet().runBatches();
-		
-//		offstageGui.pack();
-//	    offstageGui.setVisible(true);
     }
 
 

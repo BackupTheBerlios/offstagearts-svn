@@ -28,7 +28,10 @@ public class Enrollment
 	
 	// Calculated
 	private double prorate;		// Pro-rating fraction
+	private String prorateDesc;	// Description of how we pro-rate
+	
 	public double getProrate() { return prorate; }
+	public String getprorateDesc() { return prorateDesc; }
 	
 	public Enrollment(ResultSet rs, SqlDate date, Map<Integer,Course> courses) throws SQLException
 	{
@@ -44,8 +47,15 @@ public class Enrollment
 		locationid = rs.getInt("locationid");
 		
 		Course course = courses.get(courseid);
-		prorate = (course == null ? 1.0D :
-			(double)course.numMeetings(dstart,dend) / (double)course.numMeetings());
+		if (course == null) {
+			prorate = 1.0D;
+			prorateDesc = "full term";
+		} else {
+			int numMeet = course.numMeetings(dstart,dend);
+			int totMeet = course.numMeetings();
+			prorate = (double)numMeet / (double)totMeet;
+			prorateDesc = ""+numMeet + " of " + totMeet + " meetings";
+		}
 	}
 
 	public double getPrice()

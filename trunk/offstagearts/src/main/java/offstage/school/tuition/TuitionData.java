@@ -41,8 +41,9 @@ public class TuitionData {
 // ==========================================================
 public int termid;
 public String termName;
-public String tuitionClass;
-public boolean calcTuition;
+public String rbPlanSetClass;
+//public boolean calcTuition;
+public boolean calcTuition() { return rbPlanSetClass != null; }
 
 public Map<String,DueDate> duedates;
 public Map<Integer,Payer> payers;
@@ -62,7 +63,7 @@ public TuitionData(SqlRunner str, int termid, String payerIdSql, TimeZone tz)
 	this.termid = termid;
 	String sql =
 		// rss[0]: Name of Term
-		" select t.name, t.tuitionclass, t.calctuition" +
+		" select t.name, t.rbplansetclass" +
 		" from termids t" +
 		" where t.groupid = " + SqlInteger.sql(termid) + ";\n" +
 		
@@ -98,11 +99,20 @@ public TuitionData(SqlRunner str, int termid, String payerIdSql, TimeZone tz)
 		" where groupid = " + SqlInteger.sql(termid) +
 		" and termregs.entityid = _students.entityid;\n" +
 		
+//		// rss[2]: Payers
+//		" select e.entityid, e.isorg,\n" +
+//		" (case when es.billingtype is null then 'y' else es.billingtype end) as billingtype\n" +
+//		" from entities e left outer join entities_school es on (e.entityid = es.entityid), _payers" +
+//		" where _payers.entityid = e.entityid\n" +
+//		" and not e.obsolete;\n" +
+		
 		// rss[2]: Payers
-		" select e.entityid, e.isorg,\n" +
-		" (case when es.billingtype is null then 'y' else es.billingtype end) as billingtype\n" +
-		" from entities e left outer join entities_school es on (e.entityid = es.entityid), _payers" +
-		" where _payers.entityid = e.entityid\n" +
+		" select e.entityid, e.isorg, tr.rbplan\n" +
+		" from _payers,\n" +
+		"     entities e, termregs tr\n" +
+		" where tr.groupid = " + SqlInteger.sql(termid) + "\n" +
+		" and _payers.entityid = tr.entityid\n" +
+		" and _payers.entityid = e.entityid\n" +
 		" and not e.obsolete;\n" +
 		
 		// rss[3]: Students
@@ -153,8 +163,8 @@ public TuitionData(SqlRunner str, int termid, String payerIdSql, TimeZone tz)
 		rs = rss[0];
 		rs.next();
 		termName = rs.getString("name");
-		tuitionClass = rs.getString("tuitionclass");
-		calcTuition = rs.getBoolean("calctuition");
+		rbPlanSetClass = rs.getString("rbplansetclass");
+//		calcTuition = rs.getBoolean("calctuition");
 		
 		// rss[1]: DueDate
 		rs = rss[1];

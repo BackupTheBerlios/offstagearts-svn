@@ -61,4 +61,15 @@ END;
 $BODY$
   LANGUAGE 'plpgsql' VOLATILE;
 
+ALTER TABLE termregs ADD COLUMN rbplan varchar(100);
+COMMENT ON COLUMN termregs.rbplan IS 'Short name of rate/billing plan to use for this customer.  If null, use the default rate/billing plan for the term.  See RbPlanSet';
+
+ALTER TABLE termids ADD COLUMN rbplansetclass varchar(200);
+COMMENT ON COLUMN termids.rbplansetclass IS 'Java class of the RBPlanSet subclass to use for rate plans this term.';
+
+
+alter table termids drop column tuitionclass;
+alter table termids drop column calctuition;
+
+
 commit;

@@ -37,15 +37,19 @@ import java.io.*;
 import offstage.crypt.*;
 import citibob.gui.*;
 import citibob.resource.ResData;
+import citibob.resource.ResResult;
 import citibob.resource.ResSet;
 import citibob.resource.UpgradePlan;
 import citibob.resource.UpgradePlanSet;
 import citibob.swingers.JavaSwingerMap;
 import citibob.version.Version;
+import java.net.URL;
+import java.net.URLClassLoader;
 import javax.swing.JOptionPane;
 import offstage.config.ConfigChooser;
 import offstage.config.UpgradesDialog;
 import offstage.resource.OffstageResSet;
+import offstage.school.tuition.TuitionScale;
 
 public class FrontApp extends citibob.app.App
 {
@@ -77,6 +81,7 @@ OffstageSchemaSet sset;
 EQuerySchema equerySchema;
 citibob.reports.Reports reports;
 FrameSet frameSet;
+ClassLoader siteCode;
 
 //FullEntityDbModel fullEntityDm;
 //EQueryModel2 equeries;
@@ -159,6 +164,7 @@ public void runApp(CBRunnable r) { appRunner.doRun(r); }
 public MailSender getMailSender() { return mailSender; }
 public SqlSchema getSchema(String name) { return sset.get(name); }
 public FrameSet getFrameSet() { return frameSet; }
+public ClassLoader getSiteCode() { return siteCode; }
 public citibob.sql.SqlTypeSet getSqlTypeSet() { return sqlTypeSet; }
 public citibob.reports.Reports getReports() { return reports; }
 
@@ -354,8 +360,9 @@ throws Exception
 		str.flush();
 }
 
-public void checkResources()  throws Exception
+public boolean checkResources()  throws Exception
 {
+	boolean ret = true;
 	try {
 		final FrontApp app = this;
 
@@ -388,7 +395,7 @@ public void checkResources()  throws Exception
 				if (udialog.required) {
 					JOptionPane.showMessageDialog(null,
 						"OffstageArts cannot run without the required upgrades.\n");
-					System.exit(0);
+					ret = false;
 				}
 			}
 		}
@@ -397,6 +404,7 @@ public void checkResources()  throws Exception
 		expHandler.consume(e);
 		System.exit(-1);
 	}
+	return ret;
 }
 
 /** Finishes initialization, things that require a functional database. */
@@ -404,11 +412,33 @@ public void initWithDatabase()
 {
 	try {
 		SqlBatchSet str = new SqlBatchSet(pool);
-		
+
 		//pool = new DBConnPool();
 	//	MailSender sender = new GuiMailSender();
 		//guiRunner = new SimpleDbTaskRunner(pool);
 
+		final ResResult siteCodeRes = getResSet().load(str, "sitecode.jar", 0);
+		str.execUpdate(new UpdRunnable() {
+		public void run(SqlRunner str) throws IOException {
+			if (siteCodeRes.bytes != null) {
+				// Save our site code to a temporary jar file
+				File outFile = File.createTempFile("sitecode", ".jar");
+				outFile.deleteOnExit();
+				OutputStream out = new FileOutputStream(outFile);
+				out.write(siteCodeRes.bytes);
+				out.close();
+				
+				// Create a classloader on that jar file
+				siteCode = new URLClassLoader(new URL[] {new URL(
+					"file:///" + outFile.getPath())});
+			} else {
+				// No site code available!
+				// Just use current classloader, hope for the best
+				siteCode = getClass().getClassLoader();
+			}
+		}});
+		
+		
 		// Figure out who we're logged in as
 		String sql = "select entityid from dblogins where username = " +
 			SqlString.sql(System.getProperty("user.name"));

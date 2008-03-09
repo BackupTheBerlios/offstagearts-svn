@@ -75,8 +75,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 	termsDm.setOrderClause("firstdate desc, name");
 		
 	terms.setModelU(termsDm.getSchemaBuf(),
-		new String[] {"Status", "Type", "Name", "From", "To (+1)", "Calc Tuition", "Is Current"},
-		new String[] {"__status__", "termtypeid", "name", "firstdate", "nextdate", "calctuition", "iscurrent"},
+		new String[] {"Status", "Type", "Name", "From", "To (+1)", "Tuition Plans", "Is Current"},
+		new String[] {"__status__", "termtypeid", "name", "firstdate", "nextdate", "rbplansetclass", "iscurrent"},
 		null, fapp.getSwingerMap());
 
 	allDm = new MultiDbModel(new DbModel[] {termsDm});

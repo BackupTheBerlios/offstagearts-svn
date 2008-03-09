@@ -85,8 +85,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRunner str)
 	
 	termInfo.setSwingerMap(fapp.getSwingerMap());
 	termInfo.setModel(new RowModelTableModel(oneTermRm,
-		new String[] {"Name", "Type", "From", "To (+1)", "Tuition Java", "Calc. Tuition?", "Current?"},
-		new String[] {"name", "termtypeid", "firstdate", "nextdate", "tuitionclass", "calctuition", "iscurrent"}));
+		new String[] {"Name", "Type", "From", "To (+1)", "Tuition Plans", "Current?"},
+		new String[] {"name", "termtypeid", "firstdate", "nextdate", "rbplansetclass", "iscurrent"}));
 
 	
 	// Due Dates

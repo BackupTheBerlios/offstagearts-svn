@@ -7,6 +7,8 @@ package offstage.school.tuition;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,15 +19,18 @@ public class Student implements Comparable<Student>
 	public int payerid;
 	public String lastname, firstname;
 	public double scholarship;
-	public Double tuitionoverride;
+	public Double tuitionoverride;			// Manual override tuition
 	public List<Enrollment> enrollments;	// Courses we're enrolled in
 
 	// Calculated Stuff
-	public double defaulttuition = 0;
+	public double defaulttuition = 0;		// Tuition we calculated
 	public double secProrate;				// Pro-rate multiplier for seconds per week of class
 	public int sec;						// Seconds of week per class
-	public double tuition = 0;				// Tuition we calculated
+	public double priceProrate;				// $ of $-priced class
+//	public double tuition = 0;				// == 
 	public String tuitionDesc;				// Discription of our tuition for account
+	public double getTuition()
+		{ return (tuitionoverride != null ? tuitionoverride : defaulttuition); }
 	
 	public Student(ResultSet rs) throws SQLException
 	{
@@ -35,42 +40,64 @@ public class Student implements Comparable<Student>
 		lastname = rs.getString("lastname");
 		firstname = rs.getString("firstname");
 		scholarship = TuitionData.getMoney(rs, "scholarship");
-		Double Tuition = TuitionData.getMoney(rs, "tuition");
-			tuition = (Tuition == null ? 0 : Tuition);
+//		Double Tuition = TuitionData.getMoney(rs, "tuition");
+//			tuition = (Tuition == null ? 0 : Tuition);
 		tuitionoverride = TuitionData.getMoney(rs, "tuitionoverride");
 		Double Defaulttuition = TuitionData.getMoney(rs, "defaulttuition");
 			defaulttuition = (Defaulttuition == null ? 0 : Defaulttuition);
 		enrollments = new ArrayList(1);
 	}
 	public String toString() { return "Student(" + entityid + ", " + getName() + ")"; }
-	public double getProratedPrice()
+	public String setPrice()
 	{
-		double price = 0;
+		StringBuffer desc = new StringBuffer();
+		NumberFormat mfmt = NumberFormat.getCurrencyInstance();
+		priceProrate = 0;
 		for (Enrollment e : enrollments) {
-			price += e.getPrice() * e.getProrate();
+			double p = e.getPrice();
+			priceProrate += e.getPrice() * e.getProrate();
+			if (p != 0) {
+				desc.append(mfmt.format(p));
+				if (e.getProrate() != 1.0D) desc.append(" * (" + e.getprorateDesc() +
+					") = " + mfmt.format(p * e.getProrate()) + "\n");
+			}
 System.out.println(entityid + "     : price += " + e.getPrice() + " * " + e.getProrate());
 		}
-System.out.println(entityid + ": price = " + price);
-		return price;
+		return desc.toString();
 	}
-	public void setSec()
+	
+	NumberFormat nfmt00 = new DecimalFormat("00");
+	NumberFormat nfmt4 = new DecimalFormat("#.0000");
+	/** Calculates (prorated) number of seconds.  Returns description */
+	public String setSec()
 	{
+		StringBuffer desc = new StringBuffer();
 		sec = 0;
 		double psec = 0;		// Prorated # of seconds
 		for (Enrollment e : enrollments) {
 			int s = e.getSec();
 			sec += s;
 			psec += s * e.getProrate();
+			
+			if (s != 0) {
+				String ssec = (s / 3600) + ":" + nfmt00.format((s + 59 / 60));
+				desc.append(ssec + " * (" + e.getprorateDesc() + ")\n");
+			}
 System.out.println(entityid + "     : sec += " + e.getSec() + " * " + e.getProrate());
 		}
 System.out.println(entityid + ": sec = " + sec + " " + psec);
 		secProrate = (double)psec / (double)sec;
 		if (Double.isNaN(secProrate)) secProrate = 1.0D;	// 0/0 = 1 in this case.
+		
+		String ssec = (sec / 3600) + ":" + nfmt00.format((sec + 59 / 60));
+		desc.append("Total " + ssec);
+		if (secProrate != 1.0D) desc.append(" * " + nfmt4.format(secProrate) + " prorate factor");
+		return desc.toString();
 	}
 	public String getName() { return firstname + " " + lastname; }
 
 	public int compareTo(Student o) {
-		double d = o.tuition - tuition;		// Sort descending
+		double d = o.defaulttuition - defaulttuition;		// Sort descending
 		if (d > 0) return 1;
 		if (d < 0) return -1;
 		return 0;
