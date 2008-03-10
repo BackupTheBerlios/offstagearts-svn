@@ -381,7 +381,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			int termid = schoolModel.getTermID();
-			Integer payerid = (Integer)schoolModel.schoolRm.get("adultid");
+			Integer payerid = (Integer)schoolModel.termregsRm.get("payerid");
 			if (payerid == null) JOptionPane.showMessageDialog(SchoolFrame.this,
 				"You must have a student selected for this report!", "", JOptionPane.OK_OPTION);
 			else AcctStatement.doAccountStatementsAndLabels(str, fapp, termid, payerid, new java.util.Date());

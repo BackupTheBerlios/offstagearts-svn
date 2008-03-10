@@ -72,4 +72,78 @@ alter table termids drop column tuitionclass;
 alter table termids drop column calctuition;
 
 
+
+
+CREATE TABLE payerterms
+(
+termid int not null,
+entityid int not null,
+  rbplan varchar(30), -- Short name of rate/billing plan to use for this customer.  If null, use the default rate/billing plan for the term.  See RbPlanSet
+ PRIMARY KEY (termid, entityid)
+)
+WITHOUT OIDS;
+COMMENT ON COLUMN termregs.rbplan IS 'Short name of rate/billing plan to use for this customer.  If null, use the default rate/billing plan for the term.  See RbPlanSet';
+
+
+ALTER TABLE termregs ADD COLUMN payerid int4;
+COMMENT ON COLUMN termregs.payerid IS 'entityid of person promising to pay this term bill.';
+update termregs set payerid = entityid;
+ALTER TABLE termregs
+   ALTER COLUMN payerid SET NOT NULL;
+
+CREATE TABLE payertermregs
+(
+  termid int4 NOT NULL,
+  entityid int4 NOT NULL,
+  rbplan abstime, -- Tuition payment plan to use for this term.
+  CONSTRAINT payertermregs_pkey PRIMARY KEY (termid, entityid)
+) 
+WITHOUT OIDS;
+COMMENT ON COLUMN payertermregs.rbplan IS 'Tuition payment plan to use for this term.';
+
+ALTER TABLE entities ADD COLUMN parent1id int4;
+ALTER TABLE entities ADD COLUMN parent2id int4;
+
+DROP FUNCTION w_student_create(studentid int4);
+DROP FUNCTION w_payer_create(payerid int4);
+DROP FUNCTION w_student_register(termid int4, studentid int4, xdtregistered date);
+
+CREATE OR REPLACE FUNCTION w_student_register(xtermid int4, studentid int4, xdtregistered date) RETURNS void AS
+$BODY$
+BEGIN
+    BEGIN
+    insert into termregs (groupid, entityid, payerid, dtregistered) values
+	(xtermid, studentid, studentid, xdtregistered);
+    EXCEPTION WHEN unique_violation THEN
+            -- do nothing
+    END;
+END;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
+
+CREATE OR REPLACE FUNCTION w_payer_register(xtermid int4, xpayerid int4) RETURNS void AS
+$BODY$
+BEGIN
+    BEGIN
+    insert into payertermregs (termid, entityid) values (xtermid, xpayerid);
+    EXCEPTION WHEN unique_violation THEN
+            -- do nothing
+    END;
+END;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
+
+
+-- drop table entities_school
+
+
+-- Transfer over billing records
+update termregs
+set rbplan = es1.billingtype
+from entities_school es0, entities_school es1
+where termregs.entityid = es0.entityid
+and es0.adultid = es1.entityid
+
+
+
 commit;

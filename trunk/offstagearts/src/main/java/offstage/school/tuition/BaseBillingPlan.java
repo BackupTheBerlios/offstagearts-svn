@@ -31,7 +31,7 @@ int duedateDN, double amount, String label)
 {
 	con.addTransaction(student, duedateDN, amount,
 		con.getData().termName + ": Scholarship for " + student.getName() +
-		label == null ? "" : " --- " + label);
+		(label == null ? "" : " (" + label + ")"));
 }
 
 protected void addTuition(TuitionCon con, Student student,
@@ -39,7 +39,7 @@ int duedateDN, double amount, String label)
 {
 	con.addTransaction(student, duedateDN, amount,
 		con.getData().termName + ": Tuition for " + student.getName() +
-		label == null ? "" : " --- " + label);
+		(label == null ? "" : " (" + label + ")"));
 }
 
 }

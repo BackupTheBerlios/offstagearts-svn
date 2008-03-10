@@ -45,6 +45,7 @@ public class EntitySelector extends citibob.swing.typed.JTypedPanel {
 // searchResultsTable is the main "sub widget", whose value change events get reported in JTypedPanel
 citibob.app.App app;
 int termid;					// If >=0, only select persons registered for this term.
+boolean inDropDown;			// True if this widget is being used in a dropdown
 
 private boolean autoSelectOnOne = false;		// If true, auto-select if we get only one element in our search results
 
@@ -53,18 +54,27 @@ public EntitySelector() {
 	initComponents();
 }
 
+public void setDropDown(boolean dropDown)
+{ inDropDown = dropDown; }
+
 /** Property change in the "main" widget (search panel) is the result of a user
  action (we know this to be the case, in this case).  Therefore, it must get
  its own DB transaction. */
-public void propertyChange(final java.beans.PropertyChangeEvent evt) {
-//	if (searchResultsTable.isInSelect()) {
-//		// Maybe this code should go back in a superclass of searchResultsTable...
-		
+public void propertyChange(final java.beans.PropertyChangeEvent evt)
+{
 		// We were started by mouse click (or some semblance thereof)
-		app.runGui(EntitySelector.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
-			EntitySelector.super.propertyChange(evt);
-		}});
+		// But don't do a busy cursor if we're within a dropdown
+		if (inDropDown) {
+			app.runApp(new BatchRunnable() {
+			public void run(SqlRunner str) throws Exception {
+				EntitySelector.super.propertyChange(evt);
+			}});
+		} else {
+			app.runGui(EntitySelector.this, new BatchRunnable() {
+			public void run(SqlRunner str) throws Exception {
+				EntitySelector.super.propertyChange(evt);
+			}});
+		}
 //	} else {
 //		// We're just in the middle of a long line of cascading events
 //		EntitySelector.super.propertyChange(evt);		

@@ -37,13 +37,14 @@ throws SQLException
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "groupid", true),	// links to termids; this should really be enum, except that's not needed...
 		new SqlCol(new SqlInteger(false), "entityid", true),
+		new SqlCol(new SqlInteger(true), "payerid"),
 		new SqlCol(new SqlNumeric(9,2, true), "tuition"),
 		new SqlCol(new SqlNumeric(9,2, true), "defaulttuition"),
 		new SqlCol(new SqlNumeric(9,2, false), "scholarship"),
 		new SqlCol(new SqlNumeric(9,2, true), "tuitionoverride"),
 		new SqlCol(new SqlDate(tz, true), "dtsigned"),
 		new SqlCol(new SqlDate(tz, true), "dtregistered"),
-		new SqlCol(new SqlString(true), "rbplan"),
+//		new SqlCol(new SqlString(true), "rbplan"),
 		new SqlCol(new SqlEnum(kmodel, "<No Level Selected>"), "programid")		
 	};
 }

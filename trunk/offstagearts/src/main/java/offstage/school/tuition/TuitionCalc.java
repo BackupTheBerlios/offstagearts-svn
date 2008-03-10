@@ -43,7 +43,7 @@ int termid;
 SqlDate date;
 String payerIdSql;
 TuitionData tdata;
-TuitionCon tcon;
+MyTuitionCon tcon;
 RBPlanSet rbPlanSet;
 FrontApp app;
 DayConv dconv;
@@ -77,6 +77,7 @@ public void recalcTuition(SqlRunner str)
 	tdata = new TuitionData(str, termid, payerIdSql, date.getTimeZone());
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
+		rbPlanSet = (RBPlanSet)app.getSiteCode().loadClass(tdata.rbPlanSetClass).newInstance();
 		if (tdata.calcTuition()) {
 			calcTuition();
 			String sql = writeTuitionSql();
@@ -90,7 +91,6 @@ public void recalcTuition(SqlRunner str)
 void calcTuition()
 throws InstantiationException, IllegalAccessException, ClassNotFoundException
 {
-	rbPlanSet = (RBPlanSet)app.getSiteCode().loadClass(tdata.rbPlanSetClass).newInstance();
 //	rbPlanSet = (RBPlanSet)Class.forName(tdata.rbPlanSetClass).newInstance();
 	tcon = new MyTuitionCon();
 
@@ -105,6 +105,7 @@ throws InstantiationException, IllegalAccessException, ClassNotFoundException
 String writeTuitionSql()
 {
 	StringBuffer sql = new StringBuffer();
+	tcon.sql = sql;
 	
 	// Produce the SQL to store this tuition calculation
 	for (Payer payer : tdata.payers.values()) {
@@ -116,13 +117,13 @@ String writeTuitionSql()
 			sql.append(
 				" update termregs" +
 				" set defaulttuition=" + TuitionData.money.sql(ss.defaulttuition) + "," +
-				" tuition=" + TuitionData.money.sql(tuition) + "," +
+				" tuition=" + TuitionData.money.sql(tuition) +
 				" where groupid = " + SqlInteger.sql(tdata.termid) +
 				" and entityid = " + SqlInteger.sql(ss.entityid) +
 				";\n");
 
-//			// Don't mess with accounts if there's no tuition to be charged
-//			if (tuition == 0) continue;
+			// Don't mess with accounts if there's no tuition to be charged
+			if (tuition == 0) continue;
 
 			rbplan.getBillingPlan().billAccount(tcon, ss);
 		}
@@ -143,7 +144,7 @@ String writeTuitionSql()
 class MyTuitionCon implements TuitionCon
 {
 	
-StringBuffer sql;
+StringBuffer sql;	// Left null; needs to be set from outside = new StringBuffer();
 
 /** Sets the calculated tuition for a particular student */
 public void setCalcTuition(Student student, double amount, String desc)

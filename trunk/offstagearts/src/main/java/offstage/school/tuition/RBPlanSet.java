@@ -17,6 +17,7 @@ protected RBPlan defPlan;
 /** Get list of plans so we can make a chooser */
 public RBPlan[] getPlans()
 { return plans; }
+public RBPlan getDefPlan() { return defPlan; }
 
 /** Get one plan by name --- or the default if null. */
 public RBPlan getPlan(String name)

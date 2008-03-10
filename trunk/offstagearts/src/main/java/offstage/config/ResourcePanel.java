@@ -74,8 +74,8 @@ boolean inUpdate;
 //		tResKeys.setValueColU("ResKey");
 		
 		tAvailVersions.setModelU(rmods.availMod,
-			new String[] {"Version", "Last Modified"},
-			new String[] {"version", "lastmodified"},
+			new String[] {"Version", "Size", "Last Modified"},
+			new String[] {"version", "size", "lastmodified"},
 			null, app.getSwingerMap());
 		tAvailVersions.setRenderEditU("lastmodified", "MM/dd/yyyy");
 
@@ -595,7 +595,11 @@ boolean inUpdate;
 		public void run(SqlRunner str) throws Exception {
 			final RtVers ver = (RtVers)tAvailVersions.getValue();
 			ConnPool pool = app.getPool();
-			ResUtil.editResource(str, pool, ResourcePanel.this, curResKey, ver.version);
+			ResUtil.editResource(str, pool, ResourcePanel.this, curResKey, ver);
+			str.execUpdate(new UpdRunnable() {
+			public void run(SqlRunner str) {
+				refreshVersionPaths(str);
+			}});
 		}});
 	}//GEN-LAST:event_bEditActionPerformed
 
@@ -633,7 +637,11 @@ boolean inUpdate;
 
 			// Import it
 			final RtVers ver = (RtVers)tAvailVersions.getValue();
-			ResUtil.uploadResource(app.getPool(), curResKey, ver.version, file);
+			ResUtil.uploadResource(app.getPool(), curResKey, ver, file);
+			str.execUpdate(new UpdRunnable() {
+			public void run(SqlRunner str) {
+				refreshVersionPaths(str);
+			}});
 		}});
 
 		

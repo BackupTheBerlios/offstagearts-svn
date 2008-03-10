@@ -82,13 +82,14 @@ throws SQLException
 	map.put("phoneids", new PhoneidsSchema());
 	map.put("meetings", new MeetingsSchema());
 	map.put("enrollments", new EnrollmentsSchema(str, change, tz));
-	map.put("entities_school", new EntitiesSchoolSchema(str, change));
+//	map.put("entities_school", new EntitiesSchoolSchema(str, change));
 	map.put("actrans", new ActransSchema(str, change, tz));
 //	map.put("cashpayments", new CashpaymentsSchema(str, change,tz));
 //	map.put("checkpayments", new CheckpaymentsSchema(str, change,tz));
 //	map.put("ccpayments", new CcpaymentsSchema(str, change,tz));
 //	map.put("adjpayments", new CcpaymentsSchema(str, change,tz));
 	map.put("termregs", new TermregsSchema(str, change,tz));
+	map.put("payertermregs", new PayertermregsSchema(str, change,tz));
 	map.put("termenrolls", new TermenrollsSchema(str, change));		// VIEW
 	map.put("duedates", new DuedatesSchema(str, change, tz));
 	map.put("duedateids", new DuedateidsSchema());

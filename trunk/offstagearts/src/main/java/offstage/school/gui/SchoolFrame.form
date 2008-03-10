@@ -171,7 +171,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                  <Component id="vTermID" pref="994" max="32767" attributes="0"/>
+                  <Component id="vTermID" pref="1000" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

@@ -46,14 +46,6 @@ public EntityIDEditableLabel() {}
 App app;
 EntitySelector sel;
 
-//public void setJType(Swinger swing)
-//{
-//	if (swing == null) {
-//		System.out.println("Missing swinger for EntityIDLabel: " + this);
-//	}
-//	super.setJType(swing.getJType(), new EntityIDLabel.EntityIDFormatter(app.getPool()));
-//	super.setNullText("<No Person>");
-//}
 
 // ---------------------------------------------------------------
 // Must override stuff in TextTypedWidget
@@ -81,6 +73,7 @@ public void initRuntime(App app, int termid)
 	setJType(new SqlInteger(), app.getBatchSet());
 	label.setText("<Select a Person>");
 	sel = new EntitySelector();
+	sel.setDropDown(true);
 	sel.initRuntime(app, termid);
 	super.setPopupWidget(sel);		// Makes superclass listen to sel
 }

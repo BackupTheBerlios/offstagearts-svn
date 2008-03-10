@@ -40,12 +40,12 @@ public class SchoolDB {
 
 // -------------------------------------------------------------------------------
 /** Makes a student record for an entity --- error if student already exists. */
-public static String createStudentSql(int studentid)
-{
-	if (studentid < 0) return "";
-	
-	return "select w_student_create(" + SqlInteger.sql(studentid) + ")";
-}
+//public static String createStudentSql(int studentid)
+//{
+//	if (studentid < 0) return "";
+//	
+//	return "select w_student_create(" + SqlInteger.sql(studentid) + ")";
+//}
 /** Makes a student record for an entity --- error if student already exists. */
 public static String registerStudentSql(int termid, int studentid, SqlDate sqlDate)
 {
@@ -56,11 +56,12 @@ public static String registerStudentSql(int termid, int studentid, SqlDate sqlDa
 		SqlInteger.sql(studentid) + ", " +
 		sqlDate.toSql(new java.util.Date()) + ")";	// Register NOW
 }
-public static String createPayerSql(int payerid)
+public static String registerPayerSql(int termid, int payerid)
 {
-	if (payerid < 0) return "";
+	if (termid < 0 || payerid < 0) return "";
 	
-	return "select w_payer_create(" + SqlInteger.sql(payerid) + ")";
+//	return "select w_payer_create(" + SqlInteger.sql(payerid) + ")";
+	return "select w_payer_register(" + SqlInteger.sql(termid) + ", " + SqlInteger.sql(payerid) + ")";
 }
 
 public static String w_delteOrpanMeetingsSql()

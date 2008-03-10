@@ -26,7 +26,7 @@ import offstage.swing.typed.FamilySelectorTable;
  */
 public class SchoolFamilySelectorTable extends FamilySelectorTable
 {
-public void setPrimaryEntityID(SqlRunner str, int primaryEntityID)
+public void setPrimaryEntityID(SqlRunner str, Integer primaryEntityID)
 {
 	executeQuery(str,
 		" select pe.entityid from entities_school pe, entities ee, entities_school pq" +

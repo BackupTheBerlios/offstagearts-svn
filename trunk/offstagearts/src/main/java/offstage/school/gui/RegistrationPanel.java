@@ -29,8 +29,6 @@ import citibob.swing.typed.*;
 import citibob.task.*;
 import javax.swing.JOptionPane;
 import offstage.*;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
 import citibob.sql.pgsql.*;
 import citibob.sql.*;
 import static citibob.swing.typed.TypedWidgetBinder.*;
@@ -44,6 +42,11 @@ import offstage.db.*;
 import offstage.reports.*;
 import citibob.types.*;
 //import citibob.swingers.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.sql.ResultSet;
+import offstage.school.tuition.RBPlan;
+import offstage.school.tuition.RBPlanSet;
 import offstage.school.tuition.TuitionCalc;
 
 /**
@@ -61,7 +64,13 @@ public SqlBufDbModel enrolledDb;
 //public IntKeyedDbModel actransDb;
 
 
-boolean studentDirty;		// Does the student record needs saving?
+RBPlanSet rbPlanSet;
+// ====================================================
+AllStudentDbModel allStudent;
+AllPayerDbModel allPayer;
+AllParentDbModel allParent1;
+AllParentDbModel allParent2;
+AllRecDbModel allRec;
 
 // ====================================================
 MultiDbModel all = new AllDbModel();
@@ -74,20 +83,21 @@ class AllDbModel extends MultiDbModel
 
 		str.execUpdate(new UpdRunnable() {
 		public void run(SqlRunner str) throws Exception {
+			Integer payerid = (Integer)smod.termregsRm.get("payerid");
+			
 			// Keys depend on results of previous queries
-			smod.parentDm.setKey((Integer)smod.schoolRm.get("parentid"));
-			smod.parent2Dm.setKey((Integer)smod.schoolRm.get("parent2id"));
-			smod.payerDm.setKey(smod.studentDm.getAdultID());
+			smod.parent1Dm.setKey((Integer)smod.studentRm.get("parent1id"));
+			smod.parent2Dm.setKey((Integer)smod.studentRm.get("parent2id"));
+			smod.payerDm.setKey(payerid); //(Integer)smod.termregsRm.get("payerid"));//smod.studentDm.getAdultID());
+			smod.payertermregsDm.setKey("entityid", payerid); //smod.termregsRm.get("payerid"));
 
-			smod.parentDm.doSelect(str);
+			smod.payertermregsDm.doSelect(str);
+			smod.parent1Dm.doSelect(str);
 			smod.parent2Dm.doSelect(str);
 //			Integer pid = (Integer)smod.studentRm.get("primaryentityid");
-			Integer payerid = (Integer)smod.schoolRm.get("adultid");
 			familyTable.setPrimaryEntityID(str, payerid);
 			smod.payerDm.doSelect(str);
 			enrolledDb.doSelect(str);
-			studentDirty = false;
-			setIDDirty(false);
 		}});
 	}
 	public void setKey(Object entityid)
@@ -106,18 +116,18 @@ class AllDbModel extends MultiDbModel
 		{ super.doUpdate(str); }
 	public void doUpdate(SqlRunner str)
 	{
-		if (smod.schoolRm.get("parentid") == null || smod.schoolRm.get("adultid") == null) {
+		if (smod.studentRm.get("parent1id") == null || smod.termregsRm.get("payerid") == null) {
 			JOptionPane.showMessageDialog(RegistrationPanel.this,
 				"Cannot save record.  You must have a payer\nand parent in order to save.");
 			return;
 		}
 
 		// Make sure payer has record in school system
-		Integer payerid = (Integer)smod.schoolRm.get("adultid");
-		if (payerid != null) str.execSql(SchoolDB.createPayerSql(payerid));
+		Integer payerid = (Integer)smod.studentRm.get("payerid");
+		if (payerid != null) str.execSql(SchoolDB.registerPayerSql(smod.getTermID(), payerid));
 
 		// Transfer main parent over as primary entity id (family relationships)
-		offstage.db.DB.getPrimaryEntityID(str, (Integer)smod.schoolRm.get("parentid"));
+		offstage.db.DB.getPrimaryEntityID(str, (Integer)smod.studentRm.get("parent1id"));
 		str.execUpdate(new UpdRunnable() {
 		public void run(SqlRunner str) throws Exception {
 			smod.studentRm.set("primaryentityid", str.get("primaryentityid"));
@@ -126,9 +136,9 @@ class AllDbModel extends MultiDbModel
 			superDoUpdate(str);
 
 			// Calculate the tuition
-			int col = smod.schoolRm.findColumn("adultid");
-			Integer Oldadultid = (Integer)smod.schoolRm.getOrigValue(col);
-			Integer Adultid = (Integer)smod.schoolRm.get(col);
+			int col = smod.studentRm.findColumn("parentid");
+			Integer Oldadultid = (Integer)smod.studentRm.getOrigValue(col);
+			Integer Adultid = (Integer)smod.studentRm.get(col);
 
 			transRegister.getDbModel().doUpdate(str);
 			
@@ -171,119 +181,134 @@ public RegistrationPanel()
 	initComponents();
 }
 
+// =====================================================
+class AllStudentDbModel extends MultiDbModel
+{
+	public AllStudentDbModel()
+		{ super(smod.studentDm, smod.termregsDm, enrolledDb); }
+	public void setStudentID(Integer studentid)
+	{
+		smod.studentDm.setKey(studentid);
+		smod.termregsDm.setKey("entityid", studentid);
+	}
+	public Integer getStudentID()
+		{ return (Integer)smod.studentDm.getKey(); }
+	public void setTermID(Integer termid)
+	{
+		smod.termregsDm.setKey("groupid", termid);	
+	}
+	public void resetStudentID(SqlRunner str, Integer studentid)
+	{
+		doUpdate(str);
+		setStudentID(studentid);
+		doSelect(str);
+	}
+	public void resetTermID(SqlRunner str, Integer termid)
+	{
+		doUpdate(str);
+		setTermID(termid);
+		doSelect(str);
+	}
+}
+class AllPayerDbModel extends MultiDbModel
+{
+	public AllPayerDbModel()
+		{super(smod.payerDm, smod.payertermregsDm); }
+//		transRegister.getDbModel()); }
+	public void doSelect(SqlRunner str)
+	{
+		super.doSelect(str);
+		familyTable.setPrimaryEntityID(str, getPayerID());
+		transRegister.refresh(str);
+	}
+	public void setPayerID(Integer payerid)
+	{
+//		Integer oldPayerID = getPayerID();
+//		if (payerid == oldPayerID) return;
+//		if (oldPayerID != null && payerid != null && payerid.equals(oldPayerID)) return;
+		smod.payerDm.setKey(payerid);
+		smod.payertermregsDm.setKey("entityid", payerid);
+		transRegister.getDbModel().setKey("entityid", payerid);
+		familyTable.setPrimaryEntityID(fapp.getBatchSet(), payerid);
+	}
+	public Integer getPayerID()
+		{ return (Integer)smod.payerDm.getKey(); }
+	public void setTermID(Integer termid)
+	{
+		smod.payertermregsDm.setKey("termid", termid);	
+	}
+	public void resetPayerID(SqlRunner str, Integer payerid)
+	{
+		doUpdate(str);
+		setPayerID(payerid);
+		doSelect(str);
+	}
+	public void resetTermID(SqlRunner str, Integer termid)
+	{
+		doUpdate(str);
+		setTermID(termid);
+		doSelect(str);
+	}
+}
+class AllParentDbModel extends MultiDbModel
+{
+	public AllParentDbModel(DbModel model)
+		{ super(model); }
+	public void setParentID(Integer parentid)
+	{
+		getModel(0).setKey(parentid);
+	}
+	public void resetParentID(SqlRunner str, Integer parentid)
+	{
+		doUpdate(str);
+		setParentID(parentid);
+		doSelect(str);		
+	}
+	
+}
+class AllRecDbModel extends MultiDbModel
+{
+	public AllRecDbModel()
+		{ super(allStudent, allPayer, allParent1, allParent2); }
+	public void setStudentID(Integer studentid)
+	{
+		allStudent.setStudentID(studentid);
+		// The rest will wait for doSelect() below
+	}
+	public void setTermID(Integer termid)
+	{
+		allStudent.setTermID(termid);
+		allPayer.setTermID(termid);		
+	}
+	public void resetTermID(SqlRunner str, Integer termid)
+	{
+		allStudent.resetTermID(str, termid);
+		allPayer.resetTermID(str, termid);
+	}
+	public void doSelect(SqlRunner str)
+	{
+		refreshRBPlanSet(str);
+		
+		allStudent.doSelect(str);
+		str.execUpdate(new UpdRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			allPayer.setPayerID(smod.getPayerID());
+			allParent1.setParentID(smod.getParent1ID());
+			allParent2.setParentID(smod.getParent2ID());
+			
+			allPayer.doSelect(str);
+			allParent1.doSelect(str);
+			allParent2.doSelect(str);
+		}});
+	}
+}
+// =====================================================
+
 public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 //throws SQLException
 {
 	this.fapp = xfapp;
 	this.smod = xschoolModel;
-	
-
-	all.add(smod.studentDm);
-	all.add(smod.payerDm);
-//	all.add(householdDm);
-	all.add(smod.parentDm);
-	all.add(smod.parent2Dm);
-	all.add(smod.termregsDm);
-	SwingerMap smap = fapp.getSwingerMap();
-	
-	// ================================================================
-	// Student
-	// Display student info from persons table
-	smod.termregsRm = new SchemaBufRowModel(smod.termregsDm.getSchemaBuf());
-	TypedWidgetBinder.bindRecursive(this.TermRegPanel, smod.termregsRm, smap);
-		
-	smod.studentRm = new SchemaBufRowModel(smod.studentDm.personDb.getSchemaBuf());
-	new TypedWidgetBinder().bind(lEntityID, smod.studentRm, smap);
-//	vHouseholdID.initRuntime(fapp);
-//		new TypedWidgetBinder().bind(vHouseholdID, smod.studentRm, smap);
-//	vStudentID.initRuntime(fapp);
-	vStudentID.setJType(fapp.getBatchSet());
-		new TypedWidgetBinder().bind(vStudentID, smod.studentRm, smap);
-	KeyedModel gmodel = new KeyedModel();
-		gmodel.addItem(null, "<Unknown>");
-		gmodel.addItem("M", "Male");
-		gmodel.addItem("F", "Female");
-		gender.setKeyedModel(gmodel);
-		new TypedWidgetBinder().bind(gender, smod.studentRm, "gender", BT_READWRITE);
-	familyTable.initRuntime(fapp);
-//		new TypedWidgetBinder().bind(familyTable, smod.studentRm, "primaryentityid", BT_READ);
-	TypedWidgetBinder.bindRecursive(StudentTab, smod.studentRm, smap);
-
-	
-	
-	
-	// Initialize dropdowns when student changes.
-	smod.studentRm.addColListener("entityid", new RowModel.ColAdapter() {
-//		// Do nothing when user just changes values; it must be saved first.
-//		public void valueChanged(int col) {}
-		// Do something when user moves to a different student
-		public void curRowChanged(final int col) {
-			setIDDirty(true);
-//			fapp.runApp(new BatchRunnable() {
-//			public void run(SqlRunner str) throws Exception {
-			SqlRunner str = fapp.getBatchSet();
-				Integer ID = (Integer)smod.studentRm.get(col);
-				if (ID == null) return;
-				String lastname = (String)smod.studentRm.get(smod.studentRm.findColumn("lastname"));
-				vPayerID.setSearch(str, lastname);
-//				vHouseholdID.setSearch(st, lastname);
-				vParentID.setSearch(str, lastname);
-				vParent2ID.setSearch(str, lastname);
-//			}});
-		}
-	});
-
-	// Change person when user clicks on family...
-	familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
-	public void propertyChange(final PropertyChangeEvent evt) {
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
-			Integer EntityID = (Integer)evt.getNewValue();
-			if (EntityID == null) return;
-			changeStudent(str, EntityID);
-		}});
-	}});
-
-	
-	// Display student info from entities_school table
-	smod.schoolRm = new SchemaBufRowModel(smod.studentDm.schoolDb.getSchemaBuf());
-	vParentID.initRuntime(fapp);
-		new TypedWidgetBinder().bind(vParentID, smod.schoolRm, smap);
-	vParent2ID.initRuntime(fapp);
-		new TypedWidgetBinder().bind(vParent2ID, smod.schoolRm, smap);
-	vPayerID.initRuntime(fapp);
-		new TypedWidgetBinder().bind(vPayerID, smod.schoolRm, smap);
-	TypedWidgetBinder.bindRecursive(StudentTab, smod.schoolRm, smap);
-
-	// ================================================================
-	// Payer
-	final SchemaBufRowModel payerRm = new SchemaBufRowModel(smod.payerDm.personDb.getSchemaBuf());
-	TypedWidgetBinder.bindRecursive(PayerPanel, payerRm, smap);
-	payerPhonePanel.initRuntime(str, smod.payerDm.phoneDb.getSchemaBuf(),
-			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, true, smap);
-	payerCCInfo.initRuntime(fapp.getKeyRing());
-	RowModel.ColListener payerCCListener = new RowModel.ColAdapter() {
-		public void valueChanged(final int col) {
-			String xzip = (String)payerRm.get("zip");
-				if (xzip != null && xzip.length() > 5) xzip = xzip.substring(0,5);
-			String xname = (String)payerRm.get("firstname") + " " + (String)payerRm.get("lastname");
-				xname = xname.toUpperCase();
-			payerCCInfo.setDefaults(xname, xzip);
-		}};
-	payerRm.addColListener("firstname", payerCCListener);
-	payerRm.addColListener("lastname", payerCCListener);
-	payerRm.addColListener("zip", payerCCListener);
-
-	// Display payer info from entities_school table
-	SchemaBufRowModel pschoolRm = new SchemaBufRowModel(smod.payerDm.schoolDb.getSchemaBuf());
-//	gmodel = new KeyedModel();
-//		//gmodel.addItem(null, "<Unknown>");
-//		gmodel.addItem("y", "Yearly");
-//		gmodel.addItem("q", "Quarterly");
-	billingtype.setKeyedModel(EntitiesSchoolSchema.billingtypeModel);
-	new TypedWidgetBinder().bind(billingtype, pschoolRm, "billingtype", BT_READWRITE);
-//	TypedWidgetBinder.bindRecursive(PayerPanel, pschoolRm, smap);
 
 	// ================================================================
 	// Account Transactions
@@ -301,49 +326,6 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 		return (now.getTime() - created.getTime() < 86400 * 1000L);
 	}};
 	transRegister.initRuntime(fapp, actransSb, ActransSchema.AC_SCHOOL, false);
-//	actransDb = new IntKeyedDbModel(actransSb, "entityid", new IntKeyedDbModel.Params(true));
-//	actransDb.setWhereClause(
-//		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
-//		" and now()-date < '450 days'");
-//	actransDb.setOrderClause("date desc, actransid desc");
-//	trans.setModelU(actransDb.getSchemaBuf(),
-//		new String[] {"Type", "Date", "Amount", "Description"},
-//		new String[] {"tableoid", "date", "amount", "description"},
-//		new String[] {null, null, null, "description"},
-//		null,
-////		new boolean[] {false, false, false, false},
-//		fapp.getSwingerMap());
-
-	
-	// Bind our account actions
-	ActionTaskBinder tbinder = new ActionTaskBinder(
-		this, fapp.getGuiRunner(), transRegister.getTaskMap());
-//		new AccountTaskMap(fapp, this) {
-//			public void refresh(SqlRunner str) { refreshAccount(str); }
-//			public int getEntityID() { return (Integer)entityid.getValue(); }
-//			public int getAcTypeID() { return ActransSchema.AC_SCHOOL; }
-//	});
-	tbinder.bind(this.bCash, "cash");
-	tbinder.bind(this.bCheck, "check");
-	tbinder.bind(this.bCc, "cc");
-	tbinder.bind(this.bOtherTrans, "other");
-
-	
-	// Refresh account when payer changes
-	smod.schoolRm.addColListener("adultid", new RowModel.ColListener() {
-		// Do nothing when user just changes values; it must be saved first.
-		public void valueChanged(int col) {}
-		// Do something when user saves and re-loads
-		public void curRowChanged(final int col) {
-//			fapp.runApp(new BatchRunnable() {
-//			public void run(SqlRunner str) throws Exception {
-
-				Integer ID = (Integer)smod.schoolRm.get(col);
-				if (ID == null) return;
-				changeAccount(fapp.getBatchSet(), ID);
-//			}});
-		}
-	});
 
 	// =====================================================================
 	// Enrollments
@@ -351,24 +333,28 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 		new String[] {"courseids", "enrollments"},
 		null,
 		new String[] {"enrollments"}) {
-//	new SqlSchema[] {fapp.getSchema("courseids"), fapp.getSchema("enrollments")},
-//	null, fapp.getSqlTypeSet(),
-//	fapp.getSchema("enrollments"), null, fapp.getDbChange()) {
 	public String getSelectSql(boolean proto) {
 		return
 			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
 			" from enrollments e, courseids c" +
 			" where e.courseid = c.courseid" +
 			" and c.termid = " + SqlInteger.sql(smod.getTermID()) +
-			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql((Integer)smod.studentDm.getKey())) +
+			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(smod.getStudentID())) +
 			" order by dayofweek, tstart, name";
 	}};
+
+	// =============================================
+	// Payer Group
+	familyTable.initRuntime(fapp);
+
+	// =====================================================================
+	// Enrollments
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) {
 		RSSchema schema = (RSSchema)enrolledDb.getSchemaBuf().getSchema();
 //		schema.setJTypes(fapp.getSchema("courseids"));
 //		schema.setJTypes(fapp.getSchema("enrollments"));
-		all.add(enrolledDb);
+		allStudent.add(enrolledDb);
 		enrollments.setModelU(enrolledDb.getTableModel(),
 			new String[] {"Course", "Day", "Start", "Finish",
 				"Role", "Custom Start", "Custom End (+1)"},
@@ -377,54 +363,140 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 			new boolean[] {false, false, false, false,
 				true, true, true, false}, fapp.getSwingerMap());
 		enrollments.setRenderEditU("dayofweek", new DayOfWeekKeyedModel());
-//		enrollments.setModelU(enrolledDb.getTableModel(),
-//			new String[] {"courseid",
-//				"Role", "Custom Start", "Custom End (+1)", "Enrolled"},
-//			new String[] {"courseid",
-//				"courserole", "dstart", "dend", "dtenrolled"},
-//			null, fapp.getSwingerMap());
+	}});
+	
+	// ==============================================================
+	// Set up the basic model
+	allStudent = new AllStudentDbModel();
+	allPayer = new AllPayerDbModel();
+	allParent1 = new AllParentDbModel(smod.parent1Dm);
+	allParent2 = new AllParentDbModel(smod.parent2Dm);
+	allRec = new AllRecDbModel();
+	
+	SwingerMap smap = fapp.getSwingerMap();
+
+	// ===============================================================
+	// Link events when an entityid changes
+	smod.termregsRm.addColListener("payerid", new RowModel.ColAdapter() {
+	public void valueChanged(int col) {
+		if (allStudent.inSelect()) return;	// Only respond to widget changes
+		Integer payerid = smod.getPayerID();
+		allPayer.resetPayerID(fapp.getBatchSet(), payerid);
+	}});
+	smod.studentRm.addColListener("parent1id", new RowModel.ColAdapter() {
+	public void valueChanged(int col) {
+		if (allStudent.inSelect()) return;	// Only respond to widget changes
+		Integer parent1id = smod.getParent1ID();
+		allParent1.resetParentID(fapp.getBatchSet(), parent1id);
+	}});
+	smod.studentRm.addColListener("parent2id", new RowModel.ColAdapter() {
+	public void valueChanged(int col) {
+		if (allStudent.inSelect()) return;	// Only respond to widget changes
+		Integer parent2id = smod.getParent2ID();
+		allParent2.resetParentID(fapp.getBatchSet(), parent2id);
 	}});
 
-//	enrolledDb.setOrderClause("courseids_dayofweek, courseids_tstart, courseids_name");
-//	enrollments.setModelU(enrolledDb.getTableModel(),
-//		new String[] {"Course", "Day", "Start", "Finish",
-//			"Role", "Custom Start", "Custom End (+1)", "Enrolled"},
-//		new String[] {"courseids_name", "courseids_dayofweek", "courseids_tstart", "courseids_tnext",
-//			"enrollments_courserole", "enrollments_dstart", "enrollments_dend", "enrollments_dtenrolled"},
-//		new boolean[] {false, false, false, false,
-//			true, true, true, false}, fapp.getSwingerMap());
-//	enrollments.setRenderEditU("courseids_dayofweek", new DayOfWeekKeyedModel());
-//		new TypedWidgetRenderEdit(new JKeyedComboBox(new DayOfWeekKeyedModel())));
-
-//		new KeyedRenderEdit(new DayOfWeekKeyedModel()));
+		
 	
 	// ================================================================
-	// Household
-//	SchemaBufRowModel householdRm = new SchemaBufRowModel(householdDm.personDb.getSchemaBuf());
-//	TypedWidgetBinder.bindRecursive(HouseholdPanel, householdRm, smap);
-//	householdPhonePanel.initRuntime(st, householdDm.phoneDb.getSchemaBuf(),
-//			new String[] {"Type", "Number"},
-//			new String[] {"groupid", "phone"}, smap);
+	// Student
+	// Display student info from persons table
+	smod.termregsRm = new SchemaBufRowModel(smod.termregsDm.getSchemaBuf());
+	smod.payertermregsRm = new SchemaBufRowModel(smod.payertermregsDm.getSchemaBuf());
+	TypedWidgetBinder.bindRecursive(this.TermRegPanel, smod.termregsRm, smap);
+	TypedWidgetBinder.bindRecursive(this.TermRegPanel, smod.payertermregsRm, smap);
+
+	smod.studentRm = new SchemaBufRowModel(smod.studentDm.personDb.getSchemaBuf());
+	new TypedWidgetBinder().bind(lEntityID, smod.studentRm, smap);
+//	vHouseholdID.initRuntime(fapp);
+//		new TypedWidgetBinder().bind(vHouseholdID, smod.studentRm, smap);
+//	vStudentID.initRuntime(fapp);
+	vStudentID.setJType(fapp.getBatchSet());
+		new TypedWidgetBinder().bind(vStudentID, smod.studentRm, smap);
+	KeyedModel gmodel = new KeyedModel();
+		gmodel.addItem(null, "<Unknown>");
+		gmodel.addItem("M", "Male");
+		gmodel.addItem("F", "Female");
+		gender.setKeyedModel(gmodel);
+		new TypedWidgetBinder().bind(gender, smod.studentRm, "gender", BT_READWRITE);
+//		new TypedWidgetBinder().bind(familyTable, smod.studentRm, "primaryentityid", BT_READ);
+	TypedWidgetBinder.bindRecursive(StudentTab, smod.studentRm, smap);
+
+	// Initialize dropdowns when student changes.
+	smod.studentRm.addColListener("entityid", new RowModel.ColAdapter() {
+		// Do nothing when user just changes values; it must be saved first.
+		// public void valueChanged(int col) {}
+		// Do something when user moves to a different student
+		public void curRowChanged(final int col) {
+			SqlRunner str = fapp.getBatchSet();
+				Integer ID = (Integer)smod.studentRm.get(col);
+				if (ID == null) return;
+				String lastname = (String)smod.studentRm.get(smod.studentRm.findColumn("lastname"));
+				vPayerID.setSearch(str, lastname);
+				vParent1ID.setSearch(str, lastname);
+				vParent2ID.setSearch(str, lastname);
+//			}});
+		}
+	});
+
+	// Change person when user clicks on family...
+	familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
+	public void propertyChange(final PropertyChangeEvent evt) {
+		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
+		public void run(SqlRunner str) throws Exception {
+			Integer EntityID = (Integer)evt.getNewValue();
+			if (EntityID == null) return;
+			changeStudent(str, EntityID);
+		}});
+	}});
+
+	// Display names of related entities
+	vParent1ID.initRuntime(fapp);
+		new TypedWidgetBinder().bind(vParent1ID, smod.studentRm, smap);
+	vParent2ID.initRuntime(fapp);
+		new TypedWidgetBinder().bind(vParent2ID, smod.studentRm, smap);
+	vPayerID.initRuntime(fapp);
+		new TypedWidgetBinder().bind(vPayerID, smod.termregsRm, smap);
+
+	// ================================================================
+	// Payer
+	TypedWidgetBinder.bindRecursive(PayerPanel, smod.payerRm, smap);
+	payerPhonePanel.initRuntime(str, smod.payerDm.phoneDb.getSchemaBuf(),
+			new String[] {"Type", "Number"},
+			new String[] {"groupid", "phone"}, true, smap);
+	payerCCInfo.initRuntime(fapp.getKeyRing());
+	RowModel.ColListener payerCCListener = new RowModel.ColAdapter() {
+		public void valueChanged(final int col) {
+			String xzip = (String)smod.payerRm.get("zip");
+				if (xzip != null && xzip.length() > 5) xzip = xzip.substring(0,5);
+			String xname = (String)smod.payerRm.get("firstname") + " " + (String)smod.payerRm.get("lastname");
+				xname = xname.toUpperCase();
+			payerCCInfo.setDefaults(xname, xzip);
+		}};
+	smod.payerRm.addColListener("firstname", payerCCListener);
+	smod.payerRm.addColListener("lastname", payerCCListener);
+	smod.payerRm.addColListener("zip", payerCCListener);
+
+	
+	// Bind our account actions
+	ActionTaskBinder tbinder = new ActionTaskBinder(
+		this, fapp.getGuiRunner(), transRegister.getTaskMap());
+	tbinder.bind(this.bCash, "cash");
+	tbinder.bind(this.bCheck, "check");
+	tbinder.bind(this.bCc, "cc");
+	tbinder.bind(this.bOtherTrans, "other");
 	
 	// ===============================================================
 	// Parents
-	SchemaBufRowModel parentRm = new SchemaBufRowModel(smod.parentDm.personDb.getSchemaBuf());
-	TypedWidgetBinder.bindRecursive(ParentPanel, parentRm, smap);
-	ParentPhonePanel.initRuntime(str, smod.parentDm.phoneDb.getSchemaBuf(),
+	TypedWidgetBinder.bindRecursive(ParentPanel, smod.parent1Rm, smap);
+	ParentPhonePanel.initRuntime(str, smod.parent1Dm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, true, smap);
-	SchemaBufRowModel parent2Rm = new SchemaBufRowModel(smod.parent2Dm.personDb.getSchemaBuf());
-	TypedWidgetBinder.bindRecursive(Parent2Panel, parent2Rm, smap);
+//	SchemaBufRowModel parent2Rm = new SchemaBufRowModel(smod.parent2Dm.personDb.getSchemaBuf());
+	TypedWidgetBinder.bindRecursive(Parent2Panel, smod.parent2Rm, smap);
 	Parent2PhonePanel.initRuntime(str, smod.parent2Dm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, true, smap);
-	RowModel.ColListener idDirtyListener = new RowModel.ColAdapter() {
-		public void valueChanged(final int col) {
-			setIDDirty(true);
-		}};
-	smod.schoolRm.addColListener("parentid", idDirtyListener);
-	smod.schoolRm.addColListener("parent2id", idDirtyListener);
-	smod.schoolRm.addColListener("adultid", idDirtyListener);
 	
 	// ================================================================
 	// Global Stuff
@@ -437,61 +509,82 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 		SqlRunner str = fapp.getBatchSet();
 			Integer EntityID = (Integer)searchBox.getValue();
 			if (EntityID == null) return;
-			int entityid = EntityID;
-			changeStudent(str, entityid);
-//		}});
+			changeStudent(str, EntityID);
 	}});
 
 	
 
 	smod.addListener(new SchoolModel.Adapter() {
     public void termIDChanged(int oldTermID, int termID)  {
-		smod.termregsDm.setKey("groupid", termID);
+		allRec.setTermID(termID);
 
 		SqlRunner str = fapp.getBatchSet();
 		Integer eid = (Integer)smod.studentRm.get("entityid");
-		if (eid == null) return;
-		
-		// Ensure a registration record for this term
-		str.execSql(SchoolDB.registerStudentSql(termID, eid, fapp.sqlDate));
+		if (eid != null) {
+			// Ensure a registration record for this term
+			str.execSql(SchoolDB.registerStudentSql(termID, eid, fapp.sqlDate));
 
-		smod.termregsDm.doUpdate(str);
-		
-//		all.setKey(all.getKey());
-		all.doSelect(str);
+			allRec.doUpdate(str);
+			allRec.doSelect(str);
+		}
 	}});
-	smod.setTermID(smod.getTermID());
+//	smod.fireTermIDChanged(smod.getTermID(), smod.getTermID());
+//	smod.setTermID(smod.getTermID());
+	
+	fapp.getDbChange().addListener("termids", new DbChangeModel.Listener() {
+    public void tableWillChange(SqlRunner str, String table) {
+		smod.oneTermDm.doSelect(str);
+		refreshRBPlanSet(str);
+	}});
+}
+
+void refreshRBPlanSet(SqlRunner str)
+{
+	int termid = smod.getTermID();
+	String sql = "select rbplansetclass from termids where groupid = " + termid;
+	
+	// Make sure we have our Tuition Plans in place
+	str.execSql(sql, new RsRunnable() {
+	public void run(SqlRunner str, ResultSet rs) throws Exception {
+		rs.next();
+		String className = rs.getString("rbplansetclass");
+		boolean good = true;
+
+		// Set up rbPlanSet
+//		String className = (String)smod.oneTermRm.get("rbplansetclass");
+		if (className != null) {
+			Class klass = fapp.getSiteCode().loadClass(className);
+			if (rbPlanSet == null || rbPlanSet.getClass() != klass) {
+				rbPlanSet = (RBPlanSet)klass.newInstance();
+			}
+
+			// Make a dropdown for billing types
+			RBPlan[] plans = rbPlanSet.getPlans();
+			KeyedModel kmodel = new KeyedModel();
+			kmodel.addItem(null, "Default (" + rbPlanSet.getDefPlan().getName() + ")");
+			for (int i=0; i<plans.length; ++i) {
+				kmodel.addItem(plans[i].getKey(), plans[i].getName());
+			}
+//				KeyedModel kmodel = KeyedModel.sameKeys(names);
+			rbPlans.setKeyedModel(kmodel);
+			rbPlans.setEnabled(true);
+		} else {
+			// No tuition plan for this term.
+			// OffstageArts will not bill!
+			rbPlanSet = null;
+			rbPlans.setKeyedModel(KeyedModel.sameKeys(new Object[0]));
+			rbPlans.setEnabled(false);
+		}
+
+	}});
 }
 
 	
-//	// Set up terms selector
-////setKeyedModel selects the term --- but the KeyedModel is not getting filled in till afterwards
-//	final DbKeyedModel tkmodel = new DbKeyedModel(str, fapp.getDbChange(), "termids",
-//		"select groupid, name from termids where iscurrent order by firstdate desc");
-//	str.execUpdate(new UpdRunnable() {
-//	public void run(SqlRunner str) throws Exception {
-//		vTermID.setKeyedModel(tkmodel);
-//		vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
-//		public void propertyChange(PropertyChangeEvent evt) {
-//			fapp.runApp(new BatchRunnable() {
-//			public void run(SqlRunner str) throws Exception {
-//				termChanged(str);
-//			}});
-//		}});
 
-//	//	vStudentID.setValue((Integer)12633);
-//		changeStudent(str, 12633);
-//	//	all.setKey(new Integer(12633));
-//		all.doSelect(str);
-
-//	}});
-	
-//}
-
-public void changeStudent(SqlRunner str, int entityid)// throws SQLException
+public void changeStudent(SqlRunner str, Integer entityid)// throws SQLException
 {
 	// See if old student needs saving...
-	if (studentDirty || all.valueChanged()) {
+	if (all.valueChanged()) {
 		String[] options = new String[] {"Save", "Don't Save", "Cancel"};
 		JOptionPane pane = new JOptionPane(
 			"You have not yet saved the current record.\n" +
@@ -512,80 +605,14 @@ public void changeStudent(SqlRunner str, int entityid)// throws SQLException
 		}
 	}
 	
-//	if (!SchoolDB.isInSchool(st, entityid)) {
-//		if (JOptionPane.showConfirmDialog(SchoolPanel.this,
-//			"The person or payer you selected is not yet\n" +
-//			"in the school system.\n" +
-//			"Should that person be added now?",
-//			"Person Not in School", JOptionPane.YES_NO_OPTION)
-//			!= JOptionPane.YES_OPTION) return;
-//		SchoolDB.w_student_create(st, entityid);
-//	}
-	
 	String sql =
-		// Make sure person has record in school system
-		SchoolDB.createStudentSql(entityid) + ";\n" +
 		// Ensure a registration record for this term
 		SchoolDB.registerStudentSql(smod.getTermID(), entityid, fapp.sqlDate) + "\n;";
 	str.execSql(sql);
 
 	// Go to that record
-//	vHouseholdID.setEntityID(entityid);	// So it knows when we try to emancipate.
-	all.setKey(entityid);
-	all.doSelect(str);
-}
-
-public void changeAccount(SqlRunner str, int payerid) // throws SQLException
-{
-	transRegister.setEntityID(str, payerid);
-}
-public void refreshAccount(SqlRunner str) // throws SQLException
-{
-	transRegister.refresh(str);
-}
-//{
-//	actransDb.doSelect(str);
-//	
-//	// Set up account balance
-//	acbal.setJType(Double.class, java.text.NumberFormat.getCurrencyInstance());
-//	int entityid = actransDb.getIntKey();
-//	String sql =
-//		AccountsDB.w_tmp_acct_balance_sql("select " + entityid + " as id", ActransSchema.AC_SCHOOL) +
-//		" select bal from _bal;\n" +
-//		" drop table _bal;";
-//	str.execSql(sql, new RsRunnable() {
-//	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
-//		rs.next();
-//		acbal.setValue(rs.getDouble(1));
-//	}});
-//	
-////	
-////	
-////	DB.r_acct_balance("bal", str, , ,
-////	new UpdRunnable() { public void run(SqlRunner str) throws Exception {
-////		acbal.setValue(str.get("bal"));
-////	}});
-//}
-
-//void termChanged(SqlRunner str) throws SQLException
-////public void setTermID(SqlRunner str, Integer Termid)
-//{
-//	Integer eid = (Integer)smod.studentRm.get("entityid");
-//	
-//	// Ensure a registration record for this term
-//	str.execSql(SchoolDB.registerStudentSql(schoolModel.getTermID(), eid, fapp.sqlDate));
-//	
-//	smod.termregsDm.doUpdate(str);
-//}
-
-void setIDDirty(boolean dirty)
-{
-	CardLayout cl = (CardLayout)(cardPanel.getLayout());
-	if (dirty) {
-	    cl.show(cardPanel, "blankCard");
-	} else {		
-	    cl.show(cardPanel, "peopleCard");
-	}
+	allRec.setStudentID(entityid);
+	allRec.doSelect(str);
 }
 
 	/** This method is called from within the constructor to
@@ -594,7 +621,8 @@ void setIDDirty(boolean dirty)
 	 * always regenerated by the Form Editor.
 	 */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel20 = new javax.swing.JPanel();
@@ -623,7 +651,6 @@ void setIDDirty(boolean dirty)
         payerPhonePanel = new offstage.gui.GroupPanel();
         jPanel5 = new javax.swing.JPanel();
         payerCCInfo = new offstage.swing.typed.CryptCCInfo();
-        billingtype = new citibob.swing.typed.JKeyedComboBox();
         jLabel16 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
@@ -781,7 +808,7 @@ void setIDDirty(boolean dirty)
         bNewStudent = new javax.swing.JButton();
         bNewPayer = new javax.swing.JButton();
         jLabel20 = new javax.swing.JLabel();
-        vParentID = new offstage.swing.typed.EntityIDEditableLabel();
+        vParent1ID = new offstage.swing.typed.EntityIDEditableLabel();
         bNewParent = new javax.swing.JButton();
         jLabel21 = new javax.swing.JLabel();
         vParent2ID = new offstage.swing.typed.EntityIDEditableLabel();
@@ -799,6 +826,8 @@ void setIDDirty(boolean dirty)
         tuitionOverride = new citibob.swing.typed.JTypedTextField();
         scholarship = new citibob.swing.typed.JTypedTextField();
         dtSigned = new citibob.swing.typed.JTypedDateChooser();
+        jLabel18 = new javax.swing.JLabel();
+        rbPlans = new citibob.swing.typed.JKeyedComboBox();
         searchBox = new offstage.swing.typed.EntitySelector();
 
         setBackground(new java.awt.Color(102, 255, 51));
@@ -817,13 +846,15 @@ void setIDDirty(boolean dirty)
         jPanel12.setLayout(new java.awt.BorderLayout());
 
         enrollments.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+            new Object [][]
+            {
                 {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null}
             },
-            new String [] {
+            new String []
+            {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
@@ -834,16 +865,20 @@ void setIDDirty(boolean dirty)
         jPanel12.add(GroupScrollPanel, java.awt.BorderLayout.CENTER);
 
         bAddEnrollment.setText("Add Enrollment");
-        bAddEnrollment.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bAddEnrollment.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bAddEnrollmentActionPerformed(evt);
             }
         });
         jPanel15.add(bAddEnrollment);
 
         bRemoveEnrollment.setText("Remove Enrollment");
-        bRemoveEnrollment.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bRemoveEnrollment.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bRemoveEnrollmentActionPerformed(evt);
             }
         });
@@ -965,19 +1000,6 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
         jPanel5.add(payerCCInfo, gridBagConstraints);
 
-        billingtype.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        billingtype.setColName("programid");
-        billingtype.setPreferredSize(new java.awt.Dimension(120, 24));
-        billingtype.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                billingtypeActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        jPanel5.add(billingtype, gridBagConstraints);
-
         jLabel16.setText("Billing Type:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1027,7 +1049,7 @@ void setIDDirty(boolean dirty)
             jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel6Layout.createSequentialGroup()
                 .add(jPanel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addContainerGap(117, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Misc.", jPanel6);
@@ -1125,8 +1147,10 @@ void setIDDirty(boolean dirty)
         bLaunchEmail.setText("*");
         bLaunchEmail.setMargin(new java.awt.Insets(1, 1, 1, 1));
         bLaunchEmail.setPreferredSize(new java.awt.Dimension(14, 19));
-        bLaunchEmail.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bLaunchEmail.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bLaunchEmailActionPerformed(evt);
             }
         });
@@ -1305,7 +1329,7 @@ void setIDDirty(boolean dirty)
             jPanel21Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel21Layout.createSequentialGroup()
                 .add(jPanel22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(94, Short.MAX_VALUE))
+                .addContainerGap(153, Short.MAX_VALUE))
         );
 
         jTabbedPane4.addTab("Misc.", jPanel21);
@@ -1545,7 +1569,7 @@ void setIDDirty(boolean dirty)
             jPanel25Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel25Layout.createSequentialGroup()
                 .add(jPanel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(94, Short.MAX_VALUE))
+                .addContainerGap(153, Short.MAX_VALUE))
         );
 
         jTabbedPane5.addTab("Misc.", jPanel25);
@@ -1798,8 +1822,10 @@ void setIDDirty(boolean dirty)
 
         bCash.setText("Cash");
         bCash.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        bCash.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bCash.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bCashActionPerformed(evt);
             }
         });
@@ -1807,8 +1833,10 @@ void setIDDirty(boolean dirty)
 
         bCheck.setText("Check");
         bCheck.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        bCheck.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bCheck.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bCheckActionPerformed(evt);
             }
         });
@@ -1816,8 +1844,10 @@ void setIDDirty(boolean dirty)
 
         bCc.setText("Credit");
         bCc.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        bCc.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bCc.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bCcActionPerformed(evt);
             }
         });
@@ -1825,8 +1855,10 @@ void setIDDirty(boolean dirty)
 
         bOtherTrans.setText("Other");
         bOtherTrans.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        bOtherTrans.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bOtherTrans.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bOtherTransActionPerformed(evt);
             }
         });
@@ -1849,13 +1881,15 @@ void setIDDirty(boolean dirty)
         StudentAccounts.add(AccountTab, gridBagConstraints);
 
         familyTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+            new Object [][]
+            {
                 {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null}
             },
-            new String [] {
+            new String []
+            {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
@@ -1895,8 +1929,10 @@ void setIDDirty(boolean dirty)
         ObsoleteStuff.add(jLabel5);
 
         bEmancipate.setText("Emancipate");
-        bEmancipate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bEmancipate.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bEmancipateActionPerformed(evt);
             }
         });
@@ -1904,8 +1940,10 @@ void setIDDirty(boolean dirty)
 
         bNewHousehold.setText("New");
         bNewHousehold.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bNewHousehold.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bNewHousehold.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bNewHouseholdActionPerformed(evt);
             }
         });
@@ -2050,7 +2088,7 @@ void setIDDirty(boolean dirty)
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(2491, Short.MAX_VALUE))
+                .addContainerGap(2496, Short.MAX_VALUE))
         );
 
         jTabbedPane3.addTab("Misc.", jPanel10);
@@ -2190,7 +2228,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
         PeopleHeader1.add(jLabel4, gridBagConstraints);
 
-        vPayerID.setColName("adultid");
+        vPayerID.setColName("payerid");
         vPayerID.setPreferredSize(new java.awt.Dimension(200, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -2203,16 +2241,20 @@ void setIDDirty(boolean dirty)
         PeopleHeader1.add(vPayerID, gridBagConstraints);
 
         bSave.setText("Save");
-        bSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bSave.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bSaveActionPerformed(evt);
             }
         });
         jToolBar1.add(bSave);
 
         bUndo.setText("Undo");
-        bUndo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bUndo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bUndoActionPerformed(evt);
             }
         });
@@ -2245,8 +2287,10 @@ void setIDDirty(boolean dirty)
 
         bNewStudent.setText("New");
         bNewStudent.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bNewStudent.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bNewStudent.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bNewStudentActionPerformed(evt);
             }
         });
@@ -2256,8 +2300,10 @@ void setIDDirty(boolean dirty)
 
         bNewPayer.setText("New");
         bNewPayer.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bNewPayer.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bNewPayer.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bNewPayerActionPerformed(evt);
             }
         });
@@ -2275,8 +2321,8 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
         PeopleHeader1.add(jLabel20, gridBagConstraints);
 
-        vParentID.setColName("parentid");
-        vParentID.setPreferredSize(new java.awt.Dimension(200, 19));
+        vParent1ID.setColName("parent1id");
+        vParent1ID.setPreferredSize(new java.awt.Dimension(200, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -2285,12 +2331,14 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
-        PeopleHeader1.add(vParentID, gridBagConstraints);
+        PeopleHeader1.add(vParent1ID, gridBagConstraints);
 
         bNewParent.setText("New");
         bNewParent.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bNewParent.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bNewParent.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bNewParentActionPerformed(evt);
             }
         });
@@ -2322,8 +2370,10 @@ void setIDDirty(boolean dirty)
 
         bNewParent2.setText("New");
         bNewParent2.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        bNewParent2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bNewParent2.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bNewParent2ActionPerformed(evt);
             }
         });
@@ -2362,7 +2412,7 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         TermRegPanel.add(jLabel31, gridBagConstraints);
 
-        jLabel14.setText("Level:");
+        jLabel14.setText("Tuition Plan:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -2375,7 +2425,7 @@ void setIDDirty(boolean dirty)
         programs.setPreferredSize(new java.awt.Dimension(120, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
@@ -2449,6 +2499,25 @@ void setIDDirty(boolean dirty)
         gridBagConstraints.weightx = 1.0;
         TermRegPanel.add(dtSigned, gridBagConstraints);
 
+        jLabel18.setText("Level:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        TermRegPanel.add(jLabel18, gridBagConstraints);
+
+        rbPlans.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        rbPlans.setColName("rbplan");
+        rbPlans.setPreferredSize(new java.awt.Dimension(120, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        TermRegPanel.add(rbPlans, gridBagConstraints);
+
         PeopleHeader.add(TermRegPanel);
 
         jPanel20.add(PeopleHeader, java.awt.BorderLayout.NORTH);
@@ -2470,23 +2539,18 @@ void setIDDirty(boolean dirty)
 
 	private void bNewParent2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewParent2ActionPerformed
 	{//GEN-HEADEREND:event_bNewParent2ActionPerformed
-		newAdultAction("parent2id");
+		newPayerAction("parent2id");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bNewParent2ActionPerformed
 
 	private void bNewParentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewParentActionPerformed
 	{//GEN-HEADEREND:event_bNewParentActionPerformed
-		this.newAdultAction("parentid");
+		this.newPayerAction("parentid");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bNewParentActionPerformed
 
-	private void billingtypeActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_billingtypeActionPerformed
-	{//GEN-HEADEREND:event_billingtypeActionPerformed
-// TODO add your handling code here:
-	}//GEN-LAST:event_billingtypeActionPerformed
 
-
-void newAdultAction(final String colName)
+void newPayerAction(final String colName)
 {
 	fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
 	public void run(SqlRunner str) throws Exception {
@@ -2495,7 +2559,7 @@ void newAdultAction(final String colName)
 		wizard.runWizard();
 		Integer eid = (Integer)wizard.getVal("entityid");
 		if (eid != null) {
-			smod.schoolRm.set(colName, eid);
+			smod.termregsRm.set(colName, eid);
 			doUpdateSelect(str);
 //			all.doUpdate(str);
 //			all.doSelect(str);
@@ -2523,7 +2587,7 @@ void newAdultAction(final String colName)
 
 	private void bNewPayerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewPayerActionPerformed
 	{//GEN-HEADEREND:event_bNewPayerActionPerformed
-		newAdultAction("adultid");
+		newPayerAction("adultid");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bNewPayerActionPerformed
 
@@ -2536,7 +2600,7 @@ void newAdultAction(final String colName)
 			wizard.runWizard();
 			Integer eid = (Integer)wizard.getVal("entityid");
 			if (eid != null) {
-				str.execSql(SchoolDB.createStudentSql(eid));
+//				str.execSql(SchoolDB.createStudentSql(eid));
 				changeStudent(str, eid);
 			}
 		}});
@@ -2563,7 +2627,6 @@ void newAdultAction(final String colName)
 				" where courseid = " + SqlInteger.sql(courseid) +
 				" and entityid = " + SqlInteger.sql(entityid));
 			enrolledDb.doSelect(str);
-			studentDirty = true;
 		}});
 		
 // TODO add your handling code here:
@@ -2587,7 +2650,6 @@ void newAdultAction(final String colName)
 
 			wizard.runWizard("add");
 			enrolledDb.doSelect(str);
-			studentDirty = true;
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bAddEnrollmentActionPerformed
@@ -2734,7 +2796,6 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JButton bRemoveEnrollment;
     private javax.swing.JButton bSave;
     private javax.swing.JButton bUndo;
-    private citibob.swing.typed.JKeyedComboBox billingtype;
     private javax.swing.JPanel cardPanel;
     private citibob.swing.typed.JTypedTextField city;
     private citibob.swing.typed.JTypedTextField city1;
@@ -2770,6 +2831,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
@@ -2856,6 +2918,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private offstage.swing.typed.CryptCCInfo payerCCInfo;
     private offstage.gui.GroupPanel payerPhonePanel;
     private citibob.swing.typed.JKeyedComboBox programs;
+    private citibob.swing.typed.JKeyedComboBox rbPlans;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField salutation1;
     private citibob.swing.typed.JTypedTextField salutation2;
@@ -2869,8 +2932,8 @@ private void doUpdateSelect(SqlRunner str) throws Exception
     private citibob.swing.typed.JTypedTextField state3;
     private offstage.accounts.gui.TransRegPanel transRegister;
     private citibob.swing.typed.JTypedTextField tuitionOverride;
+    private offstage.swing.typed.EntityIDEditableLabel vParent1ID;
     private offstage.swing.typed.EntityIDEditableLabel vParent2ID;
-    private offstage.swing.typed.EntityIDEditableLabel vParentID;
     private offstage.swing.typed.EntityIDEditableLabel vPayerID;
     private offstage.swing.typed.EntityIDLabel vStudentID;
     private citibob.swing.typed.JTypedTextField zip;

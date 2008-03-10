@@ -48,8 +48,6 @@ public class TermsPanel extends javax.swing.JPanel
 FrontApp fapp;
 SchoolModel smod;
 
-IntKeyedDbModel oneTermDm;
-	RowModel oneTermRm;
 SqlBufDbModel duedatesDm;
 IntKeyedDbModel holidaysDm;
 
@@ -76,15 +74,9 @@ public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRunner str)
     public void termIDChanged(int oldTermID, int termID) {
 			termChanged(fapp.getBatchSet());
 	}});
-
-	
-	oneTermDm = new IntKeyedDbModel(fapp.getSchema("termids"),
-		"groupid", fapp.getDbChange());//, new IntKeyedDbModel.Params(false));
-	oneTermDm.setDoInsertKeys(false);
-	oneTermRm = new SchemaBufRowModel(oneTermDm.getSchemaBuf());
 	
 	termInfo.setSwingerMap(fapp.getSwingerMap());
-	termInfo.setModel(new RowModelTableModel(oneTermRm,
+	termInfo.setModel(new RowModelTableModel(smod.oneTermRm,
 		new String[] {"Name", "Type", "From", "To (+1)", "Tuition Plans", "Current?"},
 		new String[] {"name", "termtypeid", "firstdate", "nextdate", "rbplansetclass", "iscurrent"}));
 
@@ -117,7 +109,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRunner str)
 		new String[] {"__status__", "firstday", "lastday", "description"},
 		null, fapp.getSwingerMap());
 	
-	allDm = new MultiDbModel(new DbModel[] {oneTermDm, duedatesDm, holidaysDm});
+	allDm = new MultiDbModel(new DbModel[] {smod.oneTermDm, duedatesDm, holidaysDm});
 }
 
 void termChanged(SqlRunner str) 

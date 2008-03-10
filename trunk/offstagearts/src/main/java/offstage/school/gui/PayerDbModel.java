@@ -32,7 +32,7 @@ public class PayerDbModel extends EntityMultiDbModel
 {
 	
 public final IntKeyedDbModel phoneDb;
-public final IntKeyedDbModel schoolDb;
+//public final IntKeyedDbModel schoolDb;
 
 public PayerDbModel(citibob.app.App app)
 {
@@ -41,8 +41,8 @@ public PayerDbModel(citibob.app.App app)
 	logadd(logger, phoneDb = new IntKeyedDbModel(app.getSchema("phones"), "entityid"));
 	phoneDb.setDoInsertKeys(true);
 //		new IntKeyedDbModel.Params(true)));
-	logadd(logger, schoolDb = new IntKeyedDbModel(app.getSchema("entities_school"), "entityid"));
-	schoolDb.setDoInsertKeys(true);
+//	logadd(logger, schoolDb = new IntKeyedDbModel(app.getSchema("entities_school"), "entityid"));
+//	schoolDb.setDoInsertKeys(true);
 //		new IntKeyedDbModel.Params(true)));
 }
 

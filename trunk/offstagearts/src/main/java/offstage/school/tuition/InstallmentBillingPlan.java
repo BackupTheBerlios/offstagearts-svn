@@ -57,7 +57,7 @@ public void billAccount(TuitionCon con, Student student)
 		// Scholarship
 		int cumS00 = (int)Math.round(100.0 * student.scholarship * frac);
 		double scholarship = .01D * (double)(cumS00 - lastCumS00);
-		addTuition(con, student, duedatesDN[i], -scholarship, labels[i]);		
+		addScholarship(con, student, duedatesDN[i], -scholarship, labels[i]);		
 		lastCumS00 = cumS00;
 	}
 //	

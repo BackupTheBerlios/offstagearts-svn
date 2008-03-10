@@ -45,6 +45,8 @@ throws SQLException
 	cols = new SqlCol[] {
 			new SqlCol(new SqlInteger(false), "entityid", true),
 			new SqlCol(new SqlInteger(), "primaryentityid", false),
+			new SqlCol(new SqlInteger(), "parent1id", false),
+			new SqlCol(new SqlInteger(), "parent2id", false),
 			new SqlCol(new SqlString(100), "address1", false),
 			new SqlCol(new SqlString(50), "address2", false),
 			new SqlCol(new SqlString(50), "city", false),
