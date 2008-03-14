@@ -89,7 +89,7 @@ extends javax.swing.JPanel {
 		
 		familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-			app.runGui(PersonPanel.this, new BatchRunnable() {
+			app.runGui(PersonPanel.this, new BatchTask() {
 			public void run(SqlRunner str) throws Exception {
 				Integer EntityID = (Integer)familyTable.getValue();
 				if (EntityID == null) return;
@@ -123,7 +123,7 @@ extends javax.swing.JPanel {
 		// Change family table contents when user re-reads from db
 		model.addColListener(model.findColumn("primaryentityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
-			SqlRunner str = app.getBatchSet();
+			SqlRunner str = app.batchSet();
 //			app.runApp(new BatchRunnable() {
 //			public void run(SqlRunner str) throws Exception {
 				if (model.getCurRow() < 0) return;
@@ -145,7 +145,7 @@ extends javax.swing.JPanel {
 
 		model.addColListener(model.findColumn("entityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
-			app.runApp(new ERunnable() {
+			app.runApp(new ETask() {
 			public void run() throws Exception {
 				if (model.getCurRow() < 0) return;
 //				if (familyTable.isInSelect()) return;	// Don't re-query just cause user is clicking
@@ -164,7 +164,7 @@ extends javax.swing.JPanel {
 		}});
 		
 		
-		TypedWidgetBinder.bindRecursive(this, model, app.getSwingerMap());
+		TypedWidgetBinder.bindRecursive(this, model, app.swingerMap());
 		new TypedWidgetBinder().bind(genderButtonGroup, xmodel);
 //		new IsPrimaryBinder().bind(cbIsPrimary, model);	// Should just do a regular listener as above; this is read-only
 
@@ -172,7 +172,7 @@ extends javax.swing.JPanel {
 		
 		phonePanel.initRuntime(str, dm.getPhonesSb(),
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, true, app.getSwingerMap());
+			new String[] {"groupid", "phone"}, true, app.swingerMap());
 		
 			
 //		phonesTable.initRuntime(dm.getPhonesSb());
@@ -805,7 +805,7 @@ private void relprimarytypeidActionPerformed(java.awt.event.ActionEvent evt) {//
 
 	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
-		app.runGui(PersonPanel.this, new BatchRunnable() {
+		app.runGui(PersonPanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 				model.set("primaryentityid", dmod.getPersonSb().getValueAt(0, "entityid"));
 		}});

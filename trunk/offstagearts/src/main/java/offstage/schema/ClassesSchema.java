@@ -27,7 +27,7 @@ import citibob.types.*;
 public class ClassesSchema extends ConstSqlSchema
 {
 
-public ClassesSchema(citibob.sql.SqlRunner str, DbChangeModel change)
+public ClassesSchema(citibob.sql.SqlRun str, DbChangeModel change)
 throws SQLException
 {
 	super();

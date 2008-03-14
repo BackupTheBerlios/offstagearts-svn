@@ -26,7 +26,7 @@ import citibob.types.*;
 public class NotesSchema extends ConstSqlSchema
 {
 
-public NotesSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public NotesSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super();

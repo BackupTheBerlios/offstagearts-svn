@@ -107,8 +107,8 @@ void logadd(SchemaBufDbModel m)
 }
 public DevelModel(citibob.app.App app)
 {
-	logger = app.getLogger();
-	SchemaSet osset = app.getSchemaSet();
+	logger = app.queryLogger();
+	SchemaSet osset = app.schemaSet();
 	logadd(onePerson = new EntityDbModel(osset.get("persons"), app));
 	logadd(phones = new IntKeyedDbModel(osset.get("phones"), "entityid"));
 	logadd(donations = new IntKeyedDbModel(osset.get("donations"), "entityid"));

@@ -45,7 +45,7 @@ public class LateFeesWiz extends HtmlWiz {
 public LateFeesWiz(java.awt.Frame owner, citibob.app.App app)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
-	super(owner, app.getSwingerMap());
+	super(owner, app.swingerMap());
 
 //	JTypedTextField latedays = new JTypedTextField();
 //		latedays.setJType(Integer.class, new FormatSFormat(new NumberFormat("#")));
@@ -53,8 +53,8 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 //		new JTypedDateChooser();
 //		asofdate.setJType(new JDate(app.getTimeZone(), false), )
 
-	SwingerMap smap = app.getSwingerMap();
-	JDate jdate = new JDate(app.getTimeZone(), false);
+	SwingerMap smap = app.swingerMap();
+	JDate jdate = new JDate(app.timeZone(), false);
 	TypedWidget asofdate = smap.newWidget(jdate);
 	TypedWidget latedays = smap.newWidget(Integer.class);
 	JTypedTextField multiplier = new JTypedTextField();

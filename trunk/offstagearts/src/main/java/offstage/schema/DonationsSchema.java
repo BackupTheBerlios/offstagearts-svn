@@ -27,7 +27,7 @@ import citibob.types.*;
 public class DonationsSchema extends ConstSqlSchema
 {
 
-public DonationsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public DonationsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	table = "donations";

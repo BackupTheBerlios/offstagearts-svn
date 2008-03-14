@@ -27,7 +27,7 @@ import java.sql.*;
 public class CcpaymentsSchema extends ActransSchema
 {
 
-public CcpaymentsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public CcpaymentsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super(str, change,tz);

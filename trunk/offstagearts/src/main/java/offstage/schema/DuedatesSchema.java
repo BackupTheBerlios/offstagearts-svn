@@ -30,7 +30,7 @@ public class DuedatesSchema extends ConstSqlSchema
 	
 public final KeyedModel kmodel;
 
-public DuedatesSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public DuedatesSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException{
 	
 	table = "duedates";

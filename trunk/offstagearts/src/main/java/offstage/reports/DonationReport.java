@@ -65,7 +65,7 @@ public DonationReport(App app, String idSql, int minYear, int maxYear)
 		" select p.* from persons p, ids_donor ids where p.entityid = ids.id";
 //		int x=5;
 	MainSqlTableModel main = new MainSqlTableModel(
-		app.getSqlTypeSet(), sql);
+		app.sqlTypeSet(), sql);
 	this.add(new SqlDbModel(main));
 
 	// Outer Join the Fiscal Year summaries
@@ -87,7 +87,7 @@ public DonationReport(App app, String idSql, int minYear, int maxYear)
 		" group by d.entityid, di.fiscalyear";
 
 	SqlDbModel model = new SqlDbModel(new AdhocOJSqlTableModel(
-		main, "entityid", "entityid", cols, app.getSqlTypeSet(),
+		main, "entityid", "entityid", cols, app.sqlTypeSet(),
 		sql) {
 			public void setRow(int row, ResultSet rs) throws SQLException
 			{
@@ -110,7 +110,7 @@ String idSql, int minYear, int maxYear, final File outFile) throws Exception
 	report.doSelect(str);
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
-		citibob.reports.Reports rr = app.getReports();
+		citibob.reports.Reports rr = app.reports();
 		rr.writeCSV(rr.format(report.newTableModel()), outFile);
 	}});
 }

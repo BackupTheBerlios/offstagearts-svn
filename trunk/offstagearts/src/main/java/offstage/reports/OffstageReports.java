@@ -41,7 +41,7 @@ public class OffstageReports extends citibob.reports.Reports
 public OffstageReports(App app)
 {
 	this.app = app;
-	oofficeExe = app.getProps().getProperty("ooffice.exe");
+	oofficeExe = app.props().getProperty("ooffice.exe");
 }
 
 public InputStream openTemplateFile(File dir, String name) throws IOException
@@ -50,7 +50,7 @@ public InputStream openTemplateFile(File dir, String name) throws IOException
 
 	// First: try loading external file
 //	File dir = new File(System.getProperty("user.dir"), "config");
-	File f = new File(app.getConfigDir().getPath() + File.separatorChar + "reports" + File.separatorChar + name);
+	File f = new File(app.configDir().getPath() + File.separatorChar + "reports" + File.separatorChar + name);
 	if (f.exists()) {
 System.out.println("Loading template from filesystem: " + f);
 		return new FileInputStream(f);

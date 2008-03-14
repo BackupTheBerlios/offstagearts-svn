@@ -28,7 +28,7 @@ package offstage.gui;
 
 import citibob.gui.ConsoleFrame;
 import citibob.gui.FrameSet.Maker;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 import javax.swing.*;
 import offstage.FrontApp;
 import offstage.accounts.gui.AccountFrame;
@@ -53,7 +53,7 @@ public JFrame newFrame(FrameRec rec) throws Exception
 	if ("maintenance".equals(rec.name)) {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	frame.setTitle(frame.getTitle() + " --- OffstageArts " + fapp.getVersion().toString());
+	frame.setTitle(frame.getTitle() + " --- OffstageArts " + fapp.version().toString());
 	return frame;
 }
 
@@ -62,15 +62,15 @@ public JFrame newFrame(FrameRec rec) throws Exception
 
 /** Creates a new instance of OffstageFrameSet */
 public OffstageFrameSet(FrontApp xfapp) {
-	super(xfapp.getSwingPrefs(), xfapp.userRoot());
+	super(xfapp.swingPrefs(), xfapp.userRoot());
 	wmenu = new WindowMenu(xfapp);
 	this.fapp = xfapp;
 
 addMaker("devel", new Maker() {
 public JFrame newFrame() throws Exception {
-	SqlRunner str = fapp.getBatchSet();
+	SqlRun str = fapp.batchSet();
 	final DevelFrame f = new DevelFrame();
-	f.initRuntime(fapp.getBatchSet(), fapp);
+	f.initRuntime(fapp.batchSet(), fapp);
 	str.flush();
 //	str.execUpdate(new UpdRunnable() {
 //	public void run(SqlRunner str) throws Exception {
@@ -82,7 +82,7 @@ public JFrame newFrame() throws Exception {
 addMaker("school", new Maker() {
 public JFrame newFrame() throws Exception {
 	final SchoolFrame f = new SchoolFrame();
-	SqlRunner str = fapp.getBatchSet();
+	SqlRun str = fapp.batchSet();
 	f.initRuntime(str, fapp);
 	str.flush();
 //	str.execUpdate(new UpdRunnable() {
@@ -95,7 +95,7 @@ public JFrame newFrame() throws Exception {
 addMaker("dups", new Maker() {
 public JFrame newFrame() throws Exception {
 	final CleanseFrame f = new CleanseFrame();
-	SqlRunner str = fapp.getBatchSet();
+	SqlRun str = fapp.batchSet();
 	f.initRuntime(str, fapp, "n");
 	str.flush();
 	return f;
@@ -129,7 +129,7 @@ public JFrame newFrame() throws Exception {
 addMaker("config", new Maker() {
 public JFrame newFrame() throws Exception {
 	ConfigFrame frame = new ConfigFrame();
-	SqlRunner str = fapp.getBatchSet();
+	SqlRun str = fapp.batchSet();
 	frame.initRuntime(str, fapp);
 	str.flush();
 	return frame;

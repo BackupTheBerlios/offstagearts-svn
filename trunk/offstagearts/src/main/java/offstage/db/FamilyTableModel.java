@@ -36,7 +36,7 @@ implements RowModel.ColListener //, SchemaRowModelBindable
 /** Creates a new instance of FamilyTableModel
  @param runner should be a raw runner (for db, not app). */
 public FamilyTableModel(App app) {//ActionRunner runner, SqlTypeSet tset) {
-	super(app.getSqlTypeSet());
+	super(app.sqlTypeSet());
 	this.app = app;
 }
 
@@ -75,7 +75,7 @@ public void bind(SchemaRowModel bufRow)
 /** Propagate data from underlying model to widget. */
 public void valueChanged(final int col)
 {
-	app.runApp(new BatchRunnable() {
+	app.runApp(new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 		Integer Primaryid = (Integer)bufRow.get(primaryCol);
 		if (Primaryid == null) {

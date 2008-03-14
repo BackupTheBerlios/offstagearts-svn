@@ -53,51 +53,51 @@ throws org.xml.sax.SAXException, java.io.IOException
 {
 	super.initRuntime(xfapp);
 
-	addAction("mailprefs", "", "admin", new ERunnable() {
+	addAction("mailprefs", "", "admin", new ETask() {
 	public void run() throws Exception {
 		new citibob.mail.MailPrefsDialog(
 			(JFrame)SwingUtilities.getRoot(MaintenanceActionPanel.this)).setVisible(true);
 	}});
 
-	addAction("newcategory", "", "admin", new ERunnable() {
+	addAction("newcategory", "", "admin", new ETask() {
 	public void run() throws Exception {
 		Wizard wizard = new NewGroupidWizard((FrontApp)app, MaintenanceActionPanel.this);
 		wizard.runWizard();
 	}});
 
-	addAction("newkey", "", "admin", new ERunnable() {
+	addAction("newkey", "", "admin", new ETask() {
 	public void run() throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(MaintenanceActionPanel.this);
 		Wizard wizard = new offstage.crypt.wiz.NewKeyWizard((FrontApp)app, root);
 		wizard.runWizard();
 	}});
 
-	addAction("dupkey", "", "admin", new ERunnable() {
+	addAction("dupkey", "", "admin", new ETask() {
 	public void run() throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(MaintenanceActionPanel.this);
 		Wizard wizard = new offstage.crypt.wiz.DupKeyWizard((FrontApp)app, root);
 		wizard.runWizard();
 	}});
 
-	addAction("restorekey", "", "admin", new ERunnable() {
+	addAction("restorekey", "", "admin", new ETask() {
 	public void run() throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(MaintenanceActionPanel.this);
 		Wizard wizard = new offstage.crypt.wiz.RestoreKeyWizard((FrontApp)app, MaintenanceActionPanel.this);
 		wizard.runWizard();
 	}});
 
-	addAction("ccbatch", "", "admin", new ERunnable() {
+	addAction("ccbatch", "", "admin", new ETask() {
 	public void run() throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(MaintenanceActionPanel.this);
 		Wizard wizard = new offstage.crypt.wiz.CCBatchWizard((FrontApp)app, MaintenanceActionPanel.this);
 		wizard.runWizard();
 	}});
 
-	addAction("processdupnames", "", "admin", new BatchRunnable() {
+	addAction("processdupnames", "", "admin", new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 		CleansePanel.showFrame(str, (FrontApp)app, "n", "Duplicate Names");
 	}});
-	addAction("processdupaddrs", "", "admin", new BatchRunnable() {
+	addAction("processdupaddrs", "", "admin", new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 		CleansePanel.showFrame(str, (FrontApp)app, "a", "Duplicate Addresses");
 	}});

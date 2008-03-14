@@ -7,7 +7,7 @@
 package offstage.config;
 
 import citibob.app.App;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 
 /**
  
@@ -21,7 +21,7 @@ public class ConfigFrame extends javax.swing.JFrame
 	{
 		initComponents();
 	}
-	public void initRuntime(SqlRunner str, App app)
+	public void initRuntime(SqlRun str, App app)
 	{
 		resources.initRuntime(str, app);
 	}

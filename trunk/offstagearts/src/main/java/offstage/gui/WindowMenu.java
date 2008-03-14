@@ -87,9 +87,9 @@ class OpenFrameListener implements ActionListener
 		this.frameName = frameName;
 	}
 	public void actionPerformed(java.awt.event.ActionEvent evt) {
-		app.runGui((Component)evt.getSource(), new citibob.task.ERunnable() {
+		app.runGui((Component)evt.getSource(), new citibob.task.ETask() {
 		public void run() throws Exception {
-			app.getFrameSet().openFrame(frameName);
+			app.frameSet().openFrame(frameName);
 		}});
 	}
 }

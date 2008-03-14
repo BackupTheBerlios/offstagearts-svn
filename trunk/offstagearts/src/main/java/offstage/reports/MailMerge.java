@@ -50,7 +50,7 @@ throws Exception
 	
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
-		Reports rr = fapp.getReports();
+		Reports rr = fapp.reports();
 //		Map map = new HashMap();
 //		rr.viewJodPdfs(rr.toJodList(rs, null), templateFile.getParentFile(), templateFile.getName());
 		rr.viewJodPdfs(rr.toJodList(rs,

@@ -28,7 +28,7 @@ import citibob.types.*;
 public class HolidaysSchema extends ConstSqlSchema
 {	
 	
-public HolidaysSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public HolidaysSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException{
 	
 	table = "holidays";

@@ -26,9 +26,9 @@ package offstage.school.gui;
 import citibob.jschema.DbModel;
 import citibob.jschema.MultiDbModel;
 import citibob.jschema.SchemaBufDbModel;
-import citibob.task.BatchRunnable;
-import citibob.task.ERunnable;
-import citibob.sql.SqlRunner;
+import citibob.task.BatchTask;
+import citibob.task.ETask;
+import citibob.sql.SqlRun;
 import citibob.types.JEnum;
 import offstage.FrontApp;
 
@@ -63,13 +63,13 @@ public TermsAddPanel()
 
 
 /** Creates new form CompleteStatusPanel */
-public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
+public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 //throws SQLException
 {
 	this.fapp = xfapp;
 
 	termsDm = new SchemaBufDbModel(
-		fapp.getSchema("termids"), fapp.getDbChange());
+		fapp.getSchema("termids"), fapp.dbChange());
 //	termsDm.setWhereClause("(firstdate > now() - interval '2 years' or iscurrent or firstdate is null)");
 //	termsDm.setWhereClause("");
 	termsDm.setOrderClause("firstdate desc, name");
@@ -77,7 +77,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 	terms.setModelU(termsDm.getSchemaBuf(),
 		new String[] {"Status", "Type", "Name", "From", "To (+1)", "Tuition Plans", "Is Current"},
 		new String[] {"__status__", "termtypeid", "name", "firstdate", "nextdate", "rbplansetclass", "iscurrent"},
-		null, fapp.getSwingerMap());
+		null, fapp.swingerMap());
 
 	allDm = new MultiDbModel(new DbModel[] {termsDm});
 	allDm.doSelect(str);
@@ -213,7 +213,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 
 	private void ddUndelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddUndelActionPerformed
 	{//GEN-HEADEREND:event_ddUndelActionPerformed
-		fapp.runGui(TermsAddPanel.this, new ERunnable() {
+		fapp.runGui(TermsAddPanel.this, new ETask() {
 		public void run() throws Exception {
 			termsDm.getSchemaBuf().undeleteRow(terms.getSelectedRow());
 			terms.requestFocus();
@@ -223,8 +223,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
-		fapp.runApp(new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runApp(new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			allDm.doSelect(str);
 		}});
 // TODO add your handling code here:
@@ -232,8 +232,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		fapp.runApp(new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runApp(new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			allDm.doUpdate(str);
 			str.flush();
 			allDm.doSelect(str);
@@ -243,7 +243,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 
 	private void ddDelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddDelActionPerformed
 	{//GEN-HEADEREND:event_ddDelActionPerformed
-		fapp.runGui(TermsAddPanel.this, new ERunnable() {
+		fapp.runGui(TermsAddPanel.this, new ETask() {
 		public void run() throws Exception {
 			termsDm.getSchemaBuf().deleteRow(terms.getSelectedRow());
 			terms.requestFocus();
@@ -252,7 +252,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 
 	private void ddAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddAddActionPerformed
 	{//GEN-HEADEREND:event_ddAddActionPerformed
-		fapp.runGui(TermsAddPanel.this, new ERunnable() {
+		fapp.runGui(TermsAddPanel.this, new ETask() {
 		public void run() throws Exception {
 			JEnum tt = (JEnum)termsDm.getSchemaBuf().getJType(0, "termtypeid");
 			Object defaultTermTypeID = tt.getKeyedModel().getKeyList().get(0);

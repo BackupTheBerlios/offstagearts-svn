@@ -47,7 +47,7 @@ citibob.app.App fapp;
 //EQueryModel2 app;
 EntityListTableModel testResults;
 //SqlRunner str;
-TaskRunner runner;
+JobRun runner;
 
 SchemaBufDbModel equeriesDm;
 public boolean ok = false;		// Did user exit by pressing OK?
@@ -70,7 +70,7 @@ throws SQLException
 		new String[] {"ID", "Name", "Modified"},
 		new String[] {"equeryid", "name", "lastmodified"},
 		new boolean[] {false, false, false},
-		fapp.getSwingerMap());
+		fapp.swingerMap());
 	
 	// Read the data
 	equeriesDm.setOrderClause("lastmodified desc");
@@ -78,7 +78,7 @@ throws SQLException
 	
 	tQueries.addMouseListener(new DClickTableMouseListener(tQueries) {
 	public void doubleClicked(final int row) {
-		fapp.runGui(ListQueryWiz.this, new BatchRunnable() {
+		fapp.runGui(ListQueryWiz.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			tQueries.getSelectionModel().setSelectionInterval(row, row);
 			wrapper.doSubmit("next");
@@ -184,7 +184,7 @@ public void getAllValues(java.util.Map m)
 	private void bDeleteQueryActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDeleteQueryActionPerformed
 	{//GEN-HEADEREND:event_bDeleteQueryActionPerformed
 //System.out.println("hoi");
-		fapp.runGui(ListQueryWiz.this, new BatchRunnable() {
+		fapp.runGui(ListQueryWiz.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			final int row = tQueries.getSelectionModel().getMinSelectionIndex();
 			if (row < 0) return;

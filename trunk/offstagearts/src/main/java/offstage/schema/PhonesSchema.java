@@ -28,7 +28,7 @@ import offstage.types.*;
 public class PhonesSchema extends ConstSqlSchema
 {
 
-public PhonesSchema(citibob.sql.SqlRunner str, DbChangeModel change)
+public PhonesSchema(citibob.sql.SqlRun str, DbChangeModel change)
 throws SQLException
 {
 	super();

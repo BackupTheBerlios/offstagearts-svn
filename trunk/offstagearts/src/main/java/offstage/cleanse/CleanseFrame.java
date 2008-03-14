@@ -6,7 +6,7 @@
 
 package offstage.cleanse;
 
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 import offstage.FrontApp;
 
 /**
@@ -20,7 +20,7 @@ public class CleanseFrame extends javax.swing.JFrame {
 		initComponents();
 	}
 	/** @param dupType = 'a' (address), 'n' (names), 'o' (organization) */
-	public void initRuntime(SqlRunner str, FrontApp fapp, String dupType)
+	public void initRuntime(SqlRun str, FrontApp fapp, String dupType)
 	{
 		cleansePanel1.initRuntime(str, fapp, dupType);
 	}

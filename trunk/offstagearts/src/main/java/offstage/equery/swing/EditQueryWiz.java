@@ -76,16 +76,16 @@ throws SQLException
 	
 	EQueryTableModel2 eqModel = new EQueryTableModel2(fapp.getEquerySchema());
 //		new EQuerySchema(fapp.getSchemaSet()));
-	eQueryEditor.initRuntime(eqModel, fapp.getSwingerMap(), fapp.getTimeZone());
+	eQueryEditor.initRuntime(eqModel, fapp.swingerMap(), fapp.timeZone());
 
 	equeryDm = new SchemaBufDbModel(new SchemaBuf(fapp.getSchema("equeries")));
 	row = new SchemaBufRowModel(equeryDm.getSchemaBuf());
-	citibob.swing.typed.TypedWidgetBinder.bindRecursive(this, row, fapp.getSwingerMap());
+	citibob.swing.typed.TypedWidgetBinder.bindRecursive(this, row, fapp.swingerMap());
 	
 	equeryDm.setWhereClause("equeryid = " + equeryID);
 	equeryDm.doSelect(str);
 	
-	testResults = new EntityListTableModel(fapp.getSqlTypeSet());
+	testResults = new EntityListTableModel(fapp.sqlTypeSet());
 	tTestResults.initRuntime(testResults);
 }
 
@@ -211,7 +211,7 @@ throws SQLException
 
 	private void bApplyActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bApplyActionPerformed
 	{//GEN-HEADEREND:event_bApplyActionPerformed
-		fapp.runGui(this, new BatchRunnable() {
+		fapp.runGui(this, new BatchTask() {
 		public void run(SqlRunner str) throws SQLException, IOException {
 			eQueryEditor.commitValue();
 			EQuery eqy = eQueryEditor.getEQuery();
@@ -226,7 +226,7 @@ throws SQLException
 			String sql =
 				DB.sqlCountIDList(sql0_all) + ";\n" +
 				DB.sqlCountIDList(sql0_primaryOnly);
-			str.execSql(sql, new RssRunnable() {
+			str.execSql(sql, new RssTask() {
 			public void run(SqlRunner str, ResultSet[] rss) throws SQLException {
 				rss[0].next();
 				int fullSize = rss[0].getInt(1);
@@ -244,7 +244,7 @@ public void nextPressed()
 
 void saveCurQuery()
 {
-	fapp.runGui(this, new BatchRunnable() {
+	fapp.runGui(this, new BatchTask() {
 	public void run(SqlRunner str) throws SQLException {
 		eQueryEditor.commitValue();
 		equeryDm.doUpdate(str);

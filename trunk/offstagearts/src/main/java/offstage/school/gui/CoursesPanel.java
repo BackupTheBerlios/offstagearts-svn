@@ -27,10 +27,10 @@ import citibob.jschema.DayOfWeekKeyedModel;
 import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.SchemaBuf;
 import citibob.jschema.SqlSchemaInfo;
-import citibob.task.BatchRunnable;
-import citibob.task.ERunnable;
+import citibob.task.BatchTask;
+import citibob.task.ETask;
 import citibob.sql.ConsSqlQuery;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 import citibob.sql.UpdRunnable;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.sql.pgsql.SqlTimestamp;
@@ -66,7 +66,7 @@ public CoursesPanel()
 	
 
 /** Creates new form CompleteStatusPanel */
-public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
+public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 //throws SQLException
 {
 	this.fapp = xfapp;
@@ -79,7 +79,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 
 	smod.addListener(new SchoolModel.Adapter() {
     public void termIDChanged(int oldTermID, int termID) {
-			termChanged(fapp.getBatchSet());
+			termChanged(fapp.batchSet());
 //			fapp.runApp(new BatchRunnable() {
 //			public void run(SqlRunner str) throws Exception {
 //				termChanged(str);
@@ -88,9 +88,9 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 
 	// Set up courses editor
 	coursesDb = new IntKeyedDbModel(fapp.getSchema("courseids"),
-		"termid", fapp.getDbChange()) {
+		"termid", fapp.dbChange()) {
 	/** Override stuff to delete from meetings table when we delete from courseids table. */
-	protected ConsSqlQuery doSimpleDeleteNoRemoveRow(int row, SqlRunner str, SqlSchemaInfo qs) {
+	protected ConsSqlQuery doSimpleDeleteNoRemoveRow(int row, SqlRun str, SqlSchemaInfo qs) {
 		ConsSqlQuery q = super.doSimpleDeleteNoRemoveRow(row, str, qs);
 		int courseid = (Integer)getSchemaBuf().getValueAt(row, "courseid");
 		String sql =
@@ -105,7 +105,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 	courses.setModelU(coursesDb.getSchemaBuf(),
 		new String[] {"Status", "#", "Name", "Day", "Start", "End", "Tuition", "Enroll Limit"},
 		new String[] {"__status__", "__rowno__", "name", "dayofweek", "tstart", "tnext", "price", "enrolllimit"},
-		null, fapp.getSwingerMap());
+		null, fapp.swingerMap());
 	courses.setRenderEditU("dayofweek", new DayOfWeekKeyedModel());
 
 	courses.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -114,8 +114,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 		int oldid = courseid;
 		courseid = courseRow < 0 ? -1 : (Integer)coursesDb.getSchemaBuf().getValueAt(courseRow, "courseid");
 		if (courseid != oldid) {
-			fapp.runApp(new BatchRunnable() {
-			public void run(SqlRunner str) throws Exception {
+			fapp.runApp(new BatchTask() {
+			public void run(SqlRun str) throws Exception {
 				courseChanged(str);
 			}});
 		}
@@ -123,24 +123,24 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRunner str)
 	
 	// Set up meetings editor
 	meetingsDb = new IntKeyedDbModel(fapp.getSchema("meetings"),
-		"courseid", fapp.getDbChange());
+		"courseid", fapp.dbChange());
 	meetingsDb.setDoInsertKeys(false);
 	meetingsDb.setOrderClause("dtstart");
 	meetings.setModelU(meetingsDb.getSchemaBuf(),
 		new String[] {"Status", "#", "Start", "End"},
 		new String[] {"__status__", "__rowno__", "dtstart", "dtnext"},
-		null, fapp.getSwingerMap());
+		null, fapp.swingerMap());
 
 	// Dates are internally represented (in the database) in GMT, but displayed in local timezone.
 	Swinger swing = new JDateSwinger(new SqlTimestamp("GMT"),
-		new String[] {"EEE MMM dd hh:mm a yy"}, "", fapp.getTimeZone(),
+		new String[] {"EEE MMM dd hh:mm a yy"}, "", fapp.timeZone(),
 		citibob.swing.calendar.JCalendarDateHHMM.class);
 	meetings.setRenderEditU("dtstart", swing);
 	meetings.setRenderEditU("dtnext", swing);
 
 }
 
-void termChanged(SqlRunner str) 
+void termChanged(SqlRun str) 
 {
 	meetingsDb.doUpdate(str);
 	coursesDb.setKey((Integer)smod.getTermID());
@@ -148,21 +148,21 @@ void termChanged(SqlRunner str)
 	coursesDb.doSelect(str);
 }
 
-void courseChanged(SqlRunner str)
+void courseChanged(SqlRun str)
 {
 	meetingsDb.setKey(courseid);
 	meetingsDb.doUpdate(str);
 	meetingsDb.doSelect(str);
 }
 	
-void all_doSelect(SqlRunner str)
+void all_doSelect(SqlRun str)
 {
 	final int id = courseid;
 	meetingsDb.doSelect(str);
 	coursesDb.doSelect(str);
 
 	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	public void run(SqlRun str) throws Exception {
 		courses.setSelectedRowU(id, "courseid");
 	}});
 }
@@ -396,7 +396,7 @@ void all_doSelect(SqlRunner str)
 
 	private void bUndelAllCourseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndelAllCourseActionPerformed
 	{//GEN-HEADEREND:event_bUndelAllCourseActionPerformed
-		fapp.runGui(CoursesPanel.this, new ERunnable() {
+		fapp.runGui(CoursesPanel.this, new ETask() {
 		public void run() throws Exception {
 			coursesDb.getSchemaBuf().undeleteAllRows();
 		}});
@@ -405,7 +405,7 @@ void all_doSelect(SqlRunner str)
 
 	private void bUndelCourseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndelCourseActionPerformed
 	{//GEN-HEADEREND:event_bUndelCourseActionPerformed
-		fapp.runGui(CoursesPanel.this, new ERunnable() {
+		fapp.runGui(CoursesPanel.this, new ETask() {
 		public void run() throws Exception {
 			coursesDb.getSchemaBuf().undeleteRow(courses.getSelectedRow());
 			courses.requestFocus();
@@ -415,7 +415,7 @@ void all_doSelect(SqlRunner str)
 
 	private void bUndelAllMeetingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndelAllMeetingActionPerformed
 	{//GEN-HEADEREND:event_bUndelAllMeetingActionPerformed
-		fapp.runGui(CoursesPanel.this, new ERunnable() {
+		fapp.runGui(CoursesPanel.this, new ETask() {
 		public void run() throws Exception {
 			meetingsDb.getSchemaBuf().undeleteAllRows();
 		}});
@@ -425,7 +425,7 @@ void all_doSelect(SqlRunner str)
 
 	private void bDelAllCourseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelAllCourseActionPerformed
 	{//GEN-HEADEREND:event_bDelAllCourseActionPerformed
-		fapp.runGui(CoursesPanel.this, new ERunnable() {
+		fapp.runGui(CoursesPanel.this, new ETask() {
 		public void run() throws Exception {
 			coursesDb.getSchemaBuf().deleteAllRows();
 		}});
@@ -434,7 +434,7 @@ void all_doSelect(SqlRunner str)
 
 	private void bUndoDelMeetingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoDelMeetingActionPerformed
 	{//GEN-HEADEREND:event_bUndoDelMeetingActionPerformed
-		fapp.runGui(CoursesPanel.this, new ERunnable() {
+		fapp.runGui(CoursesPanel.this, new ETask() {
 		public void run() throws Exception {
 			meetingsDb.getSchemaBuf().undeleteRow(meetings.getSelectedRow());
 			meetings.requestFocus();
@@ -444,7 +444,7 @@ void all_doSelect(SqlRunner str)
 
 	private void bDelAllMeetingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelAllMeetingActionPerformed
 	{//GEN-HEADEREND:event_bDelAllMeetingActionPerformed
-		fapp.runGui(CoursesPanel.this, new ERunnable() {
+		fapp.runGui(CoursesPanel.this, new ETask() {
 		public void run() throws Exception {
 			meetingsDb.getSchemaBuf().deleteAllRows();
 		}});
@@ -453,8 +453,8 @@ void all_doSelect(SqlRunner str)
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
-		fapp.runApp(new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runApp(new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			all_doSelect(str);
 		}});
 // TODO add your handling code here:
@@ -462,8 +462,8 @@ void all_doSelect(SqlRunner str)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		fapp.runApp(new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runApp(new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			meetingsDb.doUpdate(str);
 			coursesDb.doUpdate(str);
 			str.flush();
@@ -474,15 +474,15 @@ void all_doSelect(SqlRunner str)
 
 	private void bAutoFillAllActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAutoFillAllActionPerformed
 	{//GEN-HEADEREND:event_bAutoFillAllActionPerformed
-		fapp.runGui(CoursesPanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runGui(CoursesPanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			if (JOptionPane.showConfirmDialog(CoursesPanel.this,
 				"Are you sure you wish to fill all course meetings?\n" +
 				"This will overwrite all previous settings.",
 				"Fill All Meetings",
 				JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
 
-			SchoolDB.w_meetings_autofill(str, smod.getTermID(), -1, fapp.getTimeZone());
+			SchoolDB.w_meetings_autofill(str, smod.getTermID(), -1, fapp.timeZone());
 			str.flush();
 			meetingsDb.doSelect(str);
 		}});
@@ -491,9 +491,9 @@ void all_doSelect(SqlRunner str)
 
 	private void bAutoFillMeetingsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAutoFillMeetingsActionPerformed
 	{//GEN-HEADEREND:event_bAutoFillMeetingsActionPerformed
-		fapp.runGui(CoursesPanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
-			SchoolDB.w_meetings_autofill(str, smod.getTermID(), courseid, fapp.getTimeZone());
+		fapp.runGui(CoursesPanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
+			SchoolDB.w_meetings_autofill(str, smod.getTermID(), courseid, fapp.timeZone());
 			str.flush();
 			meetingsDb.doSelect(str);
 		}});
@@ -502,7 +502,7 @@ void all_doSelect(SqlRunner str)
 
 	private void bDelMeetingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelMeetingActionPerformed
 	{//GEN-HEADEREND:event_bDelMeetingActionPerformed
-		fapp.runGui(CoursesPanel.this, new ERunnable() {
+		fapp.runGui(CoursesPanel.this, new ETask() {
 		public void run() throws Exception {
 			meetingsDb.getSchemaBuf().deleteRow(meetings.getSelectedRow());
 			meetings.requestFocus();
@@ -511,8 +511,8 @@ void all_doSelect(SqlRunner str)
 
 	private void bAddMeetingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddMeetingActionPerformed
 	{//GEN-HEADEREND:event_bAddMeetingActionPerformed
-		fapp.runGui(CoursesPanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runGui(CoursesPanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			AddMeetingWizard wizard = new AddMeetingWizard(fapp, WidgetTree.getJFrame(CoursesPanel.this));
 			if (wizard.runWizard()) {
 				SchemaBuf csb = coursesDb.getSchemaBuf();
@@ -540,7 +540,7 @@ void all_doSelect(SqlRunner str)
 
 	private void bDelCourseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelCourseActionPerformed
 	{//GEN-HEADEREND:event_bDelCourseActionPerformed
-		fapp.runGui(CoursesPanel.this, new ERunnable() {
+		fapp.runGui(CoursesPanel.this, new ETask() {
 		public void run() throws Exception {
 			coursesDb.getSchemaBuf().deleteRow(courses.getSelectedRow());
 			courses.requestFocus();
@@ -549,7 +549,7 @@ void all_doSelect(SqlRunner str)
 
 	private void bAddCourseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddCourseActionPerformed
 	{//GEN-HEADEREND:event_bAddCourseActionPerformed
-		fapp.runGui(CoursesPanel.this, new ERunnable()
+		fapp.runGui(CoursesPanel.this, new ETask()
 		{ public void run() throws Exception
 		  {
 			  coursesDb.getSchemaBuf().insertRow(-1, "termid", (Integer)smod.getTermID());

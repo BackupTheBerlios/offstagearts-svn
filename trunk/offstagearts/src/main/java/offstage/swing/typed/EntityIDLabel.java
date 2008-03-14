@@ -43,7 +43,7 @@ public class EntityIDLabel extends JTypedLabelDB
 
 // ---------------------------------------------------------------
 // Must override stuff in TextTypedWidget
-public void setJType(SqlRunner str)
+public void setJType(SqlRun str)
 {
 	super.setJType(str, new EntityIDDBFormat(this));
 }
@@ -57,7 +57,7 @@ TextTypedWidget tw;
 public EntityIDDBFormat(TextTypedWidget tw)
 	{ this.tw = tw; }
 	
-public void setDisplayValue(SqlRunner str, final Object value)
+public void setDisplayValue(SqlRun str, final Object value)
 {
 	if (value == null) {
 		tw.setDisplayValue(null, "");
@@ -73,7 +73,7 @@ public void setDisplayValue(SqlRunner str, final Object value)
 		" from entities" +
 		" where entityid = " + SqlInteger.sql((Integer)value);
 	str.execSql(sql, new RsRunnable() {
-	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
+	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
 		if (rs.next()) {
 			tw.setDisplayValue(value, rs.getString("name"));
 		} else {

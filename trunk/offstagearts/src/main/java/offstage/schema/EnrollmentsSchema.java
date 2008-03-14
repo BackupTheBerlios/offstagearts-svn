@@ -26,7 +26,7 @@ import citibob.types.*;
 public class EnrollmentsSchema extends ConstSqlSchema
 {
 
-public EnrollmentsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public EnrollmentsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super();

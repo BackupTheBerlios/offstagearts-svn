@@ -82,7 +82,7 @@ addState(new AbstractWizState("ticketparams", null, "editquery") {
 			" order by p.lastname,p.firstname\n";
 		con.str.execSql(sql, new RsRunnable() {
 		public void run(SqlRunner str, ResultSet rs) throws Exception {
-			Reports rr = fapp.getReports();
+			Reports rr = fapp.reports();
 			rr.writeCSV(
 				rr.format(rr.toTableModel(rs)),
 				frame, "Save Ticket Sales Repot");

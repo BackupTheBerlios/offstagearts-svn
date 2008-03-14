@@ -62,7 +62,7 @@ public void propertyChange(java.beans.PropertyChangeEvent evt)
 	if (oldval == null) return;
 
 	// Run final result after we've finished batch set in setValue()
-	app.getBatchSet().execUpdate(new UpdRunnable() {
+	app.batchSet().execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		Object newval = getValue();
 		firePropertyChange("value", oldval, newval);
@@ -90,7 +90,7 @@ public void setValue(Object o)
 //	app.runApp(new BatchRunnable() {
 //	public void run(SqlRunner str) throws SQLException {
 		
-	SqlRunner str = app.getBatchSet();
+	SqlRunner str = app.batchSet();
 //	SqlBatchSet str = app.getBatchSet();
 	offstage.db.DB.getPrimaryEntityID(str, ID);
 	str.execUpdate(new UpdRunnable() {

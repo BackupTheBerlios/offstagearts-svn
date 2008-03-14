@@ -27,7 +27,7 @@ import java.sql.*;
 public class PersonsSchema extends EntitiesSchema
 {
 
-public PersonsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public PersonsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super(str, change);

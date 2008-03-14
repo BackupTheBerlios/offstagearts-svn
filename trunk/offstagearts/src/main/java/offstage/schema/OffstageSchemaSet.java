@@ -57,7 +57,7 @@ public class OffstageSchemaSet extends BaseSchemaSet
 //public Schema equeries;
 
 /** Creates a new instance of OffstageSchema */
-public OffstageSchemaSet(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public OffstageSchemaSet(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	map.put("courseids", new CourseidsSchema());

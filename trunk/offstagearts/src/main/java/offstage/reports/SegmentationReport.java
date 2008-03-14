@@ -149,11 +149,11 @@ List<String> segmentTypes)
 public static void writeCSV(final App app, SqlRunner str,
 String idSql, List<String> segmentTypes, final File outFile) throws Exception
 {
-	final SegmentationReport report = new SegmentationReport(str, app.getSqlTypeSet(),
+	final SegmentationReport report = new SegmentationReport(str, app.sqlTypeSet(),
 		idSql, segmentTypes);
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
-		citibob.reports.Reports rr = app.getReports();
+		citibob.reports.Reports rr = app.reports();
 		rr.writeCSV(rr.format(report), outFile);
 	}});
 }

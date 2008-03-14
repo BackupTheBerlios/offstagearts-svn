@@ -81,7 +81,7 @@ void getStudentNames(SqlRunner str, App app, int termid, String payerIdSql)
 		(payerIdSql == null ? "" : " and es.adultid = xx.id") +
 		" order by es.adultid";
 System.out.println(sql);
-	final RSTableModel mod = new RSTableModel(app.getSqlTypeSet());
+	final RSTableModel mod = new RSTableModel(app.sqlTypeSet());
 	mod.executeQuery(str, sql);
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws SQLException {
@@ -139,7 +139,7 @@ int termid, String payerIdSql, final java.util.Date today)
 		(payerIdSql == null ? "" : " and act.entityid = xx.id") +
 //		" and act.termid = " + SqlInteger.sql(termid) + "\n" +
 		" order by p.lastname, p.firstname, act.entityid, act.date, act.actransid";
-	final RSTableModel rsmod = new RSTableModel(app.getSqlTypeSet());
+	final RSTableModel rsmod = new RSTableModel(app.sqlTypeSet());
 	rsmod.executeQuery(str, sql);
 	
 	// Fetch name of term and do main processig
@@ -241,9 +241,9 @@ int termid, String payerIdSql, final java.util.Date today)
 			SubrowTableModel rs2 = new SubrowTableModel(mod, split, mod.getRowCount());
 
 			// Split into things owed and things not yet owed
-			data.put("rs0", new TemplateTableModel(new StatementTableModel(rs0, app.getSFormatMap())));
-			data.put("rs1", new TemplateTableModel(new StatementTableModel(rs1, app.getSFormatMap())));
-			data.put("rs2", new TemplateTableModel(new StatementTableModel(rs2, app.getSFormatMap())));
+			data.put("rs0", new TemplateTableModel(new StatementTableModel(rs0, app.sFormatMap())));
+			data.put("rs1", new TemplateTableModel(new StatementTableModel(rs1, app.sFormatMap())));
+			data.put("rs2", new TemplateTableModel(new StatementTableModel(rs2, app.sFormatMap())));
 
 			// Add totals...
 			int balcol = mod.findColumn("balance");
@@ -270,7 +270,7 @@ int termid, String payerIdSql, final java.util.Date today)
 			data.put("studentname", studentName == null ? "<none>" : studentName);
 			data.put("payername", rs0.getValueAt(0, mod.findColumn("payername")));
 			DateFormat dfmt = new SimpleDateFormat("MMM dd, yyyy");
-				dfmt.setTimeZone(app.getTimeZone());
+				dfmt.setTimeZone(app.timeZone());
 			data.put("date", dfmt.format(today));
 			data.put("duedate", (rs1.getRowCount() == 0 ? "Immediately" :
 				dfmt.format((java.util.Date)rs1.getValueAt(0,dtcol))));
@@ -302,7 +302,7 @@ throws Exception
 	str.execUpdate(new UpdRunnable() {
 	public void run(SqlRunner str) throws Exception {
 		//List models = (List)str.get("models");
-		Reports reports = fapp.getReports(); //new OffstageReports(fapp);
+		Reports reports = fapp.reports(); //new OffstageReports(fapp);
 		File f = reports.writeJodPdfs(rep.models, null, "AcctStatement.odt", null);
 		reports.viewPdf(f);
 	}});

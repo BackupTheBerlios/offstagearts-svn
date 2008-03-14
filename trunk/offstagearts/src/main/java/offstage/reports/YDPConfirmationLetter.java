@@ -67,7 +67,7 @@ throws Exception
 	
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
-		Reports rr = app.getReports();
+		Reports rr = app.reports();
 		rr.viewJodPdfs(rr.toJodList(rs,
 			new String[][] {{"line1", "line2", "line3", "city", "state", "zip", "firstname"}}),
 			null, "YDPConfirmationLetter.odt");

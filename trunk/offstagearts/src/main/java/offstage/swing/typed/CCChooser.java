@@ -62,7 +62,7 @@ public void setEntityID(SqlRunner str, int entityid, final App app)
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws SQLException {
 		rs.next();
-		TypedWidgetBinder.setValueRecursive(oldCard, rs, app.getSwingerMap(), app.getSqlTypeSet());
+		TypedWidgetBinder.setValueRecursive(oldCard, rs, app.swingerMap(), app.sqlTypeSet());
 		if (oldCard.isFullySet()) {
 			// Old card is good --- give option to use it
 			jTabbedPane1.setEnabledAt(T_OLD, true);

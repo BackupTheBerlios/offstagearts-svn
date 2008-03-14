@@ -164,7 +164,7 @@ public static void viewReport(SqlRunner str, final App app, String idSql, String
 	String sql = LabelReport.getSql(idSql, orderBy);
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
-		Reports rr = app.getReports();
+		Reports rr = app.reports();
 		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
 	}});
 }

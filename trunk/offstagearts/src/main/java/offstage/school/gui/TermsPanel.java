@@ -28,9 +28,9 @@ import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.MultiDbModel;
 import citibob.jschema.SchemaBufRowModel;
 import citibob.jschema.SqlBufDbModel;
-import citibob.task.BatchRunnable;
-import citibob.task.ERunnable;
-import citibob.sql.SqlRunner;
+import citibob.task.BatchTask;
+import citibob.task.ETask;
+import citibob.sql.SqlRun;
 import citibob.sql.UpdRunnable;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.RowModel;
@@ -62,7 +62,7 @@ public TermsPanel()
 	
 
 /** Creates new form CompleteStatusPanel */
-public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRunner str)
+public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRun str)
 //throws SQLException
 {
 	this.fapp = xfapp;
@@ -72,10 +72,10 @@ public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRunner str)
 	
 	smod.addListener(new SchoolModel.Adapter() {
     public void termIDChanged(int oldTermID, int termID) {
-			termChanged(fapp.getBatchSet());
+			termChanged(fapp.batchSet());
 	}});
 	
-	termInfo.setSwingerMap(fapp.getSwingerMap());
+	termInfo.setSwingerMap(fapp.swingerMap());
 	termInfo.setModel(new RowModelTableModel(smod.oneTermRm,
 		new String[] {"Name", "Type", "From", "To (+1)", "Tuition Plans", "Current?"},
 		new String[] {"name", "termtypeid", "firstdate", "nextdate", "rbplansetclass", "iscurrent"}));
@@ -94,25 +94,25 @@ public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRunner str)
 				" and dd.termid = " + SqlInteger.sql(proto ? -1 : smod.getTermID());
 		}};
 	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	public void run(SqlRun str) throws Exception {
 		duedates.setModelU(duedatesDm.getSchemaBuf(),
 			new String[] {"Status", "Due Date", "Description"},
 			new String[] {"__status__", "duedate", "description"},
-			new boolean[] {false,true,false}, fapp.getSwingerMap());		
+			new boolean[] {false,true,false}, fapp.swingerMap());		
 	}});
 	
 	holidaysDm = new IntKeyedDbModel(fapp.getSchema("holidays"),
-		"termid", fapp.getDbChange()); //, new IntKeyedDbModel.Params(false));
+		"termid", fapp.dbChange()); //, new IntKeyedDbModel.Params(false));
 	holidaysDm.setDoInsertKeys(false);
 	holidays.setModelU(holidaysDm.getSchemaBuf(),
 		new String[] {"Status", "First Day", "Last Day", "Description"},
 		new String[] {"__status__", "firstday", "lastday", "description"},
-		null, fapp.getSwingerMap());
+		null, fapp.swingerMap());
 	
 	allDm = new MultiDbModel(new DbModel[] {smod.oneTermDm, duedatesDm, holidaysDm});
 }
 
-void termChanged(SqlRunner str) 
+void termChanged(SqlRun str) 
 {
 	Integer Termid = (Integer)smod.getTermID();
 	allDm.doUpdate(str);
@@ -123,7 +123,7 @@ void termChanged(SqlRunner str)
 }
 
 	
-void all_doSelect(SqlRunner str)
+void all_doSelect(SqlRun str)
 {
 	allDm.doSelect(str);
 }
@@ -337,7 +337,7 @@ void all_doSelect(SqlRunner str)
 
 	private void ddUndelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddUndelActionPerformed
 	{//GEN-HEADEREND:event_ddUndelActionPerformed
-		fapp.runGui(TermsPanel.this, new ERunnable() {
+		fapp.runGui(TermsPanel.this, new ETask() {
 		public void run() throws Exception {
 			duedatesDm.getSchemaBuf().undeleteRow(duedates.getSelectedRow());
 			duedates.requestFocus();
@@ -347,7 +347,7 @@ void all_doSelect(SqlRunner str)
 
 	private void holUndelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_holUndelActionPerformed
 	{//GEN-HEADEREND:event_holUndelActionPerformed
-		fapp.runGui(TermsPanel.this, new ERunnable() {
+		fapp.runGui(TermsPanel.this, new ETask() {
 		public void run() throws Exception {
 			holidaysDm.getSchemaBuf().undeleteRow(holidays.getSelectedRow());
 			holidays.requestFocus();
@@ -357,8 +357,8 @@ void all_doSelect(SqlRunner str)
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
-		fapp.runApp(new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runApp(new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			all_doSelect(str);
 		}});
 // TODO add your handling code here:
@@ -366,8 +366,8 @@ void all_doSelect(SqlRunner str)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		fapp.runApp(new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runApp(new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			allDm.doUpdate(str);
 			str.flush();
 			all_doSelect(str);
@@ -377,7 +377,7 @@ void all_doSelect(SqlRunner str)
 
 	private void holDelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_holDelActionPerformed
 	{//GEN-HEADEREND:event_holDelActionPerformed
-		fapp.runGui(TermsPanel.this, new ERunnable() {
+		fapp.runGui(TermsPanel.this, new ETask() {
 		public void run() throws Exception {
 			holidaysDm.getSchemaBuf().deleteRow(holidays.getSelectedRow());
 			holidays.requestFocus();
@@ -386,8 +386,8 @@ void all_doSelect(SqlRunner str)
 
 	private void holAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_holAddActionPerformed
 	{//GEN-HEADEREND:event_holAddActionPerformed
-		fapp.runGui(TermsPanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runGui(TermsPanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			holidaysDm.getSchemaBuf().insertRow(-1, "termid", (Integer)smod.getTermID());
 		}});
 // TODO add your handling code here:
@@ -395,7 +395,7 @@ void all_doSelect(SqlRunner str)
 
 	private void ddDelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddDelActionPerformed
 	{//GEN-HEADEREND:event_ddDelActionPerformed
-		fapp.runGui(TermsPanel.this, new ERunnable() {
+		fapp.runGui(TermsPanel.this, new ETask() {
 		public void run() throws Exception {
 			duedatesDm.getSchemaBuf().deleteRow(duedates.getSelectedRow());
 			duedates.requestFocus();
@@ -404,7 +404,7 @@ void all_doSelect(SqlRunner str)
 
 	private void ddAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddAddActionPerformed
 	{//GEN-HEADEREND:event_ddAddActionPerformed
-		fapp.runGui(TermsPanel.this, new ERunnable() {
+		fapp.runGui(TermsPanel.this, new ETask() {
 		public void run() throws Exception {
 			if (ddType.getValue() == null) return;
 			Object val = ddType.getValue();

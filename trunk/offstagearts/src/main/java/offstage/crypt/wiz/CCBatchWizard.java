@@ -139,7 +139,7 @@ void processBatch(SqlRunner str)
 //java.security.GeneralSecurityException, java.text.ParseException, JRException
 {
 	final SqlTimestamp sqlt = new SqlTimestamp("GMT");
-	final SqlDate sqld = new SqlDate(fapp.getTimeZone(), false);
+	final SqlDate sqld = new SqlDate(fapp.timeZone(), false);
 
 	// Process empty batch
 	SqlSerial.getNextVal(str, "ccbatch_ccbatchid_seq");
@@ -158,7 +158,7 @@ void processBatch(SqlRunner str)
 				" where e.entityid = p.entityid" +
 				" and p.ccbatchid = " + SqlInteger.sql(ccbatchid) +
 				" order by date";
-		str.execSql(sql, new RssRunnable() {
+		str.execSql(sql, new RssTasklet() {
 		public void run(SqlRunner str, ResultSet[] rss) throws Exception {
 			ResultSet rs;
 			
@@ -192,7 +192,7 @@ void processBatch(SqlRunner str)
 
 				details.add(map);
 			}
-			Reports rr = fapp.getReports();
+			Reports rr = fapp.reports();
 			rr.viewJasper(rr.toJasper(details), params, null, "CCPayments.jrxml");
 //			JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
 //			offstage.reports.ReportOutput.viewJasperReport(fapp, "CCPayments.jrxml", jrdata, params);

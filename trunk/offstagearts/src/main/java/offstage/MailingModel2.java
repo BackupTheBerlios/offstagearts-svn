@@ -53,7 +53,7 @@ IntKeyedDbModel mailings;		// Set to entire mailing info
 //IntKeyedDbModel oneMailingid;		// Set to entire mailing info
 //int mailingID;					// Current mailing ID
 //SqlRunner str;
-TaskRunner runner;
+JobRun runner;
 citibob.app.App app;
 
 public IntKeyedDbModel getMailingsDb()
@@ -84,7 +84,7 @@ public MailingModel2(final SqlRunner str, citibob.app.App app) //OffstageSchemaS
 //throws SQLException
 {
 	this.app = app;
-	SchemaSet sset = app.getSchemaSet();
+	SchemaSet sset = app.schemaSet();
 	this.runner = runner;
 	mailings = new IntKeyedDbModel(sset.get("mailings"), "groupid", null); //, new IntKeyedDbModel.Params(false));
 	mailings.setDoInsertKeys(false);
@@ -125,7 +125,7 @@ public void makeReport(SqlRunner str) throws SQLException, JRException
 		" order by country, zip";
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
-		Reports rr = app.getReports();
+		Reports rr = app.reports();
 		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
 	}});
 }

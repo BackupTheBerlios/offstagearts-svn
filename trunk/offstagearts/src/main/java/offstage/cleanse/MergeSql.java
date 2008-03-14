@@ -52,7 +52,7 @@ public String toSql()
 
 public static String mergeEntities(App app, Object entityid0, Object entityid1)
 {
-	MergeSql merge = new MergeSql(app.getSchemaSet());
+	MergeSql merge = new MergeSql(app.schemaSet());
 	merge.mergeEntities(entityid0, entityid1);
 	String sql = merge.toSql();
 	return sql;

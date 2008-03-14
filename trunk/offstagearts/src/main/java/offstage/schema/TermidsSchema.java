@@ -28,7 +28,7 @@ import citibob.types.*;
 public class TermidsSchema extends GroupidsSchema
 {
 
-public TermidsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public TermidsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException{
 	table = "termids";
 	KeyedModel kmodel = new DbKeyedModel(str, change,

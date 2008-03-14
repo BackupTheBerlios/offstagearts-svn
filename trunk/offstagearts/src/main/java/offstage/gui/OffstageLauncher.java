@@ -38,7 +38,7 @@ import citibob.resource.ResData;
 import citibob.resource.UpgradePlan;
 import citibob.resource.UpgradePlanSet;
 import citibob.sql.*;
-import citibob.task.BatchRunnable;
+import citibob.task.BatchTask;
 import java.io.IOException;
 import offstage.FrontApp;
 import offstage.config.*;
@@ -81,11 +81,11 @@ protected ConsoleFrame consoleFrame;
 		app.initWithDatabase();
 		
 		if (resGood) {
-			app.getFrameSet().openFrame("maintenance");
+			app.frameSet().openFrame("maintenance");
 		} else {
-			app.getFrameSet().openFrame("config");
+			app.frameSet().openFrame("config");
 		}
-		app.getBatchSet().flush();
+		app.batchSet().flush();
     }
 
 

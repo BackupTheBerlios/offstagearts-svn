@@ -229,7 +229,7 @@ class AllPayerDbModel extends MultiDbModel
 		smod.payerDm.setKey(payerid);
 		smod.payertermregsDm.setKey("entityid", payerid);
 		transRegister.getDbModel().setKey("entityid", payerid);
-		familyTable.setPrimaryEntityID(fapp.getBatchSet(), payerid);
+		familyTable.setPrimaryEntityID(fapp.batchSet(), payerid);
 	}
 	public Integer getPayerID()
 		{ return (Integer)smod.payerDm.getKey(); }
@@ -361,7 +361,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 			new String[] {"name", "dayofweek", "tstart", "tnext",
 				"courserole", "dstart", "dend"},
 			new boolean[] {false, false, false, false,
-				true, true, true, false}, fapp.getSwingerMap());
+				true, true, true, false}, fapp.swingerMap());
 		enrollments.setRenderEditU("dayofweek", new DayOfWeekKeyedModel());
 	}});
 	
@@ -373,7 +373,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 	allParent2 = new AllParentDbModel(smod.parent2Dm);
 	allRec = new AllRecDbModel();
 	
-	SwingerMap smap = fapp.getSwingerMap();
+	SwingerMap smap = fapp.swingerMap();
 
 	// ===============================================================
 	// Link events when an entityid changes
@@ -381,19 +381,19 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 	public void valueChanged(int col) {
 		if (allStudent.inSelect()) return;	// Only respond to widget changes
 		Integer payerid = smod.getPayerID();
-		allPayer.resetPayerID(fapp.getBatchSet(), payerid);
+		allPayer.resetPayerID(fapp.batchSet(), payerid);
 	}});
 	smod.studentRm.addColListener("parent1id", new RowModel.ColAdapter() {
 	public void valueChanged(int col) {
 		if (allStudent.inSelect()) return;	// Only respond to widget changes
 		Integer parent1id = smod.getParent1ID();
-		allParent1.resetParentID(fapp.getBatchSet(), parent1id);
+		allParent1.resetParentID(fapp.batchSet(), parent1id);
 	}});
 	smod.studentRm.addColListener("parent2id", new RowModel.ColAdapter() {
 	public void valueChanged(int col) {
 		if (allStudent.inSelect()) return;	// Only respond to widget changes
 		Integer parent2id = smod.getParent2ID();
-		allParent2.resetParentID(fapp.getBatchSet(), parent2id);
+		allParent2.resetParentID(fapp.batchSet(), parent2id);
 	}});
 
 		
@@ -411,7 +411,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 //	vHouseholdID.initRuntime(fapp);
 //		new TypedWidgetBinder().bind(vHouseholdID, smod.studentRm, smap);
 //	vStudentID.initRuntime(fapp);
-	vStudentID.setJType(fapp.getBatchSet());
+	vStudentID.setJType(fapp.batchSet());
 		new TypedWidgetBinder().bind(vStudentID, smod.studentRm, smap);
 	KeyedModel gmodel = new KeyedModel();
 		gmodel.addItem(null, "<Unknown>");
@@ -428,7 +428,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 		// public void valueChanged(int col) {}
 		// Do something when user moves to a different student
 		public void curRowChanged(final int col) {
-			SqlRunner str = fapp.getBatchSet();
+			SqlRunner str = fapp.batchSet();
 				Integer ID = (Integer)smod.studentRm.get(col);
 				if (ID == null) return;
 				String lastname = (String)smod.studentRm.get(smod.studentRm.findColumn("lastname"));
@@ -442,7 +442,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 	// Change person when user clicks on family...
 	familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(final PropertyChangeEvent evt) {
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			Integer EntityID = (Integer)evt.getNewValue();
 			if (EntityID == null) return;
@@ -479,8 +479,8 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 
 	
 	// Bind our account actions
-	ActionTaskBinder tbinder = new ActionTaskBinder(
-		this, fapp.getGuiRunner(), transRegister.getTaskMap());
+	ActionJobBinder tbinder = new ActionJobBinder(
+		this, fapp.guiRun(), transRegister.getTaskMap());
 	tbinder.bind(this.bCash, "cash");
 	tbinder.bind(this.bCheck, "check");
 	tbinder.bind(this.bCc, "cc");
@@ -506,7 +506,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 	public void propertyChange(PropertyChangeEvent evt) {
 //		fapp.runApp(new BatchRunnable() {
 //		public void run(SqlRunner str) throws Exception {
-		SqlRunner str = fapp.getBatchSet();
+		SqlRunner str = fapp.batchSet();
 			Integer EntityID = (Integer)searchBox.getValue();
 			if (EntityID == null) return;
 			changeStudent(str, EntityID);
@@ -518,7 +518,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
     public void termIDChanged(int oldTermID, int termID)  {
 		allRec.setTermID(termID);
 
-		SqlRunner str = fapp.getBatchSet();
+		SqlRunner str = fapp.batchSet();
 		Integer eid = (Integer)smod.studentRm.get("entityid");
 		if (eid != null) {
 			// Ensure a registration record for this term
@@ -531,7 +531,7 @@ public void initRuntime(SqlRunner str, FrontApp xfapp, SchoolModel xschoolModel)
 //	smod.fireTermIDChanged(smod.getTermID(), smod.getTermID());
 //	smod.setTermID(smod.getTermID());
 	
-	fapp.getDbChange().addListener("termids", new DbChangeModel.Listener() {
+	fapp.dbChange().addListener("termids", new DbChangeModel.Listener() {
     public void tableWillChange(SqlRunner str, String table) {
 		smod.oneTermDm.doSelect(str);
 		refreshRBPlanSet(str);
@@ -2552,7 +2552,7 @@ public void changeStudent(SqlRunner str, Integer entityid)// throws SQLException
 
 void newPayerAction(final String colName)
 {
-	fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
+	fapp.runGui(RegistrationPanel.this, new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(RegistrationPanel.this);
 		Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, root);
@@ -2569,7 +2569,7 @@ void newPayerAction(final String colName)
 
 	private void bNewHouseholdActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewHouseholdActionPerformed
 	{//GEN-HEADEREND:event_bNewHouseholdActionPerformed
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(RegistrationPanel.this);
 			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, root);
@@ -2593,7 +2593,7 @@ void newPayerAction(final String colName)
 
 	private void bNewStudentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewStudentActionPerformed
 	{//GEN-HEADEREND:event_bNewStudentActionPerformed
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(RegistrationPanel.this);
 			Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(fapp, root);
@@ -2614,7 +2614,7 @@ void newPayerAction(final String colName)
 			"Remove Enrollment", JOptionPane.YES_NO_OPTION)
 			== JOptionPane.NO_OPTION) return;
 		
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			
 			int row = enrollments.getSelectedRow();
@@ -2634,7 +2634,7 @@ void newPayerAction(final String colName)
 
 	private void bAddEnrollmentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddEnrollmentActionPerformed
 	{//GEN-HEADEREND:event_bAddEnrollmentActionPerformed
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			enrolledDb.doUpdate(str);
 			Wizard wizard = new EnrollWizard(fapp, RegistrationPanel.this);
@@ -2662,7 +2662,7 @@ void newPayerAction(final String colName)
 
 	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			smod.studentRm.set("primaryentityid", all.getKey());
 		}});
@@ -2671,7 +2671,7 @@ void newPayerAction(final String colName)
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			all.doSelect(str);
 //str.execUpdate(new UpdRunnable() {
@@ -2693,7 +2693,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 	// updates are complete before querying select.  We could solve
 	// this problem by putting the tuition update code in a stored procedure.
 	fapp.pushBatchSet();
-	all.doUpdate(fapp.getBatchSet());
+	all.doUpdate(fapp.batchSet());
 	fapp.popBatchSet();
 	
 	str.execUpdate(new UpdRunnable() {
@@ -2710,7 +2710,7 @@ private void doUpdateSelect(SqlRunner str) throws Exception
 	
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		fapp.runGui(RegistrationPanel.this, new BatchRunnable() {
+		fapp.runGui(RegistrationPanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			doUpdateSelect(str);
 		}});

@@ -10,7 +10,7 @@ import citibob.resource.RtResKey;
 import citibob.resource.Resource;
 import citibob.sql.DbChangeModel;
 import citibob.sql.RsRunnable;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 import citibob.sql.UpdRunnable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,17 +36,17 @@ static class UVersion {
 List<UVersion> terms = new ArrayList();
 //List<UVersion> shows;
 
-public OffstageResSet(SqlRunner str, DbChangeModel dbChange)
+public OffstageResSet(SqlRun str, DbChangeModel dbChange)
 throws SQLException
 {
 	super(str, 17, OffstageResSet.class.getClassLoader(),  "offstage/resource/");
 
 	dbChange.addListener("termids", new DbChangeModel.Listener() {
-    public void tableWillChange(SqlRunner str, String table) {
+    public void tableWillChange(SqlRun str, String table) {
 		refreshTerms(str);
 	}});
 	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) {
+	public void run(SqlRun str) {
 		if (dbbExists()) refreshTerms(str);
 	}});
 
@@ -57,12 +57,12 @@ throws SQLException
 	
 }
 
-private void refreshTerms(SqlRunner str)
+private void refreshTerms(SqlRun str)
 {
 	
 	String sql = "select groupid, name from termids where iscurrent";
 	str.execSql(sql, new RsRunnable() {
-	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
+	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
 		terms.clear();
 		while (rs.next()) {
 			UVersion uv = new UVersion(rs.getInt("groupid"), rs.getString("name"));

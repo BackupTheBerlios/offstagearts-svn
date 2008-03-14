@@ -65,35 +65,35 @@ public class EntityPanel extends javax.swing.JPanel {
 		mainPanel.initRuntime(str, app, dm);
 		
 		// Init the credit card panel
-		TypedWidgetBinder.bindRecursive(this, mainPanel.model, app.getSwingerMap());
+		TypedWidgetBinder.bindRecursive(this, mainPanel.model, app.swingerMap());
 		cryptCCInfo.initRuntime(fapp.getKeyRing());
 		
 		donationsPanel.initRuntime(str, dm.getDonationSb(),
 			new String[] {"Type", "Date", "Amount"},
-			new String[] {"groupid", "date", "amount"}, true, app.getSwingerMap());
+			new String[] {"groupid", "date", "amount"}, true, app.swingerMap());
 		flagsPanel.initRuntime(str, dm.getFlagSb(),
 			new String[] {"Type"},
-			new String[] {"groupid"}, true, app.getSwingerMap());
+			new String[] {"groupid"}, true, app.swingerMap());
 		eventsPanel.initRuntime(str, dm.getEventsSb(),
 			new String[] {"Event"},//, "Role"},
-			new String[] {"groupid"/*, "role"*/}, true, app.getSwingerMap());
+			new String[] {"groupid"/*, "role"*/}, true, app.swingerMap());
 		notesPanel.initRuntime(str, dm.getNotesSb(),
 			new String[] {"Type", "Date", "Note"},
-			new String[] {"groupid", "date", "note"}, true, app.getSwingerMap());
+			new String[] {"groupid", "date", "note"}, true, app.swingerMap());
 		ticketsPanel.initRuntime(str, dm.getTicketsSb(),
 			new String[] {"Event", "Date", "Type", "Venue", "Perf Type", "#Tix", "Payment", "Offer Code"},
 			new String[] {"groupid", "date", "tickettypeid", "venueid", "perftypeid", "numberoftickets", "payment", "offercodeid"},
-			true, app.getSwingerMap());
+			true, app.swingerMap());
 		interestsPanel.initRuntime(str, dm.getInterestsSb(),
 			new String[] {"Interest", "By Person", "Referred By"},
-			new String[] {"groupid", "byperson", "referredby"}, true, app.getSwingerMap());
+			new String[] {"groupid", "byperson", "referredby"}, true, app.swingerMap());
 //		classesPanel.initRuntime(str, dm.getClassesSb(),
 //			new String[] {"Class", "Comments"},
 //			new String[] {"groupid", "comments"}, app.getSwingerMap());
 		termsPanel.initRuntime(str, dm.getTermsSb(),
 			new String[] {"Term", "Role"},
 			new String[] {"groupid", "courserole"},
-			false, app.getSwingerMap());
+			false, app.swingerMap());
 			termsPanel.setEnabled(false);
 		
 //		dm.addListener(new FullEntityDbModel.Adapter() {

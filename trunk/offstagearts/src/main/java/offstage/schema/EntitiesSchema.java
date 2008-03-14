@@ -35,7 +35,7 @@ static {
 	ccTypeModel.addItem("v", "Visa");
 }
 
-public EntitiesSchema(citibob.sql.SqlRunner str, DbChangeModel change)
+public EntitiesSchema(citibob.sql.SqlRun str, DbChangeModel change)
 throws SQLException
 {
 	table = "entities";

@@ -27,7 +27,7 @@ import java.util.*;
 public class TicketeventsSchema extends ConstSqlSchema
 {
 
-public TicketeventsSchema(citibob.sql.SqlRunner str, DbChangeModel change, TimeZone tz)
+public TicketeventsSchema(citibob.sql.SqlRun str, DbChangeModel change, TimeZone tz)
 throws SQLException
 {
 	super();

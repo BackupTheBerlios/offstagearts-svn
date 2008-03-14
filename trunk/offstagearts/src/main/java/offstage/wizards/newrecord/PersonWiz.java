@@ -53,7 +53,7 @@ public class PersonWiz extends HtmlWiz {
 public PersonWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
-	super(owner, app.getSwingerMap());
+	super(owner, app.swingerMap());
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
 	addTextField("firstname");

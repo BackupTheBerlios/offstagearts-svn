@@ -27,7 +27,7 @@ import java.sql.*;
 public class OrgSchema extends EntitiesSchema
 {
 
-public OrgSchema(citibob.sql.SqlRunner str, DbChangeModel change)
+public OrgSchema(citibob.sql.SqlRun str, DbChangeModel change)
 throws SQLException
 {
 	super(str, change);

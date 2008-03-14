@@ -49,7 +49,7 @@ public class TicketParamsWiz extends HtmlWiz {
 public TicketParamsWiz(java.awt.Frame owner, App app)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, app.getSwingerMap());
+	super(owner, app.swingerMap());
 	setSize(600,400);
 	citibob.jschema.SqlSchema schema = app.getSchema("tickets");
 	addWidget("groupid", schema);

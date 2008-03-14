@@ -87,9 +87,9 @@ ClassLoader siteCode;
 //EQueryModel2 equeries;
 //MailingModel2 mailings;
 //EntityListTableModel simpleSearchResults;
-SwingTaskRunner guiRunner;		// Run user-initiated actions; when user hits button, etc.
+SwingJobRun guiRunner;		// Run user-initiated actions; when user hits button, etc.
 	// This will put on queue, etc.
-TaskRunner appRunner;		// Run secondary events, in response to other events.  Just run immediately
+JobRun appRunner;		// Run secondary events, in response to other events.  Just run immediately
 MailSender mailSender;	// Way to send mail (TODO: make this class MVC.)
 SqlTypeSet sqlTypeSet;		// Conversion between SQL types and SqlType objects
 ExpHandler expHandler;
@@ -106,18 +106,18 @@ public static final SqlTimestamp sqlTimestamp = new SqlTimestamp("GMT", true);
 //public static final TimeZone timeZone = TimeZone.getTimeZone("US/Pacific");
 //public static final TimeZone timeZone = TimeZone.getTimeZone("Americas/Chicago");
 // -------------------------------------------------------
-public Version getVersion() { return version; }
-public int getSysVersion() { return sysVersion; }
-public Properties getProps() { return props; }
-public ResSet getResSet() { return resSet; }
+public Version version() { return version; }
+public int sysVersion() { return sysVersion; }
+public Properties props() { return props; }
+public ResSet resSet() { return resSet; }
 public KeyRing getKeyRing() { return keyRing; }
-public TimeZone getTimeZone() { return timeZone; }
+public TimeZone timeZone() { return timeZone; }
 
-public SwingPrefs getSwingPrefs() { return swingPrefs; }
-public QueryLogger getLogger() { return logger; }
+public SwingPrefs swingPrefs() { return swingPrefs; }
+public QueryLogger queryLogger() { return logger; }
 public int getLoginID() { return loginID; }
-public ConnPool getPool() { return pool; }
-public SqlBatchSet getBatchSet() { return batchSets.peek(); }
+public ConnPool pool() { return pool; }
+public SqlBatchSet batchSet() { return batchSets.peek(); }
 public void pushBatchSet()
 {
 	SqlBatchSet bs = new SqlBatchSet(pool);
@@ -128,13 +128,13 @@ public void popBatchSet() throws Exception
 	SqlBatchSet bs = batchSets.pop();
 	bs.runBatches();
 }
-public ExpHandler getExpHandler() { return expHandler; }
-public File getConfigDir() { return configDir; }
+public ExpHandler expHandler() { return expHandler; }
+public File configDir() { return configDir; }
 public String getConfigName() { return configName; }
-public void runGui(java.awt.Component c, CBRunnable r) { guiRunner.doRun(c, r); }
+public void runGui(java.awt.Component c, CBTask r) { guiRunner.doRun(c, r); }
 /** Only runs the action if logged-in user is a member of the correct group.
  TODO: This functionality should be maybe in the TaskRunner? */
-public void runGui(java.awt.Component c, String group, CBRunnable r) {
+public void runGui(java.awt.Component c, String group, CBTask r) {
 	runGui(c,r);
 //	if (loginGroups.contains(group)) {
 //		runGui(c,r);
@@ -142,7 +142,7 @@ public void runGui(java.awt.Component c, String group, CBRunnable r) {
 //		javax.swing.JOptionPane.showMessageDialog(c, "You are not authorized for that action.");
 //	}
 }
-public void runGui(java.awt.Component c, String[] groups, CBRunnable r)
+public void runGui(java.awt.Component c, String[] groups, CBTask r)
 {
 	runGui(c,r);
 	
@@ -160,16 +160,16 @@ public void runGui(java.awt.Component c, String[] groups, CBRunnable r)
 }
 
 //public void runGui(CBRunnable r) { guiRunner.doRun(null, r); }
-public void runApp(CBRunnable r) { appRunner.doRun(r); }
-public MailSender getMailSender() { return mailSender; }
+public void runApp(CBTask r) { appRunner.doRun(r); }
+public MailSender mailSender() { return mailSender; }
 public SqlSchema getSchema(String name) { return sset.get(name); }
-public FrameSet getFrameSet() { return frameSet; }
+public FrameSet frameSet() { return frameSet; }
 public ClassLoader getSiteCode() { return siteCode; }
-public citibob.sql.SqlTypeSet getSqlTypeSet() { return sqlTypeSet; }
-public citibob.reports.Reports getReports() { return reports; }
+public citibob.sql.SqlTypeSet sqlTypeSet() { return sqlTypeSet; }
+public citibob.reports.Reports reports() { return reports; }
 
-public SwingTaskRunner getGuiRunner() { return guiRunner; }
-public TaskRunner getAppRunner() { return appRunner; }
+public SwingJobRun guiRun() { return guiRunner; }
+public JobRun appRun() { return appRunner; }
 
 // ----------------------------------------------------------------------
 Preferences pUserRoot;
@@ -304,8 +304,8 @@ throws Exception
 		new InternetAddress(props.getProperty("mail.bugs.recipient")),
 //		new InternetAddress("citibob@citibob.net"),
 		"OffstageArts", consoleFrame.getDocument());
-	guiRunner = new BusybeeDbTaskRunner(this, expHandler);
-	appRunner = new SimpleDbTaskRunner(this, expHandler);
+	guiRunner = new BusybeeDbJobRun(this, expHandler);
+	appRunner = new SimpleDbJobRun(this, expHandler);
 
 	// Use the exception handler
 	try {
@@ -335,7 +335,7 @@ throws Exception
 		this.mailSender = new citibob.mail.ConstMailSender(props);
 	//	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
 		this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
-		this.swingerMap = new offstage.types.OffstageSwingerMap(getTimeZone());
+		this.swingerMap = new offstage.types.OffstageSwingerMap(timeZone());
 	//	this.sFormatterMap = new offstage.types.OffstageSFormatMap();
 
 		this.pool = pool;
@@ -367,13 +367,13 @@ public boolean checkResources()  throws Exception
 		final FrontApp app = this;
 
 		dbChange = new DbChangeModel();
-		final SqlBatchSet str = app.getBatchSet();
+		final SqlBatchSet str = app.batchSet();
 		createResSet(str);
-		ResData rdata = new ResData(str, resSet, getSqlTypeSet());
+		ResData rdata = new ResData(str, resSet, sqlTypeSet());
 		str.flush();	
 
 		// See if resources need upgrading
-		final UpgradePlanSet upset = new UpgradePlanSet(rdata, app.getSysVersion());
+		final UpgradePlanSet upset = new UpgradePlanSet(rdata, app.sysVersion());
 		if (upset.reqCannotCreate.size() != 0 || upset.reqNotUpgradeable.size() != 0) {
 			upset.print(System.out);
 			throw new IOException("Cannot upgrade resources!");
@@ -386,7 +386,7 @@ public boolean checkResources()  throws Exception
 //				app.runApp(new BatchRunnable() {
 //				public void run(SqlRunner xstr) throws Exception {
 					for (UpgradePlan up : upset.uplans) {
-						up.applyPlan(str, app.getPool());
+						up.applyPlan(str, app.pool());
 					}
 					createResSet(str);		// We might now have a database!
 //				}});
@@ -417,7 +417,7 @@ public void initWithDatabase()
 	//	MailSender sender = new GuiMailSender();
 		//guiRunner = new SimpleDbTaskRunner(pool);
 
-		final ResResult siteCodeRes = getResSet().load(str, "sitecode.jar", 0);
+		final ResResult siteCodeRes = resSet().load(str, "sitecode.jar", 0);
 		str.execUpdate(new UpdRunnable() {
 		public void run(SqlRunner str) throws IOException {
 			if (siteCodeRes.bytes != null) {
@@ -463,13 +463,13 @@ public void initWithDatabase()
 			rs.close();
 		}});
 
-		this.sset = new OffstageSchemaSet(str, dbChange, getTimeZone());
+		this.sset = new OffstageSchemaSet(str, dbChange, timeZone());
 		str.runBatches();		// Our SchemaSet must be set up before we go on.
 		// ================
 
 		// ================
 		str = new SqlBatchSet(pool);
-		logger = new OffstageQueryLogger(getAppRunner(), getLoginID());	
+		logger = new OffstageQueryLogger(appRun(), getLoginID());	
 	//	fullEntityDm = new FullEntityDbModel(this);
 	//	mailings = new MailingModel2(str, this);//, appRunner);
 
@@ -477,7 +477,7 @@ public void initWithDatabase()
 	//		equeries = new EQueryModel2(st, mailings, sset);
 	//	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
 
-		equerySchema = new EQuerySchema(getSchemaSet());
+		equerySchema = new EQuerySchema(schemaSet());
 		str.runBatches();
 		// ================
 
@@ -504,11 +504,11 @@ public void initWithDatabase()
 //	{ return mailings; }
 //public EQueryModel2 getEQueryModel2()
 //	{ return equeries; }
-public DbChangeModel getDbChange()
+public DbChangeModel dbChange()
 	{ return dbChange; }
-public OffstageSchemaSet getSchemaSet() { return sset; }
-public SwingerMap getSwingerMap() { return swingerMap; }
-public SFormatMap getSFormatMap() { return (SFormatMap)swingerMap; }
+public OffstageSchemaSet schemaSet() { return sset; }
+public SwingerMap swingerMap() { return swingerMap; }
+public SFormatMap sFormatMap() { return (SFormatMap)swingerMap; }
 public EQuerySchema getEquerySchema() { return equerySchema;}
 // -------------------------------------------------
 public int getScreen()

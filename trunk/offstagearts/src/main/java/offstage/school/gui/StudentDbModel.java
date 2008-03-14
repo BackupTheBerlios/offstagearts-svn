@@ -38,7 +38,7 @@ public final IntKeyedDbModel notesDb;
 public StudentDbModel(citibob.app.App app)
 {
 	super(app);
-	QueryLogger logger = app.getLogger();
+	QueryLogger logger = app.queryLogger();
 //	logadd(logger, schoolDb = new IntKeyedDbModel(app.getSchema("entities_school"), "entityid"));
 //		schoolDb.setDoInsertKeys(true);
 	logadd(logger, notesDb = new IntKeyedDbModel(app.getSchema("notes"), "entityid"));

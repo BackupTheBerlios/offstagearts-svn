@@ -63,7 +63,7 @@ throws SQLException
 
 	// Set up terms selector
 //	SqlBatchSet str0 = new SqlBatchSet();
-	terms.setKeyedModel(new DbKeyedModel(str, fapp.getDbChange(), "termids",
+	terms.setKeyedModel(new DbKeyedModel(str, fapp.dbChange(), "termids",
 		"select groupid, name from termids where iscurrent order by firstdate"));
 //	str0.runBatches(fapp);
 
@@ -72,7 +72,7 @@ throws SQLException
 
 		terms.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-			fapp.runApp(new BatchRunnable() {
+			fapp.runApp(new BatchTask() {
 			public void run(SqlRunner str) throws Exception {
 				termChanged(str);
 			}});
@@ -80,7 +80,7 @@ throws SQLException
 
 		// Set up courses editor
 		coursesSb = new IntKeyedDbModel(fapp.getSchema("courseids"),
-			"termid", fapp.getDbChange());
+			"termid", fapp.dbChange());
 		coursesSb.setOrderClause("dayofweek, tstart, name");
 
 		terms.setValue(termid);
@@ -89,7 +89,7 @@ throws SQLException
 		courses.setModelU(coursesSb.getSchemaBuf(),
 			new String[] {"Name", "Day", "Start", "End", "Tuition", "Enroll Limit"},
 			new String[] {"name", "dayofweek", "tstart", "tnext", "price", "enrolllimit"},
-			null, fapp.getSwingerMap());
+			null, fapp.swingerMap());
 //		courses.setRowSelectionAllowed(false);
 
 //courses.setRowSelectionAllowed(false);
@@ -137,7 +137,7 @@ void termChanged(SqlRunner str) throws SQLException
 
 	public void saveCur()
 	{
-		fapp.runGui(CoursesWiz.this, new BatchRunnable() {
+		fapp.runGui(CoursesWiz.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			if (coursesSb.valueChanged()) {
 				coursesSb.doUpdate(str);
@@ -260,7 +260,7 @@ void termChanged(SqlRunner str) throws SQLException
 
 	private void bRestoreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRestoreActionPerformed
 	{//GEN-HEADEREND:event_bRestoreActionPerformed
-		fapp.runGui(CoursesWiz.this, new BatchRunnable()
+		fapp.runGui(CoursesWiz.this, new BatchTask()
 		{ public void run(SqlRunner str) throws Exception
 		  {
 			  coursesSb.doSelect(str);
@@ -270,7 +270,7 @@ void termChanged(SqlRunner str) throws SQLException
 
 	private void bDelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelActionPerformed
 	{//GEN-HEADEREND:event_bDelActionPerformed
-		fapp.runGui(CoursesWiz.this, new ERunnable()
+		fapp.runGui(CoursesWiz.this, new ETask()
 		{ public void run() throws Exception
 		  {
 			  int selected = courses.getSelectedRow();
@@ -282,7 +282,7 @@ void termChanged(SqlRunner str) throws SQLException
 
 	private void bAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddActionPerformed
 	{//GEN-HEADEREND:event_bAddActionPerformed
-		fapp.runGui(CoursesWiz.this, new ERunnable()
+		fapp.runGui(CoursesWiz.this, new ETask()
 		{ public void run() throws Exception
 		  {
 			  coursesSb.getSchemaBuf().insertRow(-1);

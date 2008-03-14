@@ -60,7 +60,7 @@ implements java.beans.PropertyChangeListener
 
 public void propertyChange(final java.beans.PropertyChangeEvent evt)
 {
-	SqlRunner str = app.getBatchSet();
+	SqlRunner str = app.batchSet();
 		Integer Entityid = (Integer)evt.getNewValue();
 		if (Entityid == null) return;
 		int entityid = Entityid;

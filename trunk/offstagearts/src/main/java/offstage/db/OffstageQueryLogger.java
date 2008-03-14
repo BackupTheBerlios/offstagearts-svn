@@ -45,10 +45,10 @@ public class OffstageQueryLogger implements QueryLogger
 {
 
 int loginID;
-TaskRunner runner;
+JobRun runner;
 
 /** Creates a new instance of OffstageQueryLogger */
-public OffstageQueryLogger(TaskRunner runner, int loginID)
+public OffstageQueryLogger(JobRun runner, int loginID)
 {
 	this.runner = runner;
 	this.loginID = loginID;

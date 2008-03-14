@@ -55,7 +55,7 @@ public void initRuntime(citibob.app.App app) //SqlRunner str, FullEntityDbModel 
 		new String[] {"name"},
 		new String[] {"tooltip"},
 		new boolean[] {false},
-		app.getSwingerMap());
+		app.swingerMap());
 	setValueColU("entityid");
 }
 

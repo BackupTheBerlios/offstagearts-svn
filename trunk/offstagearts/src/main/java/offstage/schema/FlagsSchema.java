@@ -27,7 +27,7 @@ import citibob.types.*;
 public class FlagsSchema extends ConstSqlSchema
 {
 
-public FlagsSchema(citibob.sql.SqlRunner str, DbChangeModel change)
+public FlagsSchema(citibob.sql.SqlRun str, DbChangeModel change)
 throws SQLException
 {
 	table = "flags";

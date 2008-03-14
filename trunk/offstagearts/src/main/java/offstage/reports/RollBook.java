@@ -101,7 +101,7 @@ public RollBook(App app, int termid)
 		" order by c.dayofweek, c.tstart, c.courseid, p.lastname, p.firstname\n";
 System.out.println(sql);
 	MainSqlTableModel main = new MainSqlTableModel(
-		app.getSqlTypeSet(), sql);
+		app.sqlTypeSet(), sql);
 	this.add(new SqlDbModel(main));
 
 	// Outer Join the "Day Registered" stuff
@@ -115,7 +115,7 @@ System.out.println(sql);
 		" and c.termid = " + SqlInteger.sql(termid) + "\n" +
 		" order by p.entityid, c.dayofweek\n";
 	SqlDbModel model = new SqlDbModel(new AdhocOJSqlTableModel(
-		main, "entityid", "entityid", cols, app.getSqlTypeSet(),
+		main, "entityid", "entityid", cols, app.sqlTypeSet(),
 		sql) {
 			public void setRow(int row, ResultSet rs) throws SQLException
 			{

@@ -77,7 +77,7 @@ String dupType;
 //		public void valueChanged(final ListSelectionEvent e) {
 	    public void propertyChange(final java.beans.PropertyChangeEvent evt) {
 			// User wants to switch to a new cell...
-			app.runGui(CleansePanel.this, new BatchRunnable() {
+			app.runGui(CleansePanel.this, new BatchTask() {
 			public void run(SqlRunner str) throws Exception {
 				if (evt.getNewValue() == null) return;		// We've become un-selected
 //				int row = e.getFirstIndex();
@@ -163,7 +163,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 //			(idSql == null ? "" : " and (_ids.id = e0.entityid or _ids.id = e1.entityid)") +
 			" order by score desc,string0,string1,entityid0,entityid1;\n" +
 			(idSql == null ? "" : " drop table _ids;\n");
-		dupModel = new RSTableModel(app.getSqlTypeSet());
+		dupModel = new RSTableModel(app.sqlTypeSet());
 		dupModel.executeQuery(str, sql);
 		str.execUpdate(new UpdRunnable() {
 		public void run(SqlRunner str) throws Exception {
@@ -173,7 +173,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 				new String[] {"__rowno__", "score", "entityid0", "string0", "entityid1", "string1"},
 				new String[] {null, null, "string0", "string0", "string1", "string1"},
 				new boolean[] {false, false,false,false,false,false},
-				app.getSwingerMap());
+				app.swingerMap());
 //			dupTable.setRenderEditU("score", new java.text.DecimalFormat("#.00"));
 			dupTable.setRenderEditU("score", "#.00");
 		}});		
@@ -457,7 +457,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 
 	private void bRefreshListActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRefreshListActionPerformed
 	{//GEN-HEADEREND:event_bRefreshListActionPerformed
-		app.runGui(CleansePanel.this, new BatchRunnable() {
+		app.runGui(CleansePanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			refreshDupTable(str, null);
 		}});
@@ -466,7 +466,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 
 	private void bDupOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDupOKActionPerformed
 	{//GEN-HEADEREND:event_bDupOKActionPerformed
-		app.runGui(CleansePanel.this, new BatchRunnable() {
+		app.runGui(CleansePanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			Integer entityid0 = (Integer)dm[0].getKey();
 			Integer entityid1 = (Integer)dm[1].getKey();
@@ -486,13 +486,13 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 	
 	private void subordinateAction(final int eix)
 	{
-		app.runGui(CleansePanel.this, new BatchRunnable() {
+		app.runGui(CleansePanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 //			dm[0].getEntity().getSchemaBuf().setValueAt(dm[1].getIntKey(), 0, "primaryentityid");
 			allDm.doUpdate(str);
 			
 			// Change around household...
-			MergeSql merge = new MergeSql(app.getSchemaSet());
+			MergeSql merge = new MergeSql(app.schemaSet());
 			Integer pid = (Integer)dm[1-eix].getEntitySb().getValueAt(0, "primaryentityid");
 			merge.subordinateEntities(dm[eix].getKey(), pid); //dm[1-eix].getIntKey());
 			String sql = merge.toSql();
@@ -526,7 +526,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 
 private void deleteAction(final int... eix)
 {
-	app.runGui(CleansePanel.this, new BatchRunnable() {
+	app.runGui(CleansePanel.this, new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 		allDm.doUpdate(str);
 		for (int i=0; i<eix.length; ++i) dm[eix[i]].doDelete(str);
@@ -550,7 +550,7 @@ private void deleteAction(final int... eix)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		app.runGui(CleansePanel.this, new BatchRunnable() {
+		app.runGui(CleansePanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			allDm.doUpdate(str);
 			allDm.doSelect(str);
@@ -560,7 +560,7 @@ private void deleteAction(final int... eix)
 
 private void mergeAction(final Integer entityid0, final Integer entityid1)
 {
-	app.runGui(CleansePanel.this, new BatchRunnable() {
+	app.runGui(CleansePanel.this, new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 		allDm.doUpdate(str);
 		String sql = MergeSql.mergeEntities(app, entityid0, entityid1);
@@ -587,7 +587,7 @@ private void mergeAction(final Integer entityid0, final Integer entityid1)
 	}//GEN-LAST:event_bMerge0ActionPerformed
 
 	private void bSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSearchActionPerformed
-		app.runGui(CleansePanel.this, new BatchRunnable() {
+		app.runGui(CleansePanel.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			String text = tfSearch.getText();
 			String idSql = DB.simpleSearchSql(text);

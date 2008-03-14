@@ -30,7 +30,7 @@ public class InterestsSchema extends ConstSqlSchema
 KeyedModel kmodel;
 public KeyedModel getKeyedModel() { return kmodel; }
 
-public InterestsSchema(citibob.sql.SqlRunner str, DbChangeModel change)
+public InterestsSchema(citibob.sql.SqlRun str, DbChangeModel change)
 throws SQLException
 {
 	super();

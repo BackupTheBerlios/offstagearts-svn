@@ -53,8 +53,8 @@ public TuitionCalc(FrontApp app, int termid)
 {
 	this.termid = termid;
 	this.app = app;
-	date = new SqlDate(app.getTimeZone(), true);
-	dconv = new DayConv(app.getTimeZone());
+	date = new SqlDate(app.timeZone(), true);
+	dconv = new DayConv(app.timeZone());
 }
 
 public void setPayerIDs(String payerIdSql)
@@ -168,7 +168,7 @@ int duedateDN, double amount, String description)
 	int payerid = student.payerid;
 	int studentid = student.entityid;
 	
-	KeyedModel transtypes = app.getSchemaSet().getKeyedModel("actrans", "actranstypeid");
+	KeyedModel transtypes = app.schemaSet().getKeyedModel("actrans", "actranstypeid");
 	sql.append(
 		" insert into actrans " +
 		" (entityid, actranstypeid, actypeid, date, amount, description, studentid, termid)" +

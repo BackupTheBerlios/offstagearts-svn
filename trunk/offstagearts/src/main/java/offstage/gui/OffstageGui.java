@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.gui;
 import citibob.gui.FrameSet;
-import citibob.task.BatchRunnable;
+import citibob.task.BatchTask;
 import java.sql.*;
 import javax.swing.*;
 import java.util.prefs.*;

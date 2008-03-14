@@ -33,7 +33,7 @@ import citibob.wizard.*;
 import citibob.app.*;
 import citibob.jschema.*;
 import citibob.sql.RsRunnable;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 
 /**
  *
@@ -45,10 +45,10 @@ public class TransTypeWiz extends HtmlWiz {
 /**
  * Creates a new instance of PersonWiz 
  */
-public TransTypeWiz(java.awt.Frame owner, SqlRunner str, App app, TypedHashMap v)
+public TransTypeWiz(java.awt.Frame owner, SqlRun str, App app, TypedHashMap v)
 throws org.xml.sax.SAXException, java.io.IOException
 {
-	super(owner, app.getSwingerMap());
+	super(owner, app.swingerMap());
 
 	setSize(600,460);
 	String sql = "select" +
@@ -57,7 +57,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 		" case when middlename is null then '' else middlename end) as name" +
 		" from entities where entityid = " + v.get("entityid");
 	str.execSql(sql, new RsRunnable() {
-	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
+	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
 		rs.next();
 		addComponent("name", new JTypedLabel(rs.getString("name")));	
 		loadHtml();

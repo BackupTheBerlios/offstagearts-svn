@@ -23,11 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.school.gui;
 
-import citibob.task.BatchRunnable;
+import citibob.task.BatchTask;
 import citibob.reports.Reports;
 import citibob.sql.DbKeyedModel;
 import citibob.sql.RsRunnable;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 import citibob.sql.UpdRunnable;
 import citibob.swing.table.JTypeTableModel;
 import java.beans.PropertyChangeEvent;
@@ -62,7 +62,7 @@ public SchoolFrame()
 	tabs.setSelectedComponent(regPanel);
 }
 
-public void initRuntime(SqlRunner str, FrontApp xfapp)
+public void initRuntime(SqlRun str, FrontApp xfapp)
 //throws SQLException
 {
 	this.fapp = xfapp;
@@ -76,16 +76,16 @@ public void initRuntime(SqlRunner str, FrontApp xfapp)
 
 	// Set up terms selector
 //setKeyedModel selects the term --- but the KeyedModel is not getting filled in till afterwards
-	final DbKeyedModel tkmodel = new DbKeyedModel(str, fapp.getDbChange(), "termids",
+	final DbKeyedModel tkmodel = new DbKeyedModel(str, fapp.dbChange(), "termids",
 		"select groupid, name from termids where iscurrent order by firstdate desc");
 	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	public void run(SqlRun str) throws Exception {
 		vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
 			// Property change was (almost probably) due to a mouse click;
 			// So we need the runApp() here.
-			fapp.runApp(new BatchRunnable() {
-			public void run(SqlRunner str) throws Exception {
+			fapp.runApp(new BatchTask() {
+			public void run(SqlRun str) throws Exception {
 //System.out.println("a value = " + vTermID.getValue());
 				schoolModel.setTermID((Integer)(vTermID.getValue()));
 //System.out.println("b value = " + vTermID.getValue());
@@ -338,8 +338,8 @@ vTermID.setKeyedModel(vTermID.getKeyedModel());
 
 	private void miApplyLateFeesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miApplyLateFeesActionPerformed
 	{//GEN-HEADEREND:event_miApplyLateFeesActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runGui(SchoolFrame.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			final LateFeesWizard wizard = new LateFeesWizard(fapp, SchoolFrame.this);
 			if (!wizard.runWizard("latefees")) return;
 			
@@ -351,10 +351,10 @@ vTermID.setKeyedModel(vTermID.getKeyedModel());
 //				cal.set(Calendar.MILLISECOND, 0);
 //				cal.add(Calendar.DAY_OF_MONTH, -30);
 System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
-			final SchoolAccounts rep = new SchoolAccounts(str, fapp.getTimeZone(), -1,
+			final SchoolAccounts rep = new SchoolAccounts(str, fapp.timeZone(), -1,
 				(java.util.Date)wizard.getVal("asofdate"), (Integer)wizard.getVal("latedays"));
 			str.execUpdate(new UpdRunnable() {
-			public void run(SqlRunner str) throws Exception {
+			public void run(SqlRun str) throws Exception {
 				rep.applyLateFees(str, (Double)wizard.getVal("multiplier"));
 			}});
 		}});
@@ -363,8 +363,8 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miConfirmationLetterActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miConfirmationLetterActionPerformed
 	{//GEN-HEADEREND:event_miConfirmationLetterActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runGui(SchoolFrame.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			Integer eid = (Integer)schoolModel.studentRm.get("entityid");
 			int termid = schoolModel.getTermID();
 			if (eid == null)
@@ -378,8 +378,8 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miAccountStatementActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miAccountStatementActionPerformed
 	{//GEN-HEADEREND:event_miAccountStatementActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runGui(SchoolFrame.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			int termid = schoolModel.getTermID();
 			Integer payerid = (Integer)schoolModel.termregsRm.get("payerid");
 			if (payerid == null) JOptionPane.showMessageDialog(SchoolFrame.this,
@@ -391,8 +391,8 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miScheduleActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miScheduleActionPerformed
 	{//GEN-HEADEREND:event_miScheduleActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runGui(SchoolFrame.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			Integer eid = (Integer)schoolModel.studentRm.get("entityid");
 			if (eid == null) JOptionPane.showMessageDialog(SchoolFrame.this,
 				"You must have a student selected for this report!", "", JOptionPane.OK_OPTION);
@@ -403,8 +403,8 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miStudentAccountsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miStudentAccountsActionPerformed
 	{//GEN-HEADEREND:event_miStudentAccountsActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runGui(SchoolFrame.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			int termid = schoolModel.getTermID();
 //			Calendar cal = Calendar.getInstance(fapp.getTimeZone());
 //				cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -412,11 +412,11 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 //				cal.set(Calendar.SECOND, 0);
 //				cal.set(Calendar.MILLISECOND, 0);
 //				cal.add(Calendar.DAY_OF_MONTH, -30);
-			final SchoolAccounts rep = new SchoolAccounts(str, fapp.getTimeZone(),
+			final SchoolAccounts rep = new SchoolAccounts(str, fapp.timeZone(),
 				termid, new java.util.Date(), 30);
 			str.execUpdate(new UpdRunnable() {
-			public void run(SqlRunner str) throws Exception {
-				Reports reports = fapp.getReports(); //new OffstageReports(fapp);
+			public void run(SqlRun str) throws Exception {
+				Reports reports = fapp.reports(); //new OffstageReports(fapp);
 				reports.viewXls(rep.model, null, "StudentAccounts.xls");
 			}});
 		}});
@@ -425,9 +425,9 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miPayerLabelsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miPayerLabelsActionPerformed
 	{//GEN-HEADEREND:event_miPayerLabelsActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable()
+		fapp.runGui(SchoolFrame.this, new BatchTask()
 		{
-			public void run(SqlRunner str) throws Exception
+			public void run(SqlRun str) throws Exception
 			{
 				int termid = schoolModel.getTermID();
 				String idSql =
@@ -451,9 +451,9 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 				System.out.println("==================");
 				str.execSql(sql, new RsRunnable()
 				{
-					public void run(SqlRunner str, ResultSet rs) throws Exception
+					public void run(SqlRun str, ResultSet rs) throws Exception
 					{
-						Reports rr = fapp.getReports();
+						Reports rr = fapp.reports();
 						rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
 					}});
 //			st.executeUpdate(LabelReport.cleanupSql());
@@ -463,8 +463,8 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miConfirmationLettersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miConfirmationLettersActionPerformed
 	{//GEN-HEADEREND:event_miConfirmationLettersActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runGui(SchoolFrame.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			int termid = schoolModel.getTermID();
 			YDPConfirmationLetter.viewReport(str, fapp, termid, -1);
 		}});
@@ -473,9 +473,9 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miAccountStatementsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miAccountStatementsActionPerformed
 	{//GEN-HEADEREND:event_miAccountStatementsActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable()
+		fapp.runGui(SchoolFrame.this, new BatchTask()
 		{
-			public void run(SqlRunner str) throws Exception
+			public void run(SqlRun str) throws Exception
 			{
 				int termid = schoolModel.getTermID();
 				AcctStatement.doAccountStatementsAndLabels(str, fapp, termid, -1, new java.util.Date());
@@ -485,8 +485,8 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miStudentSchedulesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miStudentSchedulesActionPerformed
 	{//GEN-HEADEREND:event_miStudentSchedulesActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.runGui(SchoolFrame.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			StudentSchedule.viewStudentSchedules(fapp, str, schoolModel.getTermID(), -1);
 		}});
 // TODO add your handling code here:
@@ -494,20 +494,20 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miRollBooksActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miRollBooksActionPerformed
 	{//GEN-HEADEREND:event_miRollBooksActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable()
+		fapp.runGui(SchoolFrame.this, new BatchTask()
 		{
-			public void run(SqlRunner str) throws Exception
+			public void run(SqlRun str) throws Exception
 			{
 				final RollBook report = new RollBook(fapp, schoolModel.getTermID());
 				report.doSelect(str);
 				str.execUpdate(new UpdRunnable()
 				{
-					public void run(SqlRunner str) throws Exception
+					public void run(SqlRun str) throws Exception
 					{
 						JTypeTableModel model = report.newTableModel();
 						JRDataSource jrdata = new JRTableModelDataSource(model);
-						fapp.getReports().viewJasper(
-							fapp.getReports().toJasper(model), null, "RollBook.jrxml");
+						fapp.reports().viewJasper(
+							fapp.reports().toJasper(model), null, "RollBook.jrxml");
 //				offstage.reports.ReportOutput.viewJasperReport(fapp, "RollBook.jrxml", jrdata, null);// TODO add your handling code here:
 					}});
 			}});// TODO add your handling code here:
@@ -515,9 +515,9 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miRecalcAllTuitionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miRecalcAllTuitionActionPerformed
 	{//GEN-HEADEREND:event_miRecalcAllTuitionActionPerformed
-		fapp.runGui(SchoolFrame.this, new BatchRunnable()
+		fapp.runGui(SchoolFrame.this, new BatchTask()
 		{
-			public void run(SqlRunner str) throws Exception
+			public void run(SqlRun str) throws Exception
 			{
 				TuitionCalc tc = new TuitionCalc(fapp, schoolModel.getTermID());
 					tc.setAllPayerIDs();
@@ -558,12 +558,12 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
     private citibob.swing.typed.JKeyedComboBox vTermID;
     // End of variables declaration//GEN-END:variables
 
-public static void showFrame(SqlRunner str, final FrontApp fapp)
+public static void showFrame(SqlRun str, final FrontApp fapp)
 {
 	final SchoolFrame frame = new SchoolFrame();
 	frame.initRuntime(str, fapp);
 	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	public void run(SqlRun str) throws Exception {
 		frame.setVisible(true);
 	}});
 }

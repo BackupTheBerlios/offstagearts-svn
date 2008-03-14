@@ -45,7 +45,7 @@ offstage.FrontApp fapp;
 		this.fapp = fapp;
 		initComponents();
 		SchemaBufDbModel tm = new SchemaBufDbModel(
-			fapp.getSchema("termids"), fapp.getDbChange());
+			fapp.getSchema("termids"), fapp.dbChange());
 		tm.setWhereClause("(firstdate > now() - interval '2 years' or iscurrent)");
 		tm.setOrderClause("firstdate");
 		tm.doSelect(str);

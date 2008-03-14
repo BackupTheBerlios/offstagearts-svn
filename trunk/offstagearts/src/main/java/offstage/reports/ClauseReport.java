@@ -57,7 +57,7 @@ public static final String[] availSegmentTypes =
 //	 "address1", "address2", "city", "state", "zip", "orgname", "isorg", "title", "occupation", "email",
 //	 "phone1type", "phone1", "phone2type", "phone2", "phone3type", "phone3", "recordsource"};
 	
-public ClauseReport(FrontApp fapp, SqlRunner str, final SqlTypeSet tset, EQuery equery)
+public ClauseReport(FrontApp fapp, SqlRun str, final SqlTypeSet tset, EQuery equery)
 throws IOException
 {
 	// Create the main query
@@ -76,8 +76,8 @@ throws IOException
 		sql.append(";\n");
 	}
 
-	str.execSql(sql.toString(), new RssRunnable() {
-	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet[] rss) throws Exception {
+	str.execSql(sql.toString(), new RssTasklet() {
+	public void run(citibob.sql.SqlRun str, java.sql.ResultSet[] rss) throws Exception {
 		JTypeTableModel[] models = new JTypeTableModel[clauses.size() + 1];
 		int n=0;
 		
@@ -122,14 +122,14 @@ throws IOException
 	
 }
 
-public static void writeCSV(final FrontApp fapp, SqlRunner str,
+public static void writeCSV(final FrontApp fapp, SqlRun str,
 EQuery equery, final File outFile) throws Exception
 {
 	final ClauseReport report = new ClauseReport(fapp, str,
-		fapp.getSqlTypeSet(), equery);
+		fapp.sqlTypeSet(), equery);
 	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		citibob.reports.Reports rr = fapp.getReports();
+	public void run(SqlRun str) throws Exception {
+		citibob.reports.Reports rr = fapp.reports();
 		rr.writeCSV(rr.format(report.model), outFile);
 	}});
 }

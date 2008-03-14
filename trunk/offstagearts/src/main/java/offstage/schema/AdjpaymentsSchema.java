@@ -27,7 +27,7 @@ import java.sql.*;
 public class AdjpaymentsSchema extends ActransSchema
 {
 
-public AdjpaymentsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public AdjpaymentsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super(str, change, tz);

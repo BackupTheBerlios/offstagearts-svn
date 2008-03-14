@@ -97,7 +97,7 @@ addState(new AbstractWizState("catname", "grouplist", "finished") {
 			" (name) values (" + SqlString.sql(catname) + ")";
 System.out.println(sql);
 		con.str.execSql(sql);
-		fapp.getDbChange().fireTableWillChange(con.str, table);
+		fapp.dbChange().fireTableWillChange(con.str, table);
 	}
 });
 // ---------------------------------------------
@@ -116,7 +116,7 @@ addState(new AbstractWizState("donationname", "grouplist", "finished") {
 			SqlString.sql(catname) + ", " + SqlInteger.sql(fiscalyear) + ")";
 System.out.println(sql);
 		con.str.execSql(sql);
-		fapp.getDbChange().fireTableWillChange(con.str, "donationids");
+		fapp.dbChange().fireTableWillChange(con.str, "donationids");
 	}
 });
 // ---------------------------------------------

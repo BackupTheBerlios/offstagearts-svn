@@ -70,7 +70,7 @@ public void initRuntime(App app, int termid)
 {
 	this.app = app;
 //	super.setJType(new SqlInteger(), ));
-	setJType(new SqlInteger(), app.getBatchSet());
+	setJType(new SqlInteger(), app.batchSet());
 	label.setText("<Select a Person>");
 	sel = new EntitySelector();
 	sel.setDropDown(true);

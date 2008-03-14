@@ -56,7 +56,7 @@ static SqlTime time = new SqlTime(true);
 static Double getMoney(ResultSet rs, String col) throws SQLException
 	{ return (Double)money.get(rs, col); }
 // ==========================================================
-public TuitionData(SqlRunner str, int termid, String payerIdSql, TimeZone tz)
+public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 //throws SQLException
 {
 	final SqlDate date = new SqlDate(tz, true);
@@ -155,8 +155,8 @@ public TuitionData(SqlRunner str, int termid, String payerIdSql, TimeZone tz)
 		" drop table _payers;" +
 		" drop table _courses;" +
 		" drop table _students;";
-	str.execSql(sql, new RssRunnable() {
-	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet[] rss) throws Exception {
+	str.execSql(sql, new RssTasklet() {
+	public void run(citibob.sql.SqlRun str, java.sql.ResultSet[] rss) throws Exception {
 		ResultSet rs;
 		
 		// rss[0]: Name of term

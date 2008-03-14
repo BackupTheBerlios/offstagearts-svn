@@ -11,10 +11,10 @@ import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.SchemaBuf;
 import citibob.jschema.SchemaSet;
 import citibob.jschema.log.QueryLogger;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 import citibob.swing.typed.TypedWidgetBinder;
-import citibob.task.ActionTaskBinder;
-import citibob.task.BatchRunnable;
+import citibob.task.ActionJobBinder;
+import citibob.task.BatchTask;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import offstage.FrontApp;
@@ -46,7 +46,7 @@ public void initRuntime(FrontApp fapp)
 	transRegister.initRuntime(fapp, actransSb, 1, true);
 	
 	// Bind our account actions
-	ActionTaskBinder tbinder = new ActionTaskBinder(this, fapp.getGuiRunner(),
+	ActionJobBinder tbinder = new ActionJobBinder(this, fapp.guiRun(),
 		transRegister.getTaskMap());
 	tbinder.bind(this.bCash, "cash");
 	tbinder.bind(this.bCheck, "check");
@@ -56,18 +56,18 @@ public void initRuntime(FrontApp fapp)
 	
 	// Set up our models
 //	QueryLogger logger = fapp.getLogger();
-	SchemaSet osset = fapp.getSchemaSet();
+	SchemaSet osset = fapp.schemaSet();
 	onePerson = new EntityDbModel(osset.get("persons"), fapp);
 //		onePerson.setLogger(logger);
 
-	TypedWidgetBinder.bindRecursive(entityPanel, onePerson.getSchemaBuf(), fapp.getSwingerMap());
+	TypedWidgetBinder.bindRecursive(entityPanel, onePerson.getSchemaBuf(), fapp.swingerMap());
 
 	// Change entity when a person is selected.
 	selector.initRuntime(fapp);
 	selector.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(PropertyChangeEvent evt) {
 		Entityid = (Integer)evt.getNewValue();
-		refreshEntityid(app.getBatchSet());
+		refreshEntityid(app.batchSet());
 	}});
 
 	// Change account when Actypeid dropdown is selected
@@ -75,24 +75,24 @@ public void initRuntime(FrontApp fapp)
 	public void propertyChange(PropertyChangeEvent evt) {
 		// Property change was (almost probably) due to a mouse click;
 		// So we need the runApp() here.
-		app.runApp(new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		app.runApp(new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			Actypeid = (Integer)selActypeid.getValue();
-			refreshActypeid(app.getBatchSet());
+			refreshActypeid(app.batchSet());
 		}});
 	}});
 	selActypeid.setKeyedModel(osset, "actrans", "actypeid");
 }
 
 /** Called when Entityid changes */
-void refreshEntityid(SqlRunner str)
+void refreshEntityid(SqlRun str)
 {
 	onePerson.setKey(Entityid);
 	onePerson.doSelect(str);
 	transRegister.setEntityID(str, Entityid);
 }
 
-void refreshActypeid(SqlRunner str)
+void refreshActypeid(SqlRun str)
 {
 	transRegister.setAcTypeID(str, Actypeid.intValue());
 }
@@ -360,8 +360,8 @@ void refreshActypeid(SqlRunner str)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		app.runGui(AccountPanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		app.runGui(AccountPanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			transRegister.getDbModel().doUpdate(str);
 			transRegister.refresh(str);
 		}});
@@ -370,8 +370,8 @@ void refreshActypeid(SqlRunner str)
 
 	private void bRefreshActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRefreshActionPerformed
 	{//GEN-HEADEREND:event_bRefreshActionPerformed
-		app.runGui(AccountPanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		app.runGui(AccountPanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			transRegister.getDbModel().doSelect(str);
 		}});
 		// TODO add your handling code here:

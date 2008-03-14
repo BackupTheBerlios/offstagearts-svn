@@ -65,12 +65,12 @@ public void propertyChange(final java.beans.PropertyChangeEvent evt)
 		// We were started by mouse click (or some semblance thereof)
 		// But don't do a busy cursor if we're within a dropdown
 		if (inDropDown) {
-			app.runApp(new BatchRunnable() {
+			app.runApp(new BatchTask() {
 			public void run(SqlRunner str) throws Exception {
 				EntitySelector.super.propertyChange(evt);
 			}});
 		} else {
-			app.runGui(EntitySelector.this, new BatchRunnable() {
+			app.runGui(EntitySelector.this, new BatchTask() {
 			public void run(SqlRunner str) throws Exception {
 				EntitySelector.super.propertyChange(evt);
 			}});
@@ -97,7 +97,7 @@ public void initRuntime(citibob.app.App xapp, int termid) //Statement st, FullEn
 	public void keyTyped(KeyEvent e) {
 		//System.out.println(e.getKeyChar());
 		if (e.getKeyChar() == '\n') {
-			app.runGui(EntitySelector.this, new BatchRunnable() {
+			app.runGui(EntitySelector.this, new BatchTask() {
 			public void run(SqlRunner str) throws Exception {
 				runSearch(str);
 			}});
@@ -122,7 +122,7 @@ void runSearch(SqlRunner str) { //throws Exception {
 //	app.runGui(this, new BatchRunnable() {
 //	public void run(SqlRunner str) throws Exception {
 	String text = searchWord.getText();
-	setSearch(app.getBatchSet(), text);
+	setSearch(app.batchSet(), text);
 //	app.getBatchSet().runBatches();
 //	}});
 }
@@ -196,7 +196,7 @@ public void requestTextFocus()
 
 	
 	private void bSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSearchActionPerformed
-		app.runGui(EntitySelector.this, new BatchRunnable() {
+		app.runGui(EntitySelector.this, new BatchTask() {
 		public void run(SqlRunner str) throws Exception {
 			runSearch(str);
 //			app.getBatchSet().runBatches();

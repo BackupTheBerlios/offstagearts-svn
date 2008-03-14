@@ -55,7 +55,7 @@ implements ObjHtmlPanel.Listener
 {
 
 FrontApp fapp;
-HashMap<String,Task> actionMap = new HashMap();
+HashMap<String,Job> actionMap = new HashMap();
 
 DevelActionPanel getThis() { return this; }
 
@@ -67,14 +67,14 @@ throws org.xml.sax.SAXException, java.io.IOException
 	this.fapp = xfapp;
 
 
-	actionMap.put("ticketsalesreport", new Task("", new ERunnable() {
+	actionMap.put("ticketsalesreport", new Job("", new ETask() {
 	public void run() throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		Wizard wizard = new offstage.reports.ReportWizard(fapp, DevelActionPanel.this);
 		wizard.runWizard("ticketparams");
 	}}));
 
-	actionMap.put("mailmerge", new Task("", new BatchRunnable() {
+	actionMap.put("mailmerge", new Job("", new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
@@ -84,7 +84,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 		}
 	}}));
 
-	actionMap.put("segmentation", new Task("", new BatchRunnable() {
+	actionMap.put("segmentation", new Job("", new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
@@ -97,14 +97,14 @@ throws org.xml.sax.SAXException, java.io.IOException
 		}
 	}}));
 
-	actionMap.put("mailinglabels", new Task("", new BatchRunnable() {
+	actionMap.put("mailinglabels", new Job("", new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
 		wizard.runMailingLabels(str);
 	}}));
 
-	actionMap.put("donationreport", new Task("", new BatchRunnable() {
+	actionMap.put("donationreport", new Job("", new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
@@ -119,7 +119,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 	}}));
 
 
-	actionMap.put("clausereport", new Task("", new BatchRunnable() {
+	actionMap.put("clausereport", new Job("", new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
@@ -144,7 +144,7 @@ public void linkSelected(java.net.URL href, String target)
 	int slash = url.lastIndexOf('/');
 	if (slash > 0) url = url.substring(slash+1);
 	
-	Task t = actionMap.get(url);
+	Job t = actionMap.get(url);
 	fapp.runGui(this, t.getPermissions(), t.getCBRunnable());
 }
 }

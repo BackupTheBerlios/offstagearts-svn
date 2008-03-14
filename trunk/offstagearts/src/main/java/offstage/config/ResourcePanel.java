@@ -18,9 +18,9 @@ import citibob.resource.RtRes;
 import citibob.resource.RtVers;
 import citibob.resource.UpgradePlan;
 import citibob.sql.ConnPool;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 import citibob.sql.UpdRunnable;
-import citibob.task.BatchRunnable;
+import citibob.task.BatchTask;
 import citibob.types.KeyedModel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -53,36 +53,36 @@ boolean inUpdate;
 		initComponents();
 	}
 	
-	public void initRuntime(SqlRunner str, App xapp)
+	public void initRuntime(SqlRun str, App xapp)
 	{
 		this.app = xapp;
-		ResSet rset = app.getResSet();
-		rdata = new ResData(str, rset, app.getSqlTypeSet());
-		rmods = new ResModels(rdata, app, app.getSysVersion());
+		ResSet rset = app.resSet();
+		rdata = new ResData(str, rset, app.sqlTypeSet());
+		rmods = new ResModels(rdata, app, app.sysVersion());
 
 		// Set up tables
 		tResources.setModelU(rmods.resMod,
 			new String[] {"Resource", "Required Version"},
 			new String[] {"name", "reqversion"},
-			null, app.getSwingerMap());
+			null, app.swingerMap());
 //		tResources.setValueColU("RtRes");
 
 		this.tResKeys.setModelU(rmods.rkMod,
 			new String[] {"Name"},
 			new String[] {"name"},
-			null, app.getSwingerMap());
+			null, app.swingerMap());
 //		tResKeys.setValueColU("ResKey");
 		
 		tAvailVersions.setModelU(rmods.availMod,
 			new String[] {"Version", "Size", "Last Modified"},
 			new String[] {"version", "size", "lastmodified"},
-			null, app.getSwingerMap());
+			null, app.swingerMap());
 		tAvailVersions.setRenderEditU("lastmodified", "MM/dd/yyyy");
 
 		this.tUpgradePlans.setModelU(rmods.uplanMod,
 			new String[] {"Source", "Plan", "Back-Compatible"},
 			new String[] {"uversionName0", "UpgradePlan", "backcompatible"},
-			null, app.getSwingerMap());
+			null, app.swingerMap());
 		tUpgradePlans.setRenderEditU("UpgradePlan", new ResModels.PathSFormat());
 		
 		
@@ -163,7 +163,7 @@ boolean inUpdate;
 				if (v.intValue() > 0) kmodel.addItem(v,v);
 			}
 			version1.setKeyedModel(kmodel);
-			version1.setValue(rr.res.getRequiredVersion(app.getSysVersion()));
+			version1.setValue(rr.res.getRequiredVersion(app.sysVersion()));
 
 			tResKeys.setValue(rr.relevant.get(0));
 
@@ -199,7 +199,7 @@ boolean inUpdate;
 	
 	void refreshPaths()
 	{
-		ResSet rset = app.getResSet();
+		ResSet rset = app.resSet();
 
 		int ver1 = (Integer)version1.getValue();
 		RtResKey srcRk = (RtResKey)srckeys.getValue();
@@ -554,23 +554,23 @@ boolean inUpdate;
         add(jPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-	void refreshVersionPaths(SqlRunner str)
+	void refreshVersionPaths(SqlRun str)
 	{
 //		rmods.refreshVersions(str);
 		rdata.readData(str);
 		str.execUpdate(new UpdRunnable() {
-		public void run(SqlRunner str) {
+		public void run(SqlRun str) {
 //				setCurResKey(curResKey);
 			refreshVersions();
 			refreshPaths();
 		}});
 	}
 	private void bUpgradeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUpgradeActionPerformed
-		app.runGui(ResourcePanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
-			curResource.applyPlan(str, app.getPool(), (UpgradePlan)tUpgradePlans.getValue());
+		app.runGui(ResourcePanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
+			curResource.applyPlan(str, app.pool(), (UpgradePlan)tUpgradePlans.getValue());
 			str.execUpdate(new UpdRunnable() {
-			public void run(SqlRunner str) {
+			public void run(SqlRun str) {
 				refreshVersionPaths(str);
 			}});
 		}});
@@ -578,8 +578,8 @@ boolean inUpdate;
 	}//GEN-LAST:event_bUpgradeActionPerformed
 
 	private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
-		app.runGui(ResourcePanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		app.runGui(ResourcePanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			RtVers ver = (RtVers)tAvailVersions.getValue();
 			if (ver == null) return;
 			str.execSql(ResUtil.delResourceSql(
@@ -591,13 +591,13 @@ boolean inUpdate;
 
 	private void bEditActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEditActionPerformed
 	{//GEN-HEADEREND:event_bEditActionPerformed
-		app.runGui(ResourcePanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		app.runGui(ResourcePanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			final RtVers ver = (RtVers)tAvailVersions.getValue();
-			ConnPool pool = app.getPool();
+			ConnPool pool = app.pool();
 			ResUtil.editResource(str, pool, ResourcePanel.this, curResKey, ver);
 			str.execUpdate(new UpdRunnable() {
-			public void run(SqlRunner str) {
+			public void run(SqlRun str) {
 				refreshVersionPaths(str);
 			}});
 		}});
@@ -605,8 +605,8 @@ boolean inUpdate;
 
 	private void bExportActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bExportActionPerformed
 	{//GEN-HEADEREND:event_bExportActionPerformed
-		app.runGui(ResourcePanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		app.runGui(ResourcePanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			// Get the file to export to
 			String suffix = curResKey.res.getSuffix();
 			JFileChooser chooser = GuiUtil.newChooser(suffix);
@@ -625,8 +625,8 @@ boolean inUpdate;
 
 	private void bImportActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bImportActionPerformed
 	{//GEN-HEADEREND:event_bImportActionPerformed
-		app.runGui(ResourcePanel.this, new BatchRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		app.runGui(ResourcePanel.this, new BatchTask() {
+		public void run(SqlRun str) throws Exception {
 			// Get the file to export to
 			String suffix = curResKey.res.getSuffix();
 			JFileChooser chooser = GuiUtil.newChooser(suffix);
@@ -637,9 +637,9 @@ boolean inUpdate;
 
 			// Import it
 			final RtVers ver = (RtVers)tAvailVersions.getValue();
-			ResUtil.uploadResource(app.getPool(), curResKey, ver, file);
+			ResUtil.uploadResource(app.pool(), curResKey, ver, file);
 			str.execUpdate(new UpdRunnable() {
-			public void run(SqlRunner str) {
+			public void run(SqlRun str) {
 				refreshVersionPaths(str);
 			}});
 		}});

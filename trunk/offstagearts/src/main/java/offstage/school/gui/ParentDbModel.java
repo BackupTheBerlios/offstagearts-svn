@@ -36,7 +36,7 @@ public final IntKeyedDbModel phoneDb;
 public ParentDbModel(citibob.app.App app)
 {
 	super(app);
-	QueryLogger logger = app.getLogger();
+	QueryLogger logger = app.queryLogger();
 	logadd(logger, phoneDb = new IntKeyedDbModel(app.getSchema("phones"), "entityid"));
 	phoneDb.setDoInsertKeys(true);
 }

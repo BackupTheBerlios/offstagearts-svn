@@ -158,7 +158,7 @@ final int courseid, final TimeZone tz)//, final UpdRunnable rr)
 			? " and t.groupid = " + SqlInteger.sql(termid)
 			: " and c.courseid = " + SqlInteger.sql(courseid));
 
-	str.execSql(sql, new RssRunnable() {
+	str.execSql(sql, new RssTasklet() {
 	public void run(SqlRunner str, ResultSet[] rss) throws SQLException {
 		SqlTimestamp sts = new SqlTimestamp("GMT");
 		SqlDate sdt = new SqlDate(tz, true);

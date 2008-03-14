@@ -28,7 +28,7 @@ import citibob.types.*;
 public class TermenrollsSchema extends ConstSqlSchema
 {
 
-public TermenrollsSchema(citibob.sql.SqlRunner str, DbChangeModel change)
+public TermenrollsSchema(citibob.sql.SqlRun str, DbChangeModel change)
 throws SQLException
 {
 	super();

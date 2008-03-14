@@ -9,10 +9,10 @@ package offstage.accounts.gui;
 import citibob.jschema.IntsKeyedDbModel;
 import citibob.jschema.SchemaBuf;
 import citibob.sql.RsRunnable;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 import citibob.sql.pgsql.*;
-import citibob.task.BatchRunnable;
-import citibob.task.TaskMap;
+import citibob.task.BatchTask;
+import citibob.task.JobMap;
 import citibob.wizard.Wizard;
 import offstage.FrontApp;
 
@@ -25,7 +25,7 @@ public class TransRegPanel extends javax.swing.JPanel
 	
 public IntsKeyedDbModel actransDb;
 FrontApp fapp;
-TaskMap taskMap;
+JobMap taskMap;
 
 /** Creates new form AccountsPanel */
 public TransRegPanel()
@@ -51,40 +51,40 @@ public void initRuntime(FrontApp fapp, SchemaBuf actransSb, int actypeid, boolea
 		new String[] {null, null, null, null, "description"},
 		superuser ? new boolean[] {false,false,true,true,true} : null,
 //		new boolean[] {false, false, false, false},
-		fapp.getSwingerMap());
-	actransDb.setLogger(fapp.getLogger());
+		fapp.swingerMap());
+	actransDb.setLogger(fapp.queryLogger());
 
 	// Set up the task map, which will be used to bind actions to buttons
-	taskMap = new TaskMap();
+	taskMap = new JobMap();
 	String[] permissions = null;
 	taskMap.add("cash", permissions, new RunWizard("cashpayment"));
 	taskMap.add("check", permissions, new RunWizard("checkpayment"));
 	taskMap.add("cc", permissions, new RunWizard("ccpayment"));
 	taskMap.add("other", permissions, new RunWizard("transtype"));
-	taskMap.add("delete", permissions, new BatchRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	taskMap.add("delete", permissions, new BatchTask() {
+	public void run(SqlRun str) throws Exception {
 		SchemaBuf sb = actransDb.getSchemaBuf();
 		sb.deleteRow(trans.getSelectedRow());
 	}});
 
 }
 
-public TaskMap getTaskMap() { return taskMap; }
+public JobMap getTaskMap() { return taskMap; }
 public Integer getEntityID() { return actransDb.getIntKey(0); }
 public Integer getAcTypeID() { return actransDb.getIntKey(1); }
 
 
-public void setEntityID(SqlRunner str, Integer entityid) // throws SQLException
+public void setEntityID(SqlRun str, Integer entityid) // throws SQLException
 {
 	actransDb.setKey(0, entityid);
 	refresh(str);
 }
-public void setAcTypeID(SqlRunner str, int actypeid)
+public void setAcTypeID(SqlRun str, int actypeid)
 {
 	actransDb.setKey(1, actypeid);
 	refresh(str);	
 }
-public void refresh(SqlRunner str) // throws SQLException
+public void refresh(SqlRun str) // throws SQLException
 {
 	actransDb.doSelect(str);
 	
@@ -97,7 +97,7 @@ public void refresh(SqlRunner str) // throws SQLException
 		" select bal from _bal;\n" +
 		" drop table _bal;";
 	str.execSql(sql, new RsRunnable() {
-	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
+	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
 		rs.next();
 		acbal.setValue(rs.getDouble(1));
 	}});
@@ -173,11 +173,11 @@ public void refresh(SqlRunner str) // throws SQLException
     // End of variables declaration//GEN-END:variables
 
 // =========================================================
-class RunWizard implements BatchRunnable
+class RunWizard implements BatchTask
 {
 String startState;
 public RunWizard(String startState) { this.startState = startState; }
-public void run(SqlRunner str) throws Exception {
+public void run(SqlRun str) throws Exception {
 	int entityid = getEntityID();
 	Wizard wizard = new TransactionWizard(fapp, TransRegPanel.this, entityid, getAcTypeID());
 	wizard.setVal("entityid", entityid);

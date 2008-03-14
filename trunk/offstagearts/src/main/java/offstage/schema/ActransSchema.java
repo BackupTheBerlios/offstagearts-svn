@@ -36,7 +36,7 @@ public static final int AC_EXPENSE = 5;
 public final KeyedModel actranstypeKmodel;
 public final KeyedModel actypeKmodel;
 
-public ActransSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public ActransSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super();

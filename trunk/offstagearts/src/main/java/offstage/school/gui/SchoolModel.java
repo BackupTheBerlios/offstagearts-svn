@@ -30,7 +30,7 @@ import citibob.app.App;
 import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.IntsKeyedDbModel;
 import citibob.jschema.SchemaBufRowModel;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 import offstage.school.tuition.RBPlanSet;
 
 /**
@@ -74,7 +74,7 @@ public SchoolModel(App fapp)
 	parent2Dm = new ParentDbModel(fapp);
 		parent2Rm = new SchemaBufRowModel(parent2Dm.personDb.getSchemaBuf());
 	oneTermDm = new IntKeyedDbModel(fapp.getSchema("termids"),
-		"groupid", fapp.getDbChange());
+		"groupid", fapp.dbChange());
 	oneTermDm.setDoInsertKeys(false);
 		oneTermRm = new SchemaBufRowModel(oneTermDm.getSchemaBuf());
 	termregsDm = new IntsKeyedDbModel(fapp.getSchema("termregs"),
@@ -94,7 +94,7 @@ public void setTermID(int newTermID)
 	int oldTermID = termID;
 	this.termID = newTermID;
 	
-	SqlRunner str = app.getBatchSet();
+	SqlRun str = app.batchSet();
 	oneTermDm.doUpdate(str);
 	oneTermDm.setKey(termID);
 	oneTermDm.doSelect(str);

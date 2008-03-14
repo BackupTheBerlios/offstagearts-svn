@@ -63,7 +63,7 @@ throws SQLException
 {
 //	final App app = xapp;
 //	final ActionRunner guiRunner = app.getGuiRunner();
-	dupsModel = new EntityListTableModel(app.getSqlTypeSet());
+	dupsModel = new EntityListTableModel(app.sqlTypeSet());
 	dupsModel.setIdSql(idSql, orderBy);
 	dupsModel.executeQuery(str);
 	
@@ -73,7 +73,7 @@ throws SQLException
 	DClickTableMouseListener dclick =
 		new DClickTableMouseListener(dupsTable) {
 		public void doubleClicked(final int row) {
-			app.runGui(IDListViewer.this, new BatchRunnable() {
+			app.runGui(IDListViewer.this, new BatchTask() {
 			public void run(SqlRunner str) throws Exception {
 				// Make sure it's selected in the GUI
 				dupsTable.getSelectionModel().setSelectionInterval(row, row);

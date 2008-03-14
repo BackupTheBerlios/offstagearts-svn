@@ -34,7 +34,7 @@ public final EntityDbModel personDb;
 
 public EntityMultiDbModel(citibob.app.App app)
 {
-	QueryLogger logger = app.getLogger();
+	QueryLogger logger = app.queryLogger();
 	logadd(logger, personDb = new EntityDbModel(app.getSchema("persons"), app));
 }
 

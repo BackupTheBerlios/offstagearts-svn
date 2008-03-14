@@ -206,7 +206,7 @@ java.util.Date xasOfDate, int lateDays)
 		
 		// rss[1]
 		" select name from termids where groupid=" + termid + ";\n";
-	str.execSql(sql, new RssRunnable() {
+	str.execSql(sql, new RssTasklet() {
 	public void run(SqlRunner str, ResultSet[] rss) throws Exception {
 		model = new TreeMap();
 		table = new DefaultTableModel(

@@ -159,7 +159,7 @@ FrontApp app;
 
 	private void bNewOrgActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewOrgActionPerformed
 	{//GEN-HEADEREND:event_bNewOrgActionPerformed
-	app.runGui(this, new BatchRunnable() {
+	app.runGui(this, new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 //		model.newEntity(st, FullEntityDbModel.PERSON);
 		JFrame root = (javax.swing.JFrame)citibob.swing.WidgetTree.getRoot(DevelPanel.this);
@@ -174,14 +174,14 @@ FrontApp app;
 	}//GEN-LAST:event_bNewOrgActionPerformed
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
-	app.runGui(this, new BatchRunnable() {
+	app.runGui(this, new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 		offstage.devel.gui.DevelPanel.this.dmod.doSelect(str);
 	}});
 	}//GEN-LAST:event_bUndoActionPerformed
 
 private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
-	app.runGui(this, "admin", new BatchRunnable() {
+	app.runGui(this, "admin", new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 		if (JOptionPane.showConfirmDialog(DevelPanel.this,
 			"Are you sure you wish to permanently delete this record?",
@@ -196,7 +196,7 @@ private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 }//GEN-LAST:event_bDeleteActionPerformed
 
 private void bNewPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewPersonActionPerformed
-	app.runGui(this, new BatchRunnable() {
+	app.runGui(this, new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 //		model.newEntity(st, FullEntityDbModel.PERSON);
 		JFrame root = (javax.swing.JFrame)citibob.swing.WidgetTree.getRoot(DevelPanel.this);
@@ -211,7 +211,7 @@ private void bNewPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 }//GEN-LAST:event_bNewPersonActionPerformed
 
 private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-	app.runGui(this, new BatchRunnable() {
+	app.runGui(this, new BatchTask() {
 	public void run(SqlRunner str) throws Exception {
 		offstage.devel.gui.DevelPanel.this.dmod.doUpdate(str);
 		offstage.devel.gui.DevelPanel.this.dmod.doSelect(str);

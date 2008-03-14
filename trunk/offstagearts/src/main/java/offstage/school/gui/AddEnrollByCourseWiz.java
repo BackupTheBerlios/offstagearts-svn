@@ -48,7 +48,7 @@ public class AddEnrollByCourseWiz extends HtmlWiz {
 public AddEnrollByCourseWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app, TypedHashMap v)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
-	super(owner, app.getSwingerMap());
+	super(owner, app.swingerMap());
 	setSize(600,460);
 	final EntityIDEditableLabel entityid = new EntityIDEditableLabel();
 		entityid.initRuntime(app, v.getInteger("termid"));

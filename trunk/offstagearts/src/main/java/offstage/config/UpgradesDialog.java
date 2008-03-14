@@ -13,7 +13,7 @@ import citibob.resource.ResSet;
 import citibob.resource.RtRes;
 import citibob.resource.RtResKey;
 import citibob.resource.UpgradePlan;
-import citibob.sql.SqlRunner;
+import citibob.sql.SqlRun;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -36,10 +36,10 @@ public boolean required;		// true if all resources to be created are required
 
 	}
 
-	public void initRuntime(SqlRunner str, App xapp, ArrayList<UpgradePlan> uplans)
+	public void initRuntime(SqlRun str, App xapp, ArrayList<UpgradePlan> uplans)
 	{
 		this.app = xapp;
-		ResSet rset = app.getResSet();
+		ResSet rset = app.resSet();
 
 		// See if any upgrades are required
 		required = false;
@@ -52,7 +52,7 @@ public boolean required;		// true if all resources to be created are required
 		this.tUpgradePlans.setModelU(mod,
 			new String[] {"Resource", "Plan", "Back Compatible", "Required"},
 			new String[] {"resourceName", "UpgradePlan", "backcompatible", "required"},
-			null, app.getSwingerMap());
+			null, app.swingerMap());
 		tUpgradePlans.setRenderEditU("UpgradePlan", new ResModels.PathSFormat());
 
 		// Select an upgrade plan to inspect and maybe execute
@@ -66,7 +66,7 @@ public boolean required;		// true if all resources to be created are required
 			}
 		}});
 
-		app.getSwingPrefs().setPrefs(this, "",
+		app.swingPrefs().setPrefs(this, "",
 			app.userRoot().node("dialog-UpgradesDialog"));
 	};
 

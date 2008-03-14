@@ -74,15 +74,15 @@ throws Exception
 	String sql = offstage.reports.StudentSchedule.getSql(termid, entityid);
 	str.execSql(sql, new RsRunnable() {
 	public void run(SqlRunner str, ResultSet rs) throws Exception {
-		citibob.reports.Reports reports = app.getReports();
+		citibob.reports.Reports reports = app.reports();
 		
 		java.util.List models = reports.toJodList(rs,
 			new String[][] {{"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"}},
 			new String[] {"firstdate", "firstyear", "lastyear"},
 			new SFormat[] {
-				new DateSFormat("EEEEE, MMMMM d", "", app.getTimeZone()),
-				new DateSFormat("yyyy", "", app.getTimeZone()),
-				new DateSFormat("yyyy", "", app.getTimeZone())
+				new DateSFormat("EEEEE, MMMMM d", "", app.timeZone()),
+				new DateSFormat("yyyy", "", app.timeZone()),
+				new DateSFormat("yyyy", "", app.timeZone())
 		});
 		reports.viewJodPdfs(models, null, "StudentSchedule.odt");
 	}});

@@ -79,7 +79,7 @@ Integer xentityid, int xactypeid)
 	super("Transactions", xfapp, comp);
 	this.entityid = xentityid;
 	this.actypeid = xactypeid;
-	sqlDate = new SqlDate(fapp.getTimeZone(), false);
+	sqlDate = new SqlDate(fapp.timeZone(), false);
 // ---------------------------------------------
 //addState(new AbstractWizState("init", "init", "init") {
 //	public HtmlWiz newWiz(WizState.Context con) throws Exception

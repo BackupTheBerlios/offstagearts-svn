@@ -203,7 +203,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 		String sql = q.getSql();
 	System.out.println(sql);
 		str.execSql(sql);
-		fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("persons")));
+		fapp.queryLogger().log(new QueryLogRec(q, fapp.schemaSet().get("persons")));
 
 		// Make phone record --- first dig for keyed model...
 		String phone = v.getString("phone");
@@ -217,7 +217,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 	System.out.println(sql);
 			str.execSql(sql);
 
-			fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
+			fapp.queryLogger().log(new QueryLogRec(q, fapp.schemaSet().get("phones")));
 		}
 
 		// Do interests
@@ -229,7 +229,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 			sql = q.getSql();
 	System.out.println(sql);
 			str.execSql(sql);
-			fapp.getLogger().log(new QueryLogRec(q, fapp.getSchemaSet().get("phones")));
+			fapp.queryLogger().log(new QueryLogRec(q, fapp.schemaSet().get("phones")));
 		}
 	}});
 }

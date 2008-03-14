@@ -27,7 +27,7 @@ import citibob.types.*;
 public class TermregsSchema extends ConstSqlSchema
 {
 
-public TermregsSchema(citibob.sql.SqlRunner str, DbChangeModel change, java.util.TimeZone tz)
+public TermregsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super();
