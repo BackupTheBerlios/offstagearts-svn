@@ -23,8 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.swing.typed;
 
-import java.text.DateFormat;
-import java.util.Date;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -36,6 +34,7 @@ import citibob.swing.typed.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
 import citibob.sql.*;
+import citibob.util.IntVal;
 
 public class HouseholdIDEditableLabel extends EntityIDEditableLabel
 {
@@ -62,8 +61,8 @@ public void propertyChange(java.beans.PropertyChangeEvent evt)
 	if (oldval == null) return;
 
 	// Run final result after we've finished batch set in setValue()
-	app.batchSet().execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	app.sqlRun().execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
 		Object newval = getValue();
 		firePropertyChange("value", oldval, newval);
 	}});
@@ -88,14 +87,14 @@ public void setValue(Object o)
 
 	// Make sure we're only pointing to a head of household.
 //	app.runApp(new BatchRunnable() {
-//	public void run(SqlRunner str) throws SQLException {
+//	public void run(SqlRun str) throws SQLException {
 		
-	SqlRunner str = app.batchSet();
+	SqlRun str = app.sqlRun();
 //	SqlBatchSet str = app.getBatchSet();
-	offstage.db.DB.getPrimaryEntityID(str, ID);
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		HouseholdIDEditableLabel.super.setValue((Integer)str.get("primaryentityid"));
+	final IntVal ival = offstage.db.DB.getPrimaryEntityID(str, ID);
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
+		HouseholdIDEditableLabel.super.setValue((Integer)ival.val);
 	}});
 }
 }

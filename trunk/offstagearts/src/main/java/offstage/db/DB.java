@@ -27,6 +27,7 @@ import java.sql.*;
 import citibob.sql.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
+import citibob.util.IntVal;
 import java.util.prefs.*;
 import offstage.config.*;
 
@@ -78,12 +79,12 @@ final String url;
 //}
 // -------------------------------------------------------------------------------
 ///** Gets the next value from a sequence. */
-//public static int r_nextval(SqlRunner str, String sequence) throws SQLException
+//public static int r_nextval(SqlRun str, String sequence) throws SQLException
 //{
 //	return SQL.readInt(st, "select nextval('" + sequence + "')");
 //}
 // -------------------------------------------------------------------------------
-//public static int w_mailingids_create(SqlRunner str, String eqXml, String eqSql)
+//public static int w_mailingids_create(SqlRun str, String eqXml, String eqSql)
 //throws SQLException
 //{
 //	int groupID = r_nextval(st, "groupids_groupid_seq");
@@ -111,13 +112,13 @@ final String url;
 // -------------------------------------------------------------------------------
 /** @param eqSql an idSql that selects the entityids we wish to mail to.  Assumes that
  only one of each primaryentityid has already been done. */
-public static void w_mailingids_create(SqlRunner str, final String queryName,
-final String eqXml, final String eqSql, final UpdRunnable rr)
+public static void w_mailingids_create(SqlRun str, final String queryName,
+final String eqXml, final String eqSql, final UpdTasklet2 rr)
 {
-	SqlSerial.getNextVal(str, "groupids_groupid_seq");
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		final int groupID = (Integer)str.get("groupids_groupid_seq");
+	final IntVal iGroupID = SqlSerial.getNextVal(str, "groupids_groupid_seq");
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
+//		final int groupID = (Integer)str.get("groupids_groupid_seq");
 		
 		String sql =
 			// Conditionally drop our temporary able before creating it
@@ -126,7 +127,7 @@ final String eqXml, final String eqSql, final UpdRunnable rr)
 			// Create Mailing List 
 			" insert into mailingids" + 
 			" (groupid, name, created, equery) values" + 
-			" (" + groupID + ", " + SqlString.sql(queryName) + ", now(),\n" + SqlString.sql(eqXml) + "\n);" + 
+			" (" + iGroupID.val + ", " + SqlString.sql(queryName) + ", now(),\n" + SqlString.sql(eqXml) + "\n);" + 
 
 			// Create temporary table of IDs for this mailing list
 			// These are primaryentityids (i.e. the people we REALLY want to send to)
@@ -136,7 +137,7 @@ final String eqXml, final String eqSql, final UpdRunnable rr)
 //			" insert into _ids (id) " + removeDupsIDSql(eqSql) + ";\n" +
 
 			// Insert into Mailing List
-			" insert into mailings (groupid, entityid) select " + groupID + ", id from _ids;" + 
+			" insert into mailings (groupid, entityid) select " + iGroupID.val + ", id from _ids;" + 
 			" drop table _ids;\n" +
 
 			// ========= Set addressto from multiple sources
@@ -147,13 +148,13 @@ final String eqXml, final String eqSql, final UpdRunnable rr)
 			"	where p.entityid = mailings.entityid\n" +
 			"	and p.customaddressto is not null\n" +
 			"	and addressto is null\n" +
-			"	and mailings.groupid = " + groupID + ";\n" +
+			"	and mailings.groupid = " + iGroupID.val + ";\n" +
 
 			// 2. Try pre-computed names
 			"	update mailings\n" +
 			"	set addressto = ename\n" +
 			"	where addressto is null and ename is not null\n" +
-			"	and groupid = " + groupID + ";\n" +
+			"	and groupid = " + iGroupID.val + ";\n" +
 
 			// 3. Try addressto as name of person
 			"	update mailings\n" +
@@ -163,7 +164,7 @@ final String eqXml, final String eqSql, final UpdRunnable rr)
 			"		coalesce(p.lastname, '')\n" +
 			"	from entities p\n" +
 			"	where mailings.entityid = p.entityid\n" +
-			"	and mailings.groupid = " + groupID + "\n" +
+			"	and mailings.groupid = " + iGroupID.val + "\n" +
 			"	and addressto is null;\n" +
 
 			// 4. Try addressto as name of organization
@@ -171,7 +172,7 @@ final String eqXml, final String eqSql, final UpdRunnable rr)
 			"	set addressto = p.name\n" +
 			"	from organizations p\n" +
 			"	where mailings.entityid = p.entityid\n" +
-			"	and mailings.groupid = " + groupID + "\n" +
+			"	and mailings.groupid = " + iGroupID.val + "\n" +
 			"	and addressto is null;\n" +
 
 			// Set the rest of the address\n" +
@@ -184,10 +185,10 @@ final String eqXml, final String eqSql, final UpdRunnable rr)
 			"	country = e.country\n" +
 			"	from entities e\n" +
 			"	where mailings.entityid = e.entityid\n" +
-			"	and mailings.groupid = " + groupID + ";\n";
+			"	and mailings.groupid = " + iGroupID.val + ";\n";
 
-		str.execSql(sql, new UpdRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		str.execSql(sql, new UpdTasklet2() {
+		public void run(SqlRun str) throws Exception {
 			if (rr != null) rr.run(str);
 		}});
 	}});
@@ -196,7 +197,7 @@ final String eqXml, final String eqSql, final UpdRunnable rr)
 //	return groupID;
 }
 // -------------------------------------------------------------------------------
-public static void w_mailings_makereport(SqlRunner str, int mailingID)
+public static void w_mailings_makereport(SqlRun str, int mailingID)
 {
 	String sql =
 		" update mailings set line1=trim(addressto), line2=trim(address1), line3=trim(address2)" +
@@ -230,20 +231,21 @@ public static void w_mailings_makereport(SqlRunner str, int mailingID)
 	str.execSql(sql);
 }
 // -------------------------------------------------------------------------------
-public static void getPrimaryEntityID(SqlRunner str, int eid)
+public static IntVal getPrimaryEntityID(SqlRun str, int eid)
 // throws SQLException
 {
+	final IntVal ival = new IntVal();
 	String sql =
 		"select primaryentityid from entities where entityid = " + eid;
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws Exception {
 		rs.next();
-		int pid = rs.getInt(1);
-		str.put("primaryentityid", pid);
+		ival.val = rs.getInt(1);
 	}});
+	return ival;
 }
 
-//public static int getTransitivePrimaryEntityID(SqlRunner str, int eid)
+//public static int getTransitivePrimaryEntityID(SqlRun str, int eid)
 //throws SQLException
 //{
 //	int origID = eid;
@@ -265,7 +267,7 @@ public static void getPrimaryEntityID(SqlRunner str, int eid)
 // -------------------------------------------------------------------------------
 /** Creates a temporary table full of entity id's from an SQL query designed
  to select those IDs. */
-public static void createIDList(SqlRunner str, String idSql, String idTable)
+public static void createIDList(SqlRun str, String idSql, String idTable)
 //throws SQLException
 {
 	String sql =
@@ -277,7 +279,7 @@ public static void createIDList(SqlRunner str, String idSql, String idTable)
 }
 // -------------------------------------------------------------------------------
 /** Creates a temporary table full of entity id's from a list of IDs. */
-public static void createIDList(SqlRunner str, int[] ids, String idTable)
+public static void createIDList(SqlRun str, int[] ids, String idTable)
 //throws SQLException
 {
 	StringBuffer sbuf = new StringBuffer();
@@ -299,17 +301,18 @@ public static String sqlCountIDList(String idSql)
 	return sql;
 }
 
-public static void countIDList(final String retVar, SqlRunner str, String idSql)
+public static IntVal countIDList(final String retVar, SqlRun str, String idSql)
 //throws SQLException
 {
+	final IntVal ival = new IntVal();
 	String sql = sqlCountIDList(idSql);
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws Exception {
 		rs.next();
-		final int nn = rs.getInt(1);
-		str.put(retVar, nn);
+		ival.val = rs.getInt(1);
 	}});
-
+	return ival;
+	
 //System.out.println(sql);
 //	ResultSet rs = st.executeQuery(sql);
 //	rs.next();
@@ -330,7 +333,7 @@ public static void countIDList(final String retVar, SqlRunner str, String idSql)
 //	return sql;
 //}
 // -------------------------------------------------------------------------------
-//public static String rs_entities_namesByIDList(SqlRunner str, String idSql, String orderBy, final RsRunnable rr)
+//public static String rs_entities_namesByIDList(SqlRun str, String idSql, String orderBy, final RsTasklet2 rr)
 ////throws SQLException
 //{
 //	if (orderBy == null) orderBy = "relation, name";
@@ -391,8 +394,8 @@ public static String sql_entities_namesByIDList2(String idSql, String orderBy)
 // -------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------
-//public static void r_acct_balance(final String retVar, SqlRunner str,
-//final int entityid, final int actypeid, final UpdRunnable rr)
+//public static void r_acct_balance(final String retVar, SqlRun str,
+//final int entityid, final int actypeid, final UpdTasklet2 rr)
 ////throws SQLException
 //{
 //	String sql;
@@ -404,8 +407,8 @@ public static String sql_entities_namesByIDList2(String idSql, String orderBy)
 //		" where entityid = " + SqlInteger.sql(entityid) +
 //		" and actypeid = " + SqlInteger.sql(actypeid) +
 //		" order by dtime desc";
-//	str.execSql(sql, new RsRunnable() {
-//	public void run(SqlRunner str, ResultSet rs) throws Exception {
+//	str.execSql(sql, new RsTasklet2() {
+//	public void run(SqlRun str, ResultSet rs) throws Exception {
 //		double bal = 0;
 //		String sdtime = null;
 //		if (rs.next()) {
@@ -421,8 +424,8 @@ public static String sql_entities_namesByIDList2(String idSql, String orderBy)
 //			" where entityid = " + SqlInteger.sql(entityid) +
 //			" and actypeid = " + SqlInteger.sql(actypeid) +
 //			(sdtime == null ? "" : " and dtime > '" + sdtime + "'");
-//		str.execSql(sql, new RsRunnable() {
-//		public void run(SqlRunner str, ResultSet rs) throws Exception {
+//		str.execSql(sql, new RsTasklet2() {
+//		public void run(SqlRun str, ResultSet rs) throws Exception {
 //			rs.next();
 //			double bal = fbal + rs.getDouble(1);
 //			str.put(retVar, bal);
@@ -448,7 +451,7 @@ throws SQLException
 }
 // --------------------------------------------------
 /** Re-encrypts all encrypted data in the database, after a master key has been changed. */
-public static void rekeyEncryptedData(SqlRunner str, offstage.crypt.KeyRing kr)
+public static void rekeyEncryptedData(SqlRun str, offstage.crypt.KeyRing kr)
 {
 
 }

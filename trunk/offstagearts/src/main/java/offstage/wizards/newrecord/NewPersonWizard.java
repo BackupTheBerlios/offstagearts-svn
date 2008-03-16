@@ -38,6 +38,7 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.jschema.log.*;
+import citibob.util.IntVal;
 import java.awt.Component;
 
 /**
@@ -50,7 +51,7 @@ public class NewPersonWizard extends OffstageWizard {
 addState(new State("", "", "") {
 	public HtmlWiz newWiz(WizState.Context con)
 		{ return new }
-	public void process(citibob.sql.SqlRunner str)
+	public void process(citibob.sql.SqlRun str)
 	{
 		
 	}
@@ -64,7 +65,7 @@ public NewPersonWizard(offstage.FrontApp xfapp, Component comp)
 //addState(new State("init", "init", "init") {
 //	public HtmlWiz newWiz(WizState.Context con) throws Exception
 //		{ return new InitWiz(frame); }
-//	public void process(citibob.sql.SqlRunner str) throws Exception
+//	public void process(citibob.sql.SqlRun str) throws Exception
 //	{
 //		String s = v.getString("type");
 //		if (s != null) state = s;
@@ -84,16 +85,18 @@ addState(new AbstractWizState("person", null, null) {
 					"Invalid input.\nPlease fill in all required (starred) fields!");
 				stateName = "person";
 			} else {
-				offstage.db.DupCheck.checkDups(con.str, v, 3, 20, new UpdRunnable() {
-				public void run(SqlRunner str) {
-					String idSql = (String)str.get("idsql");
+				final DupCheck dc = new DupCheck(con.str, v);
+				con.str.execUpdate(new UpdTasklet2() {
+//				offstage.db.DupCheck.checkDups(con.str, v, 3, 20, new UpdTasklet2() {
+				public void run(SqlRun str) {
+					String idSql = dc.getIDSql(3, 20);
 					v.put("idsql", idSql);
 					System.out.println("DupCheck sql: " + idSql);
-					DB.countIDList("count", str, idSql);
-					str.execUpdate(new UpdRunnable() {
-					public void run(SqlRunner str) throws Exception {
-						int ndups = (Integer)str.get("count");
-						if (ndups == 0) {
+					final IntVal ndups = DB.countIDList("count", str, idSql);
+					str.execUpdate(new UpdTasklet2() {
+					public void run(SqlRun str) throws Exception {
+//						int ndups = (Integer)str.get("count");
+						if (ndups.val == 0) {
 							createPerson(str, false);
 							stateName = null; //"finished";
 						} else {
@@ -135,16 +138,19 @@ addState(new AbstractWizState("org", null, null) {
 					"Invalid input.\nPlease fill in all required (starred) fields!");
 				stateName = "org";
 			} else {
-				offstage.db.DupCheck.checkDups(con.str, con.v, 3, 20, new UpdRunnable() {
-				public void run(SqlRunner str) {
-					String idSql = (String)str.get("idsql");
+				final DupCheck dc = new DupCheck(con.str, con.v);
+//				offstage.db.DupCheck.checkDups(con.str, con.v, 3, 20, new UpdTasklet2() {
+				con.str.execUpdate(new UpdTasklet2() {
+				public void run(SqlRun str) {
+//					String idSql = (String)str.get("idsql");
+					String idSql = dc.getIDSql(3, 20);
 					v.put("idsql", idSql);
 					System.out.println("DupCheck sql: " + idSql);
-					DB.countIDList("ndups", str, idSql);
-					str.execUpdate(new UpdRunnable() {
-					public void run(SqlRunner str) throws SQLException {
-						int ndups = (Integer)str.get("ndups");
-						if (ndups == 0) {
+					final IntVal ndups = DB.countIDList("ndups", str, idSql);
+					str.execUpdate(new UpdTasklet2() {
+					public void run(SqlRun str) throws SQLException {
+//						int ndups = (Integer)str.get("ndups");
+						if (ndups.val == 0) {
 							createPerson(str, true);
 							stateName = null;// "finished";
 						} else {
@@ -175,17 +181,17 @@ private void addSCol(ConsSqlQuery q, String col)
 	String val = v.getString(col);
 	if (val != null) q.addColumn(col, SqlString.sql(val));
 }
-void createPerson(SqlRunner str, final boolean isorg) throws SQLException
+void createPerson(SqlRun str, final boolean isorg) throws SQLException
 {
 	// Make main record
-	SqlSerial.getNextVal(str, "entities_entityid_seq");
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) {
-		int id = (Integer)str.get("entities_entityid_seq");
-		v.put("entityid", new Integer(id));
+	final IntVal iid = SqlSerial.getNextVal(str, "entities_entityid_seq");
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) {
+//		int id = (Integer)str.get("entities_entityid_seq");
+		v.put("entityid", new Integer(iid.val));
 		ConsSqlQuery q = new ConsSqlQuery("persons", ConsSqlQuery.INSERT);
-		q.addColumn("entityid", SqlInteger.sql(id));
-		q.addColumn("primaryentityid", SqlInteger.sql(id));
+		q.addColumn("entityid", SqlInteger.sql(iid.val));
+		q.addColumn("primaryentityid", SqlInteger.sql(iid.val));
 		addSCol(q, "lastname");
 		addSCol(q, "middlename");
 		addSCol(q, "firstname");
@@ -210,7 +216,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 		if (phone != null) {
 			String phoneType = (isorg ? "work" : "home");
 			q = new ConsSqlQuery("phones", ConsSqlQuery.INSERT);
-			q.addColumn("entityid", SqlInteger.sql(id));
+			q.addColumn("entityid", SqlInteger.sql(iid.val));
 			q.addColumn("groupid", "(select groupid from phoneids where name = " + SqlString.sql(phoneType) + ")");
 			q.addColumn("phone", SqlString.sql(phone));
 			sql = q.getSql();
@@ -224,7 +230,7 @@ void createPerson(SqlRunner str, final boolean isorg) throws SQLException
 		Integer interestid = v.getInteger("interestid");
 		if (interestid != null) {
 			q = new ConsSqlQuery("interests", ConsSqlQuery.INSERT);
-			q.addColumn("entityid", SqlInteger.sql(id));
+			q.addColumn("entityid", SqlInteger.sql(iid.val));
 			q.addColumn("groupid", SqlInteger.sql(interestid));
 			sql = q.getSql();
 	System.out.println(sql);

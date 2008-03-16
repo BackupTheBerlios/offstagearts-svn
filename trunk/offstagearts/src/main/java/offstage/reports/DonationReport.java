@@ -48,7 +48,7 @@ public class DonationReport extends MultiTableDbModel
 //SqlDbModel main;
 String idSql;		// Set of IDs for our report
 
-public void doSelect(SqlRunner str)
+public void doSelect(SqlRun str)
 {
 	DB.createIDList(str, idSql, "ids_donor");
 	super.doSelect(str);
@@ -103,26 +103,26 @@ System.out.println("year = " + year);
 //	setTableModel();
 }
 
-public static void writeCSV(final App app, SqlRunner str,
+public static void writeCSV(final App app, SqlRun str,
 String idSql, int minYear, int maxYear, final File outFile) throws Exception
 {
 	final DonationReport report = new DonationReport(app, idSql, minYear, maxYear);
 	report.doSelect(str);
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
 		citibob.reports.Reports rr = app.reports();
 		rr.writeCSV(rr.format(report.newTableModel()), outFile);
 	}});
 }
 
 
-//public static void writeCSV(final App app, SqlRunner str, final java.awt.Frame frame,
+//public static void writeCSV(final App app, SqlRun str, final java.awt.Frame frame,
 //final String title, String sql) throws Exception
 //{
 //	final DonationReport report = new DonationReport(app, sql);
 //	report.doSelect(str);
-//	str.execUpdate(new UpdRunnable() {
-//	public void run(SqlRunner str) throws Exception {
+//	str.execUpdate(new UpdTasklet2() {
+//	public void run(SqlRun str) throws Exception {
 //		Reports rr = app.getReports();
 //		rr.writeCSV(rr.format(report.newTableModel()),
 //			frame, "Save" + title);

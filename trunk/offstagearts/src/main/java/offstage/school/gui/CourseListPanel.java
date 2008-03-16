@@ -29,12 +29,12 @@ import citibob.jschema.RSSchema;
 import citibob.jschema.SchemaBuf;
 import citibob.jschema.SqlSchemaInfo;
 import citibob.jschema.SqlBufDbModel;
-import citibob.task.BatchTask;
 import citibob.task.ETask;
 import citibob.sql.ConsSqlQuery;
 import citibob.sql.SqlRun;
-import citibob.sql.UpdRunnable;
+import citibob.sql.UpdTasklet2;
 import citibob.sql.pgsql.SqlInteger;
+import citibob.task.SqlTask;
 import citibob.wizard.Wizard;
 import java.util.Set;
 import java.util.TreeSet;
@@ -80,9 +80,9 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 
 	smod.addListener(new SchoolModel.Adapter() {
     public void termIDChanged(int oldTermID, int termID) {
-			termChanged(fapp.batchSet());
+			termChanged(fapp.sqlRun());
 //			fapp.runApp(new BatchRunnable() {
-//			public void run(SqlRunner str) throws Exception {
+//			public void run(SqlRun str) throws Exception {
 //				termChanged(str);
 //			}});
 	}});
@@ -116,10 +116,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 		int oldid = courseid;
 		courseid = courseRow < 0 ? -1 : (Integer)coursesDb.getSchemaBuf().getValueAt(courseRow, "courseid");
 		if (courseid != oldid) {
-			fapp.runApp(new BatchTask() {
-			public void run(SqlRun str) throws Exception {
-				courseChanged(str);
-			}});
+			courseChanged(fapp.sqlRun());
 		}
 	}});
 	
@@ -145,7 +142,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 			" and c.courseid = " + SqlInteger.sql(courseid) +
 			" order by e.courserole,st.lastname,st.firstname\n";
 	}};
-	str.execUpdate(new UpdRunnable() {
+	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) {
 		RSSchema schema = (RSSchema)enrolledDb.getSchemaBuf().getSchema();
 		enrollments.setModelU(enrolledDb.getTableModel(),
@@ -184,7 +181,7 @@ void all_doSelect(SqlRun str)
 	enrolledDb.doSelect(str);
 	coursesDb.doSelect(str);
 
-	str.execUpdate(new UpdRunnable() {
+	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 		courses.setSelectedRowU(id, "courseid");
 	}});
@@ -341,7 +338,7 @@ void all_doSelect(SqlRun str)
 
 	private void bUndelAllMeetingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndelAllMeetingActionPerformed
 	{//GEN-HEADEREND:event_bUndelAllMeetingActionPerformed
-		fapp.runGui(CourseListPanel.this, new ETask() {
+		fapp.guiRun().run(CourseListPanel.this, new ETask() {
 		public void run() throws Exception {
 			enrolledDb.getSchemaBuf().undeleteAllRows();
 		}});
@@ -351,7 +348,7 @@ void all_doSelect(SqlRun str)
 
 	private void bUndoDelMeetingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoDelMeetingActionPerformed
 	{//GEN-HEADEREND:event_bUndoDelMeetingActionPerformed
-		fapp.runGui(CourseListPanel.this, new ETask() {
+		fapp.guiRun().run(CourseListPanel.this, new ETask() {
 		public void run() throws Exception {
 			enrolledDb.getSchemaBuf().undeleteRow(enrollments.getSelectedRow());
 			enrollments.requestFocus();
@@ -361,7 +358,7 @@ void all_doSelect(SqlRun str)
 
 	private void bDelAllMeetingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelAllMeetingActionPerformed
 	{//GEN-HEADEREND:event_bDelAllMeetingActionPerformed
-		fapp.runGui(CourseListPanel.this, new ETask() {
+		fapp.guiRun().run(CourseListPanel.this, new ETask() {
 		public void run() throws Exception {
 			enrolledDb.getSchemaBuf().deleteAllRows();
 		}});
@@ -370,7 +367,7 @@ void all_doSelect(SqlRun str)
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
-		fapp.runApp(new BatchTask() {
+		fapp.guiRun().run(new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			all_doSelect(str);
 		}});
@@ -379,7 +376,7 @@ void all_doSelect(SqlRun str)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		fapp.runApp(new BatchTask() {
+		fapp.guiRun().run(new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			// Re-calculate tuition for changed students
 			Set<Integer> payers = new TreeSet();
@@ -398,7 +395,7 @@ void all_doSelect(SqlRun str)
 
 	private void bDelMeetingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelMeetingActionPerformed
 	{//GEN-HEADEREND:event_bDelMeetingActionPerformed
-		fapp.runGui(CourseListPanel.this, new ETask() {
+		fapp.guiRun().run(CourseListPanel.this, new ETask() {
 		public void run() throws Exception {
 			enrolledDb.getSchemaBuf().deleteRow(enrollments.getSelectedRow());
 			enrollments.requestFocus();
@@ -407,7 +404,7 @@ void all_doSelect(SqlRun str)
 
 	private void bAddMeetingActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddMeetingActionPerformed
 	{//GEN-HEADEREND:event_bAddMeetingActionPerformed
-		fapp.runGui(CourseListPanel.this, new BatchTask() {
+		fapp.guiRun().run(CourseListPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 
 			Wizard wizard = new EnrollWizard(fapp, null);
@@ -425,7 +422,7 @@ void all_doSelect(SqlRun str)
 			}
 		}});
 
-//		fapp.runGui(CourseListPanel.this, new ERunnable()
+//		fapp.guiRun().run(CourseListPanel.this, new ERunnable()
 //		{ public void run() throws Exception
 //		  {
 //			  enrollmentsSb.getSchemaBuf().insertRow(-1);

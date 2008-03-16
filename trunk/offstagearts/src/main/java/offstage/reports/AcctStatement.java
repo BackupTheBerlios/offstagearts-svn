@@ -65,7 +65,7 @@ private Map<Integer,String> studentNames;
      * @throws java.sql.SQLException 
      *
      */
-void getStudentNames(SqlRunner str, App app, int termid, String payerIdSql)
+void getStudentNames(SqlRun str, App app, int termid, String payerIdSql)
 //throws SQLException
 {
 	String sql =
@@ -83,8 +83,8 @@ void getStudentNames(SqlRunner str, App app, int termid, String payerIdSql)
 System.out.println(sql);
 	final RSTableModel mod = new RSTableModel(app.sqlTypeSet());
 	mod.executeQuery(str, sql);
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws SQLException {
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws SQLException {
 		Map<Integer,String> map = new HashMap();
 		TableModelGrouper grouper = new TableModelGrouper(mod,
 			new String[][] {{"adultid"}});
@@ -111,13 +111,13 @@ System.out.println(sql);
 ///* @param str Stores result under "models" List<HashMap<String,Object>> */
 ////public static void makeJodModels(
 //public AcctStatement(
-//SqlRunner str, final App app,
+//SqlRun str, final App app,
 //int termid, int payerid, final java.util.Date today)
 //{
 //	this(str, app, termid, payerid < 0 ? null : "select " + payerid + " as id", today);
 //}
 public AcctStatement(
-SqlRunner str, final App app,
+SqlRun str, final App app,
 int termid, String payerIdSql, final java.util.Date today)
 {
 	// Fetch name of students in family
@@ -145,8 +145,8 @@ int termid, String payerIdSql, final java.util.Date today)
 	// Fetch name of term and do main processig
 	sql =
 		"select name from termids where groupid = " + termid + ";\n";
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws Exception {
 		// Retrieve name of term (rss[0])
 		rs.next();
 		String sterm = rs.getString(1);
@@ -278,7 +278,7 @@ int termid, String payerIdSql, final java.util.Date today)
 		// str.put("models", models);
 	}});
 }
-public static void doAccountStatementsAndLabels(SqlRunner str, final FrontApp fapp,
+public static void doAccountStatementsAndLabels(SqlRun str, final FrontApp fapp,
 	int termid, int payerid, java.util.Date dt)
 throws Exception
 {
@@ -298,9 +298,9 @@ throws Exception
 
 	// Only generate statements with non-zero balances
 	final AcctStatement rep = new AcctStatement(str, fapp, termid, idSql,
-		fapp.sqlDate.truncate(dt));
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+		fapp.sqlTypeSet().date().truncate(dt));
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
 		//List models = (List)str.get("models");
 		Reports reports = fapp.reports(); //new OffstageReports(fapp);
 		File f = reports.writeJodPdfs(rep.models, null, "AcctStatement.odt", null);

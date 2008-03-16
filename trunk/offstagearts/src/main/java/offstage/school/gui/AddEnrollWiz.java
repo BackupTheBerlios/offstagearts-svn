@@ -64,12 +64,12 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	final KeyedModel cModel = new citibob.sql.DbKeyedModel(str, null, "courseids", sql);
 	sql =
 		" select name from termids where groupid = " + SqlInteger.sql(v.getInteger("termid"));
-	str.execSql(sql, new RsRunnable() {
+	str.execSql(sql, new RsTasklet2() {
 	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
 		rs.next();
 		addComponent("sterm", new JTypedLabel(rs.getString("name")));	
 	}});
-	str.execUpdate(new UpdRunnable() {
+	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 		addComponent("courserole", new JKeyedComboBox(crModel));
 		addComponent("courseid", new JKeyedComboBox(cModel));

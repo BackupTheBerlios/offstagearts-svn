@@ -58,7 +58,7 @@ public class EntityPanel extends javax.swing.JPanel {
 	
 	EntityPanel getThis() { return this; }
 	
-	public void initRuntime(SqlRunner str, FrontApp fapp, DevelModel dm)
+	public void initRuntime(SqlRun str, FrontApp fapp, DevelModel dm)
 	//throws java.sql.SQLException
 	{
 		App app = fapp;
@@ -66,7 +66,7 @@ public class EntityPanel extends javax.swing.JPanel {
 		
 		// Init the credit card panel
 		TypedWidgetBinder.bindRecursive(this, mainPanel.model, app.swingerMap());
-		cryptCCInfo.initRuntime(fapp.getKeyRing());
+		cryptCCInfo.initRuntime(fapp.keyRing());
 		
 		donationsPanel.initRuntime(str, dm.getDonationSb(),
 			new String[] {"Type", "Date", "Amount"},
@@ -108,7 +108,7 @@ public class EntityPanel extends javax.swing.JPanel {
 //				break;
 //			}
 //		}});
-		this.cryptCCInfo.initRuntime(fapp.getKeyRing());
+		this.cryptCCInfo.initRuntime(fapp.keyRing());
 		
 	}	
 	/** This method is called from within the constructor to

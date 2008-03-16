@@ -52,7 +52,7 @@ SchemaBufDbModel mailingids;		// Set to just one record (for 1 mailing)
 IntKeyedDbModel mailings;		// Set to entire mailing info
 //IntKeyedDbModel oneMailingid;		// Set to entire mailing info
 //int mailingID;					// Current mailing ID
-//SqlRunner str;
+//SqlRun str;
 JobRun runner;
 citibob.app.App app;
 
@@ -80,7 +80,7 @@ public void newAddress() throws KeyViolationException
 
 
 /** Creates a new instance of MailingDbModel */
-public MailingModel2(final SqlRunner str, citibob.app.App app) //OffstageSchemaSet sset)
+public MailingModel2(final SqlRun str, citibob.app.App app) //OffstageSchemaSet sset)
 //throws SQLException
 {
 	this.app = app;
@@ -114,7 +114,7 @@ public MailingModel2(final SqlRunner str, citibob.app.App app) //OffstageSchemaS
 //	}});
 }
 
-public void makeReport(SqlRunner str) throws SQLException, JRException
+public void makeReport(SqlRun str) throws SQLException, JRException
 {
 	DB.w_mailings_makereport(str, mailings.getIntKey());
 
@@ -123,8 +123,8 @@ public void makeReport(SqlRunner str) throws SQLException, JRException
 		" where groupid=" + mailings.getIntKey() +
 		" and isgood" +
 		" order by country, zip";
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws Exception {
 		Reports rr = app.reports();
 		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
 	}});
@@ -133,7 +133,7 @@ public void makeReport(SqlRunner str) throws SQLException, JRException
 //public void makeReport() throws SQLException, JRException
 //{
 ////	runner.doRun(new StRunnable() {
-////	public void run(SqlRunner str) throws Exception {
+////	public void run(SqlRun str) throws Exception {
 //		ResultSet rs = null;
 //		InputStream in = null;
 //		try {

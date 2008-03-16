@@ -77,8 +77,8 @@ String dupType;
 //		public void valueChanged(final ListSelectionEvent e) {
 	    public void propertyChange(final java.beans.PropertyChangeEvent evt) {
 			// User wants to switch to a new cell...
-			app.runGui(CleansePanel.this, new BatchTask() {
-			public void run(SqlRunner str) throws Exception {
+			app.guiRun().run(CleansePanel.this, new SqlTask() {
+			public void run(SqlRun str) throws Exception {
 				if (evt.getNewValue() == null) return;		// We've become un-selected
 //				int row = e.getFirstIndex();
 //				dm[0].setKey((Integer)dupModel.getValueAt(row, "entityid0"));
@@ -107,7 +107,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 		}});
 	}
 	/** @param dupType = 'a' (address), 'n' (names), 'o' (organization) */
-	public void initRuntime(SqlRunner str, FrontApp fapp, String dupType)
+	public void initRuntime(SqlRun str, FrontApp fapp, String dupType)
 	{
 		this.app = fapp;
 		this.dupType = dupType;
@@ -121,7 +121,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 		refreshDupTable(str, null);
 	}
 	
-	void refreshDupTable(SqlRunner str, String idSql)
+	void refreshDupTable(SqlRun str, String idSql)
 	{
 		String sql =
 			(idSql == null ? "" :
@@ -165,8 +165,8 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 			(idSql == null ? "" : " drop table _ids;\n");
 		dupModel = new RSTableModel(app.sqlTypeSet());
 		dupModel.executeQuery(str, sql);
-		str.execUpdate(new UpdRunnable() {
-		public void run(SqlRunner str) throws Exception {
+		str.execUpdate(new UpdTasklet2() {
+		public void run(SqlRun str) throws Exception {
 			dupTable.setModelU(dupModel,
 				new String[] {"#", "Score", "ID-0", "Name-0", "ID-1", "Name-1"},
 //				new String[] {"score", "score", "entityid0", "string0", "entityid1", "string1"},
@@ -457,8 +457,8 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 
 	private void bRefreshListActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRefreshListActionPerformed
 	{//GEN-HEADEREND:event_bRefreshListActionPerformed
-		app.runGui(CleansePanel.this, new BatchTask() {
-		public void run(SqlRunner str) throws Exception {
+		app.guiRun().run(CleansePanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
 			refreshDupTable(str, null);
 		}});
 // TODO add your handling code here:
@@ -466,8 +466,8 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 
 	private void bDupOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDupOKActionPerformed
 	{//GEN-HEADEREND:event_bDupOKActionPerformed
-		app.runGui(CleansePanel.this, new BatchTask() {
-		public void run(SqlRunner str) throws Exception {
+		app.guiRun().run(CleansePanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
 			Integer entityid0 = (Integer)dm[0].getKey();
 			Integer entityid1 = (Integer)dm[1].getKey();
 			allDm.doUpdate(str);
@@ -486,8 +486,8 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 	
 	private void subordinateAction(final int eix)
 	{
-		app.runGui(CleansePanel.this, new BatchTask() {
-		public void run(SqlRunner str) throws Exception {
+		app.guiRun().run(CleansePanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
 //			dm[0].getEntity().getSchemaBuf().setValueAt(dm[1].getIntKey(), 0, "primaryentityid");
 			allDm.doUpdate(str);
 			
@@ -526,8 +526,8 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 
 private void deleteAction(final int... eix)
 {
-	app.runGui(CleansePanel.this, new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	app.guiRun().run(CleansePanel.this, new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 		allDm.doUpdate(str);
 		for (int i=0; i<eix.length; ++i) dm[eix[i]].doDelete(str);
 		allDm.doSelect(str);
@@ -550,8 +550,8 @@ private void deleteAction(final int... eix)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		app.runGui(CleansePanel.this, new BatchTask() {
-		public void run(SqlRunner str) throws Exception {
+		app.guiRun().run(CleansePanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
 			allDm.doUpdate(str);
 			allDm.doSelect(str);
 		}});
@@ -560,8 +560,8 @@ private void deleteAction(final int... eix)
 
 private void mergeAction(final Integer entityid0, final Integer entityid1)
 {
-	app.runGui(CleansePanel.this, new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	app.guiRun().run(CleansePanel.this, new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 		allDm.doUpdate(str);
 		String sql = MergeSql.mergeEntities(app, entityid0, entityid1);
 //System.out.println("================= CleansePanel");
@@ -587,8 +587,8 @@ private void mergeAction(final Integer entityid0, final Integer entityid1)
 	}//GEN-LAST:event_bMerge0ActionPerformed
 
 	private void bSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSearchActionPerformed
-		app.runGui(CleansePanel.this, new BatchTask() {
-		public void run(SqlRunner str) throws Exception {
+		app.guiRun().run(CleansePanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
 			String text = tfSearch.getText();
 			String idSql = DB.simpleSearchSql(text);
 			refreshDupTable(str, idSql);
@@ -635,12 +635,12 @@ private void mergeAction(final Integer entityid0, final Integer entityid1)
     // End of variables declaration//GEN-END:variables
 
 
-public static void showFrame(SqlRunner str, final FrontApp fapp, String dupType, final String title)
+public static void showFrame(SqlRun str, final FrontApp fapp, String dupType, final String title)
 {
 	final CleansePanel panel = new CleansePanel();
 	panel.initRuntime(str, fapp, dupType);
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
 		JFrame frame = new JFrame(title);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

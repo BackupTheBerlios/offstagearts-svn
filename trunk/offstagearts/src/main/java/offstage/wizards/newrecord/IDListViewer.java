@@ -46,7 +46,7 @@ public IDListViewer() {
 	initComponents();
 }
 
-//public void initRuntime(SqlRunner str,
+//public void initRuntime(SqlRun str,
 //EntityListTableModel dupsModel, DevelModel entityDb,
 //ActionRunner guiRunner, SwingerMap smap)
 //{
@@ -54,7 +54,7 @@ public IDListViewer() {
 //	this.entityDb = entityDb;
 //}
 
-public void initRuntime(SqlRunner str,
+public void initRuntime(SqlRun str,
 DevelModel xentityDb,
 String idSql, String orderBy,
 final App app)
@@ -73,8 +73,8 @@ throws SQLException
 	DClickTableMouseListener dclick =
 		new DClickTableMouseListener(dupsTable) {
 		public void doubleClicked(final int row) {
-			app.runGui(IDListViewer.this, new BatchTask() {
-			public void run(SqlRunner str) throws Exception {
+			app.guiRun().run(IDListViewer.this, new SqlTask() {
+			public void run(SqlRun str) throws Exception {
 				// Make sure it's selected in the GUI
 				dupsTable.getSelectionModel().setSelectionInterval(row, row);
 

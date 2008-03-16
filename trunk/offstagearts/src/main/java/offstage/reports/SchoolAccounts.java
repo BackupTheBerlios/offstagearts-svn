@@ -163,7 +163,7 @@ int entityidCol;
  @param xtransCutoff Don't list transactions after this date.  If null, list all transactions.
  @param lateDays Something is late if it was billed before xlateAsOfDate - lateDays and is not yet paid.
  */
-public SchoolAccounts(SqlRunner str, TimeZone tz, final int termid,
+public SchoolAccounts(SqlRun str, TimeZone tz, final int termid,
 java.util.Date xasOfDate, int lateDays)
 //int xlateDays, java.util.Date xlateAsOf)
 {
@@ -207,7 +207,7 @@ java.util.Date xasOfDate, int lateDays)
 		// rss[1]
 		" select name from termids where groupid=" + termid + ";\n";
 	str.execSql(sql, new RssTasklet() {
-	public void run(SqlRunner str, ResultSet[] rss) throws Exception {
+	public void run(ResultSet[] rss) throws Exception {
 		model = new TreeMap();
 		table = new DefaultTableModel(
 			new String[] {"entityid", "lastname", "firstname", "totalbilled_term",
@@ -291,7 +291,7 @@ java.util.Date xasOfDate, int lateDays)
 	}});
 }
 
-public void applyLateFees(SqlRunner str, double multiplier)
+public void applyLateFees(SqlRun str, double multiplier)
 {
 	DateFormat dfmt = new SimpleDateFormat("MMM dd, yyyy");
 	NumberFormat nfmt = NumberFormat.getCurrencyInstance();

@@ -42,6 +42,7 @@ import offstage.crypt.*;
 import java.util.*;
 import citibob.text.*;
 import citibob.reports.*;
+import citibob.util.IntVal;
 
 /**
  *
@@ -59,7 +60,7 @@ addStartState(new AbstractWizState("initial", null, "insertkey1") {
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
-		KeyRing kr = fapp.getKeyRing();
+		KeyRing kr = fapp.keyRing();
 		if (kr.privKeysLoaded()) {
 			processBatch(con.str);
 			stateName = null;
@@ -73,7 +74,7 @@ addState(new AbstractWizState("insertkey1", null, "removekey1") {
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
-		KeyRing kr = fapp.getKeyRing();
+		KeyRing kr = fapp.keyRing();
 		if (!kr.isUsbInserted()) stateName = "keynotinserted";
 		else {
 			try {
@@ -92,9 +93,9 @@ addState(new AbstractWizState("removekey1", null, "insertkey2") {
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
-		if (fapp.getKeyRing().isUsbInserted()) stateName = "keynotremoved";
+		if (fapp.keyRing().isUsbInserted()) stateName = "keynotremoved";
 		else processBatch(con.str);
-//		KeyRing kr = fapp.getKeyRing();
+//		KeyRing kr = fapp.keyRing();
 	}
 });
 // ---------------------------------------------
@@ -134,7 +135,7 @@ static {
 	fexpdate = new offstage.types.ExpDateSFormat();
 }
 
-void processBatch(SqlRunner str)
+void processBatch(SqlRun str)
 //throws SQLException, java.io.IOException,
 //java.security.GeneralSecurityException, java.text.ParseException, JRException
 {
@@ -142,24 +143,23 @@ void processBatch(SqlRunner str)
 	final SqlDate sqld = new SqlDate(fapp.timeZone(), false);
 
 	// Process empty batch
-	SqlSerial.getNextVal(str, "ccbatch_ccbatchid_seq");
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) {
-		final int ccbatchid = (Integer)str.get("ccbatch_ccbatchid_seq");
+	final IntVal iccbatchid = SqlSerial.getNextVal(str, "ccbatch_ccbatchid_seq");
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) {
 		String sql =
-			" insert into ccbatches (ccbatchid) values (" + SqlInteger.sql(ccbatchid) + ");" +
+			" insert into ccbatches (ccbatchid) values (" + SqlInteger.sql(iccbatchid.val) + ");" +
 			
-			" update ccpayments set ccbatchid = " + SqlInteger.sql(ccbatchid) +
+			" update ccpayments set ccbatchid = " + SqlInteger.sql(iccbatchid.val) +
 			" where ccbatchid is null and ccinfo is not null;\n"+
 			// rss[0]
-			"select dtime from ccbatches where ccbatchid = " + SqlInteger.sql(ccbatchid) + ";\n" +
+			"select dtime from ccbatches where ccbatchid = " + SqlInteger.sql(iccbatchid.val) + ";\n" +
 			// rss[1]
 			"select e.firstname, e.lastname, p.* from ccpayments p, entities e" +
 				" where e.entityid = p.entityid" +
-				" and p.ccbatchid = " + SqlInteger.sql(ccbatchid) +
+				" and p.ccbatchid = " + SqlInteger.sql(iccbatchid.val) +
 				" order by date";
-		str.execSql(sql, new RssTasklet() {
-		public void run(SqlRunner str, ResultSet[] rss) throws Exception {
+		str.execSql(sql, new RssTasklet2() {
+		public void run(SqlRun str, ResultSet[] rss) throws Exception {
 			ResultSet rs;
 			
 			// =============== rss[0]: incidental items
@@ -167,20 +167,20 @@ void processBatch(SqlRunner str)
 			rs.next();
 			
 			final HashMap params = new HashMap();
-			params.put("ccbatchid", ccbatchid);
+			params.put("ccbatchid", iccbatchid.val);
 			params.put("dtime", sqlt.get(rs, "dtime"));
 			rs.close();
 
 			// =============== rss[1]: main report
 			rs = rss[1];
-			KeyRing kr = fapp.getKeyRing();
+			KeyRing kr = fapp.keyRing();
 			ArrayList<Map> details = new ArrayList();
 			while (rs.next()) {
 				String cryptCcinfo = rs.getString("ccinfo");
 				String ccinfo = kr.decrypt(cryptCcinfo);
 		//System.out.println(rs.getDouble("amount") + " " + ccinfo);
 				Map map = CCEncoding.decode(ccinfo);
-				map.put("ccbatchid", ccbatchid);
+				map.put("ccbatchid", iccbatchid.val);
 				map.put("ccnumber", fccnumber.valueToString(map.get("ccnumber")));
 				map.put("expdate", fexpdate.valueToString(map.get("expdate")));
 				map.put("firstname", rs.getString("firstname"));

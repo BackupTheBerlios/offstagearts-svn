@@ -44,7 +44,7 @@ public class IdSqlTable extends JTypedSelectTable {
 protected IdSqlTableModel searchResults;
 citibob.app.App app;
 
-public void initRuntime(citibob.app.App app) //SqlRunner str, FullEntityDbModel dm)
+public void initRuntime(citibob.app.App app) //SqlRun str, FullEntityDbModel dm)
 {
 	this.app = app;
 	searchResults = new IdSqlTableModel();
@@ -60,7 +60,7 @@ public void initRuntime(citibob.app.App app) //SqlRunner str, FullEntityDbModel 
 }
 
 /** Re-query */
-protected void executeQuery(SqlRunner str, final String idSql, String orderBy)// throws SQLException
+protected void executeQuery(SqlRun str, final String idSql, String orderBy)// throws SQLException
 {
 	searchResults.executeQuery(str, idSql, orderBy);
 }

@@ -51,7 +51,7 @@ implements java.beans.PropertyChangeListener
 
 		selector.addPropertyChangeListener("value", this);
 	}
-	public void initRuntime(FrontApp fapp, DevelModel dmod) //SqlRunner str, FullEntityDbModel dm)
+	public void initRuntime(FrontApp fapp, DevelModel dmod) //SqlRun str, FullEntityDbModel dm)
 	{
 		this.app = fapp;
 		this.dmod = dmod;
@@ -60,7 +60,7 @@ implements java.beans.PropertyChangeListener
 
 public void propertyChange(final java.beans.PropertyChangeEvent evt)
 {
-	SqlRunner str = app.batchSet();
+	SqlRun str = app.sqlRun();
 		Integer Entityid = (Integer)evt.getNewValue();
 		if (Entityid == null) return;
 		int entityid = Entityid;

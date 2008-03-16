@@ -72,12 +72,12 @@ public void setAllPayerIDs()
 }
 
 
-public void recalcTuition(SqlRunner str)
+public void recalcTuition(SqlRun str)
 {
 	tdata = new TuitionData(str, termid, payerIdSql, date.getTimeZone());
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		rbPlanSet = (RBPlanSet)app.getSiteCode().loadClass(tdata.rbPlanSetClass).newInstance();
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
+		rbPlanSet = (RBPlanSet)app.siteCode().loadClass(tdata.rbPlanSetClass).newInstance();
 		if (tdata.calcTuition()) {
 			calcTuition();
 			String sql = writeTuitionSql();

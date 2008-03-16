@@ -29,7 +29,6 @@ import citibob.jschema.swing.*;
 import citibob.swing.table.*;
 import citibob.swing.typed.*;
 import citibob.task.*;
-import citibob.jschema.swing.StatusTable;
 import citibob.sql.*;
 import citibob.app.*;
 import offstage.*;
@@ -54,7 +53,7 @@ IntKeyedDbModel coursesSb;
 FrontApp fapp;
 
 /** Creates new form CompleteStatusPanel */
-public CoursesWiz(FrontApp xfapp, SqlRunner str, final int termid)
+public CoursesWiz(FrontApp xfapp, SqlRun str, final int termid)
 throws SQLException
 {
 	super("Edit Courses");
@@ -67,15 +66,15 @@ throws SQLException
 		"select groupid, name from termids where iscurrent order by firstdate"));
 //	str0.runBatches(fapp);
 
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
 
 		terms.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-			fapp.runApp(new BatchTask() {
-			public void run(SqlRunner str) throws Exception {
-				termChanged(str);
-			}});
+//			fapp.runApp(new SqlTask() {
+//			public void run(SqlRun str) throws Exception {
+				termChanged(fapp.sqlRun());
+//			}});
 		}});
 
 		// Set up courses editor
@@ -115,12 +114,12 @@ throws SQLException
 	}});
 }
 
-void termChanged(SqlRunner str) throws SQLException
+void termChanged(SqlRun str) //throws SQLException
 {
 	coursesSb.setKey((Integer)terms.getValue());
 	coursesSb.doUpdate(str);
-//	str.execUpdate(new UpdRunnable() {
-//	public void run(SqlRunner str) throws Exception {
+//	str.execUpdate(new UpdTasklet2() {
+//	public void run(SqlRun str) throws Exception {
 //	}});
 	coursesSb.doSelect(str);
 }
@@ -137,8 +136,8 @@ void termChanged(SqlRunner str) throws SQLException
 
 	public void saveCur()
 	{
-		fapp.runGui(CoursesWiz.this, new BatchTask() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.guiRun().run(CoursesWiz.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
 			if (coursesSb.valueChanged()) {
 				coursesSb.doUpdate(str);
 				coursesSb.doSelect(str);
@@ -250,8 +249,8 @@ void termChanged(SqlRunner str) throws SQLException
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
 		saveCur();
-//		fapp.runGui(CoursesWiz.this, new StRunnable() {
-//		public void run(SqlRunner str) throws Exception {
+//		fapp.guiRun().run(CoursesWiz.this, new StRunnable() {
+//		public void run(SqlRun str) throws Exception {
 //			  coursesSb.doUpdate(st);
 //			  coursesSb.doSelect(st);
 //		  }});
@@ -260,8 +259,8 @@ void termChanged(SqlRunner str) throws SQLException
 
 	private void bRestoreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRestoreActionPerformed
 	{//GEN-HEADEREND:event_bRestoreActionPerformed
-		fapp.runGui(CoursesWiz.this, new BatchTask()
-		{ public void run(SqlRunner str) throws Exception
+		fapp.guiRun().run(CoursesWiz.this, new SqlTask()
+		{ public void run(SqlRun str) throws Exception
 		  {
 			  coursesSb.doSelect(str);
 		  }});
@@ -270,7 +269,7 @@ void termChanged(SqlRunner str) throws SQLException
 
 	private void bDelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelActionPerformed
 	{//GEN-HEADEREND:event_bDelActionPerformed
-		fapp.runGui(CoursesWiz.this, new ETask()
+		fapp.guiRun().run(CoursesWiz.this, new ETask()
 		{ public void run() throws Exception
 		  {
 			  int selected = courses.getSelectedRow();
@@ -282,7 +281,7 @@ void termChanged(SqlRunner str) throws SQLException
 
 	private void bAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddActionPerformed
 	{//GEN-HEADEREND:event_bAddActionPerformed
-		fapp.runGui(CoursesWiz.this, new ETask()
+		fapp.guiRun().run(CoursesWiz.this, new ETask()
 		{ public void run() throws Exception
 		  {
 			  coursesSb.getSchemaBuf().insertRow(-1);

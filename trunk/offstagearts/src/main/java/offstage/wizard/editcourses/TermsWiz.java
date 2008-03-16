@@ -39,7 +39,7 @@ public class TermsWiz extends citibob.swing.JPanelWiz
 offstage.FrontApp fapp;
 
 	/** Creates new form TermWiz */
-	public TermsWiz(offstage.FrontApp fapp, SqlRunner str) throws SQLException
+	public TermsWiz(offstage.FrontApp fapp, SqlRun str) throws SQLException
 	{
 		super("Edit School Terms");
 		this.fapp = fapp;
@@ -62,8 +62,8 @@ offstage.FrontApp fapp;
 	public void backPressed() { termPNC.doSave(); }
 	public void nextPressed() {
 //		// Save but don't update; so we can still go to the selected row.
-//		fapp.runGui(TermsWiz.this, new StRunnable() {
-//		public void run(SqlRunner str) throws Exception {
+//		fapp.guiRun().run(TermsWiz.this, new StRunnable() {
+//		public void run(SqlRun str) throws Exception {
 //			SchemaBufDbModel dbm = termPNC.getDbModel();
 //			if (dbm.valueChanged()) {
 //				dbm.doUpdate(st);
@@ -75,8 +75,8 @@ offstage.FrontApp fapp;
 	
 //void saveCur()
 //{
-//	fapp.runGui(this, new StRunnable() {
-//	public void run(SqlRunner str) throws SQLException {
+//	fapp.guiRun().run(this, new StRunnable() {
+//	public void run(SqlRun str) throws SQLException {
 //		termPNC.getDbModel().doUpdate(st);
 //	}});
 //}

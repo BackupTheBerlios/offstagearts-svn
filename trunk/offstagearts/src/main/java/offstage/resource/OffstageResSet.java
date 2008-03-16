@@ -9,9 +9,9 @@ import citibob.resource.ResSet;
 import citibob.resource.RtResKey;
 import citibob.resource.Resource;
 import citibob.sql.DbChangeModel;
-import citibob.sql.RsRunnable;
+import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
-import citibob.sql.UpdRunnable;
+import citibob.sql.UpdTasklet2;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ throws SQLException
     public void tableWillChange(SqlRun str, String table) {
 		refreshTerms(str);
 	}});
-	str.execUpdate(new UpdRunnable() {
+	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) {
 		if (dbbExists()) refreshTerms(str);
 	}});
@@ -61,7 +61,7 @@ private void refreshTerms(SqlRun str)
 {
 	
 	String sql = "select groupid, name from termids where iscurrent";
-	str.execSql(sql, new RsRunnable() {
+	str.execSql(sql, new RsTasklet2() {
 	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
 		terms.clear();
 		while (rs.next()) {

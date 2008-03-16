@@ -93,12 +93,12 @@ throws org.xml.sax.SAXException, java.io.IOException
 		wizard.runWizard();
 	}});
 
-	addAction("processdupnames", "", "admin", new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	addAction("processdupnames", "", "admin", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 		CleansePanel.showFrame(str, (FrontApp)app, "n", "Duplicate Names");
 	}});
-	addAction("processdupaddrs", "", "admin", new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	addAction("processdupaddrs", "", "admin", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 		CleansePanel.showFrame(str, (FrontApp)app, "a", "Duplicate Addresses");
 	}});
 	
@@ -116,7 +116,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 //	if (slash > 0) url = url.substring(slash+1);
 //	
 //	CBTask t = actionMap.get(url);
-//	(FrontApp)app.runGui(this, t.getPermissions(), t.getCBRunnable());
+//	(FrontApp)app.guiRun().run(this, t.getPermissions(), t.getCBRunnable());
 //}
 }
 

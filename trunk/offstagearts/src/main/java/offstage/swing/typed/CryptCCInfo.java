@@ -106,7 +106,7 @@ protected void showPopup()
 
 //public void initRuntime(FrontApp fapp)
 //{
-//	kr = fapp.getKeyRing();
+//	kr = fapp.keyRing();
 //}
 
 	/** This method is called from within the constructor to

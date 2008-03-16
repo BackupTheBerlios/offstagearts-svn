@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //addState(new State("", "", "") {
 //	public HtmlWiz newWiz(WizState.Context con)
 //		{ return new }
-//	public void process(citibob.sql.SqlRunner str)
+//	public void process(citibob.sql.SqlRun str)
 //	{
 //		
 //	}
@@ -101,7 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////addState(new State("catname", "grouplist", "finished") {
 ////	public HtmlWiz newWiz(WizState.Context con) throws Exception
 ////		{ return new CatNameWiz(frame, v.getString("table")); }
-////	public void process(citibob.sql.SqlRunner str) throws Exception
+////	public void process(citibob.sql.SqlRun str) throws Exception
 ////	{
 ////		String catname = v.getString("catname");
 ////		if (catname == null || "".equals(catname)) return;
@@ -119,7 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////addState(new State("donationname", "grouplist", "finished") {
 ////	public HtmlWiz newWiz(WizState.Context con) throws Exception
 ////		{ return new DonationNameWiz(frame); }
-////	public void process(citibob.sql.SqlRunner str) throws Exception
+////	public void process(citibob.sql.SqlRun str) throws Exception
 ////	{
 ////		String catname = v.getString("catname");
 ////		if (catname == null || "".equals(catname)) return;
@@ -138,7 +138,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////addState(new State("finished", null, null) {
 ////	public HtmlWiz newWiz(WizState.Context con) throws Exception
 ////		{ return new FinishedWiz(frame); }
-////	public void process(citibob.sql.SqlRunner str) throws Exception
+////	public void process(citibob.sql.SqlRun str) throws Exception
 ////	{
 ////	}
 ////});

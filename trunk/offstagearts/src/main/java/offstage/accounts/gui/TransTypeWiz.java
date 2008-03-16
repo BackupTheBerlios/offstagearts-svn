@@ -32,7 +32,7 @@ import citibob.swing.html.*;
 import citibob.wizard.*;
 import citibob.app.*;
 import citibob.jschema.*;
-import citibob.sql.RsRunnable;
+import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
 
 /**
@@ -56,7 +56,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 		" case when firstname is null then '' else firstname || ' ' end ||" +
 		" case when middlename is null then '' else middlename end) as name" +
 		" from entities where entityid = " + v.get("entityid");
-	str.execSql(sql, new RsRunnable() {
+	str.execSql(sql, new RsTasklet2() {
 	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
 		rs.next();
 		addComponent("name", new JTypedLabel(rs.getString("name")));	

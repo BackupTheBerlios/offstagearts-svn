@@ -46,9 +46,9 @@ public class AmendRecordWizard extends OffstageWizard {
 
 	/*
 addState(new State("", "", "") {
-	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
+	public HtmlWiz newWiz(citibob.sql.SqlRun str)
 		{ return new }
-	public void process(citibob.sql.SqlRunner str)
+	public void process(citibob.sql.SqlRun str)
 	{
 		
 	}

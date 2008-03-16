@@ -44,8 +44,8 @@ int primaryCol;
 SchemaRowModel bufRow;
 App app;
 // --------------------------------------------------------------
-public void setValue(SqlRunner str, int primaryEntityID)
-throws SQLException
+public void setValue(SqlRun str, int primaryEntityID)
+//throws SQLException
 {
 	// Now do the read-only stuff
 	String idSql =
@@ -75,17 +75,17 @@ public void bind(SchemaRowModel bufRow)
 /** Propagate data from underlying model to widget. */
 public void valueChanged(final int col)
 {
-	app.runApp(new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+//	app.runApp(new SqlTask() {
+//	public void run(SqlRun str) throws Exception {
 		Integer Primaryid = (Integer)bufRow.get(primaryCol);
 		if (Primaryid == null) {
 			setRowCount(0);		// Just clear it out...
 		} else {
 			int primaryid = Primaryid.intValue();
 System.out.println("FamilyTableModel: value changed to: " + primaryid);
-			setValue(str, primaryid);
+			setValue(app.sqlRun(), primaryid);
 		}
-	}});
+//	}});
 }
 public void curRowChanged(int col)
 {

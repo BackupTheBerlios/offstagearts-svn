@@ -228,8 +228,8 @@ throws IOException
 //}
 // ------------------------------------------------------
 /** Returns the mailing id */
-public void makeMailing(SqlRunner str, String queryName, EQuerySchema schema,
-final UpdRunnable rr) throws SQLException, IOException
+public void makeMailing(SqlRun str, String queryName, EQuerySchema schema,
+final UpdTasklet2 rr) throws SQLException, IOException
 {
 	String eqXml = toXML();
 	String eqSql = getSql(schema, true);

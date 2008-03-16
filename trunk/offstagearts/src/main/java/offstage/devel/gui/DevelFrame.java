@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package offstage.devel.gui;
-import citibob.task.BatchTask;
+import citibob.task.SqlTask;
 import java.sql.*;
 import javax.swing.*;
 import java.util.prefs.*;
@@ -47,7 +47,7 @@ FrontApp fapp;
 		initComponents();
 	}
 
-	public void initRuntime(SqlRunner str, FrontApp xfapp) //, DevelModel xdmod)
+	public void initRuntime(SqlRun str, FrontApp xfapp) //, DevelModel xdmod)
 	throws org.xml.sax.SAXException, java.io.IOException
 	{
 		this.fapp = xfapp;
@@ -63,8 +63,8 @@ FrontApp fapp;
 
 
 //		// Mess with preferences
-//		str.execUpdate(new UpdRunnable() {
-//		public void run(SqlRunner str) throws Exception {
+//		str.execUpdate(new UpdTasklet2() {
+//		public void run(SqlRun str) throws Exception {
 //			// Also set up frame preferences
 //			new citibob.swing.prefs.SwingPrefs().setPrefs(DevelFrame.this, "", fapp.userRoot().node("DevelFrame"));
 //		}});

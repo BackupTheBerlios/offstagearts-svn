@@ -26,7 +26,7 @@ package offstage.school.gui;
 import citibob.jschema.DbModel;
 import citibob.jschema.MultiDbModel;
 import citibob.jschema.SchemaBufDbModel;
-import citibob.task.BatchTask;
+import citibob.task.SqlTask;
 import citibob.task.ETask;
 import citibob.sql.SqlRun;
 import citibob.types.JEnum;
@@ -213,7 +213,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 
 	private void ddUndelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddUndelActionPerformed
 	{//GEN-HEADEREND:event_ddUndelActionPerformed
-		fapp.runGui(TermsAddPanel.this, new ETask() {
+		fapp.guiRun().run(TermsAddPanel.this, new ETask() {
 		public void run() throws Exception {
 			termsDm.getSchemaBuf().undeleteRow(terms.getSelectedRow());
 			terms.requestFocus();
@@ -223,7 +223,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
-		fapp.runApp(new BatchTask() {
+		fapp.guiRun().run(new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			allDm.doSelect(str);
 		}});
@@ -232,7 +232,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		fapp.runApp(new BatchTask() {
+		fapp.guiRun().run(new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			allDm.doUpdate(str);
 			str.flush();
@@ -243,7 +243,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 
 	private void ddDelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddDelActionPerformed
 	{//GEN-HEADEREND:event_ddDelActionPerformed
-		fapp.runGui(TermsAddPanel.this, new ETask() {
+		fapp.guiRun().run(TermsAddPanel.this, new ETask() {
 		public void run() throws Exception {
 			termsDm.getSchemaBuf().deleteRow(terms.getSelectedRow());
 			terms.requestFocus();
@@ -252,7 +252,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 
 	private void ddAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddAddActionPerformed
 	{//GEN-HEADEREND:event_ddAddActionPerformed
-		fapp.runGui(TermsAddPanel.this, new ETask() {
+		fapp.guiRun().run(TermsAddPanel.this, new ETask() {
 		public void run() throws Exception {
 			JEnum tt = (JEnum)termsDm.getSchemaBuf().getJType(0, "termtypeid");
 			Object defaultTermTypeID = tt.getKeyedModel().getKeyList().get(0);

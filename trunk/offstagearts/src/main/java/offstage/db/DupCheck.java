@@ -32,6 +32,7 @@ import citibob.sql.pgsql.*;
 import java.sql.*;
 import java.util.*;
 import citibob.sql.*;
+import citibob.util.IntVal;
 
 /**
  * Try to find possible duplicate records, given the data from one record
@@ -159,12 +160,12 @@ public void addScore(Integer EntityID)
 	}
 }
 
-void addScores(SqlRunner str, String table, String whereClause)
+void addScores(SqlRun str, String table, String whereClause)
 //throws SQLException
 {
 	String sql = "select distinct entityid from " + table + " where " + whereClause;
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws SQLException {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws SQLException {
 		while (rs.next()) {
 			Integer EntityID = (Integer)rs.getObject(1);
 			addScore(EntityID);
@@ -173,13 +174,13 @@ void addScores(SqlRunner str, String table, String whereClause)
 		rs.close();
 	}});
 }
-void addScores(SqlRunner str, String whereClause)
+void addScores(SqlRun str, String whereClause)
 //throws SQLException
 {
 	addScores(str, "entities", "not obsolete and " + whereClause);
 }
 /** Returns entityid of possible dups */
-void scoreDups(SqlRunner str)
+void scoreDups(SqlRun str)
 //throws SQLException
 {
 	scores = new HashMap();
@@ -204,7 +205,7 @@ void scoreDups(SqlRunner str)
 /** Creates a query that selects out all the dups of score >= minScore.
  Returns null if >maxDups entities fit the bill.  This will be used
  in EntityListTableModel. */
-String getIDSql(int minScore, int maxDups)
+public String getIDSql(int minScore, int maxDups)
 {
 	StringBuffer sql = new StringBuffer(
 		"select entityid as id from entities where not obsolete and entityid in (-1");
@@ -223,24 +224,25 @@ String getIDSql(int minScore, int maxDups)
 }
 // --------------------------------------------------------------
 /** Creates a new instance of DupCheck */
-private DupCheck(SqlRunner str, TypedHashMap v)
+public DupCheck(SqlRun str, TypedHashMap v)
 //throws SQLException
 {
 	parse(v);
 	scoreDups(str);
 }
 // --------------------------------------------------------------
-/** @param v a set of (name,value) pairs corresponding to wizard screen or database row. */
-public static void checkDups(SqlRunner str, TypedHashMap v,
-final int minScore, final int maxDups, final UpdRunnable rr)
-//throws SQLException
-{
-	final DupCheck dc = new DupCheck(str, v);
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		String idSql = dc.getIDSql(minScore, maxDups);
-		str.put("idsql", idSql);
-		rr.run(str);
-	}});
-}
+///** @param v a set of (name,value) pairs corresponding to wizard screen or database row. */
+//public static void checkDups(SqlRun str, TypedHashMap v,
+//final int minScore, final int maxDups, final UpdTasklet2 rr)
+////throws SQLException
+//{
+//	final DupCheck dc = new DupCheck(str, v);
+//	str.execUpdate(new UpdTasklet2() {
+//	public void run(SqlRun str) throws Exception {
+//		String idSql = dc.getIDSql(minScore, maxDups);
+//		str
+//		str.put("idsql", idSql);
+//		rr.run(str);
+//	}});
+//}
 }

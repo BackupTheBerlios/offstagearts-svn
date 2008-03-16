@@ -14,7 +14,7 @@ import citibob.jschema.log.QueryLogger;
 import citibob.sql.SqlRun;
 import citibob.swing.typed.TypedWidgetBinder;
 import citibob.task.ActionJobBinder;
-import citibob.task.BatchTask;
+import citibob.task.SqlTask;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import offstage.FrontApp;
@@ -67,19 +67,16 @@ public void initRuntime(FrontApp fapp)
 	selector.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(PropertyChangeEvent evt) {
 		Entityid = (Integer)evt.getNewValue();
-		refreshEntityid(app.batchSet());
+		refreshEntityid(app.sqlRun());
 	}});
 
 	// Change account when Actypeid dropdown is selected
 	selActypeid.addPropertyChangeListener("value", new PropertyChangeListener() {
 	public void propertyChange(PropertyChangeEvent evt) {
 		// Property change was (almost probably) due to a mouse click;
-		// So we need the runApp() here.
-		app.runApp(new BatchTask() {
-		public void run(SqlRun str) throws Exception {
-			Actypeid = (Integer)selActypeid.getValue();
-			refreshActypeid(app.batchSet());
-		}});
+		// So no gui runner her.
+		Actypeid = (Integer)selActypeid.getValue();
+		refreshActypeid(app.sqlRun());
 	}});
 	selActypeid.setKeyedModel(osset, "actrans", "actypeid");
 }
@@ -360,7 +357,7 @@ void refreshActypeid(SqlRun str)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		app.runGui(AccountPanel.this, new BatchTask() {
+		app.guiRun().run(AccountPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			transRegister.getDbModel().doUpdate(str);
 			transRegister.refresh(str);
@@ -370,7 +367,7 @@ void refreshActypeid(SqlRun str)
 
 	private void bRefreshActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRefreshActionPerformed
 	{//GEN-HEADEREND:event_bRefreshActionPerformed
-		app.runGui(AccountPanel.this, new BatchTask() {
+		app.guiRun().run(AccountPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			transRegister.getDbModel().doSelect(str);
 		}});

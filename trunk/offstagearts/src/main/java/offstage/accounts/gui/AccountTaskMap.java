@@ -6,7 +6,7 @@
 //package offstage.accounts.gui;
 //
 //import citibob.task.BatchRunnable;
-//import citibob.sql.SqlRunner;
+//import citibob.sql.SqlRun;
 //import citibob.task.TaskMap;
 //import citibob.wizard.Wizard;
 //import java.awt.Component;
@@ -38,14 +38,14 @@
 //public abstract int getEntityID();
 //public abstract int getAcTypeID();
 ///** Implement this to refresh the appropriate stuff on your panel. */
-//public abstract void refresh(SqlRunner str);
+//public abstract void refresh(SqlRun str);
 //
 //// =========================================================
 //class RunWizard implements BatchRunnable
 //{
 //String startState;
 //public RunWizard(String startState) { this.startState = startState; }
-//public void run(SqlRunner str) throws Exception {
+//public void run(SqlRun str) throws Exception {
 //	int entityid = getEntityID();
 //	Wizard wizard = new TransactionWizard(fapp, component, entityid, getAcTypeID());
 //	wizard.setVal("entityid", entityid);

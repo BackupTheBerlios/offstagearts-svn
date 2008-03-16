@@ -47,9 +47,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //	Statement st;		// Datbase connection
 //	/*
 //addState(new State("", "", "") {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str)
+//	public HtmlWiz newWiz(citibob.sql.SqlRun str)
 //		{ return new }
-//	public void process(citibob.sql.SqlRunner str)
+//	public void process(citibob.sql.SqlRun str)
 //	{
 //		
 //	}
@@ -62,9 +62,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //	this.st = xst;
 //// ---------------------------------------------
 //addState(new State("init", "init", "init") {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRun str) throws Exception
 //		{ return new InitWiz(frame); }
-//	public void process(citibob.sql.SqlRunner str) throws Exception
+//	public void process(citibob.sql.SqlRun str) throws Exception
 //	{
 //		String s = v.getString("type");
 //		if (s != null) state = s;
@@ -72,9 +72,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //});
 //// ---------------------------------------------
 //addState(new State("person", "init", null) {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRun str) throws Exception
 //		{ return new PersonWiz(frame, st, fapp); }
-//	public void process(citibob.sql.SqlRunner str) throws Exception
+//	public void process(citibob.sql.SqlRun str) throws Exception
 //	{
 //		if (state == null) {
 //			String idSql = offstage.db.DupCheck.checkDups(st, v, 3, 20);
@@ -94,9 +94,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //// ---------------------------------------------
 //// Duplicates were found; double-check.
 //addState(new State("checkperson", "person", null) {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRun str) throws Exception
 //		{ return new DupsWiz(frame, st, fapp, v.getString("idsql")); }
-//	public void process(citibob.sql.SqlRunner str) throws Exception
+//	public void process(citibob.sql.SqlRun str) throws Exception
 //	{
 //		String submit = v.getString("submit");
 //		if ("dontadd".equals(submit)) state = null;
@@ -110,9 +110,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //// ---------------------------------------------
 //// Duplicates were found; double-check.
 //addState(new State("finished", null, null) {
-//	public HtmlWiz newWiz(citibob.sql.SqlRunner str) throws Exception
+//	public HtmlWiz newWiz(citibob.sql.SqlRun str) throws Exception
 //		{ return new FinishedWiz(frame); }
-//	public void process(citibob.sql.SqlRunner str) throws Exception
+//	public void process(citibob.sql.SqlRun str) throws Exception
 //		{}
 //});
 //// ---------------------------------------------

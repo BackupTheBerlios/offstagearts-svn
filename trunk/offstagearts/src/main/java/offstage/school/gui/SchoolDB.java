@@ -47,7 +47,7 @@ public class SchoolDB {
 //	return "select w_student_create(" + SqlInteger.sql(studentid) + ")";
 //}
 /** Makes a student record for an entity --- error if student already exists. */
-public static String registerStudentSql(int termid, int studentid, SqlDate sqlDate)
+public static String registerStudentSql(int termid, int studentid, SqlDateType sqlDate)
 {
 	if (termid < 0 || studentid < 0) return "";
 	
@@ -78,7 +78,7 @@ public static String w_delteOrpanMeetingsSql()
 
 
 ///** Recalculate tuition for adultid associated with this student. */
-//public static void w_tuitiontrans_calcTuition(SqlRunner str, int termid, int studentid)
+//public static void w_tuitiontrans_calcTuition(SqlRun str, int termid, int studentid)
 //throws SQLException
 //{
 //	ResultSet rs;
@@ -134,8 +134,8 @@ private static class TuitionRec implements Comparable<TuitionRec>
 	}
 }
 // -----------------------------------------------------------------
-public static void w_meetings_autofill(SqlRunner str, int termid,
-final int courseid, final TimeZone tz)//, final UpdRunnable rr)
+public static void w_meetings_autofill(SqlRun str, int termid,
+final int courseid, final TimeZone tz)//, final UpdTasklet2 rr)
 //throws SQLException
 {
 	String sql =
@@ -158,8 +158,8 @@ final int courseid, final TimeZone tz)//, final UpdRunnable rr)
 			? " and t.groupid = " + SqlInteger.sql(termid)
 			: " and c.courseid = " + SqlInteger.sql(courseid));
 
-	str.execSql(sql, new RssTasklet() {
-	public void run(SqlRunner str, ResultSet[] rss) throws SQLException {
+	str.execSql(sql, new RssTasklet2() {
+	public void run(SqlRun str, ResultSet[] rss) throws SQLException {
 		SqlTimestamp sts = new SqlTimestamp("GMT");
 		SqlDate sdt = new SqlDate(tz, true);
 		SqlTime stm = new SqlTime();
@@ -215,7 +215,7 @@ final int courseid, final TimeZone tz)//, final UpdRunnable rr)
 }
 // --------------------------------------------------
 
-//public static void w_tuitiontrans_recalcAllTuitions(SqlRunner str, final int termid)
+//public static void w_tuitiontrans_recalcAllTuitions(SqlRun str, final int termid)
 //throws SQLException
 //{
 //	ResultSet rs;
@@ -223,8 +223,8 @@ final int courseid, final TimeZone tz)//, final UpdRunnable rr)
 //	if (termid < 0) return;
 //	
 //	String sql = "select distinct adultid from entities_school union select entityid from entities_school";
-//	str.execSql(sql, new RsRunnable() {
-//	public void run(SqlRunner str, ResultSet rs) throws Exception {
+//	str.execSql(sql, new RsTasklet2() {
+//	public void run(SqlRun str, ResultSet rs) throws Exception {
 //		final List<Integer> payers = new ArrayList();
 //		while (rs.next()) payers.add(rs.getInt(1));
 //		
@@ -236,8 +236,8 @@ final int courseid, final TimeZone tz)//, final UpdRunnable rr)
 //}
 
 //static SqlMoney nullableMoney = new SqlMoney(true);
-//public static void w_tuitiontrans_calcTuitionByAdult(SqlRunner str,
-//final int termid, final int adultid, final UpdRunnable rr)
+//public static void w_tuitiontrans_calcTuitionByAdult(SqlRun str,
+//final int termid, final int adultid, final UpdTasklet2 rr)
 //throws SQLException
 //{
 //	String sql =
@@ -288,7 +288,7 @@ final int courseid, final TimeZone tz)//, final UpdRunnable rr)
 //		" drop table _ids;";
 //
 //	str.execSql(sql, new RssRunnable() {
-//	public void run(SqlRunner str, ResultSet[] rss) throws Exception {
+//	public void run(SqlRun str, ResultSet[] rss) throws Exception {
 //System.out.println("Processing results, adultid = " + adultid);
 //		ResultSet rs;
 //		HashMap<String,String> duedates = new HashMap();
@@ -461,7 +461,7 @@ final int courseid, final TimeZone tz)//, final UpdRunnable rr)
 //}
 // -------------------------------------------------------------------------------
 ///** Returns true only if ALL IDs are in the entities_school table. */
-//public static boolean isInSchool(SqlRunner str, int entityid) throws SQLException
+//public static boolean isInSchool(SqlRun str, int entityid) throws SQLException
 //{
 //	ResultSet rs = null;
 //	try {
@@ -473,7 +473,7 @@ final int courseid, final TimeZone tz)//, final UpdRunnable rr)
 //		rs.close();
 //	}
 //}
-//public static boolean isInSchool(SqlRunner str, int[] entityids) throws SQLException
+//public static boolean isInSchool(SqlRun str, int[] entityids) throws SQLException
 //{
 //	ResultSet rs = null;
 //	return SQL.readInt(st,
@@ -484,7 +484,7 @@ final int courseid, final TimeZone tz)//, final UpdRunnable rr)
 //public static void main(String[] args) throws Exception
 //{
 //	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-//	SqlRunner str = pool.checkout().createStatement();
+//	SqlRun str = pool.checkout().createStatement();
 //	w_tuitiontrans_calcTuition(st, 8, 12633);
 //
 //}

@@ -68,12 +68,12 @@ public static String getSql(int termid, int studentid)
 }
 
 
-public static void viewStudentSchedules(final App app, SqlRunner str, int termid, int entityid)
+public static void viewStudentSchedules(final App app, SqlRun str, int termid, int entityid)
 throws Exception
 {
 	String sql = offstage.reports.StudentSchedule.getSql(termid, entityid);
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws Exception {
 		citibob.reports.Reports reports = app.reports();
 		
 		java.util.List models = reports.toJodList(rs,

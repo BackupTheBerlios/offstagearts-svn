@@ -47,7 +47,7 @@ public class EntityDbModel extends IntKeyedDbModel
 	}
 
 	/** Override insert stuff */
-	public void doInsert(SqlRunner str)
+	public void doInsert(SqlRun str)
 	{
 		SchemaBuf sb = this.getSchemaBuf();
 		Integer Entityid = (Integer)sb.getValueAt(0, "entityid");

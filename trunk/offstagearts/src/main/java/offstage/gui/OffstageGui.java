@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.gui;
 import citibob.gui.FrameSet;
-import citibob.task.BatchTask;
 import java.sql.*;
 import javax.swing.*;
 import java.util.prefs.*;
@@ -53,7 +52,7 @@ FrontApp fapp;
 		this.fapp = fapp;
 		actions.initRuntime(fapp);
 
-		this.oaDatabase.setText(fapp.getConfigName());
+		this.oaDatabase.setText(fapp.configName());
 		
 		// Mess with preferences
 		Preferences prefs = fapp.userRoot().node("OffstageGui");
@@ -155,7 +154,7 @@ FrontApp fapp;
     }// </editor-fold>//GEN-END:initComponents
 
 private void miThrowExceptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miThrowExceptionActionPerformed
-	fapp.runGui(this, new citibob.task.StRunnable() {
+	fapp.guiRun().run(this, new citibob.task.StRunnable() {
 	public void run(Statement st) throws Exception {
 		throw new Exception("Hello");
 	}});
@@ -200,11 +199,11 @@ private void miQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 
 /** @param frameTitle Text for frame's title bar
  @param frameName Name of frame, for defaults. */
-public static void showPanelInFrame(SqlRunner str, final FrontApp fapp,
+public static void showPanelInFrame(SqlRun str, final FrontApp fapp,
 final JPanel panel, final String frameTitle, final String frameName)
 {
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
 		JFrame frame = new JFrame(frameTitle);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

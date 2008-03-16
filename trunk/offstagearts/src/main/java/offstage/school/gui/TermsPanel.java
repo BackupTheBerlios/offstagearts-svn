@@ -28,10 +28,10 @@ import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.MultiDbModel;
 import citibob.jschema.SchemaBufRowModel;
 import citibob.jschema.SqlBufDbModel;
-import citibob.task.BatchTask;
+import citibob.task.SqlTask;
 import citibob.task.ETask;
 import citibob.sql.SqlRun;
-import citibob.sql.UpdRunnable;
+import citibob.sql.UpdTasklet2;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.RowModel;
 import citibob.swing.table.RowModelTableModel;
@@ -72,7 +72,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRun str)
 	
 	smod.addListener(new SchoolModel.Adapter() {
     public void termIDChanged(int oldTermID, int termID) {
-			termChanged(fapp.batchSet());
+			termChanged(fapp.sqlRun());
 	}});
 	
 	termInfo.setSwingerMap(fapp.swingerMap());
@@ -93,7 +93,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRun str)
 				" where dd.duedateid = id.duedateid" +
 				" and dd.termid = " + SqlInteger.sql(proto ? -1 : smod.getTermID());
 		}};
-	str.execUpdate(new UpdRunnable() {
+	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 		duedates.setModelU(duedatesDm.getSchemaBuf(),
 			new String[] {"Status", "Due Date", "Description"},
@@ -337,7 +337,7 @@ void all_doSelect(SqlRun str)
 
 	private void ddUndelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddUndelActionPerformed
 	{//GEN-HEADEREND:event_ddUndelActionPerformed
-		fapp.runGui(TermsPanel.this, new ETask() {
+		fapp.guiRun().run(TermsPanel.this, new ETask() {
 		public void run() throws Exception {
 			duedatesDm.getSchemaBuf().undeleteRow(duedates.getSelectedRow());
 			duedates.requestFocus();
@@ -347,7 +347,7 @@ void all_doSelect(SqlRun str)
 
 	private void holUndelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_holUndelActionPerformed
 	{//GEN-HEADEREND:event_holUndelActionPerformed
-		fapp.runGui(TermsPanel.this, new ETask() {
+		fapp.guiRun().run(TermsPanel.this, new ETask() {
 		public void run() throws Exception {
 			holidaysDm.getSchemaBuf().undeleteRow(holidays.getSelectedRow());
 			holidays.requestFocus();
@@ -357,7 +357,7 @@ void all_doSelect(SqlRun str)
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bUndoActionPerformed
 	{//GEN-HEADEREND:event_bUndoActionPerformed
-		fapp.runApp(new BatchTask() {
+		fapp.guiRun().run(new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			all_doSelect(str);
 		}});
@@ -366,7 +366,7 @@ void all_doSelect(SqlRun str)
 
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
-		fapp.runApp(new BatchTask() {
+		fapp.guiRun().run(new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			allDm.doUpdate(str);
 			str.flush();
@@ -377,7 +377,7 @@ void all_doSelect(SqlRun str)
 
 	private void holDelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_holDelActionPerformed
 	{//GEN-HEADEREND:event_holDelActionPerformed
-		fapp.runGui(TermsPanel.this, new ETask() {
+		fapp.guiRun().run(TermsPanel.this, new ETask() {
 		public void run() throws Exception {
 			holidaysDm.getSchemaBuf().deleteRow(holidays.getSelectedRow());
 			holidays.requestFocus();
@@ -386,7 +386,7 @@ void all_doSelect(SqlRun str)
 
 	private void holAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_holAddActionPerformed
 	{//GEN-HEADEREND:event_holAddActionPerformed
-		fapp.runGui(TermsPanel.this, new BatchTask() {
+		fapp.guiRun().run(TermsPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			holidaysDm.getSchemaBuf().insertRow(-1, "termid", (Integer)smod.getTermID());
 		}});
@@ -395,7 +395,7 @@ void all_doSelect(SqlRun str)
 
 	private void ddDelActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddDelActionPerformed
 	{//GEN-HEADEREND:event_ddDelActionPerformed
-		fapp.runGui(TermsPanel.this, new ETask() {
+		fapp.guiRun().run(TermsPanel.this, new ETask() {
 		public void run() throws Exception {
 			duedatesDm.getSchemaBuf().deleteRow(duedates.getSelectedRow());
 			duedates.requestFocus();
@@ -404,7 +404,7 @@ void all_doSelect(SqlRun str)
 
 	private void ddAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_ddAddActionPerformed
 	{//GEN-HEADEREND:event_ddAddActionPerformed
-		fapp.runGui(TermsPanel.this, new ETask() {
+		fapp.guiRun().run(TermsPanel.this, new ETask() {
 		public void run() throws Exception {
 			if (ddType.getValue() == null) return;
 			Object val = ddType.getValue();

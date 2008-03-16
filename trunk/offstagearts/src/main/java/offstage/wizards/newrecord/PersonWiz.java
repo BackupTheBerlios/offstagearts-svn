@@ -50,7 +50,7 @@ public class PersonWiz extends HtmlWiz {
 /**
  * Creates a new instance of PersonWiz 
  */
-public PersonWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app)
+public PersonWiz(java.awt.Frame owner, SqlRun str, citibob.app.App app)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
 	super(owner, app.swingerMap());
@@ -75,8 +75,8 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	
 	final KeyedModel kmodel = new citibob.sql.DbKeyedModel(str, null,
 		"interestids", "groupid", "name", "name");
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
 		kmodel.addItem(null, "<No Interest Specified>");
 		JKeyedComboBox interests = new JKeyedComboBox(kmodel);
 		interests.setValue(null);

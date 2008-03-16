@@ -54,7 +54,7 @@ public boolean getCacheWiz() { return false; }
 /**
  * Creates a new instance of NewRecordWiz2 
  */
-public CCBatchInitial(java.awt.Frame owner, SqlRunner str, FrontApp fapp)
+public CCBatchInitial(java.awt.Frame owner, SqlRun str, FrontApp fapp)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner);
@@ -67,8 +67,8 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 	String sql =
 		" select count(*) as npayments from ccpayments" +
 		" where ccbatchid is null and ccinfo is not null";
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws SQLException {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws SQLException {
 		rs.next();
 		npayments.setValue(rs.getInt(1));
 		rs.close();

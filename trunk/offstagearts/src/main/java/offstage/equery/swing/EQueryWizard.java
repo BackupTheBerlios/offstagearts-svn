@@ -39,6 +39,7 @@ import offstage.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import citibob.util.IntVal;
 import offstage.equery.*;
 import offstage.reports.*;
 import java.io.*;
@@ -54,7 +55,7 @@ public class EQueryWizard extends OffstageWizard {
 addState(new State("", "", "") {
 	public HtmlWiz newWiz(WizState.Context con)
 		{ return new }
-	public void process(citibob.sql.SqlRunner str)
+	public void process(citibob.sql.SqlRun str)
 	{
 		
 	}
@@ -83,13 +84,12 @@ addState(new AbstractWizState("newquery", null, "editquery") {
 	}
 	public void process(final Wizard.Context con) throws Exception
 	{
-		SqlSerial.getNextVal(con.str, "equeries_equeryid_seq");
-		con.str.execUpdate(new UpdRunnable() {
-		public void run(SqlRunner str) {
-			int equeryID = (Integer)con.str.get("equeries_equeryid_seq");
+		final IntVal equeryID = SqlSerial.getNextVal(con.str, "equeries_equeryid_seq");
+		con.str.execUpdate(new UpdTasklet2() {
+		public void run(SqlRun str) {
 			con.v.put("equeryid", equeryID);
 			String sql = "insert into equeries (equeryid, name, equery, lastmodified) values (" +
-				SqlInteger.sql(equeryID) + ", " +
+				SqlInteger.sql(equeryID.val) + ", " +
 				SqlString.sql(con.v.getString("queryname")) +
 				", '', now())";
 			con.str.execSql(sql);
@@ -124,9 +124,9 @@ addState(new AbstractWizState("editquery", "listquery", "reporttype") {
 //		EQuery equery = (EQuery)con.v.get("equery");
 //		String equeryName = con.v.getString("equeryname");
 //		if ("mailinglabels".equals(submit)) {
-//			equery.makeMailing(con.str, equeryName, fapp.getEquerySchema(), null);
-//			con.str.execUpdate(new UpdRunnable() {
-//			public void run(SqlRunner str) {
+//			equery.makeMailing(con.str, equeryName, fapp.equerySchema(), null);
+//			con.str.execUpdate(new UpdTasklet2() {
+//			public void run(SqlRun str) {
 //				final int mailingID = (Integer)con.str.get("groupids_groupid_seq");
 //				fapp.getMailingModel().setKey(mailingID);
 //				fapp.getMailingModel().doSelect(con.str);
@@ -135,24 +135,24 @@ addState(new AbstractWizState("editquery", "listquery", "reporttype") {
 //			stateName = stateRec.getNext();
 //		} else if ("peopletab".equals(submit)) {
 //			EntityListTableModel res = fapp.getSimpleSearchResults();
-//			String sql = equery.getSql(fapp.getEquerySchema(), false);
+//			String sql = equery.getSql(fapp.equerySchema(), false);
 //System.out.println("EQueryWizard sql: " + sql);
 //			res.setRows(con.str, sql, null);
 //			fapp.setScreen(FrontApp.PEOPLE_SCREEN);
 //			stateName = stateRec.getNext();
 //		} else if ("donationreport".equals(submit)) {
-//			String idSql = equery.getSql(fapp.getEquerySchema(), false);
+//			String idSql = equery.getSql(fapp.equerySchema(), false);
 //			DonationReport.writeCSV(fapp, con.str, frame, "Donation Report", idSql);
 //			stateName = stateRec.getNext();
 ////			stateName = (doDonationReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
 //		} else if ("donationreport_nodup".equals(submit)) {
-//			String idSql = equery.getSql(fapp.getEquerySchema(), true);
+//			String idSql = equery.getSql(fapp.equerySchema(), true);
 ////			sql = DB.removeDupsIDSql(sql);
 //			DonationReport.writeCSV(fapp, con.str, frame, "Donation Report", idSql);
 //			stateName = stateRec.getNext();			
 ////			stateName = (doDonationReport(con.str, "Donation Report (One per Household)", sql) ? stateRec.getNext() : stateRec.getName());
 ////		} else if ("segmentation".equals(submit)) {
-////			String idSql = equery.getSql(fapp.getEquerySchema(), false);
+////			String idSql = equery.getSql(fapp.equerySchema(), false);
 ////			SegmentationReport.writeCSV(fapp, con.str, frame, "Segmentation Report", idSql);
 ////			stateName = stateRec.getNext();			
 //////			stateName = (doSpreadsheetReport(con.str, "Donation Report", sql) ? stateRec.getNext() : stateRec.getName());
@@ -253,7 +253,7 @@ public boolean runDonationReport() throws Exception
 	}));
 	return runWizard("listquery");	
 }
-public boolean runMailingLabels(SqlRunner str) throws Exception
+public boolean runMailingLabels(SqlRun str) throws Exception
 {
 	setWizardName("Mailing Labels");
 	setNavigator(new HashNavigator(new String[] {
@@ -264,11 +264,11 @@ public boolean runMailingLabels(SqlRunner str) throws Exception
 	Wizard wizard = this;
 	EQuery equery = (EQuery)wizard.getVal("equery");
 
-	String idSql = equery.getSql(fapp.getEquerySchema(), false);
+	String idSql = equery.getSql(fapp.equerySchema(), false);
 	LabelReport.viewReport(str, fapp, idSql, "zip,address1");
 //	String sql = LabelReport.getSql(idSql, "zip");
-//	str.execSql(sql, new RsRunnable() {
-//	public void run(SqlRunner str, ResultSet rs) throws Exception {
+//	str.execSql(sql, new RsTasklet2() {
+//	public void run(SqlRun str, ResultSet rs) throws Exception {
 //		Reports rr = fapp.getReports();
 //		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
 //	}});

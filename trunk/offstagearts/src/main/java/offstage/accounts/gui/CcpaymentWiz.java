@@ -53,7 +53,7 @@ public class CcpaymentWiz extends HtmlWiz {
 /**
  * Creates a new instance of PersonWiz 
  */
-public CcpaymentWiz(java.awt.Frame owner, SqlRunner str, int entityid, FrontApp app)
+public CcpaymentWiz(java.awt.Frame owner, SqlRun str, int entityid, FrontApp app)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner, app.swingerMap());
@@ -66,7 +66,7 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 	addWidget("namount", "amount", schema);		// Negative of amount...
 	addTextField("description", schema);
 	offstage.swing.typed.CCChooser ccchooser = new CCChooser();
-		ccchooser.initRuntime(app.getKeyRing());
+		ccchooser.initRuntime(app.keyRing());
 		ccchooser.setEntityID(str, entityid, app);
 	addComponent("ccchooser", ccchooser);
 	addWidget("date", schema).setValue(schema.getCol("date").newDate());

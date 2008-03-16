@@ -49,7 +49,7 @@ EntitySelector sel;
 
 // ---------------------------------------------------------------
 // Must override stuff in TextTypedWidget
-public void setJType(JType jt, SqlRunner str)
+public void setJType(JType jt, SqlRun str)
 {
 	super.setJType(jt, str, new EntityIDLabel.EntityIDDBFormat(this));
 }
@@ -70,7 +70,7 @@ public void initRuntime(App app, int termid)
 {
 	this.app = app;
 //	super.setJType(new SqlInteger(), ));
-	setJType(new SqlInteger(), app.batchSet());
+	setJType(new SqlInteger(), app.sqlRun());
 	label.setText("<Select a Person>");
 	sel = new EntitySelector();
 	sel.setDropDown(true);
@@ -84,7 +84,7 @@ protected void showPopup()
 	super.showPopup();
 	sel.requestTextFocus();
 }
-public void setSearch(SqlRunner str, String text)
+public void setSearch(SqlRun str, String text)
 //throws SQLException
 {
 	sel.setSearch(str, text);

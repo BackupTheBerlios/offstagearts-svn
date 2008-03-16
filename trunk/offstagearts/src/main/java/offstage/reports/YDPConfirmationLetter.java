@@ -44,7 +44,7 @@ import citibob.reports.*;
 public class YDPConfirmationLetter
 {
 
-public static void viewReport(SqlRunner str, final citibob.app.App app, int termid, int entityid)
+public static void viewReport(SqlRun str, final citibob.app.App app, int termid, int entityid)
 throws Exception
 {
 	
@@ -65,8 +65,8 @@ throws Exception
 	}
 	String sql = LabelReport.getSql(idSql, null);
 	
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws Exception {
 		Reports rr = app.reports();
 		rr.viewJodPdfs(rr.toJodList(rs,
 			new String[][] {{"line1", "line2", "line3", "city", "state", "zip", "firstname"}}),

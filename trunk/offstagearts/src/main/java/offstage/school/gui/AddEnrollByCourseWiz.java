@@ -45,7 +45,7 @@ public class AddEnrollByCourseWiz extends HtmlWiz {
 /**
  * Creates a new instance of OrgWiz 
  */
-public AddEnrollByCourseWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app, TypedHashMap v)
+public AddEnrollByCourseWiz(java.awt.Frame owner, SqlRun str, citibob.app.App app, TypedHashMap v)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
 	super(owner, app.swingerMap());
@@ -57,13 +57,13 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 		"courseroles", "courseroleid", "name", "orderid");
 //	String sql =
 //		" select name from termids where groupid = " + SqlInteger.sql(v.getInteger("termid"));
-//	str.execSql(sql, new RsRunnable() {
-//	public void run(citibob.sql.SqlRunner str, java.sql.ResultSet rs) throws Exception {
+//	str.execSql(sql, new RsTasklet2() {
+//	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
 //		rs.next();
 //		addComponent("sterm", new JTypedLabel(rs.getString("name")));	
 //	}});
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
 		addComponent("entityid", entityid);
 		addComponent("courserole", new JKeyedComboBox(crModel));
 //		addComponent("courseid", new JKeyedComboBox(cModel));

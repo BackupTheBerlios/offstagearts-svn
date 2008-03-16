@@ -72,7 +72,7 @@ public void setDisplayValue(SqlRun str, final Object value)
 			" ) as name" +
 		" from entities" +
 		" where entityid = " + SqlInteger.sql((Integer)value);
-	str.execSql(sql, new RsRunnable() {
+	str.execSql(sql, new RsTasklet2() {
 	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
 		if (rs.next()) {
 			tw.setDisplayValue(value, rs.getString("name"));

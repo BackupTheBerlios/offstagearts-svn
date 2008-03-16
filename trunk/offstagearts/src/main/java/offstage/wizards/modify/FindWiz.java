@@ -53,7 +53,7 @@ SearchViewer listView;
 /**
  * Creates a new instance of NewRecordWiz2 
  */
-public FindWiz(java.awt.Frame owner, SqlRunner str, FrontApp fapp)
+public FindWiz(java.awt.Frame owner, SqlRun str, FrontApp fapp)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner);

@@ -163,7 +163,7 @@ System.out.println("Full Processing");
 
 
 /** Creates a new instance of MergePurge */
-public MergePurge(SqlRunner str)
+public MergePurge(SqlRun str)
 {
 	String sql =
 		" SELECT entityid,primaryentityid," +
@@ -171,8 +171,8 @@ public MergePurge(SqlRunner str)
 		" firstname,lastname,orgname,isorg from persons p" +
 		" where not obsolete";
 //		" and city = 'Cambridge'";
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws SQLException {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws SQLException {
         // create a SoftTFIDF distance learner
         SoftTFIDF nameD = new SoftTFIDF(new SimpleTokenizer(true,true),
 			new JaroWinkler(),0.8);

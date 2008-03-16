@@ -34,7 +34,7 @@
 ////	billingtypeModel.addItem("q", "Quarterly");
 ////}
 //
-//public EntitiesSchoolSchema(citibob.sql.SqlRunner str, DbChangeModel change)
+//public EntitiesSchoolSchema(citibob.sql.SqlRun str, DbChangeModel change)
 //throws SQLException
 //{
 //	table = "entities_school";

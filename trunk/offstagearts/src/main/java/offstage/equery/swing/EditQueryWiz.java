@@ -29,7 +29,6 @@ import javax.swing.*;
 import citibob.swing.table.*;
 import java.util.prefs.*;
 import offstage.*;
-import offstage.devel.gui.DevelModel;
 import offstage.db.EntityListTableModel;
 import offstage.equery.*;
 import citibob.task.*;
@@ -64,8 +63,8 @@ public EditQueryWiz() {
 
 //protected EQueryWiz1 getThis() { return this; }
 
-public EditQueryWiz(SqlRunner str, offstage.FrontApp fapp, int equeryID)
-//public void initRuntime(SqlRunner str, citibob.app.App fapp, int equeryID)
+public EditQueryWiz(SqlRun str, offstage.FrontApp fapp, int equeryID)
+//public void initRuntime(SqlRun str, citibob.app.App fapp, int equeryID)
 throws SQLException
 {
 	this();
@@ -74,7 +73,7 @@ throws SQLException
 	
 	this.equeryID = equeryID;
 	
-	EQueryTableModel2 eqModel = new EQueryTableModel2(fapp.getEquerySchema());
+	EQueryTableModel2 eqModel = new EQueryTableModel2(fapp.equerySchema());
 //		new EQuerySchema(fapp.getSchemaSet()));
 	eQueryEditor.initRuntime(eqModel, fapp.swingerMap(), fapp.timeZone());
 
@@ -195,8 +194,8 @@ throws SQLException
 
 	private void bDeleteQueryActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDeleteQueryActionPerformed
 	{//GEN-HEADEREND:event_bDeleteQueryActionPerformed
-//		fapp.runGui(EditQueryWiz.this, new StRunnable() {
-//		public void run(SqlRunner str) throws Exception {
+//		fapp.guiRun().run(EditQueryWiz.this, new StRunnable() {
+//		public void run(SqlRun str) throws Exception {
 			
 			if (JOptionPane.showConfirmDialog(EditQueryWiz.this,
 				"Are you sure you wish to permanently\n" +
@@ -211,14 +210,14 @@ throws SQLException
 
 	private void bApplyActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bApplyActionPerformed
 	{//GEN-HEADEREND:event_bApplyActionPerformed
-		fapp.runGui(this, new BatchTask() {
-		public void run(SqlRunner str) throws SQLException, IOException {
+		fapp.guiRun().run(this, new SqlTask() {
+		public void run(SqlRun str) throws SQLException, IOException {
 			eQueryEditor.commitValue();
 			EQuery eqy = eQueryEditor.getEQuery();
 			
 			// Main table
-			String sql0_all = eqy.getSql(fapp.getEquerySchema(), false);
-			String sql0_primaryOnly = eqy.getSql(fapp.getEquerySchema(), true);
+			String sql0_all = eqy.getSql(fapp.equerySchema(), false);
+			String sql0_primaryOnly = eqy.getSql(fapp.equerySchema(), true);
 			testResults.setIdSql(sql0_primaryOnly, null);
 			testResults.executeQuery(str);
 			
@@ -226,8 +225,8 @@ throws SQLException
 			String sql =
 				DB.sqlCountIDList(sql0_all) + ";\n" +
 				DB.sqlCountIDList(sql0_primaryOnly);
-			str.execSql(sql, new RssTask() {
-			public void run(SqlRunner str, ResultSet[] rss) throws SQLException {
+			str.execSql(sql, new RssTasklet() {
+			public void run(ResultSet[] rss) throws SQLException {
 				rss[0].next();
 				int fullSize = rss[0].getInt(1);
 				rss[1].next();
@@ -244,8 +243,8 @@ public void nextPressed()
 
 void saveCurQuery()
 {
-	fapp.runGui(this, new BatchTask() {
-	public void run(SqlRunner str) throws SQLException {
+	fapp.guiRun().run(this, new SqlTask() {
+	public void run(SqlRun str) throws SQLException {
 		eQueryEditor.commitValue();
 		equeryDm.doUpdate(str);
 //		equery = eQueryEditor.getEQuery();

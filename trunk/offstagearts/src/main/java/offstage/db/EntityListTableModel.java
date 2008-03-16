@@ -82,10 +82,10 @@ public void setIdSql(String idSql, String orderBy)
 //}
 // --------------------------------------------------
 ///** idSql is Sql statement to select a bunch of IDs */
-//private void addAllRows(SqlRunner str, String idSql, String orderBy) throws SQLException
+//private void addAllRows(SqlRun str, String idSql, String orderBy) throws SQLException
 //{
-//	DB.rs_entities_namesByIDList(str, idSql, orderBy, new RsRunnable() {
-//	public void run(SqlRunner str, ResultSet rs) throws SQLException {
+//	DB.rs_entities_namesByIDList(str, idSql, orderBy, new RsTasklet2() {
+//	public void run(SqlRun str, ResultSet rs) throws SQLException {
 //		executeQuery(rs);
 ////		setRowsAndCols(rs);
 ////		setColHeaders(rs);
@@ -127,7 +127,7 @@ public void addAllRows(Statement st, ResultSet rs) throws java.sql.SQLException
 }
  */
 // --------------------------------------------------
-//public void setRows(SqlRunner str, String idSql, String orderBy) throws java.sql.SQLException
+//public void setRows(SqlRun str, String idSql, String orderBy) throws java.sql.SQLException
 //{
 //	setRowCount(0);
 //	addAllRows(str, idSql, orderBy);

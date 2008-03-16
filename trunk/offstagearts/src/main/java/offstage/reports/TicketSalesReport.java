@@ -49,7 +49,7 @@ public class TicketSalesReport extends MultiTableDbModel
 //SqlDbModel main;
 String idSql;		// Set of IDs for our report
 
-public void doSelect(SqlRunner str)
+public void doSelect(SqlRun str)
 {
 	DB.createIDList(str, idSql, "ids_donor");
 	super.doSelect(str);

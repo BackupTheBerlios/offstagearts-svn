@@ -45,7 +45,7 @@ public boolean getCacheWiz() { return false; }
 /**
  * Creates a new instance of NewRecordWiz2 
  */
-public DupsWiz(java.awt.Frame owner, SqlRunner str, FrontApp fapp, String idSql)
+public DupsWiz(java.awt.Frame owner, SqlRun str, FrontApp fapp, String idSql)
 throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner);

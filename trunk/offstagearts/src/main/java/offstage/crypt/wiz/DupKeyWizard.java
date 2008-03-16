@@ -57,7 +57,7 @@ addStartState(new AbstractWizState("insertkey1", null, "removekey1") {
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
-		KeyRing kr = fapp.getKeyRing();
+		KeyRing kr = fapp.keyRing();
 		if (!kr.isUsbInserted()) stateName = "keynotinserted";
 		else {
 			try {
@@ -77,7 +77,7 @@ addState(new AbstractWizState("removekey1", null, "insertkey2") {
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
-		KeyRing kr = fapp.getKeyRing();
+		KeyRing kr = fapp.keyRing();
 		if (kr.isUsbInserted()) stateName = "keynotremoved";
 	}
 });
@@ -88,7 +88,7 @@ addState(new AbstractWizState("insertkey2", null, "removekey2") {
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
-		KeyRing kr = fapp.getKeyRing();
+		KeyRing kr = fapp.keyRing();
 		if (!kr.isUsbInserted()) stateName = "keynotinserted";
 		else {
 			try {
@@ -106,7 +106,7 @@ addState(new AbstractWizState("removekey2", null, null) {
 	}
 	public void process(Wizard.Context con) throws Exception
 	{
-		KeyRing kr = fapp.getKeyRing();
+		KeyRing kr = fapp.keyRing();
 		if (kr.isUsbInserted()) stateName = "keynotremoved";
 	}
 });

@@ -45,31 +45,31 @@ public class OffstageQueryLogger implements QueryLogger
 {
 
 int loginID;
-JobRun runner;
+SqlRun str;
 
 /** Creates a new instance of OffstageQueryLogger */
-public OffstageQueryLogger(JobRun runner, int loginID)
+public OffstageQueryLogger(SqlRun str, int loginID)
 {
-	this.runner = runner;
+	this.str = str;
 	this.loginID = loginID;
 }
 
 public void log(final QueryLogRec rec)
 {
-	runner.doRun(new StRunnable() {
-	public void run(java.sql.Statement st) throws Exception
-	{
-		char ctype = 'X';
-		switch(rec.type) {
-			case UPDATE : ctype = 'U'; break;
-			case INSERT : ctype = 'I'; break;
-			case DELETE : ctype = 'D'; break;
-		}
-		int id = SQL.readInt(st, "select nextval('querylog_queryid_seq')");
-//		int id = DB.r_nextval(st, "querylog_queryid_seq");
+	char ctype = 'X';
+	switch(rec.type) {
+		case UPDATE : ctype = 'U'; break;
+		case INSERT : ctype = 'I'; break;
+		case DELETE : ctype = 'D'; break;
+	}
+	final char xctype = ctype;
+	str.execSql("select nextval('querylog_queryid_seq')", new RsTasklet() {
+	public void run(ResultSet rs) throws SQLException {
+		rs.next();
+		int id = rs.getInt(1);
 		StringBuffer sql = new StringBuffer();
 		sql.append("insert into querylog (loginid, queryid, type, dbtable, dtime)" +
-			" values (" + SqlInteger.sql(loginID) + ", " + SqlInteger.sql(id) + ", " + SqlChar.sql(ctype) +
+			" values (" + SqlInteger.sql(loginID) + ", " + SqlInteger.sql(id) + ", " + SqlChar.sql(xctype) +
 			", " + SqlString.sql(rec.table) + ", now());\n");
 		for (ColUpdate nv : rec.keyCols) {
 			sql.append("insert into querylogcols (queryid, iskey, colname, oldval, sqlval) values (" +
@@ -81,8 +81,7 @@ public void log(final QueryLogRec rec)
 				SqlInteger.sql(id) + ", false, " +
 				SqlString.sql(nv.name) + ", " + SqlString.sql(nv.oldval) + ", " + SqlString.sql(nv.value) + ");\n");
 		}
-System.out.println(sql.toString());
-		st.execute(sql.toString());
+		str.execSql(sql.toString());
 	}});
 }
 

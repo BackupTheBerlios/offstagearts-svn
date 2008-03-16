@@ -46,7 +46,7 @@ public class ListQueryWiz extends citibob.swing.JPanelWiz {
 citibob.app.App fapp;
 //EQueryModel2 app;
 EntityListTableModel testResults;
-//SqlRunner str;
+//SqlRun str;
 JobRun runner;
 
 SchemaBufDbModel equeriesDm;
@@ -59,8 +59,8 @@ public ListQueryWiz(citibob.app.App fapp) {
 	this.fapp = fapp;
 	initComponents();
 }
-public ListQueryWiz(SqlRunner str, final citibob.app.App fapp)
-//public void initRuntime(SqlRunner str, final citibob.app.App fapp)
+public ListQueryWiz(SqlRun str, final citibob.app.App fapp)
+//public void initRuntime(SqlRun str, final citibob.app.App fapp)
 throws SQLException
 {
 	this(fapp);
@@ -78,8 +78,8 @@ throws SQLException
 	
 	tQueries.addMouseListener(new DClickTableMouseListener(tQueries) {
 	public void doubleClicked(final int row) {
-		fapp.runGui(ListQueryWiz.this, new BatchTask() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.guiRun().run(ListQueryWiz.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
 			tQueries.getSelectionModel().setSelectionInterval(row, row);
 			wrapper.doSubmit("next");
 		}});
@@ -184,8 +184,8 @@ public void getAllValues(java.util.Map m)
 	private void bDeleteQueryActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDeleteQueryActionPerformed
 	{//GEN-HEADEREND:event_bDeleteQueryActionPerformed
 //System.out.println("hoi");
-		fapp.runGui(ListQueryWiz.this, new BatchTask() {
-		public void run(SqlRunner str) throws Exception {
+		fapp.guiRun().run(ListQueryWiz.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
 			final int row = tQueries.getSelectionModel().getMinSelectionIndex();
 			if (row < 0) return;
 			SchemaBuf sb = equeriesDm.getSchemaBuf();

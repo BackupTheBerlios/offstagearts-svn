@@ -44,7 +44,7 @@ public SearchViewer() {
 	initComponents();
 }
 
-//public void initRuntime(SqlRunner str,
+//public void initRuntime(SqlRun str,
 //EntityListTableModel dupsModel, FulldmodModel dmod,
 //ActionRunner guiRunner, SwingerMap smap)
 //{
@@ -52,7 +52,7 @@ public SearchViewer() {
 //	this.dmod = dmod;
 //}
 
-public void initRuntime(SqlRunner str,
+public void initRuntime(SqlRun str,
 FrontApp fapp)
 //FulldmodModel xdmod,
 //String idSql, String orderBy,

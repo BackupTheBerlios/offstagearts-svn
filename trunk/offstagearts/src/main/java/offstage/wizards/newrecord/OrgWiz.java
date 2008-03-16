@@ -50,7 +50,7 @@ public class OrgWiz extends HtmlWiz {
 /**
  * Creates a new instance of OrgWiz 
  */
-public OrgWiz(java.awt.Frame owner, SqlRunner str, citibob.app.App app)
+public OrgWiz(java.awt.Frame owner, SqlRun str, citibob.app.App app)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
 	super(owner, app.swingerMap());

@@ -53,14 +53,14 @@ public void initRuntime(offstage.crypt.KeyRing kr)
 	oldCard.initRuntime();
 	newCard.initRuntime(kr);
 }
-public void setEntityID(SqlRunner str, int entityid, final App app)
+public void setEntityID(SqlRun str, int entityid, final App app)
 //throws SQLException
 {
 	this.entityid = entityid;
 	String sql =
 		" select * from entities where entityid = " + SqlInteger.sql(entityid);
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws SQLException {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws SQLException {
 		rs.next();
 		TypedWidgetBinder.setValueRecursive(oldCard, rs, app.swingerMap(), app.sqlTypeSet());
 		if (oldCard.isFullySet()) {
@@ -77,13 +77,13 @@ public void setEntityID(SqlRunner str, int entityid, final App app)
 	}});
 }
 
-public void saveNewCardIfNeeded(SqlRunner str) throws SQLException
+public void saveNewCardIfNeeded(SqlRun str) throws SQLException
 {
 	if (saveCard.getBoolValue()) saveNewCard(str);
 }
 
 /** Save credit card details back to the database. */
-public void saveNewCard(SqlRunner str) throws SQLException
+public void saveNewCard(SqlRun str) throws SQLException
 {
 	ConsSqlQuery sql = new ConsSqlQuery("entities", ConsSqlQuery.UPDATE);
 	sql.addWhereClause("entityid = " + SqlInteger.sql(entityid));

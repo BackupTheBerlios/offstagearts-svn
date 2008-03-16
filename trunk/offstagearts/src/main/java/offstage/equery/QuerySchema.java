@@ -113,7 +113,7 @@ protected void addSchema(SqlSchema sc, String joinClause, String table)
 	tab.joinClause = joinClause;
 	tab.table = table;
 	tabs.put(table, tab);
-	for (int i=0; i<sc.getColCount(); ++i) {
+	for (int i=0; i<sc.size(); ++i) {
 		Col col = new Col();
 		col.col = (SqlCol)sc.getCol(i);
 		Class colClass = col.col.getType().getClass();

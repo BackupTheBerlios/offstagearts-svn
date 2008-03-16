@@ -53,133 +53,32 @@ import offstage.school.tuition.TuitionScale;
 
 public class FrontApp extends citibob.app.App
 {
-Version version;
 
-
-public static final int ACTIONS_SCREEN = 0;
-public static final int PEOPLE_SCREEN = 1;
-//public static final int SCHOOL_SCREEN = 2;
-public static final int MAILINGS_SCREEN = 2;
-int screen = PEOPLE_SCREEN;
-
-final File configDir;
-final String configName;
-
-/** Connection to our SQL database. */
-//Connection db;
-Properties props;
-ResSet resSet;
-int sysVersion;
+// ==========================================================================
 KeyRing keyRing;
-DbChangeModel dbChange;
-ConnPool pool;
-Stack<SqlBatchSet> batchSets = new Stack();
-//SqlBatchSet batchSet;
-SwingerMap swingerMap;
-//SFormatMap sFormatterMap;
-OffstageSchemaSet sset;
-EQuerySchema equerySchema;
-citibob.reports.Reports reports;
-FrameSet frameSet;
+/** Encryption and decryption keys for CC #s */
+public KeyRing keyRing() { return keyRing; }
+
+String configName;
+/** Name of Offstage configuration directory used to connect to
+ a specific OffstageArts database. */
+public String configName() { return configName; }
+
 ClassLoader siteCode;
+public ClassLoader siteCode() { return siteCode; }
 
-//FullEntityDbModel fullEntityDm;
-//EQueryModel2 equeries;
-//MailingModel2 mailings;
-//EntityListTableModel simpleSearchResults;
-SwingJobRun guiRunner;		// Run user-initiated actions; when user hits button, etc.
-	// This will put on queue, etc.
-JobRun appRunner;		// Run secondary events, in response to other events.  Just run immediately
-MailSender mailSender;	// Way to send mail (TODO: make this class MVC.)
-SqlTypeSet sqlTypeSet;		// Conversion between SQL types and SqlType objects
-ExpHandler expHandler;
+int loginID;
+/** Who is logged in, based on ID gotten out of table from user's
+ system login name. */
+public int loginID() { return loginID; }
 
-int loginID;			// entityID of logged-in database application user
 TreeSet<String> loginGroups;	// Groups to which logged-in user belongs (by name)
-citibob.jschema.log.QueryLogger logger;			// Log all changes to database
-SwingPrefs swingPrefs = new SwingPrefs();
+public TreeSet<String> loginGroups() { return loginGroups; }
 
-/** TODO: This is temporary. */
-public static final TimeZone timeZone = TimeZone.getTimeZone("US/Eastern");
-public static final SqlDate sqlDate = new SqlDate(timeZone, true);	// Used for on-the-fly Sql creation
-public static final SqlTimestamp sqlTimestamp = new SqlTimestamp("GMT", true);
-//public static final TimeZone timeZone = TimeZone.getTimeZone("US/Pacific");
-//public static final TimeZone timeZone = TimeZone.getTimeZone("Americas/Chicago");
-// -------------------------------------------------------
-public Version version() { return version; }
-public int sysVersion() { return sysVersion; }
-public Properties props() { return props; }
-public ResSet resSet() { return resSet; }
-public KeyRing getKeyRing() { return keyRing; }
-public TimeZone timeZone() { return timeZone; }
-
-public SwingPrefs swingPrefs() { return swingPrefs; }
-public QueryLogger queryLogger() { return logger; }
-public int getLoginID() { return loginID; }
-public ConnPool pool() { return pool; }
-public SqlBatchSet batchSet() { return batchSets.peek(); }
-public void pushBatchSet()
-{
-	SqlBatchSet bs = new SqlBatchSet(pool);
-	batchSets.push(bs);
-}
-public void popBatchSet() throws Exception
-{
-	SqlBatchSet bs = batchSets.pop();
-	bs.runBatches();
-}
-public ExpHandler expHandler() { return expHandler; }
-public File configDir() { return configDir; }
-public String getConfigName() { return configName; }
-public void runGui(java.awt.Component c, CBTask r) { guiRunner.doRun(c, r); }
-/** Only runs the action if logged-in user is a member of the correct group.
- TODO: This functionality should be maybe in the TaskRunner? */
-public void runGui(java.awt.Component c, String group, CBTask r) {
-	runGui(c,r);
-//	if (loginGroups.contains(group)) {
-//		runGui(c,r);
-//	} else {
-//		javax.swing.JOptionPane.showMessageDialog(c, "You are not authorized for that action.");
-//	}
-}
-public void runGui(java.awt.Component c, String[] groups, CBTask r)
-{
-	runGui(c,r);
+EQuerySchema equerySchema;
+public EQuerySchema equerySchema() { return equerySchema; }
+// ==========================================================================
 	
-//	if (groups == null) {
-//		runGui(c, r);
-//		return;
-//	}
-//	for (String g : groups) {
-//		if (loginGroups.contains(g)) {
-//			runGui(c,r);
-//			return;
-//		}
-//	}
-//	javax.swing.JOptionPane.showMessageDialog(c, "You are not authorized for that action.");
-}
-
-//public void runGui(CBRunnable r) { guiRunner.doRun(null, r); }
-public void runApp(CBTask r) { appRunner.doRun(r); }
-public MailSender mailSender() { return mailSender; }
-public SqlSchema getSchema(String name) { return sset.get(name); }
-public FrameSet frameSet() { return frameSet; }
-public ClassLoader getSiteCode() { return siteCode; }
-public citibob.sql.SqlTypeSet sqlTypeSet() { return sqlTypeSet; }
-public citibob.reports.Reports reports() { return reports; }
-
-public SwingJobRun guiRun() { return guiRunner; }
-public JobRun appRun() { return appRunner; }
-
-// ----------------------------------------------------------------------
-Preferences pUserRoot;
-
-/** @returns Root user preferences node for this application */
-public java.util.prefs.Preferences userRoot()
-{
-	return pUserRoot;
-}
-
 /** Make sure preferences are initialized on first run. */
 private void initPrefs()
 throws BackingStoreException, IOException, InvalidPreferencesFormatException
@@ -192,32 +91,17 @@ throws BackingStoreException, IOException, InvalidPreferencesFormatException
 		if (pvers[iver].size() < 2) continue;	// Ignore
 		if (version.compareTo(pvers[iver], 2) == 0) {
 			// We have the version we want.  Use it!
-			pUserRoot = prefs.node(pvers[iver].toString());
+			userRoot = prefs.node(pvers[iver].toString());
 			return;
 		}
 	}
 	
 	// Our version does not exist; create it.
-	pUserRoot = prefs.node(version.toString(2));
+	userRoot = prefs.node(version.toString(2));
 	Preferences.importPreferences(getClass().getClassLoader().getResourceAsStream(
 		"offstage/config/prefs.xml"));
 }
-// ------------------------------------------------------------------
-
-
-
-
-
-
-
-
-//public Connection createConnection()
-//throws SQLException
-//{
-//	return DBConnection.getConnection();
-//}
 // -------------------------------------------------------
-
 void loadPropFile(Properties props, String name) throws IOException
 {
 	InputStream in;
@@ -235,31 +119,11 @@ void loadPropFile(Properties props, String name) throws IOException
 		in.close();
 	}
 }	
-	
-//	// First: try loading external file
-////	File dir = new File(System.getProperty("user.dir"), "config");
-//	File f = new File(configDir, name);
-//	if (f.exists()) return new FileInputStream(f);
-//
-//	// File doesn't exist; read from inside JAR file instead.
-//	Class klass = offstage.config.OffstageVersion.class;
-//	String resourceName = klass.getPackage().getName().replace('.', '/') + "/" + name;
-//	return klass.getClassLoader().getResourceAsStream(resourceName);
-
 Properties loadProps() throws IOException
 {
 	Properties props = new Properties();
 
 	loadPropFile(props, "app.properties");
-//	props = new Properties();
-//	InputStream in = openPropFile("app.properties");
-//	props.load(in);
-
-
-//	props = new Properties(props);
-//	props.load(openPropFile("site.properties"));
-
-//	props = new Properties(props);
 	String os = System.getProperty("os.name");
         int space = os.indexOf(' ');
         if (space >= 0) os = os.substring(0,space);
@@ -304,20 +168,17 @@ throws Exception
 		new InternetAddress(props.getProperty("mail.bugs.recipient")),
 //		new InternetAddress("citibob@citibob.net"),
 		"OffstageArts", consoleFrame.getDocument());
-	guiRunner = new BusybeeDbJobRun(this, expHandler);
-	appRunner = new SimpleDbJobRun(this, expHandler);
+	guiRun = new BusybeeDbJobRun(this, expHandler);
+	//appRunner = new SimpleDbJobRun(this, expHandler);
 
 	// Use the exception handler
 	try {
 	
 		// Set up database connections, etc.
 		this.pool = DB.newConnPool(props);
-	//	configDir = new File(System.getProperty("user.dir"), "config");
-	//configDir = new File("/export/home/citibob/svn/offstage/config");
+		this.sqlRun = new BatchSqlRun(pool);
 
 		// Load the crypto keys
-	//	File userDir = new File(System.getProperty("user.dir"));
-	//	File pubDir = new File(userDir, props.getProperty("crypt.pubdir"));
 		String pubLeaf = props.getProperty("crypt.pubdir");
 		File pubDir = (pubLeaf.charAt(0) == File.separatorChar ?
 			new File(pubLeaf) : new File(configDir, pubLeaf)); 
@@ -327,20 +188,16 @@ throws Exception
 			new File(privLeaf) : new File(configDir, privLeaf)); 
 		keyRing = new KeyRing(pubDir, privDir);
 		if (!keyRing.pubKeyLoaded()) {
-//			javax.swing.JOptionPane.showMessageDialog(null,
-//				"The public key failed to load.\n" +
-//				"You will be unable to enter credit card details.");
+			// Alert user...?
+			//			javax.swing.JOptionPane.showMessageDialog(null,
+			//				"The public key failed to load.\n" +
+			//				"You will be unable to enter credit card details.");
 		}
 
 		this.mailSender = new citibob.mail.ConstMailSender(props);
-	//	this.swingerMap = new citibob.sql.pgsql.SqlSwingerMap();
 		this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
 		this.swingerMap = new offstage.types.OffstageSwingerMap(timeZone());
-	//	this.sFormatterMap = new offstage.types.OffstageSFormatMap();
 
-		this.pool = pool;
-		this.batchSets = new Stack();
-		pushBatchSet();
 		
 		// ================
 	} catch(Exception e) {
@@ -350,7 +207,7 @@ throws Exception
 	}
 }
 
-private void createResSet(SqlBatchSet str)
+private void createResSet(SqlRun str)
 throws Exception
 {
 		// Set up resource set and read from database
@@ -367,7 +224,7 @@ public boolean checkResources()  throws Exception
 		final FrontApp app = this;
 
 		dbChange = new DbChangeModel();
-		final SqlBatchSet str = app.batchSet();
+		final SqlRun str = app.sqlRun();
 		createResSet(str);
 		ResData rdata = new ResData(str, resSet, sqlTypeSet());
 		str.flush();	
@@ -384,7 +241,7 @@ public boolean checkResources()  throws Exception
 			udialog.setVisible(true);
 			if (udialog.doUpgrade) {
 //				app.runApp(new BatchRunnable() {
-//				public void run(SqlRunner xstr) throws Exception {
+//				public void run(SqlRun xstr) throws Exception {
 					for (UpgradePlan up : upset.uplans) {
 						up.applyPlan(str, app.pool());
 					}
@@ -411,15 +268,11 @@ public boolean checkResources()  throws Exception
 public void initWithDatabase()
 {
 	try {
-		SqlBatchSet str = new SqlBatchSet(pool);
-
-		//pool = new DBConnPool();
-	//	MailSender sender = new GuiMailSender();
-		//guiRunner = new SimpleDbTaskRunner(pool);
+		SqlRun str = sqlRun();
 
 		final ResResult siteCodeRes = resSet().load(str, "sitecode.jar", 0);
-		str.execUpdate(new UpdRunnable() {
-		public void run(SqlRunner str) throws IOException {
+		str.execUpdate(new UpdTasklet() {
+		public void run() throws IOException {
 			if (siteCodeRes.bytes != null) {
 				// Save our site code to a temporary jar file
 				File outFile = File.createTempFile("sitecode", ".jar");
@@ -427,7 +280,7 @@ public void initWithDatabase()
 				OutputStream out = new FileOutputStream(outFile);
 				out.write(siteCodeRes.bytes);
 				out.close();
-				
+
 				// Create a classloader on that jar file
 				siteCode = new URLClassLoader(new URL[] {new URL(
 					"file:///" + outFile.getPath())});
@@ -442,8 +295,8 @@ public void initWithDatabase()
 		// Figure out who we're logged in as
 		String sql = "select entityid from dblogins where username = " +
 			SqlString.sql(System.getProperty("user.name"));
-		str.execSql(sql, new RsRunnable() {
-		public void run(SqlRunner str, ResultSet rs) throws SQLException {
+		str.execSql(sql, new RsTasklet() {
+		public void run(ResultSet rs) throws SQLException {
 			if (rs.next()) {
 				loginID = rs.getInt("entityid");
 			} else {
@@ -457,19 +310,18 @@ public void initWithDatabase()
 		sql = " select distinct name from dblogingroups g, dblogingroupids gid" +
 			" where g.entityid=" + SqlInteger.sql(loginID) +
 			" and g.groupid = gid.groupid";
-		str.execSql(sql, new RsRunnable() {
-		public void run(SqlRunner str, ResultSet rs) throws SQLException {
+		str.execSql(sql, new RsTasklet() {
+		public void run(ResultSet rs) throws SQLException {
 			while (rs.next()) loginGroups.add(rs.getString("name"));
 			rs.close();
 		}});
 
-		this.sset = new OffstageSchemaSet(str, dbChange, timeZone());
-		str.runBatches();		// Our SchemaSet must be set up before we go on.
+		schemaSet = new OffstageSchemaSet(str, dbChange, timeZone());
+		str.flush();		// Our SchemaSet must be set up before we go on.
 		// ================
 
 		// ================
-		str = new SqlBatchSet(pool);
-		logger = new OffstageQueryLogger(appRun(), getLoginID());	
+		this.queryLogger = new OffstageQueryLogger(sqlRun(), loginID());	
 	//	fullEntityDm = new FullEntityDbModel(this);
 	//	mailings = new MailingModel2(str, this);//, appRunner);
 
@@ -478,7 +330,7 @@ public void initWithDatabase()
 	//	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
 
 		equerySchema = new EQuerySchema(schemaSet());
-		str.runBatches();
+		str.flush();
 		// ================
 
 		reports = new offstage.reports.OffstageReports(this);
@@ -488,61 +340,4 @@ public void initWithDatabase()
 		System.exit(-1);
 	}
 }
-
-//public EntityListTableModel getSimpleSearchResults()
-//	{ return simpleSearchResults; }
-//public Statement createStatement() throws java.sql.SQLException
-//	{ return db.createStatement(); }
-
-//public Connection getDb()
-//	{ return db; }
-
-// ------------------------------------
-//public FullEntityDbModel getFullEntityDm()
-//	{ return fullEntityDm; }
-//public MailingModel2 getMailingModel()
-//	{ return mailings; }
-//public EQueryModel2 getEQueryModel2()
-//	{ return equeries; }
-public DbChangeModel dbChange()
-	{ return dbChange; }
-public OffstageSchemaSet schemaSet() { return sset; }
-public SwingerMap swingerMap() { return swingerMap; }
-public SFormatMap sFormatMap() { return (SFormatMap)swingerMap; }
-public EQuerySchema getEquerySchema() { return equerySchema;}
-// -------------------------------------------------
-public int getScreen()
-{ return screen; }
-public void setScreen(int s)
-{
-	this.screen = s;
-	fireScreenChanged();
-}
-// -------------------------------------------------
-// ===================================================
-public static interface Listener
-{
-	void screenChanged();
-}
-public static class Adapter implements Listener
-{
-	public void screenChanged() {}
-}
-// ===================================================
-// ===================================================
-// Listener code
-public LinkedList listeners = new LinkedList();
-public void addListener(Listener l)
-{ listeners.add(l); }
-public void fireScreenChanged()
-{
-for (Iterator ii = listeners.iterator(); ii.hasNext(); ) {
-	Listener l = (Listener)ii.next();
-	l.screenChanged();
-}
-}
-// ===================================================
-
-
-
 }

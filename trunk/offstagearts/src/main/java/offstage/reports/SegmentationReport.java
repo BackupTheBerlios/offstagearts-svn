@@ -58,7 +58,7 @@ public static final String[] availSegmentTypes =
 //	 "address1", "address2", "city", "state", "zip", "orgname", "isorg", "title", "occupation", "email",
 //	 "phone1type", "phone1", "phone2type", "phone2", "phone3type", "phone3", "recordsource"};
 	
-public SegmentationReport(SqlRunner str, SqlTypeSet tset, String idSql,
+public SegmentationReport(SqlRun str, SqlTypeSet tset, String idSql,
 List<String> segmentTypes)
 {
 	super(tset);
@@ -146,13 +146,13 @@ List<String> segmentTypes)
 	super.executeQuery(str, sql);
 }
 
-public static void writeCSV(final App app, SqlRunner str,
+public static void writeCSV(final App app, SqlRun str,
 String idSql, List<String> segmentTypes, final File outFile) throws Exception
 {
 	final SegmentationReport report = new SegmentationReport(str, app.sqlTypeSet(),
 		idSql, segmentTypes);
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
 		citibob.reports.Reports rr = app.reports();
 		rr.writeCSV(rr.format(report), outFile);
 	}});

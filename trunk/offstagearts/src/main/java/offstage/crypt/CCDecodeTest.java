@@ -73,7 +73,7 @@ static {
 //	Statement st = pool.checkout().createStatement();
 //	FrontApp fapp = new FrontApp(pool,null);
 //
-//	KeyRing kr = fapp.getKeyRing();
+//	KeyRing kr = fapp.keyRing();
 //	kr.loadPrivKeys();
 //	SqlTimestamp sqlt = new SqlTimestamp("GMT");
 //	

@@ -61,7 +61,7 @@ public ClauseReport(FrontApp fapp, SqlRun str, final SqlTypeSet tset, EQuery equ
 throws IOException
 {
 	// Create the main query
-	String idSql = equery.getSql(fapp.getEquerySchema(), true);
+	String idSql = equery.getSql(fapp.equerySchema(), true);
 	StringBuffer sql = new StringBuffer(
 		" select e.entityid,customaddressto,salutation,firstname,lastname," +
 		" address1,address2,city,state,zip," +
@@ -72,12 +72,12 @@ throws IOException
 	// Add the per-clause queries, so we know which records came from which clauses
 	final List<EClause> clauses = equery.getClauses();
 	for (EClause clause : clauses) {
-		sql.append(equery.getSql(fapp.getEquerySchema(), clause, true));
+		sql.append(equery.getSql(fapp.equerySchema(), clause, true));
 		sql.append(";\n");
 	}
 
 	str.execSql(sql.toString(), new RssTasklet() {
-	public void run(citibob.sql.SqlRun str, java.sql.ResultSet[] rss) throws Exception {
+	public void run(java.sql.ResultSet[] rss) throws Exception {
 		JTypeTableModel[] models = new JTypeTableModel[clauses.size() + 1];
 		int n=0;
 		
@@ -127,7 +127,7 @@ EQuery equery, final File outFile) throws Exception
 {
 	final ClauseReport report = new ClauseReport(fapp, str,
 		fapp.sqlTypeSet(), equery);
-	str.execUpdate(new UpdRunnable() {
+	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 		citibob.reports.Reports rr = fapp.reports();
 		rr.writeCSV(rr.format(report.model), outFile);

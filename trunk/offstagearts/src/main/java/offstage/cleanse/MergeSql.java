@@ -208,7 +208,7 @@ public void mergeOneRow(SqlSchema schema, String sEntityCol, Object entityid0, O
 		sql.append(col.getName() + " = " +
 			" (case when " + table + "." + col.getName() + " is null then " +
 			" t0." + col.getName() + " else " + table + "." + col.getName() + " end)");
-		if (++i >= schema.getColCount()) break;
+		if (++i >= schema.size()) break;
 		sql.append(",\n");
 	}
 	
@@ -237,7 +237,7 @@ public void mergeOneRow(SqlSchema schema, String sEntityCol, Object entityid0, O
 public int[] getKeyCols(SqlSchema schema, int entityColIx)
 {
 	// Collect keys from schema
-	int ncols = schema.getColCount();
+	int ncols = schema.size();
 	int nkeys = 0;
 	for (int i=0; i<ncols; ++i) if (i != entityColIx && ((SqlCol)schema.getCol(i)).isKey()) ++nkeys;
 	int[] keyCols = new int[nkeys];

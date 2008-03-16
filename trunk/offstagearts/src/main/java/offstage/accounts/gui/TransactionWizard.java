@@ -54,7 +54,7 @@ public class TransactionWizard extends OffstageWizard {
 addState(new AbstractWizState("", "", "") {
 	public HtmlWiz newWiz(WizState.Context con)
 		{ return new }
-	public void process(citibob.sql.SqlRunner str)
+	public void process(citibob.sql.SqlRun str)
 	{
 		
 	}
@@ -84,7 +84,7 @@ Integer xentityid, int xactypeid)
 //addState(new AbstractWizState("init", "init", "init") {
 //	public HtmlWiz newWiz(WizState.Context con) throws Exception
 //		{ return new InitWiz(frame); }
-//	public void process(citibob.sql.SqlRunner str) throws Exception
+//	public void process(citibob.sql.SqlRun str) throws Exception
 //	{
 //		String s = v.getString("type");
 //		if (s != null) state = s;

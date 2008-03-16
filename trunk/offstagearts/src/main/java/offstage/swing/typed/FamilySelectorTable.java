@@ -38,7 +38,7 @@ public class FamilySelectorTable extends IdSqlTable
 {
 
 	
-public void initRuntime(citibob.app.App app) //SqlRunner str, FullEntityDbModel dm)
+public void initRuntime(citibob.app.App app) //SqlRun str, FullEntityDbModel dm)
 {
 	super.initRuntime(app);
 }
@@ -64,7 +64,7 @@ public void setValue(final Object o)
 //	// Machine is setting "value", it really means it wants to
 //	// change entities...
 //	app.runApp(new StRunnable() {
-//	public void run(java.sql.SqlRunner str) throws Exception {
+//	public void run(java.sql.SqlRun str) throws Exception {
 //		// We don't have the value in our table; re-load
 //		setPrimaryEntityID(st, (Integer)o);			
 //	}});
@@ -72,7 +72,7 @@ public void setValue(final Object o)
 }
 
 //int primaryEntityID;
-public void setPrimaryEntityID(SqlRunner str, int primaryEntityID)
+public void setPrimaryEntityID(SqlRun str, int primaryEntityID)
 //throws SQLException
 {
 //int primaryEntityID;
@@ -89,7 +89,7 @@ public void setPrimaryEntityID(SqlRunner str, int primaryEntityID)
 //public static void main(String[] args) throws Exception
 //{	
 //	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-//	SqlRunner str = pool.checkout().createStatement();
+//	SqlRun str = pool.checkout().createStatement();
 //	FrontApp fapp = new FrontApp(pool,null);
 //	
 //	javax.swing.JFrame frame = new javax.swing.JFrame();

@@ -94,7 +94,7 @@ public void setTermID(int newTermID)
 	int oldTermID = termID;
 	this.termID = newTermID;
 	
-	SqlRun str = app.batchSet();
+	SqlRun str = app.sqlRun();
 	oneTermDm.doUpdate(str);
 	oneTermDm.setKey(termID);
 	oneTermDm.doSelect(str);

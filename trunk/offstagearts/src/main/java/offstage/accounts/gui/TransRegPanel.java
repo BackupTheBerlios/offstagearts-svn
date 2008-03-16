@@ -8,11 +8,12 @@ package offstage.accounts.gui;
 
 import citibob.jschema.IntsKeyedDbModel;
 import citibob.jschema.SchemaBuf;
-import citibob.sql.RsRunnable;
+import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
 import citibob.sql.pgsql.*;
-import citibob.task.BatchTask;
+import citibob.task.SqlTask;
 import citibob.task.JobMap;
+import citibob.task.SqlTask;
 import citibob.wizard.Wizard;
 import offstage.FrontApp;
 
@@ -61,7 +62,7 @@ public void initRuntime(FrontApp fapp, SchemaBuf actransSb, int actypeid, boolea
 	taskMap.add("check", permissions, new RunWizard("checkpayment"));
 	taskMap.add("cc", permissions, new RunWizard("ccpayment"));
 	taskMap.add("other", permissions, new RunWizard("transtype"));
-	taskMap.add("delete", permissions, new BatchTask() {
+	taskMap.add("delete", permissions, new SqlTask() {
 	public void run(SqlRun str) throws Exception {
 		SchemaBuf sb = actransDb.getSchemaBuf();
 		sb.deleteRow(trans.getSelectedRow());
@@ -96,7 +97,7 @@ public void refresh(SqlRun str) // throws SQLException
 		AccountsDB.w_tmp_acct_balance_sql("select " + entityid + " as id", actransid) +
 		" select bal from _bal;\n" +
 		" drop table _bal;";
-	str.execSql(sql, new RsRunnable() {
+	str.execSql(sql, new RsTasklet2() {
 	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
 		rs.next();
 		acbal.setValue(rs.getDouble(1));
@@ -105,7 +106,7 @@ public void refresh(SqlRun str) // throws SQLException
 //	
 //	
 //	DB.r_acct_balance("bal", str, , ,
-//	new UpdRunnable() { public void run(SqlRunner str) throws Exception {
+//	new UpdTasklet2() { public void run(SqlRun str) throws Exception {
 //		acbal.setValue(str.get("bal"));
 //	}});
 }
@@ -173,7 +174,7 @@ public void refresh(SqlRun str) // throws SQLException
     // End of variables declaration//GEN-END:variables
 
 // =========================================================
-class RunWizard implements BatchTask
+class RunWizard implements SqlTask
 {
 String startState;
 public RunWizard(String startState) { this.startState = startState; }

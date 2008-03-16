@@ -136,7 +136,7 @@ public void insertPhone(int groupTypeID) throws KeyViolationException
 
 
 /** Override standard delete.  Don't actually delete record, just set obsolete bit. */
-public void doDelete(SqlRunner str)
+public void doDelete(SqlRun str)
 //throws java.sql.SQLException
 {
 	// Delete the immediate record

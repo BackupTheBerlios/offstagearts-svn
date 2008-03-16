@@ -89,8 +89,8 @@ extends javax.swing.JPanel {
 		
 		familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-			app.runGui(PersonPanel.this, new BatchTask() {
-			public void run(SqlRunner str) throws Exception {
+			app.guiRun().run(PersonPanel.this, new SqlTask() {
+			public void run(SqlRun str) throws Exception {
 				Integer EntityID = (Integer)familyTable.getValue();
 				if (EntityID == null) return;
 				dmod.setKey(EntityID);
@@ -104,7 +104,7 @@ extends javax.swing.JPanel {
 
 	}
 	
-	public void initRuntime(SqlRunner str, App xapp, DevelModel dm)
+	public void initRuntime(SqlRun str, App xapp, DevelModel dm)
 	//throws java.sql.SQLException
 	{
 		this.app = xapp;
@@ -123,9 +123,9 @@ extends javax.swing.JPanel {
 		// Change family table contents when user re-reads from db
 		model.addColListener(model.findColumn("primaryentityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
-			SqlRunner str = app.batchSet();
+			SqlRun str = app.sqlRun();
 //			app.runApp(new BatchRunnable() {
-//			public void run(SqlRunner str) throws Exception {
+//			public void run(SqlRun str) throws Exception {
 				if (model.getCurRow() < 0) return;
 //				if (familyTable.isInSelect()) return;	// Don't re-query just cause user is clicking
 				Integer OrigEntityID = (Integer)model.getOrigValue(col);
@@ -145,8 +145,8 @@ extends javax.swing.JPanel {
 
 		model.addColListener(model.findColumn("entityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
-			app.runApp(new ETask() {
-			public void run() throws Exception {
+//			app.runApp(new ETask() {
+//			public void run() throws Exception {
 				if (model.getCurRow() < 0) return;
 //				if (familyTable.isInSelect()) return;	// Don't re-query just cause user is clicking
 				Integer OrigEntityID = (Integer)model.getOrigValue(col);
@@ -160,7 +160,7 @@ extends javax.swing.JPanel {
 					// solved by adding events to DbModel.
 					vHouseholdID.setEntityID(EntityID);
 				}
-			}});
+//			}});
 		}});
 		
 		
@@ -805,8 +805,8 @@ private void relprimarytypeidActionPerformed(java.awt.event.ActionEvent evt) {//
 
 	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
-		app.runGui(PersonPanel.this, new BatchTask() {
-		public void run(SqlRunner str) throws Exception {
+		app.guiRun().run(PersonPanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
 				model.set("primaryentityid", dmod.getPersonSb().getValueAt(0, "entityid"));
 		}});
 // TODO add your handling code here:

@@ -51,7 +51,7 @@ FrontApp app;
 	public DevelPanel() {
 		initComponents();
 	}
-	public void initRuntime(SqlRunner str, FrontApp fapp, DevelModel dmod)
+	public void initRuntime(SqlRun str, FrontApp fapp, DevelModel dmod)
 	{
 		this.app = fapp;
 		this.dmod = dmod;
@@ -159,8 +159,8 @@ FrontApp app;
 
 	private void bNewOrgActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewOrgActionPerformed
 	{//GEN-HEADEREND:event_bNewOrgActionPerformed
-	app.runGui(this, new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	app.guiRun().run(this, new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 //		model.newEntity(st, FullEntityDbModel.PERSON);
 		JFrame root = (javax.swing.JFrame)citibob.swing.WidgetTree.getRoot(DevelPanel.this);
 		citibob.wizard.Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, root);
@@ -174,15 +174,15 @@ FrontApp app;
 	}//GEN-LAST:event_bNewOrgActionPerformed
 
 	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
-	app.runGui(this, new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	app.guiRun().run(this, new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 		offstage.devel.gui.DevelPanel.this.dmod.doSelect(str);
 	}});
 	}//GEN-LAST:event_bUndoActionPerformed
 
 private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDeleteActionPerformed
-	app.runGui(this, "admin", new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	app.guiRun().run(this, new Job("admin", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 		if (JOptionPane.showConfirmDialog(DevelPanel.this,
 			"Are you sure you wish to permanently delete this record?",
 			"Delete Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -192,12 +192,12 @@ private void bDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST
 				offstage.devel.gui.DevelPanel.this.dmod.doSelect(str);
 		}
 //		this.simpleSearch.runSearch();
-	}});
+	}}));
 }//GEN-LAST:event_bDeleteActionPerformed
 
 private void bNewPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bNewPersonActionPerformed
-	app.runGui(this, new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	app.guiRun().run(this, new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 //		model.newEntity(st, FullEntityDbModel.PERSON);
 		JFrame root = (javax.swing.JFrame)citibob.swing.WidgetTree.getRoot(DevelPanel.this);
 		citibob.wizard.Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, root);
@@ -211,8 +211,8 @@ private void bNewPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 }//GEN-LAST:event_bNewPersonActionPerformed
 
 private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
-	app.runGui(this, new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	app.guiRun().run(this, new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 		offstage.devel.gui.DevelPanel.this.dmod.doUpdate(str);
 		offstage.devel.gui.DevelPanel.this.dmod.doSelect(str);
 	}});
@@ -236,8 +236,8 @@ private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 //
 //		FrontApp app = new FrontApp();
 //		FullEntityDbModel dm = app.getFullEntityDm();
-//		//SqlRunner str = app.createStatement();
-//		SqlRunner str = app.getPool().checkout().createStatement();
+//		//SqlRun str = app.createStatement();
+//		SqlRun str = app.getPool().checkout().createStatement();
 //
 //		dm.setKey(139208);
 //		dm.doSelect(st);

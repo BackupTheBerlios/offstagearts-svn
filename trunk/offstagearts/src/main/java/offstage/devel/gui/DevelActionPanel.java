@@ -74,8 +74,8 @@ throws org.xml.sax.SAXException, java.io.IOException
 		wizard.runWizard("ticketparams");
 	}}));
 
-	actionMap.put("mailmerge", new Job("", new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	actionMap.put("mailmerge", new Job("", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
 		if (wizard.runMailMerge()) {
@@ -84,33 +84,33 @@ throws org.xml.sax.SAXException, java.io.IOException
 		}
 	}}));
 
-	actionMap.put("segmentation", new Job("", new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	actionMap.put("segmentation", new Job("", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
 		if (wizard.runSegmentation()) {
 			EQuery equery = (EQuery)wizard.getVal("equery");
-			String idSql = equery.getSql(fapp.getEquerySchema(), false);
+			String idSql = equery.getSql(fapp.equerySchema(), false);
 			SegmentationReport.writeCSV(fapp, str, idSql,
 				(List<String>)wizard.getVal("segtypes"),
 				(File)wizard.getVal("file"));
 		}
 	}}));
 
-	actionMap.put("mailinglabels", new Job("", new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	actionMap.put("mailinglabels", new Job("", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
 		wizard.runMailingLabels(str);
 	}}));
 
-	actionMap.put("donationreport", new Job("", new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	actionMap.put("donationreport", new Job("", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
 		if (wizard.runDonationReport()) {
 			EQuery equery = (EQuery)wizard.getVal("equery");
-			String idSql = equery.getSql(fapp.getEquerySchema(), false);
+			String idSql = equery.getSql(fapp.equerySchema(), false);
 			DonationReport.writeCSV(fapp, str, idSql,
 				((Number)wizard.getVal("minyear")).intValue(),
 				((Number)wizard.getVal("maxyear")).intValue(),
@@ -119,8 +119,8 @@ throws org.xml.sax.SAXException, java.io.IOException
 	}}));
 
 
-	actionMap.put("clausereport", new Job("", new BatchTask() {
-	public void run(SqlRunner str) throws Exception {
+	actionMap.put("clausereport", new Job("", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
 		if (wizard.runClauseReport()) {
@@ -145,6 +145,6 @@ public void linkSelected(java.net.URL href, String target)
 	if (slash > 0) url = url.substring(slash+1);
 	
 	Job t = actionMap.get(url);
-	fapp.runGui(this, t.getPermissions(), t.getCBRunnable());
+	fapp.guiRun().run(this, new Job(t.getPermissions(), t.getCBRunnable()));
 }
 }

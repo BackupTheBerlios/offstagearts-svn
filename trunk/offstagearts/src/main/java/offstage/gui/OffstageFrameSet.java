@@ -68,12 +68,12 @@ public OffstageFrameSet(FrontApp xfapp) {
 
 addMaker("devel", new Maker() {
 public JFrame newFrame() throws Exception {
-	SqlRun str = fapp.batchSet();
+	SqlRun str = fapp.sqlRun();
 	final DevelFrame f = new DevelFrame();
-	f.initRuntime(fapp.batchSet(), fapp);
+	f.initRuntime(fapp.sqlRun(), fapp);
 	str.flush();
-//	str.execUpdate(new UpdRunnable() {
-//	public void run(SqlRunner str) throws Exception {
+//	str.execUpdate(new UpdTasklet2() {
+//	public void run(SqlRun str) throws Exception {
 //		f.pack();
 //	}});
 	return f;
@@ -82,11 +82,11 @@ public JFrame newFrame() throws Exception {
 addMaker("school", new Maker() {
 public JFrame newFrame() throws Exception {
 	final SchoolFrame f = new SchoolFrame();
-	SqlRun str = fapp.batchSet();
+	SqlRun str = fapp.sqlRun();
 	f.initRuntime(str, fapp);
 	str.flush();
-//	str.execUpdate(new UpdRunnable() {
-//	public void run(SqlRunner str) throws Exception {
+//	str.execUpdate(new UpdTasklet2() {
+//	public void run(SqlRun str) throws Exception {
 //		f.pack();
 //	}});
 	return f;
@@ -95,11 +95,11 @@ public JFrame newFrame() throws Exception {
 addMaker("dups", new Maker() {
 public JFrame newFrame() throws Exception {
 	final CleanseFrame f = new CleanseFrame();
-	SqlRun str = fapp.batchSet();
+	SqlRun str = fapp.sqlRun();
 	f.initRuntime(str, fapp, "n");
 	str.flush();
 	return f;
-//	SqlRunner str = fapp.getBatchSet();
+//	SqlRun str = fapp.getBatchSet();
 //	final offstage.cleanse.CleansePanel panel = new CleansePanel();
 //	panel.initRuntime(str, fapp, "n");
 //	final JFrame frame = new JFrame("Duplicate Names");
@@ -129,7 +129,7 @@ public JFrame newFrame() throws Exception {
 addMaker("config", new Maker() {
 public JFrame newFrame() throws Exception {
 	ConfigFrame frame = new ConfigFrame();
-	SqlRun str = fapp.batchSet();
+	SqlRun str = fapp.sqlRun();
 	frame.initRuntime(str, fapp);
 	str.flush();
 	return frame;

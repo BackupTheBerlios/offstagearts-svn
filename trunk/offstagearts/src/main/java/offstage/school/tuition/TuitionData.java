@@ -155,7 +155,7 @@ public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 		" drop table _payers;" +
 		" drop table _courses;" +
 		" drop table _students;";
-	str.execSql(sql, new RssTasklet() {
+	str.execSql(sql, new RssTasklet2() {
 	public void run(citibob.sql.SqlRun str, java.sql.ResultSet[] rss) throws Exception {
 		ResultSet rs;
 		

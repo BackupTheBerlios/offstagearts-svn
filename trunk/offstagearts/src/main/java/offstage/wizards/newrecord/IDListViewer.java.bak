@@ -24,14 +24,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.wizards.newrecord;
 
 import offstage.db.*;
-import offstage.*;
-import citibob.multithread.*;
-import citibob.swing.typed.*;
+import citibob.task.*;
 import java.sql.*;
 import citibob.swing.*;
 import citibob.swing.table.*;
 import citibob.app.*;
 import citibob.sql.*;
+import offstage.devel.gui.DevelModel;
 
 /**
  *
@@ -39,7 +38,7 @@ import citibob.sql.*;
  */
 public class IDListViewer extends javax.swing.JPanel {
 
-FullEntityDbModel entityDb;
+DevelModel entityDb;
 EntityListTableModel dupsModel;
 
 /** Creates new form DupCheckPanel */
@@ -47,16 +46,16 @@ public IDListViewer() {
 	initComponents();
 }
 
-//public void initRuntime(SqlRunner str,
-//EntityListTableModel dupsModel, FullEntityDbModel entityDb,
+//public void initRuntime(SqlRun str,
+//EntityListTableModel dupsModel, DevelModel entityDb,
 //ActionRunner guiRunner, SwingerMap smap)
 //{
 //	this.dupsModel = dupsModel;
 //	this.entityDb = entityDb;
 //}
 
-public void initRuntime(SqlRunner str,
-FullEntityDbModel xentityDb,
+public void initRuntime(SqlRun str,
+DevelModel xentityDb,
 String idSql, String orderBy,
 final App app)
 //final ActionRunner guiRunner, SwingerMap smap)
@@ -64,16 +63,18 @@ throws SQLException
 {
 //	final App app = xapp;
 //	final ActionRunner guiRunner = app.getGuiRunner();
-	dupsModel = new EntityListTableModel(app.getSqlTypeSet());
-	dupsModel.setRows(str, idSql, orderBy);
+	dupsModel = new EntityListTableModel(app.sqlTypeSet());
+	dupsModel.setIdSql(idSql, orderBy);
+	dupsModel.executeQuery(str);
+	
 	this.entityDb = xentityDb;
 	dupsTable.initRuntime(dupsModel);
 	mainEntityPanel.initRuntime(str, app, entityDb);
 	DClickTableMouseListener dclick =
 		new DClickTableMouseListener(dupsTable) {
 		public void doubleClicked(final int row) {
-			app.runGui(IDListViewer.this, new BatchRunnable() {
-			public void run(SqlRunner str) throws Exception {
+			app.guiRun().run(IDListViewer.this, new SqlTasklet() {
+			public void run(SqlRun str) throws Exception {
 				// Make sure it's selected in the GUI
 				dupsTable.getSelectionModel().setSelectionInterval(row, row);
 

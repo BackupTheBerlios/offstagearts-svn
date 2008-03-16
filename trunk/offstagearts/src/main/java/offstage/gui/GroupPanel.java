@@ -47,7 +47,7 @@ SchemaBuf groupSb;
 	}
 	
 	// st good
-	public void initRuntime(SqlRunner str, SchemaBuf groupSb,
+	public void initRuntime(SqlRun str, SchemaBuf groupSb,
 	String[] colNames, String[] sColMap, boolean editable, citibob.swing.typed.SwingerMap swingers)
 	//throws java.sql.SQLException
 	{
@@ -64,7 +64,7 @@ SchemaBuf groupSb;
 		initRuntime(str, groupSb, addJType, groupTable, swingers);
 	}
 	
-	public void initRuntime(SqlRunner str, SchemaBuf groupSb, JEnum addJType,
+	public void initRuntime(SqlRun str, SchemaBuf groupSb, JEnum addJType,
 	GroupsTable groupTable, SwingerMap swingers)
 	//throws java.sql.SQLException
 	{

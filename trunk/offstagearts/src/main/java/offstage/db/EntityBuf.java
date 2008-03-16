@@ -20,6 +20,7 @@ package offstage.db;
 import citibob.jschema.*;
 import offstage.schema.*;
 import citibob.sql.*;
+import citibob.util.IntVal;
 import offstage.db.*;
 import java.sql.*;
 
@@ -51,13 +52,13 @@ public void getInsertCols(int row, ConsSqlQuery q, boolean insertUnchanged, SqlS
 }
 
 /** Changes primary entity id to be the same as the primaryentityid of someone else. */
-public void setPrimaryEntityID(SqlRunner str, int entityid)
+public void setPrimaryEntityID(SqlRun str, int entityid)
 throws SQLException
 {
-	DB.getPrimaryEntityID(str, entityid);
-	str.execUpdate(new UpdRunnable() {
-	public void run(SqlRunner str) throws Exception {
-		setValueAt(str.get("primaryentityid"), 0, findColumn("primaryentityid"));
+	final IntVal ival = DB.getPrimaryEntityID(str, entityid);
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
+		setValueAt(ival.val, 0, findColumn("primaryentityid"));
 	}});
 }
 // ==================================================================

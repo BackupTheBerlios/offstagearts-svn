@@ -159,11 +159,11 @@ public static String getSql(String idSql, String orderBy)
 	return sql;
 }
 
-public static void viewReport(SqlRunner str, final App app, String idSql, String orderBy)
+public static void viewReport(SqlRun str, final App app, String idSql, String orderBy)
 {
 	String sql = LabelReport.getSql(idSql, orderBy);
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws Exception {
 		Reports rr = app.reports();
 		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
 	}});

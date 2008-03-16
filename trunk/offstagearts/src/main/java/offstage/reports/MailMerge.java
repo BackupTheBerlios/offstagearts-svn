@@ -40,16 +40,16 @@ import offstage.equery.EQuery;
 public class MailMerge
 {
 
-public static void viewReport(SqlRunner str, final FrontApp fapp,
+public static void viewReport(SqlRun str, final FrontApp fapp,
 EQuery equery, final File templateFile)
 throws Exception
 {
 	
-	String idSql = equery.getSql(fapp.getEquerySchema(), true);
+	String idSql = equery.getSql(fapp.equerySchema(), true);
 	String sql = LabelReport.getSql(idSql, null);
 	
-	str.execSql(sql, new RsRunnable() {
-	public void run(SqlRunner str, ResultSet rs) throws Exception {
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws Exception {
 		Reports rr = fapp.reports();
 //		Map map = new HashMap();
 //		rr.viewJodPdfs(rr.toJodList(rs, null), templateFile.getParentFile(), templateFile.getName());
