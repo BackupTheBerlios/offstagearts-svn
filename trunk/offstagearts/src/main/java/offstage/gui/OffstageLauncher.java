@@ -92,6 +92,12 @@ protected ConsoleFrame consoleFrame;
 	
 	public static void main(String[] args) throws Exception
     {
+		/* see:
+		http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6604109
+		http://www.jasperforge.org/sf/go/artf2423
+		*/
+		System.setProperty("sun.java2d.print.polling", "false");
+		
 		System.setProperty("swing.metalTheme", "ocean");
 		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 		
