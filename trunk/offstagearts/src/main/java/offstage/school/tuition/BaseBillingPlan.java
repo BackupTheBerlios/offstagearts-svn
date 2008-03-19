@@ -5,7 +5,8 @@
 
 package offstage.school.tuition;
 
-import citibob.text.DayConv;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 /**
@@ -16,8 +17,14 @@ public abstract class BaseBillingPlan implements BillingPlan
 {
 
 // Used to convert daynumbs in constructor
-protected static DayConv dconv = new DayConv(TimeZone.getTimeZone("GMT"));
+//protected static DayConv dconv = new DayConv(TimeZone.getTimeZone("GMT"));
+protected DateFormat dfmt;
 
+protected BaseBillingPlan()
+{
+	dfmt = new SimpleDateFormat("yyyyMMdd");
+	dfmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+}
 
 protected void addRegFee(TuitionCon con, Student student,
 int duedateDN, double amount)

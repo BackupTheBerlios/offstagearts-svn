@@ -30,6 +30,7 @@ package offstage.school.gui;
 import citibob.swing.typed.*;
 import citibob.swing.html.*;
 import citibob.text.DivDoubleSFormat;
+import citibob.types.JDate;
 import java.sql.*;
 import java.util.Calendar;
 

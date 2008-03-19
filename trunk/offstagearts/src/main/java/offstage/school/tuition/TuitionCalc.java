@@ -26,8 +26,8 @@ package offstage.school.tuition;
 import citibob.sql.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
-import citibob.text.DayConv;
 import citibob.types.KeyedModel;
+import citibob.util.DayConv;
 import offstage.FrontApp;
 
 /**
@@ -46,7 +46,8 @@ TuitionData tdata;
 MyTuitionCon tcon;
 RBPlanSet rbPlanSet;
 FrontApp app;
-DayConv dconv;
+//DayConv dconv;
+//Calendar cal;
 
 /** @param payerIdSql IdSql that selects the payers for which we want to recalc tuition. */
 public TuitionCalc(FrontApp app, int termid)
@@ -54,7 +55,7 @@ public TuitionCalc(FrontApp app, int termid)
 	this.termid = termid;
 	this.app = app;
 	date = new SqlDate(app.timeZone(), true);
-	dconv = new DayConv(app.timeZone());
+//	dconv = new DayConv(app.timeZone());
 }
 
 public void setPayerIDs(String payerIdSql)
@@ -77,9 +78,8 @@ public void recalcTuition(SqlRun str)
 	tdata = new TuitionData(str, termid, payerIdSql, date.getTimeZone());
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
-		rbPlanSet = (RBPlanSet)app.siteCode().loadClass(tdata.rbPlanSetClass).newInstance();
 		if (tdata.calcTuition()) {
-			calcTuition();
+			recalcTuition();
 			String sql = writeTuitionSql();
 			str.execSql(sql);
 		}
@@ -88,9 +88,10 @@ public void recalcTuition(SqlRun str)
 
 // ==========================================================================
 
-void calcTuition()
+void recalcTuition()
 throws InstantiationException, IllegalAccessException, ClassNotFoundException
 {
+	rbPlanSet = (RBPlanSet)app.siteCode().loadClass(tdata.rbPlanSetClass).newInstance();
 //	rbPlanSet = (RBPlanSet)Class.forName(tdata.rbPlanSetClass).newInstance();
 	tcon = new MyTuitionCon();
 
@@ -164,7 +165,11 @@ public void setCalcTuition(Student student, double amount, String desc)
 public void addTransaction(Student student,
 int duedateDN, double amount, String description)
 {
-	java.util.Date duedate = dconv.toDate(duedateDN);
+	// Don't add nuisance transactions (like $0 scholarships)
+	if (amount == 0.0D) return;
+
+	java.util.Date duedate = new Date(DayConv.toMS(duedateDN, date.getCalendar()));
+//		dconv.toDate(duedateDN);
 	int payerid = student.payerid;
 	int studentid = student.entityid;
 	

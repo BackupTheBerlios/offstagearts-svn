@@ -5,6 +5,7 @@
 
 package offstage.school.tuition;
 
+import citibob.util.DayConv;
 import java.text.ParseException;
 
 
@@ -26,10 +27,11 @@ throws ParseException
 {
 	this.labels = labels;
 	this.regFee = regFee;
-	this.regDuedateDN = dconv.toDay(sRegDueDate);
+
+	this.regDuedateDN = DayConv.parse(dfmt, sRegDueDate);
 	duedatesDN = new int[sDueDates.length];
 	for (int i=0; i<sDueDates.length; ++i)
-		duedatesDN[i] = dconv.toDay(sDueDates[i]);
+		duedatesDN[i] = DayConv.parse( dfmt,sDueDates[i]);
 }
 
 

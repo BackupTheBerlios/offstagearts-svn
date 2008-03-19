@@ -53,7 +53,7 @@ public boolean required;		// true if all resources to be created are required
 			new String[] {"Resource", "Plan", "Back Compatible", "Required"},
 			new String[] {"resourceName", "UpgradePlan", "backcompatible", "required"},
 			null, app.swingerMap());
-		tUpgradePlans.setRenderEditU("UpgradePlan", new ResModels.PathSFormat());
+		tUpgradePlans.setFormatU("UpgradePlan", new ResModels.PathSFormat());
 
 		// Select an upgrade plan to inspect and maybe execute
 		tUpgradePlans.addPropertyChangeListener("value", new PropertyChangeListener() {

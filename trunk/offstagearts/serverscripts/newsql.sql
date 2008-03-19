@@ -74,15 +74,15 @@ alter table termids drop column calctuition;
 
 
 
-CREATE TABLE payerterms
-(
-termid int not null,
-entityid int not null,
-  rbplan varchar(30), -- Short name of rate/billing plan to use for this customer.  If null, use the default rate/billing plan for the term.  See RbPlanSet
- PRIMARY KEY (termid, entityid)
-)
-WITHOUT OIDS;
-COMMENT ON COLUMN termregs.rbplan IS 'Short name of rate/billing plan to use for this customer.  If null, use the default rate/billing plan for the term.  See RbPlanSet';
+--CREATE TABLE payerterms
+--(
+--termid int not null,
+--entityid int not null,
+--  rbplan varchar(30), -- Short name of rate/billing plan to use for this customer.  If null, use the default rate/billing plan for the term.  See RbPlanSet
+-- PRIMARY KEY (termid, entityid)
+--)
+--WITHOUT OIDS;
+--COMMENT ON COLUMN termregs.rbplan IS 'Short name of rate/billing plan to use for this customer.  If null, use the default rate/billing plan for the term.  See RbPlanSet';
 
 
 ALTER TABLE termregs ADD COLUMN payerid int4;
@@ -95,7 +95,7 @@ CREATE TABLE payertermregs
 (
   termid int4 NOT NULL,
   entityid int4 NOT NULL,
-  rbplan abstime, -- Tuition payment plan to use for this term.
+  rbplan varchar(30), -- Tuition payment plan to use for this term.
   CONSTRAINT payertermregs_pkey PRIMARY KEY (termid, entityid)
 ) 
 WITHOUT OIDS;

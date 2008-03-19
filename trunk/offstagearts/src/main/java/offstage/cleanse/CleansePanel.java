@@ -175,7 +175,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 				new boolean[] {false, false,false,false,false,false},
 				app.swingerMap());
 //			dupTable.setRenderEditU("score", new java.text.DecimalFormat("#.00"));
-			dupTable.setRenderEditU("score", "#.00");
+			dupTable.setFormatU("score", "#.00");
 		}});		
 	}
 	

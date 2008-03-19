@@ -47,13 +47,13 @@ public OffstageSwingerMap(final java.util.TimeZone tz) {
 	super(tz);
 	
 	// SqlPhone
-	this.addMaker(SqlPhone.class, new DefaultSwingerMap.Maker() {
+	this.addMaker(SqlPhone.class, new BaseSwingerMap.Maker() {
 	public Swinger newSwinger(JType sqlType) {
 		return new PhoneSwinger();
 	}});
 
 	// OVERRIDE: SqlTime
-	this.addMaker(SqlTime.class, new DefaultSwingerMap.Maker() {
+	this.addMaker(SqlTime.class, new BaseSwingerMap.Maker() {
 	public Swinger newSwinger(JType sqlType) {
 		// Times represented as (timezone-free) offsets from the start
 		// of a day (in a particular timezone).  Thus, "GMT" is the timezone.

@@ -77,13 +77,13 @@ boolean inUpdate;
 			new String[] {"Version", "Size", "Last Modified"},
 			new String[] {"version", "size", "lastmodified"},
 			null, app.swingerMap());
-		tAvailVersions.setRenderEditU("lastmodified", "MM/dd/yyyy");
+		tAvailVersions.setFormatU("lastmodified", "MM/dd/yyyy");
 
 		this.tUpgradePlans.setModelU(rmods.uplanMod,
 			new String[] {"Source", "Plan", "Back-Compatible"},
 			new String[] {"uversionName0", "UpgradePlan", "backcompatible"},
 			null, app.swingerMap());
-		tUpgradePlans.setRenderEditU("UpgradePlan", new ResModels.PathSFormat());
+		tUpgradePlans.setFormatU("UpgradePlan", new ResModels.PathSFormat());
 		
 		
 		// Select a Resource

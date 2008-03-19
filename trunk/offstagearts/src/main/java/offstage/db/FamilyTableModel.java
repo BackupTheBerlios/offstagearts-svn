@@ -75,8 +75,7 @@ public void bind(SchemaRowModel bufRow)
 /** Propagate data from underlying model to widget. */
 public void valueChanged(final int col)
 {
-//	app.runApp(new SqlTask() {
-//	public void run(SqlRun str) throws Exception {
+		app.sqlRun().pushFlush();
 		Integer Primaryid = (Integer)bufRow.get(primaryCol);
 		if (Primaryid == null) {
 			setRowCount(0);		// Just clear it out...
@@ -85,7 +84,7 @@ public void valueChanged(final int col)
 System.out.println("FamilyTableModel: value changed to: " + primaryid);
 			setValue(app.sqlRun(), primaryid);
 		}
-//	}});
+		app.sqlRun().popFlush();
 }
 public void curRowChanged(int col)
 {

@@ -24,7 +24,7 @@ public RBPlan getPlan(String name)
 {
 	if (name == null) return defPlan;
 	for (int i=0; i<plans.length; ++i)
-		if (name.equals(plans[i].getName())) return plans[i];
+		if (name.equals(plans[i].getKey())) return plans[i];
 	return null;
 }
 }

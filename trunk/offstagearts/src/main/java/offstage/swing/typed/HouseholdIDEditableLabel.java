@@ -86,16 +86,14 @@ public void setValue(Object o)
 	}
 
 	// Make sure we're only pointing to a head of household.
-//	app.runApp(new BatchRunnable() {
-//	public void run(SqlRun str) throws SQLException {
-		
 	SqlRun str = app.sqlRun();
-//	SqlBatchSet str = app.getBatchSet();
+	str.pushFlush();
 	final IntVal ival = offstage.db.DB.getPrimaryEntityID(str, ID);
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 		HouseholdIDEditableLabel.super.setValue((Integer)ival.val);
 	}});
+	str.popFlush();
 }
 }
 

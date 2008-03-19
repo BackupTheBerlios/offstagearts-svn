@@ -124,35 +124,27 @@ extends javax.swing.JPanel {
 		model.addColListener(model.findColumn("primaryentityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
 			SqlRun str = app.sqlRun();
-//			app.runApp(new BatchRunnable() {
-//			public void run(SqlRun str) throws Exception {
+			str.pushFlush();
 				if (model.getCurRow() < 0) return;
-//				if (familyTable.isInSelect()) return;	// Don't re-query just cause user is clicking
 				Integer OrigEntityID = (Integer)model.getOrigValue(col);
 				Integer EntityID = (Integer)model.get(col);
-//				Integer OrigEntityID = (Integer)dm.getPersonSb().getValueAt(0, col);
-//				Integer EntityID = (Integer)dm.getPersonSb().getValueAt(0, col);
 				if (EntityID == null) return;
 				if (OrigEntityID != null && OrigEntityID.intValue() == EntityID.intValue()) {
 					// Orig == Value --- greater class probably just re-read from DB.
 					// So now we need to re-read too.  This problem should REALLY be
 					// solved by adding events to DbModel.
 					familyTable.setPrimaryEntityID(str, EntityID);
-//					vHouseholdID.setEntityID(EntityID);
 				}
-//			}});
+			str.popFlush();
 		}});
 
 		model.addColListener(model.findColumn("entityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
-//			app.runApp(new ETask() {
-//			public void run() throws Exception {
+			SqlRun str = app.sqlRun();
+			str.pushFlush();
 				if (model.getCurRow() < 0) return;
-//				if (familyTable.isInSelect()) return;	// Don't re-query just cause user is clicking
 				Integer OrigEntityID = (Integer)model.getOrigValue(col);
 				Integer EntityID = (Integer)model.get(col);
-//				Integer OrigEntityID = (Integer)dm.getPersonSb().getValueAt(0, col);
-//				Integer EntityID = (Integer)dm.getPersonSb().getValueAt(0, col);
 				if (EntityID == null) return;
 				if (OrigEntityID != null && OrigEntityID.intValue() == EntityID.intValue()) {
 					// Orig == Value --- greater class probably just re-read from DB.
@@ -160,7 +152,7 @@ extends javax.swing.JPanel {
 					// solved by adding events to DbModel.
 					vHouseholdID.setEntityID(EntityID);
 				}
-//			}});
+			str.popFlush();
 		}});
 		
 		

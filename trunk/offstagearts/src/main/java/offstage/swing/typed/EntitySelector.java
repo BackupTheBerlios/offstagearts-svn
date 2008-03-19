@@ -28,8 +28,6 @@ import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.task.*;
-import offstage.FrontApp;
-import offstage.devel.gui.DevelModel;
 import offstage.db.*;
 import java.awt.event.*;
 import citibob.swing.typed.*;
@@ -65,10 +63,9 @@ public void propertyChange(final java.beans.PropertyChangeEvent evt)
 		// We were started by mouse click (or some semblance thereof)
 		// But don't do a busy cursor if we're within a dropdown
 		if (inDropDown) {
-//			app.runApp(new SqlTask() {
-//			public void run(SqlRun str) throws Exception {
-				EntitySelector.super.propertyChange(evt);
-//			}});
+			app.sqlRun().pushFlush();
+			EntitySelector.super.propertyChange(evt);
+			app.sqlRun().popFlush();
 		} else {
 			app.guiRun().run(EntitySelector.this, new SqlTask() {
 			public void run(SqlRun str) throws Exception {

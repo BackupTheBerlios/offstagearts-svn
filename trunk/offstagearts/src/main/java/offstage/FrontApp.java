@@ -38,7 +38,6 @@ import offstage.crypt.*;
 import citibob.gui.*;
 import citibob.resource.ResData;
 import citibob.resource.ResResult;
-import citibob.resource.ResSet;
 import citibob.resource.UpgradePlan;
 import citibob.resource.UpgradePlanSet;
 import citibob.swingers.JavaSwingerMap;
@@ -49,7 +48,6 @@ import javax.swing.JOptionPane;
 import offstage.config.ConfigChooser;
 import offstage.config.UpgradesDialog;
 import offstage.resource.OffstageResSet;
-import offstage.school.tuition.TuitionScale;
 
 public class FrontApp extends citibob.app.App
 {
@@ -144,6 +142,7 @@ throws Exception
 
 	// Set up Swing GUI preferences, so we can display stuff
 	initPrefs();
+	swingPrefs = new SwingPrefs();
 	
 	// Choose the configuration directory, so we can get the rest of
 	// the configuration
@@ -159,6 +158,10 @@ throws Exception
 	// Load up properties from the configuration
 	props = loadProps();
 
+	// Time Zone should be stored in database!
+	timeZone = TimeZone.getDefault();
+//	timeZone = TimeZone.getTimeZone(props.getProperty("timezone"));
+	
 	// Re-direct (and cache recent) STDOUT
 	frameSet = new offstage.gui.OffstageFrameSet(this);
 	ConsoleFrame consoleFrame = (ConsoleFrame)frameSet.getFrame("console");
@@ -176,7 +179,7 @@ throws Exception
 	
 		// Set up database connections, etc.
 		this.pool = DB.newConnPool(props);
-		this.sqlRun = new BatchSqlRun(pool);
+		this.sqlRun = new BatchSqlRun(pool, expHandler);
 
 		// Load the crypto keys
 		String pubLeaf = props.getProperty("crypt.pubdir");

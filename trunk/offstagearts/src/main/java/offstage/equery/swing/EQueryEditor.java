@@ -64,7 +64,7 @@ implements TypedWidget
 		eQueryTable.setModel(qm);
 		eQueryTable.setSwingerMap(smap);
 		
-		JDateType jt = new citibob.swing.typed.JDate(true);
+		JDateType jt = new JDate(true);
 		DateFormat fmt = new SimpleDateFormat("MM-dd-yyyy");
 
 		Swinger swinger = smap.newSwinger(new SqlDate(tz, true));

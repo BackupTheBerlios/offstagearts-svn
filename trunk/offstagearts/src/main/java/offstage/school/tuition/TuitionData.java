@@ -107,11 +107,11 @@ public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 //		" and not e.obsolete;\n" +
 		
 		// rss[2]: Payers
-		" select e.entityid, e.isorg, tr.rbplan\n" +
+		" select e.entityid, e.isorg, ptr.rbplan\n" +
 		" from _payers,\n" +
-		"     entities e, termregs tr\n" +
-		" where tr.groupid = " + SqlInteger.sql(termid) + "\n" +
-		" and _payers.entityid = tr.entityid\n" +
+		"     entities e, payertermregs ptr\n" +
+		" where ptr.termid = " + SqlInteger.sql(termid) + "\n" +
+		" and _payers.entityid = ptr.entityid\n" +
 		" and _payers.entityid = e.entityid\n" +
 		" and not e.obsolete;\n" +
 		

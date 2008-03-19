@@ -71,10 +71,9 @@ throws SQLException
 
 		terms.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-//			fapp.runApp(new SqlTask() {
-//			public void run(SqlRun str) throws Exception {
-				termChanged(fapp.sqlRun());
-//			}});
+			fapp.sqlRun().pushFlush();
+			termChanged(fapp.sqlRun());
+			fapp.sqlRun().popFlush();
 		}});
 
 		// Set up courses editor
@@ -100,7 +99,7 @@ throws SQLException
 //boolean[] xEditable, SwingerMap swingers)
 
 		KeyedModel dkm = new DayOfWeekKeyedModel();
-		courses.setRenderEditU("dayofweek", dkm);
+		courses.setFormatU("dayofweek", dkm);
 
 //		Swinger swing = new SqlTimeSwinger(true, "HH:mm");
 //		courses.setRenderEditU("tstart", swing);

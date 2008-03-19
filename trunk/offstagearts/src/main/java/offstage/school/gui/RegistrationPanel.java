@@ -61,7 +61,7 @@ FrontApp fapp;
 SchoolModel smod;
 
 //public JoinedSchemaBufDbModel enrolledDb;
-public SqlBufDbModel enrolledDb;
+public EnrolledDbModel enrolledDb;
 //public IntKeyedDbModel actransDb;
 
 
@@ -74,102 +74,6 @@ AllParentDbModel allParent2;
 AllRecDbModel allRec;
 
 // ====================================================
-MultiDbModel all = new AllDbModel();
-class AllDbModel extends MultiDbModel
-{
-	public void doSelect(SqlRun str)
-	{
-		smod.studentDm.doSelect(str);
-		smod.termregsDm.doSelect(str);
-
-		str.execUpdate(new UpdTasklet2() {
-		public void run(SqlRun str) throws Exception {
-			Integer payerid = (Integer)smod.termregsRm.get("payerid");
-			
-			// Keys depend on results of previous queries
-			smod.parent1Dm.setKey((Integer)smod.studentRm.get("parent1id"));
-			smod.parent2Dm.setKey((Integer)smod.studentRm.get("parent2id"));
-			smod.payerDm.setKey(payerid); //(Integer)smod.termregsRm.get("payerid"));//smod.studentDm.getAdultID());
-			smod.payertermregsDm.setKey("entityid", payerid); //smod.termregsRm.get("payerid"));
-
-			smod.payertermregsDm.doSelect(str);
-			smod.parent1Dm.doSelect(str);
-			smod.parent2Dm.doSelect(str);
-//			Integer pid = (Integer)smod.studentRm.get("primaryentityid");
-			familyTable.setPrimaryEntityID(str, payerid);
-			smod.payerDm.doSelect(str);
-			enrolledDb.doSelect(str);
-		}});
-	}
-	public void setKey(Object entityid)
-	{
-		smod.studentDm.setKey(entityid); //new Integer[] {entityid});
-		smod.termregsDm.setKey("entityid", entityid);
-		
-		// Set "key" for enrollments
-		int termid = smod.getTermID();
-		enrolledDb.setKey(entityid);
-//		enrolledDb.setWhereClause("enrollments.courseid = courseids.courseid" +
-//			" and courseids.termid = " + SqlInteger.sql(termid) +
-//			" and enrollments.entityid = " + SqlInteger.sql(entityid));
-	}
-	void superDoUpdate(SqlRun str)
-		{ super.doUpdate(str); }
-	public void doUpdate(SqlRun str)
-	{
-		if (smod.studentRm.get("parent1id") == null || smod.termregsRm.get("payerid") == null) {
-			JOptionPane.showMessageDialog(RegistrationPanel.this,
-				"Cannot save record.  You must have a payer\nand parent in order to save.");
-			return;
-		}
-
-		// Make sure payer has record in school system
-		Integer payerid = (Integer)smod.studentRm.get("payerid");
-		if (payerid != null) str.execSql(SchoolDB.registerPayerSql(smod.getTermID(), payerid));
-
-		// Transfer main parent over as primary entity id (family relationships)
-		final IntVal ival = offstage.db.DB.getPrimaryEntityID(str, (Integer)smod.studentRm.get("parent1id"));
-		str.execUpdate(new UpdTasklet2() {
-		public void run(SqlRun str) throws Exception {
-			smod.studentRm.set("primaryentityid", ival.val);//str.get("primaryentityid"));
-
-			// Do the rest
-			superDoUpdate(str);
-
-			// Calculate the tuition
-			int col = smod.studentRm.findColumn("parentid");
-			Integer Oldadultid = (Integer)smod.studentRm.getOrigValue(col);
-			Integer Adultid = (Integer)smod.studentRm.get(col);
-
-			transRegister.getDbModel().doUpdate(str);
-			
-			int termid = smod.getTermID(); //(Integer)vTermID.getValue();
-			String payerIdSql = null;
-			if (Oldadultid != null && Adultid != null) {
-				if (Oldadultid.intValue() == Adultid.intValue()) {
-					// Didn't change, they're both the same
-					payerIdSql = "select " + Oldadultid;
-				} else {
-					// Changed from one payer to another
-					payerIdSql = "select " + Oldadultid + " union select " + Adultid;
-				}
-			} else if (Adultid != null) {
-				// Changed from no payer to a payer
-				payerIdSql = "select " + Adultid;
-			} else if (Oldadultid != null) {
-				// Changed from a payer to no payer.
-				payerIdSql = "select " + Oldadultid;
-			}
-			if (payerIdSql != null) {
-				TuitionCalc tc = new TuitionCalc(fapp, termid);
-					tc.setPayerIDs(payerIdSql);
-					tc.recalcTuition(str);
-			}
-//			if (Oldadultid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Oldadultid, null);
-//			if (Adultid != null && !Adultid.equals(Oldadultid)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Adultid, null);
-		}});
-	}
-}
 // ====================================================
 
 //int schoolModel.getTermID(){
@@ -183,6 +87,26 @@ public RegistrationPanel()
 }
 
 // =====================================================
+class EnrolledDbModel extends SqlBufDbModel
+{
+	int termID, studentID;
+	public EnrolledDbModel(SqlRun str) {
+		super(str, fapp,
+		new String[] {"courseids", "enrollments"},
+		null,
+		new String[] {"enrollments"});
+	}
+	public String getSelectSql(boolean proto) {
+		return
+			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
+			" from enrollments e, courseids c" +
+			" where e.courseid = c.courseid" +
+			" and c.termid = " + SqlInteger.sql(termID) + //smod.getTermID()) +
+			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(studentID)) + //smod.getStudentID())) +
+			" order by dayofweek, tstart, name";
+	}
+}
+// =====================================================
 class AllStudentDbModel extends MultiDbModel
 {
 	public AllStudentDbModel()
@@ -191,12 +115,14 @@ class AllStudentDbModel extends MultiDbModel
 	{
 		smod.studentDm.setKey(studentid);
 		smod.termregsDm.setKey("entityid", studentid);
+		enrolledDb.studentID = studentid;
 	}
 	public Integer getStudentID()
 		{ return (Integer)smod.studentDm.getKey(); }
 	public void setTermID(Integer termid)
 	{
 		smod.termregsDm.setKey("groupid", termid);	
+		enrolledDb.termID = termid;
 	}
 	public void resetStudentID(SqlRun str, Integer studentid)
 	{
@@ -213,6 +139,10 @@ class AllStudentDbModel extends MultiDbModel
 }
 class AllPayerDbModel extends MultiDbModel
 {
+	public boolean valueChanged()
+	{
+		return super.valueChanged() || transRegister.getDbModel().valueChanged();
+	}
 	public AllPayerDbModel()
 		{super(smod.payerDm, smod.payertermregsDm); }
 //		transRegister.getDbModel()); }
@@ -221,6 +151,12 @@ class AllPayerDbModel extends MultiDbModel
 		super.doSelect(str);
 		familyTable.setPrimaryEntityID(str, getPayerID());
 		transRegister.refresh(str);
+	}
+	public void doUpdate(SqlRun str)
+	{
+		super.doUpdate(str);
+		// Update account transaction edits
+		transRegister.getDbModel().doUpdate(str);
 	}
 	public void setPayerID(Integer payerid)
 	{
@@ -271,6 +207,11 @@ class AllRecDbModel extends MultiDbModel
 {
 	public AllRecDbModel()
 		{ super(allStudent, allPayer, allParent1, allParent2); }
+//	boolean changed;
+//	public boolean valueChanged()
+//	{
+//		return changed || super.valueChanged();
+//	}
 	public void setStudentID(Integer studentid)
 	{
 		allStudent.setStudentID(studentid);
@@ -302,7 +243,72 @@ class AllRecDbModel extends MultiDbModel
 			allParent2.doSelect(str);
 		}});
 	}
+	void superDoUpdate(SqlRun str)
+		{ super.doUpdate(str); }
+	public void doUpdate(SqlRun str) {
+		if (!valueChanged()) return;
+		forceUpdate(str);
+	}
+	public void forceUpdate(SqlRun str) {
+//		if (!valueChanged()) return;
+
+		if (smod.studentRm.get("parent1id") == null || smod.termregsRm.get("payerid") == null) {
+			JOptionPane.showMessageDialog(RegistrationPanel.this,
+				"Cannot save record.  You must have a payer\nand parent in order to save.");
+			return;
+		}
+
+		// Make sure payer has record in school system
+		Integer payerid = (Integer)smod.termregsRm.get("payerid");
+		if (payerid != null) str.execSql(SchoolDB.registerPayerSql(smod.getTermID(), payerid));
+
+		// Transfer main parent over as primary entity id (family relationships)
+		// Get household from parent1
+		final IntVal primaryentityid = offstage.db.DB.getPrimaryEntityID(str, (Integer)smod.studentRm.get("parent1id"));
+		str.execUpdate(new UpdTasklet2() {
+		public void run(SqlRun str) throws Exception {
+			// Setting parent results in setting household info.
+			smod.studentRm.set("primaryentityid", primaryentityid.val);
+
+			// Do the rest
+			superDoUpdate(str);
+
+			calcTuition(str);
+		}});
+	}
 }
+
+public void calcTuition(SqlRun str)
+{
+	// Calculate the tuition
+	int col = smod.studentRm.findColumn("parent1id");
+	Integer Oldparent1id = (Integer)smod.studentRm.getOrigValue(col);
+	Integer Parent1id = (Integer)smod.studentRm.get(col);
+
+	int termid = smod.getTermID();
+	String payerIdSql = null;
+	if (Oldparent1id != null && Parent1id != null) {
+		if (Oldparent1id.intValue() == Parent1id.intValue()) {
+			// Didn't change, they're both the same
+			payerIdSql = "select " + Oldparent1id;
+		} else {
+			// Changed from one payer to another
+			payerIdSql = "select " + Oldparent1id + " union select " + Parent1id;
+		}
+	} else if (Parent1id != null) {
+		// Changed from no payer to a payer
+		payerIdSql = "select " + Parent1id;
+	} else if (Oldparent1id != null) {
+		// Changed from a payer to no payer.
+		payerIdSql = "select " + Oldparent1id;
+	}
+	if (payerIdSql != null) {
+		TuitionCalc tc = new TuitionCalc(fapp, termid);
+			tc.setPayerIDs(payerIdSql);
+			tc.recalcTuition(str);
+	}
+}
+
 // =====================================================
 
 public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
@@ -330,19 +336,21 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 
 	// =====================================================================
 	// Enrollments
-	enrolledDb = new SqlBufDbModel(str, fapp,
-		new String[] {"courseids", "enrollments"},
-		null,
-		new String[] {"enrollments"}) {
-	public String getSelectSql(boolean proto) {
-		return
-			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
-			" from enrollments e, courseids c" +
-			" where e.courseid = c.courseid" +
-			" and c.termid = " + SqlInteger.sql(smod.getTermID()) +
-			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(smod.getStudentID())) +
-			" order by dayofweek, tstart, name";
-	}};
+	enrolledDb = new EnrolledDbModel(str);
+//	enrolledDb = new SqlBufDbModel(str, fapp,
+//		new String[] {"courseids", "enrollments"},
+//		null,
+//		new String[] {"enrollments"}) {
+//	int termID, studentID;
+//	public String getSelectSql(boolean proto) {
+//		return
+//			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
+//			" from enrollments e, courseids c" +
+//			" where e.courseid = c.courseid" +
+//			" and c.termid = " + SqlInteger.sql(termID) + //smod.getTermID()) +
+//			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(studentID)) + //smod.getStudentID())) +
+//			" order by dayofweek, tstart, name";
+//	}};
 
 	// =============================================
 	// Payer Group
@@ -355,7 +363,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 		RSSchema schema = (RSSchema)enrolledDb.getSchemaBuf().getSchema();
 //		schema.setJTypes(fapp.getSchema("courseids"));
 //		schema.setJTypes(fapp.getSchema("enrollments"));
-		allStudent.add(enrolledDb);
+//		allStudent.add(enrolledDb);
 		enrollments.setModelU(enrolledDb.getTableModel(),
 			new String[] {"Course", "Day", "Start", "Finish",
 				"Role", "Custom Start", "Custom End (+1)"},
@@ -363,7 +371,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 				"courserole", "dstart", "dend"},
 			new boolean[] {false, false, false, false,
 				true, true, true, false}, fapp.swingerMap());
-		enrollments.setRenderEditU("dayofweek", new DayOfWeekKeyedModel());
+		enrollments.setFormatU("dayofweek", new DayOfWeekKeyedModel());
 	}});
 	
 	// ==============================================================
@@ -585,7 +593,7 @@ void refreshRBPlanSet(SqlRun str)
 public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
 {
 	// See if old student needs saving...
-	if (all.valueChanged()) {
+	if (allRec.valueChanged()) {
 		String[] options = new String[] {"Save", "Don't Save", "Cancel"};
 		JOptionPane pane = new JOptionPane(
 			"You have not yet saved the current record.\n" +
@@ -599,7 +607,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         dialog.dispose();
 		
 		if (pane.getValue() == options[0]) {
-			all.doUpdate(str);		// Save
+			allRec.doUpdate(str);		// Save
 		} else if (pane.getValue() == options[1]) {
 		} else {
 			return;		// cancel
@@ -804,6 +812,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         jToolBar1 = new javax.swing.JToolBar();
         bSave = new javax.swing.JButton();
         bUndo = new javax.swing.JButton();
+        bRecalcTuition = new javax.swing.JButton();
         vStudentID = new offstage.swing.typed.EntityIDLabel();
         lEntityID = new citibob.swing.typed.JTypedLabel();
         bNewStudent = new javax.swing.JButton();
@@ -1823,46 +1832,18 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
 
         bCash.setText("Cash");
         bCash.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        bCash.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bCashActionPerformed(evt);
-            }
-        });
         jPanel13.add(bCash);
 
         bCheck.setText("Check");
         bCheck.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        bCheck.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bCheckActionPerformed(evt);
-            }
-        });
         jPanel13.add(bCheck);
 
         bCc.setText("Credit");
         bCc.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        bCc.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bCcActionPerformed(evt);
-            }
-        });
         jPanel13.add(bCc);
 
         bOtherTrans.setText("Other");
         bOtherTrans.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        bOtherTrans.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                bOtherTransActionPerformed(evt);
-            }
-        });
         jPanel13.add(bOtherTrans);
 
         controller1.add(jPanel13, java.awt.BorderLayout.CENTER);
@@ -2261,6 +2242,20 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         });
         jToolBar1.add(bUndo);
 
+        bRecalcTuition.setText("Recalc Tuition");
+        bRecalcTuition.setEnabled(false);
+        bRecalcTuition.setFocusable(false);
+        bRecalcTuition.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bRecalcTuition.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bRecalcTuition.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bRecalcTuitionActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(bRecalcTuition);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
@@ -2531,13 +2526,6 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         add(searchBox, java.awt.BorderLayout.EAST);
     }// </editor-fold>//GEN-END:initComponents
 
-	private void bOtherTransActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bOtherTransActionPerformed
-	{//GEN-HEADEREND:event_bOtherTransActionPerformed
-//		accountHelper.accountAction(
-//			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "transtype");
-// TODO add your handling code here:
-	}//GEN-LAST:event_bOtherTransActionPerformed
-
 	private void bNewParent2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewParent2ActionPerformed
 	{//GEN-HEADEREND:event_bNewParent2ActionPerformed
 		newPayerAction("parent2id");
@@ -2562,8 +2550,8 @@ void newPayerAction(final String colName)
 		if (eid != null) {
 			smod.termregsRm.set(colName, eid);
 			doUpdateSelect(str);
-//			all.doUpdate(str);
-//			all.doSelect(str);
+//			allRec.doUpdate(str);
+//			allRec.doSelect(str);
 		}
 	}});
 }
@@ -2579,8 +2567,8 @@ void newPayerAction(final String colName)
 			if (eid != null) {
 				smod.studentRm.set("primaryentityid", eid);
 				doUpdateSelect(str);
-	//			all.doUpdate(str);
-	//			all.doSelect(str);
+	//			allRec.doUpdate(str);
+	//			allRec.doSelect(str);
 			}
 		}});
 // TODO add your handling code here:
@@ -2665,7 +2653,7 @@ void newPayerAction(final String colName)
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
 		fapp.guiRun().run(RegistrationPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			smod.studentRm.set("primaryentityid", all.getKey());
+			smod.studentRm.set("primaryentityid", smod.studentRm.get("entityid"));
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bEmancipateActionPerformed
@@ -2674,7 +2662,7 @@ void newPayerAction(final String colName)
 	{//GEN-HEADEREND:event_bUndoActionPerformed
 		fapp.guiRun().run(RegistrationPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			all.doSelect(str);
+			allRec.doSelect(str);
 //str.execUpdate(new UpdTasklet2() {
 //public void run(SqlRun str) throws Exception {
 //	tuitionOverride.setValue(null);
@@ -2686,54 +2674,29 @@ void newPayerAction(final String colName)
 	
 private void doUpdateSelect(SqlRun str) throws Exception
 {
-	// TODO: We should really append all into one batch for maximum parallelism
-	// (meaning: one chained bach of two steps.  Won't make much difference.)
-//	SqlBatchSet str0 = new SqlBatchSet();
-	
-	// This update requires more than one round.  Ensure that all
-	// updates are complete before querying select.  We could solve
-	// this problem by putting the tuition update code in a stored procedure.
-	fapp.sqlRun().push();
-	all.doUpdate(fapp.sqlRun());
-	fapp.sqlRun().pop();
-	
-	str.execUpdate(new UpdTasklet2() {
-	public void run(SqlRun str) throws Exception {
-//	str0.runBatches(fapp.getPool());
-		all.doSelect(str);
-	}});
-	
-//	// But we can't just do it the strightforward way, or else updates won't
-// redisplya properly...
-//	all.doUpdate(str);
-//	all.doSelect(str);
+	allRec.doUpdate(fapp.sqlRun());
+	fapp.sqlRun().flush();
+	allRec.doSelect(str);
 }
 	
 	private void bSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSaveActionPerformed
 	{//GEN-HEADEREND:event_bSaveActionPerformed
 		fapp.guiRun().run(RegistrationPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			doUpdateSelect(str);
+			allRec.forceUpdate(fapp.sqlRun());
+			fapp.sqlRun().flush();
+			allRec.doSelect(str);
 		}});
 	}//GEN-LAST:event_bSaveActionPerformed
 
-	private void bCcActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCcActionPerformed
-	{//GEN-HEADEREND:event_bCcActionPerformed
-//		accountHelper.accountAction(
-//			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "ccpayment");
-	}//GEN-LAST:event_bCcActionPerformed
-
-	private void bCheckActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCheckActionPerformed
-	{//GEN-HEADEREND:event_bCheckActionPerformed
-//		accountHelper.accountAction(
-//			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "checkpayment");
-	}//GEN-LAST:event_bCheckActionPerformed
-
-	private void bCashActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bCashActionPerformed
-	{//GEN-HEADEREND:event_bCashActionPerformed
-//		accountHelper.accountAction(
-//			ActransSchema.AC_SCHOOL,(Integer) entityid.getValue(), "cashpayment");
-	}//GEN-LAST:event_bCashActionPerformed
+	private void bRecalcTuitionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRecalcTuitionActionPerformed
+	{//GEN-HEADEREND:event_bRecalcTuitionActionPerformed
+		fapp.guiRun().run(RegistrationPanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
+			calcTuition(str);
+		}});
+		// TODO add your handling code here:
+}//GEN-LAST:event_bRecalcTuitionActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2794,6 +2757,7 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JButton bNewPayer;
     private javax.swing.JButton bNewStudent;
     private javax.swing.JButton bOtherTrans;
+    private javax.swing.JButton bRecalcTuition;
     private javax.swing.JButton bRemoveEnrollment;
     private javax.swing.JButton bSave;
     private javax.swing.JButton bUndo;
@@ -2978,3 +2942,130 @@ private void doUpdateSelect(SqlRun str) throws Exception
 //}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////MultiDbModel all = new AllDbModel();
+//class AllDbModel extends MultiDbModel
+//{
+//	public void doSelect(SqlRun str)
+//	{
+//		smod.studentDm.doSelect(str);
+//		smod.termregsDm.doSelect(str);
+//
+//		str.execUpdate(new UpdTasklet2() {
+//		public void run(SqlRun str) throws Exception {
+//			Integer payerid = (Integer)smod.termregsRm.get("payerid");
+//			
+//			// Keys depend on results of previous queries
+//			smod.parent1Dm.setKey((Integer)smod.studentRm.get("primaryentityid"));
+//			smod.parent2Dm.setKey((Integer)smod.studentRm.get("parent2id"));
+//			smod.payerDm.setKey(payerid); //(Integer)smod.termregsRm.get("payerid"));//smod.studentDm.getAdultID());
+//			smod.payertermregsDm.setKey("entityid", payerid); //smod.termregsRm.get("payerid"));
+//
+//			smod.payertermregsDm.doSelect(str);
+//			smod.parent1Dm.doSelect(str);
+//			smod.parent2Dm.doSelect(str);
+////			Integer pid = (Integer)smod.studentRm.get("primaryentityid");
+//			familyTable.setPrimaryEntityID(str, payerid);
+//			smod.payerDm.doSelect(str);
+//			enrolledDb.doSelect(str);
+//		}});
+//	}
+//	public void setKey(Object entityid)
+//	{
+//		smod.studentDm.setKey(entityid); //new Integer[] {entityid});
+//		smod.termregsDm.setKey("entityid", entityid);
+//		
+//		// Set "key" for enrollments
+//		int termid = smod.getTermID();
+//		enrolledDb.setKey(entityid);
+////		enrolledDb.setWhereClause("enrollments.courseid = courseids.courseid" +
+////			" and courseids.termid = " + SqlInteger.sql(termid) +
+////			" and enrollments.entityid = " + SqlInteger.sql(entityid));
+//	}
+//	void superDoUpdate(SqlRun str)
+//		{ super.doUpdate(str); }
+//	public void doUpdate(SqlRun str)
+//	{
+//		if (smod.studentRm.get("primaryentityid") == null || smod.termregsRm.get("payerid") == null) {
+//			JOptionPane.showMessageDialog(RegistrationPanel.this,
+//				"Cannot save record.  You must have a payer\nand parent in order to save.");
+//			return;
+//		}
+//
+//		// Make sure payer has record in school system
+//		Integer payerid = (Integer)smod.termregsRm.get("payerid");
+//		if (payerid != null) str.execSql(SchoolDB.registerPayerSql(smod.getTermID(), payerid));
+//
+//		// Transfer main parent over as primary entity id (family relationships)
+//		final IntVal primaryentityid = offstage.db.DB.getPrimaryEntityID(str, (Integer)smod.studentRm.get("primaryentityid"));
+//		str.execUpdate(new UpdTasklet2() {
+//		public void run(SqlRun str) throws Exception {
+//			smod.studentRm.set("primaryentityid", primaryentityid.val);//str.get("primaryentityid"));
+//
+//			// Do the rest
+//			superDoUpdate(str);
+//
+//			// Calculate the tuition
+//			int col = smod.studentRm.findColumn("primaryentityid");
+//			Integer Oldparent1id = (Integer)smod.studentRm.getOrigValue(col);
+//			Integer Parent1id = (Integer)smod.studentRm.get(col);
+//
+//			transRegister.getDbModel().doUpdate(str);
+//			
+//			int termid = smod.getTermID(); //(Integer)vTermID.getValue();
+//			String payerIdSql = null;
+//			if (Oldparent1id != null && Parent1id != null) {
+//				if (Oldparent1id.intValue() == Parent1id.intValue()) {
+//					// Didn't change, they're both the same
+//					payerIdSql = "select " + Oldparent1id;
+//				} else {
+//					// Changed from one payer to another
+//					payerIdSql = "select " + Oldparent1id + " union select " + Parent1id;
+//				}
+//			} else if (Parent1id != null) {
+//				// Changed from no payer to a payer
+//				payerIdSql = "select " + Parent1id;
+//			} else if (Oldparent1id != null) {
+//				// Changed from a payer to no payer.
+//				payerIdSql = "select " + Oldparent1id;
+//			}
+//			if (payerIdSql != null) {
+//				TuitionCalc tc = new TuitionCalc(fapp, termid);
+//					tc.setPayerIDs(payerIdSql);
+//					tc.recalcTuition(str);
+//			}
+////			if (Oldparent1id != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Oldparent1id, null);
+////			if (Parent1id != null && !Parent1id.equals(Oldparent1id)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Parent1id, null);
+//		}});
+//	}
+//}

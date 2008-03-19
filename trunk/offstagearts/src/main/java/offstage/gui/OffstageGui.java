@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package offstage.gui;
-import citibob.gui.FrameSet;
 import java.sql.*;
 import javax.swing.*;
 import java.util.prefs.*;
@@ -30,7 +29,6 @@ import citibob.swing.prefs.*;
 import offstage.FrontApp;
 //import offstage.EQueryBrowserApp;
 import citibob.sql.*;
-import offstage.cleanse.CleansePanel;
 
 /**
  *
@@ -38,7 +36,7 @@ import offstage.cleanse.CleansePanel;
  */
 public class OffstageGui extends javax.swing.JFrame {
 
-FrameSet frameSet;
+//FrameSet frameSet;
 FrontApp fapp;
 
 	/** Creates new form FrontGui */

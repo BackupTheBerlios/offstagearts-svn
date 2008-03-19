@@ -6,7 +6,7 @@ import java.util.Collections;
 public abstract class HourlyRatePlan implements RatePlan
 {
 
-double siblingDiscount;		// % off for second siblings
+protected double siblingDiscount;		// % off for second siblings
 
 /** Sets the tuition field(s) in the student records inside payer.students.
  Also calls addTrans() as needed...  Should add the registration fee too, if needed. */
@@ -19,6 +19,7 @@ public void setTuition(TuitionCon con, Payer payer)
 	for (Student ss : payer.students) setTuition(con, ss);
 
 	// Work on sibling discount
+	if (siblingDiscount == 0.0D) return;	// No discount
 	if (payer.isorg) return;	// No sibling discounts for organizational payers
 	Collections.sort(payer.students);
 	int n = 0;

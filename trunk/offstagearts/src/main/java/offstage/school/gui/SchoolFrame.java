@@ -82,14 +82,9 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 	public void run(SqlRun str) throws Exception {
 		vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
-			// Property change was (almost probably) due to a mouse click;
-			// So we need the runApp() here.
-//			fapp.runApp(new SqlTask() {
-//			public void run(SqlRun str) throws Exception {
-//System.out.println("a value = " + vTermID.getValue());
-				schoolModel.setTermID((Integer)(vTermID.getValue()));
-//System.out.println("b value = " + vTermID.getValue());
-//			}});
+			fapp.sqlRun().pushFlush();
+			schoolModel.setTermID((Integer)(vTermID.getValue()));
+			fapp.sqlRun().popFlush();		// Flush, conditional on no other items around us.
 		}});
 		vTermID.setKeyedModel(tkmodel);
 //		if (tkmodel.size() > 0) vTermID.setSelectedIndex(0);
