@@ -193,7 +193,7 @@ void processBatch(SqlRun str)
 				details.add(map);
 			}
 			Reports rr = fapp.reports();
-			rr.viewJasper(rr.toJasper(details), params, null, "CCPayments.jrxml");
+			rr.viewJasper(rr.toJasper(details), params, null, "CCPayments.jrxml", 0);
 //			JRMapCollectionDataSource jrdata = new JRMapCollectionDataSource(details);
 //			offstage.reports.ReportOutput.viewJasperReport(fapp, "CCPayments.jrxml", jrdata, params);
 		}});

@@ -27,8 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.reports;
 
 import citibob.app.*;
+import citibob.resource.ResResult;
+import citibob.resource.Resource;
 import java.io.*;
-import java.awt.Component;
+import java.io.File;
 import javax.swing.*;
 
 /**
@@ -44,25 +46,46 @@ public OffstageReports(App app)
 	oofficeExe = app.props().getProperty("ooffice.exe");
 }
 
-public InputStream openTemplateFile(File dir, String name) throws IOException
+public byte[] readTemplateFile(File dir, String name, int uversionid)
+throws IOException
 {
-	if (dir != null) return super.openTemplateFile(dir, name);
+	byte[] ret;
+	
+	if (dir != null) return super.readTemplateFile(dir, name, uversionid);
 
-	// First: try loading external file
-//	File dir = new File(System.getProperty("user.dir"), "config");
-	File f = new File(app.configDir().getPath() + File.separatorChar + "reports" + File.separatorChar + name);
-	if (f.exists()) {
-System.out.println("Loading template from filesystem: " + f);
-		return new FileInputStream(f);
-	}
-
-	// File doesn't exist; read from inside JAR file instead.
-//	Class klass = offstage.config.OffstageVersion.class;
-//	String resourceName = klass.getPackage().getName().replace('.', '/') + "/" + name;
-//	return klass.getClassLoader().getResourceAsStream(resourceName);
-	String resourceName = "offstage/config/reports/" + name;
-System.out.println("Loading template as resource: " + resourceName);
-	return OffstageReports.class.getClassLoader().getResourceAsStream(resourceName);
+System.out.println("OffstageReports.readTemplateFile(" + name + ", " + uversionid + ")");
+	Resource res = app.resSet().get(name);
+	int reqVersion = res.getRequiredVersion(app.sysVersion());
+	
+	// Try loading versioned resource from database
+	ResResult rres = res.load(app.sqlRun(), uversionid, reqVersion);
+	app.sqlRun().flush();
+	if (rres.bytes != null) return rres.bytes;
+	
+	// Try loading uversionid=0 from database
+	rres = res.load(app.sqlRun(), 0, reqVersion);
+	app.sqlRun().flush();
+	if (rres.bytes != null) return rres.bytes;
+	
+	// Try loading from jar file (should not fail)
+	rres = res.loadJar(reqVersion);
+	return rres.bytes;
+	
+//	// First: try loading external file
+////	File dir = new File(System.getProperty("user.dir"), "config");
+//	File f = new File(app.configDir().getPath() + File.separatorChar + "reports" + File.separatorChar + name);
+//	if (f.exists()) {
+//System.out.println("Loading template from filesystem: " + f);
+//		return new FileInputStream(f);
+//	}
+//
+//	// File doesn't exist; read from inside JAR file instead.
+////	Class klass = offstage.config.OffstageVersion.class;
+////	String resourceName = klass.getPackage().getName().replace('.', '/') + "/" + name;
+////	return klass.getClassLoader().getResourceAsStream(resourceName);
+//	String resourceName = "offstage/config/reports/" + name;
+//System.out.println("Loading template as resource: " + resourceName);
+//	return OffstageReports.class.getClassLoader().getResourceAsStream(resourceName);
 }
 
 // =============================================================

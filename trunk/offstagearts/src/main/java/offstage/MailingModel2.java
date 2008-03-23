@@ -126,7 +126,7 @@ public void makeReport(SqlRun str) throws SQLException, JRException
 	str.execSql(sql, new RsTasklet2() {
 	public void run(SqlRun str, ResultSet rs) throws Exception {
 		Reports rr = app.reports();
-		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
+		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml", 0);
 	}});
 }
 

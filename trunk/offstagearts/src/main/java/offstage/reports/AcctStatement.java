@@ -279,7 +279,7 @@ int termid, String payerIdSql, final java.util.Date today)
 	}});
 }
 public static void doAccountStatementsAndLabels(SqlRun str, final FrontApp fapp,
-	int termid, int payerid, java.util.Date dt)
+final int termid, int payerid, java.util.Date dt)
 throws Exception
 {
 	if (dt == null) dt = new java.util.Date();
@@ -303,7 +303,7 @@ throws Exception
 	public void run(SqlRun str) throws Exception {
 		//List models = (List)str.get("models");
 		Reports reports = fapp.reports(); //new OffstageReports(fapp);
-		File f = reports.writeJodPdfs(rep.models, null, "AcctStatement.odt", null);
+		File f = reports.writeJodPdfs(rep.models, null, "AcctStatement.odt", termid, null);
 		reports.viewPdf(f);
 	}});
 	if (payerid < 0) {
@@ -326,10 +326,10 @@ throws Exception
 //	try {
 //		HashMap data;
 //		data = makeJodModel(fapp, st, 8, 12633, cal.getTime());
-//		jout.writeReport(ReportOutput.openTemplateFile(fapp, "AcctStatement.odt"), data);
+//		jout.writeReport(ReportOutput.openTemplateStream(fapp, "AcctStatement.odt"), data);
 //		cal.add(Calendar.MONTH, 1);
 //		data = makeJodModel(fapp, st, 8, 12633, cal.getTime());
-//		jout.writeReport(ReportOutput.openTemplateFile(fapp, "AcctStatement.odt"), data);
+//		jout.writeReport(ReportOutput.openTemplateStream(fapp, "AcctStatement.odt"), data);
 //	} finally {
 //		jout.close();
 //	}

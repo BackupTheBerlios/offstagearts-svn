@@ -25,6 +25,29 @@ public class OffstageResSet
 extends ResSet
 {
 
+protected void addAllResources()
+{
+	// Add the resources!!!
+	
+	// ODT (OpenOffice) Templates
+	add(new Res_AcctStatement(this));
+	add(new Res_StudentConfirmationLetter(this));
+	add(new Res_StudentSchedule(this));
+
+	// XLS (Spreadsheet) Templates
+	add(new Res_StudentAccounts(this));
+	
+	// JRXML (iReport) Templates
+	add(new Res_AddressLabels(this));
+	add(new Res_CCPayments(this));
+	add(new Res_RollBook(this));
+
+	// Other stuff
+//	add(new Res_Database(this));
+	add(new Res_SiteCode(this));
+	
+}
+// ===================================================
 static class UVersion {
 	public int uversionid;
 	public String name;
@@ -50,11 +73,7 @@ throws SQLException
 		if (dbbExists()) refreshTerms(str);
 	}});
 
-	// Add the resources!!!
-	add(new Res_YDPConfirmationLetter(this));
-	add(new Res_SiteCode(this));
-//	add(new Res_Database(this));
-	
+	addAllResources();
 }
 
 private void refreshTerms(SqlRun str)
@@ -78,8 +97,8 @@ public SortedSet<RtResKey> newRelevant()
 
 	// Process term-only resources
 	for (Resource res : resources.values()) {
-		String uvType = res.getUversionType();
-		if (uvType == null || !uvType.equals("termids")) continue;
+		String uvType = res.getResourceGroup();
+		if (uvType == null || !uvType.equals("school_termids")) continue;
 		for (UVersion uv : terms) {
 			ret.add(new RtResKey(res, uv.uversionid, uv.name));
 		}

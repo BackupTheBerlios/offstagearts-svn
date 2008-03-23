@@ -40,7 +40,7 @@ import offstage.reports.AcctStatement;
 import offstage.reports.LabelReport;
 import offstage.reports.RollBook;
 import offstage.reports.SchoolAccounts;
-import offstage.reports.YDPConfirmationLetter;
+import offstage.reports.StudentConfirmationLetter;
 import offstage.*;
 import offstage.reports.StudentSchedule;
 import offstage.school.tuition.TuitionCalc;
@@ -172,7 +172,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
         tabs.addTab("Terms", termsAddPanel);
-        tabs.addTab("Schedule", schedulePanel);
+        tabs.addTab("Calendar", schedulePanel);
         tabs.addTab("Courses", coursesPanel);
         tabs.addTab("Registration", regPanel);
         tabs.addTab("Enrollments", courseListPanel);
@@ -365,7 +365,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 			if (eid == null)
 				JOptionPane.showMessageDialog(SchoolFrame.this,
 					"You must have a student selected for this report!", "", JOptionPane.OK_OPTION);
-			else YDPConfirmationLetter.viewReport(str, fapp, termid, eid);
+			else StudentConfirmationLetter.viewReport(str, fapp, termid, eid);
 		}});
 
 // TODO add your handling code here:
@@ -412,7 +412,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 			str.execUpdate(new UpdTasklet2() {
 			public void run(SqlRun str) throws Exception {
 				Reports reports = fapp.reports(); //new OffstageReports(fapp);
-				reports.viewXls(rep.model, null, "StudentAccounts.xls");
+				reports.viewXls(rep.model, null, "StudentAccounts.xls", schoolModel.getTermID());
 			}});
 		}});
 // TODO add your handling code here:
@@ -449,7 +449,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 					public void run(SqlRun str, ResultSet rs) throws Exception
 					{
 						Reports rr = fapp.reports();
-						rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
+						rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml", schoolModel.getTermID());
 					}});
 //			st.executeUpdate(LabelReport.cleanupSql());
 			}});
@@ -461,7 +461,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 		fapp.guiRun().run(SchoolFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			int termid = schoolModel.getTermID();
-			YDPConfirmationLetter.viewReport(str, fapp, termid, -1);
+			StudentConfirmationLetter.viewReport(str, fapp, termid, -1);
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_miConfirmationLettersActionPerformed
@@ -502,7 +502,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 						JTypeTableModel model = report.newTableModel();
 						JRDataSource jrdata = new JRTableModelDataSource(model);
 						fapp.reports().viewJasper(
-							fapp.reports().toJasper(model), null, "RollBook.jrxml");
+							fapp.reports().toJasper(model), null, "RollBook.jrxml", schoolModel.getTermID());
 //				offstage.reports.ReportOutput.viewJasperReport(fapp, "RollBook.jrxml", jrdata, null);// TODO add your handling code here:
 					}});
 			}});// TODO add your handling code here:

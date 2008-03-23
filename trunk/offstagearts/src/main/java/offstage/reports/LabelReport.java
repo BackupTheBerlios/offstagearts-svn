@@ -165,7 +165,7 @@ public static void viewReport(SqlRun str, final App app, String idSql, String or
 	str.execSql(sql, new RsTasklet2() {
 	public void run(SqlRun str, ResultSet rs) throws Exception {
 		Reports rr = app.reports();
-		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
+		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml", 0);
 	}});
 }
 

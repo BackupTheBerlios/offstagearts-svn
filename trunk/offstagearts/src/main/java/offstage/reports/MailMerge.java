@@ -56,7 +56,7 @@ throws Exception
 		rr.viewJodPdfs(rr.toJodList(rs,
 //			new String[][] {{"entityid"}}),
 			new String[][] {{"line1", "line2", "line3", "city", "state", "zip", "firstname"}}),
-			templateFile.getParentFile(), templateFile.getName());
+			templateFile.getParentFile(), templateFile.getName(), 0);
 	}});
 }
 

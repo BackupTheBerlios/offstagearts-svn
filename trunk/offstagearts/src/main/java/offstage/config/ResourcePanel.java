@@ -57,8 +57,8 @@ boolean inUpdate;
 	{
 		this.app = xapp;
 		ResSet rset = app.resSet();
-		rdata = new ResData(str, rset, app.sqlTypeSet());
-		rmods = new ResModels(rdata, app, app.sysVersion());
+		rdata = app.resData(); //new ResData(str, rset, app.sqlTypeSet());
+		rmods = new ResModels(rdata, app, app.sysVersion(), null);
 
 		// Set up tables
 		tResources.setModelU(rmods.resMod,

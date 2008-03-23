@@ -68,7 +68,7 @@ public static String getSql(int termid, int studentid)
 }
 
 
-public static void viewStudentSchedules(final App app, SqlRun str, int termid, int entityid)
+public static void viewStudentSchedules(final App app, SqlRun str, final int termid, int entityid)
 throws Exception
 {
 	String sql = offstage.reports.StudentSchedule.getSql(termid, entityid);
@@ -84,7 +84,7 @@ throws Exception
 				new DateSFormat("yyyy", "", app.timeZone()),
 				new DateSFormat("yyyy", "", app.timeZone())
 		});
-		reports.viewJodPdfs(models, null, "StudentSchedule.odt");
+		reports.viewJodPdfs(models, null, "StudentSchedule.odt", termid);
 	}});
 }
 
@@ -119,7 +119,7 @@ throws Exception
 //			for (int i=0; i<gcols.length; ++i) {
 //				data.put("g0_" + gcols[i], smod.getValueAt(0, smod.findColumn(gcols[i])));
 //			}
-//			jout.writeReport(ReportOutput.openTemplateFile(fapp, "StudentSchedule.odt"), data);
+//			jout.writeReport(ReportOutput.openTemplateStream(fapp, "StudentSchedule.odt"), data);
 //		}
 //	} finally {
 //		jout.close();

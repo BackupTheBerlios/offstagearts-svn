@@ -41,6 +41,7 @@ import citibob.resource.ResResult;
 import citibob.resource.UpgradePlan;
 import citibob.resource.UpgradePlanSet;
 import citibob.swingers.JavaSwingerMap;
+import citibob.version.SvnVersion;
 import citibob.version.Version;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -137,8 +138,11 @@ throws Exception
 //java.security.GeneralSecurityException
 {
 	// Make sure we have the right version
-	version = new Version("1.0.1");
-	sysVersion = 17;			// Internal version number
+	version = new Version("1.1.0");
+	String resourceName = "offstage/version.txt";
+	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
+	sysVersion = svers.maxVersion;
+//	sysVersion = 17;			// Internal version number
 
 	// Set up Swing GUI preferences, so we can display stuff
 	initPrefs();
@@ -200,7 +204,7 @@ throws Exception
 		this.mailSender = new citibob.mail.ConstMailSender(props);
 		this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
 		this.swingerMap = new offstage.types.OffstageSwingerMap(timeZone());
-
+		this.sFormatMap = swingerMap;
 		
 		// ================
 	} catch(Exception e) {
@@ -229,11 +233,11 @@ public boolean checkResources()  throws Exception
 		dbChange = new DbChangeModel();
 		final SqlRun str = app.sqlRun();
 		createResSet(str);
-		ResData rdata = new ResData(str, resSet, sqlTypeSet());
+		resData = new ResData(str, resSet, sqlTypeSet());
 		str.flush();	
 
 		// See if resources need upgrading
-		final UpgradePlanSet upset = new UpgradePlanSet(rdata, app.sysVersion());
+		final UpgradePlanSet upset = new UpgradePlanSet(resData, app.sysVersion());
 		if (upset.reqCannotCreate.size() != 0 || upset.reqNotUpgradeable.size() != 0) {
 			upset.print(System.out);
 			throw new IOException("Cannot upgrade resources!");

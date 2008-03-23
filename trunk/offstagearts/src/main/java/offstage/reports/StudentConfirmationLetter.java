@@ -41,10 +41,11 @@ import citibob.reports.*;
  *
  * @author citibob
  */
-public class YDPConfirmationLetter
+public class StudentConfirmationLetter
 {
 
-public static void viewReport(SqlRun str, final citibob.app.App app, int termid, int entityid)
+public static void viewReport(SqlRun str, final citibob.app.App app,
+final int termid, int entityid)
 throws Exception
 {
 	
@@ -70,7 +71,7 @@ throws Exception
 		Reports rr = app.reports();
 		rr.viewJodPdfs(rr.toJodList(rs,
 			new String[][] {{"line1", "line2", "line3", "city", "state", "zip", "firstname"}}),
-			null, "YDPConfirmationLetter.odt");
+			null, "StudentConfirmationLetter.odt", termid);
 	}});
 }
 
