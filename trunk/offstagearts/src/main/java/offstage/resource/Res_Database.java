@@ -22,8 +22,8 @@ public Res_Database(ResSet rset)
 	super(rset, "general", "database.sql");
 
 	add(new DbbCreator(this, 1));
-	add(new DbbUpgrader(this, 1, 2, true));
-	add(new DbbUpgrader(this, 2, 3, true));
+//	add(new DbbUpgrader(this, 1, 2, true));
+//	add(new DbbUpgrader(this, 2, 3, true));
 }
 	
 }

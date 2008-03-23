@@ -43,7 +43,7 @@ protected void addAllResources()
 	add(new Res_RollBook(this));
 
 	// Other stuff
-//	add(new Res_Database(this));
+	add(new Res_Database(this));
 	add(new Res_SiteCode(this));
 	
 }

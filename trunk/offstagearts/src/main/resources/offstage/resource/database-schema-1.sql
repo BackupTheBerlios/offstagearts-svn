@@ -33,7 +33,7 @@ CREATE TYPE r_entities_idlist_name_ret AS (
 
 
 --
--- Name: drop_table(character varying); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: drop_table(character varying); Type: FUNCTION; Schema: public; Owner: ballettheatre
 --
 
 CREATE FUNCTION drop_table(character varying) RETURNS character varying
@@ -116,30 +116,12 @@ END
 
 
 --
--- Name: money2numeric(money); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: money2numeric(money); Type: FUNCTION; Schema: public; Owner: ballettheatre
 --
 
 CREATE FUNCTION money2numeric(money) RETURNS numeric
     AS ' SELECT (((get_byte(cash_send($1), 0) & 255) << 24) |((get_byte(cash_send($1), 1) & 255) << 16) |((get_byte(cash_send($1), 2) & 255) << 8) |((get_byte(cash_send($1), 3) & 255)))::numeric * 0.01; '
     LANGUAGE sql IMMUTABLE STRICT;
-
-
---
--- Name: plpgsql_call_handler(); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler
-    AS '$libdir/plpgsql', 'plpgsql_call_handler'
-    LANGUAGE c;
-
-
---
--- Name: plpgsql_validator(oid); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION plpgsql_validator(oid) RETURNS void
-    AS '$libdir/plpgsql', 'plpgsql_validator'
-    LANGUAGE c;
 
 
 --
@@ -529,17 +511,18 @@ end
 
 
 --
--- Name: w_payer_create(integer); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: w_payer_register(integer, integer); Type: FUNCTION; Schema: public; Owner: ballettheatre
 --
 
-CREATE FUNCTION w_payer_create(payerid integer) RETURNS void
+CREATE FUNCTION w_payer_register(xtermid integer, xpayerid integer) RETURNS void
     AS '
 BEGIN
-    insert into entities_school (entityid, adultid) values
-	(payerid, payerid);
+    BEGIN
+    insert into payertermregs (termid, entityid) values (xtermid, xpayerid);
     EXCEPTION WHEN unique_violation THEN
             -- do nothing
     END;
+END;
 '
     LANGUAGE plpgsql;
 
@@ -713,14 +696,14 @@ BEGIN
 
 
 --
--- Name: w_resourceid_create(character varying); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: w_resourceid_create(character varying); Type: FUNCTION; Schema: public; Owner: ballettheatre
 --
 
 CREATE FUNCTION w_resourceid_create(xname character varying) RETURNS integer
     AS '
 DECLARE id integer := 0;
 BEGIN
-	-- First try, if it''s already there!
+	-- First try, if its already there!
 	select into id resourceid from resourceids where name = xname;
 	if id is not null then
 		return id;
@@ -731,7 +714,7 @@ BEGIN
 	EXCEPTION WHEN unique_violation THEN
 		-- do nothing
 	END;
-	id := 3;
+	-- id := 3;
 	select into id resourceid from resourceids where name = xname;
 	return id;
 END;
@@ -740,48 +723,22 @@ END;
 
 
 --
--- Name: w_student_create(integer); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: w_student_register(integer, integer, date); Type: FUNCTION; Schema: public; Owner: ballettheatre
 --
 
-CREATE FUNCTION w_student_create(studentid integer) RETURNS void
+CREATE FUNCTION w_student_register(xtermid integer, studentid integer, xdtregistered date) RETURNS void
     AS '
 BEGIN
-    INSERT INTO entities_school(entityid, adultid) VALUES
-	(studentid,
-	(select primaryentityid from entities where entityid = studentid));
+    BEGIN
+    insert into termregs (groupid, entityid, payerid, dtregistered) values
+	(xtermid, studentid, studentid, xdtregistered);
     EXCEPTION WHEN unique_violation THEN
             -- do nothing
     END;
+END;
 '
     LANGUAGE plpgsql;
 
-
---
--- Name: w_student_register(integer, integer, date); Type: FUNCTION; Schema: public; Owner: postgres
---
-
-CREATE FUNCTION w_student_register(termid integer, studentid integer, xdtregistered date) RETURNS void
-    AS '
-BEGIN
-    insert into termregs (groupid, entityid, dtregistered) values
-	(termid, studentid, xdtregistered);
-    EXCEPTION WHEN unique_violation THEN
-            -- do nothing
-    END;
-'
-    LANGUAGE plpgsql;
-
-
-SET search_path = pg_catalog;
-
---
--- Name: CAST (money AS numeric); Type: CAST; Schema: pg_catalog; Owner: 
---
-
-CREATE CAST (money AS numeric) WITH FUNCTION public.money2numeric(money) AS IMPLICIT;
-
-
-SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
 
@@ -914,11 +871,22 @@ COMMENT ON COLUMN accounts."password" IS 'Not encrypted --- we might have to ema
 
 
 --
+-- Name: actrans_actransid_seq1; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE actrans_actransid_seq1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: actrans; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE actrans (
-    actransid serial NOT NULL,
+    actransid integer DEFAULT nextval('actrans_actransid_seq1'::regclass) NOT NULL,
     actranstypeid integer NOT NULL,
     entityid integer NOT NULL,
     actypeid integer NOT NULL,
@@ -928,14 +896,14 @@ CREATE TABLE actrans (
     description character varying(300),
     studentid integer,
     termid integer,
+    py_name character varying(50),
+    py_phone character varying(30),
     cc_type character(1),
     cc_info character varying(255),
-    py_name character varying(50),
     cc_last4 character varying(4),
     cc_expdate character varying(4),
     cc_batchid integer,
-    ck_number character varying(15),
-    py_phone character varying(30)
+    ck_number character varying(15)
 );
 
 
@@ -961,6 +929,13 @@ COMMENT ON COLUMN actrans.py_name IS 'Name on check or credit card --- or name c
 
 
 --
+-- Name: COLUMN actrans.py_phone; Type: COMMENT; Schema: public; Owner: ballettheatre
+--
+
+COMMENT ON COLUMN actrans.py_phone IS 'Contact phone # on check or credit card.';
+
+
+--
 -- Name: COLUMN actrans.cc_batchid; Type: COMMENT; Schema: public; Owner: ballettheatre
 --
 
@@ -968,10 +943,14 @@ COMMENT ON COLUMN actrans.cc_batchid IS 'Batch the credit card payment was proce
 
 
 --
--- Name: COLUMN actrans.py_phone; Type: COMMENT; Schema: public; Owner: ballettheatre
+-- Name: actrans_actransid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
 --
 
-COMMENT ON COLUMN actrans.py_phone IS 'Contact phone # on check or credit card.';
+CREATE SEQUENCE actrans_actransid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
 
 
 --
@@ -984,7 +963,7 @@ CREATE TABLE actrans_old (
     date date NOT NULL,
     amount numeric(9,2),
     description character varying(300),
-    actransid serial NOT NULL,
+    actransid integer DEFAULT nextval('actrans_actransid_seq'::regclass) NOT NULL,
     datecreated date
 );
 
@@ -997,14 +976,36 @@ COMMENT ON COLUMN actrans_old.amount IS 'like a credit card; >0 means customer o
 
 
 --
+-- Name: actranstypes_actranstypeid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE actranstypes_actranstypeid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: actranstypes; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE actranstypes (
-    actranstypeid serial NOT NULL,
+    actranstypeid integer DEFAULT nextval('actranstypes_actranstypeid_seq'::regclass) NOT NULL,
     name character varying(30),
     description character varying(30)
 );
+
+
+--
+-- Name: actypes_actypeid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE actypes_actypeid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
 
 
 --
@@ -1012,7 +1013,7 @@ CREATE TABLE actranstypes (
 --
 
 CREATE TABLE actypes (
-    actypeid serial NOT NULL,
+    actypeid integer DEFAULT nextval('actypes_actypeid_seq'::regclass) NOT NULL,
     name character varying(20)
 );
 
@@ -1068,11 +1069,22 @@ INHERITS (actrans_old);
 
 
 --
+-- Name: ccbatches_ccbatchid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE ccbatches_ccbatchid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: ccbatches; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE ccbatches (
-    ccbatchid serial NOT NULL,
+    ccbatchid integer DEFAULT nextval('ccbatches_ccbatchid_seq'::regclass) NOT NULL,
     dtime timestamp without time zone DEFAULT now()
 );
 
@@ -1139,11 +1151,22 @@ INHERITS (groups);
 
 
 --
+-- Name: groupids_groupid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE groupids_groupid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: groupids; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE groupids (
-    groupid serial NOT NULL,
+    groupid integer DEFAULT nextval('groupids_groupid_seq'::regclass) NOT NULL,
     name character varying(100) NOT NULL
 );
 
@@ -1190,11 +1213,22 @@ COMMENT ON COLUMN coursedeps.reqcourseid IS 'The course one is REQUIRED to take'
 
 
 --
+-- Name: courseids_courseid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE courseids_courseid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: courseids; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE courseids (
-    courseid serial NOT NULL,
+    courseid integer DEFAULT nextval('courseids_courseid_seq'::regclass) NOT NULL,
     name character varying(50),
     termid integer,
     dayofweek integer,
@@ -1221,11 +1255,22 @@ COMMENT ON COLUMN courseids.enrolllimit IS 'Max # of students to be enrolled (gu
 
 
 --
+-- Name: courseroles_courseroleid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE courseroles_courseroleid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: courseroles; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE courseroles (
-    courseroleid serial NOT NULL,
+    courseroleid integer DEFAULT nextval('courseroles_courseroleid_seq'::regclass) NOT NULL,
     name character(30),
     orderid integer
 );
@@ -1239,11 +1284,23 @@ COMMENT ON TABLE courseroles IS 'Types of enrollment in a course (student, teach
 
 
 --
+-- Name: coursesetids_coursesetid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE coursesetids_coursesetid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: coursesetids; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE coursesetids (
-    coursesetid serial NOT NULL,
+    coursesetid integer DEFAULT nextval('coursesetids_coursesetid_seq'::regclass) NOT NULL,
     programid integer,
     name character varying(50)
 );
@@ -1351,11 +1408,22 @@ INHERITS (dtgroupids);
 
 
 --
+-- Name: donations_serialid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE donations_serialid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: donations; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE donations (
-    serialid serial NOT NULL,
+    serialid integer DEFAULT nextval('donations_serialid_seq'::regclass) NOT NULL,
     entityid integer NOT NULL,
     groupid integer NOT NULL,
     date date NOT NULL,
@@ -1376,11 +1444,22 @@ INHERITS (groups);
 
 
 --
+-- Name: duedateids_duedateid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE duedateids_duedateid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: duedateids; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE duedateids (
-    duedateid serial NOT NULL,
+    duedateid integer DEFAULT nextval('duedateids_duedateid_seq'::regclass) NOT NULL,
     name character varying(30) NOT NULL,
     description character varying(200)
 );
@@ -1401,13 +1480,6 @@ COMMENT ON COLUMN duedateids.name IS 'The type of thing that''s due at this time
 
 
 --
--- Name: COLUMN duedateids.description; Type: COMMENT; Schema: public; Owner: ballettheatre
---
-
-COMMENT ON COLUMN duedateids.description IS 'Long version of name --- will be placed in the Description field in the account.';
-
-
---
 -- Name: duedates; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
@@ -1416,46 +1488,6 @@ CREATE TABLE duedates (
     duedateid integer NOT NULL,
     duedate date
 );
-
-
---
--- Name: duedates_old; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
---
-
-CREATE TABLE duedates_old (
-    termid serial NOT NULL,
-    name character varying(30) NOT NULL,
-    duedate date,
-    description character varying(200)
-);
-
-
---
--- Name: TABLE duedates_old; Type: COMMENT; Schema: public; Owner: ballettheatre
---
-
-COMMENT ON TABLE duedates_old IS 'Dates various stuff in the term is due';
-
-
---
--- Name: COLUMN duedates_old.name; Type: COMMENT; Schema: public; Owner: ballettheatre
---
-
-COMMENT ON COLUMN duedates_old.name IS 'The type of thing that''s due at this time --- this can be flexible, based on the billing policy of the school.';
-
-
---
--- Name: COLUMN duedates_old.duedate; Type: COMMENT; Schema: public; Owner: ballettheatre
---
-
-COMMENT ON COLUMN duedates_old.duedate IS 'Date this thing is due';
-
-
---
--- Name: COLUMN duedates_old.description; Type: COMMENT; Schema: public; Owner: ballettheatre
---
-
-COMMENT ON COLUMN duedates_old.description IS 'Long version of name --- will be placed in the Description field in the account.';
 
 
 --
@@ -1525,6 +1557,17 @@ COMMENT ON COLUMN enrollments.dtapproved IS 'Date/Time principlal approved enrol
 COMMENT ON COLUMN enrollments.dtenrolled IS 'Date/Time student enrolled';
 
 
+--
+-- Name: entities_entityid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE entities_entityid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
 SET default_with_oids = false;
 
 --
@@ -1532,7 +1575,7 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE entities (
-    entityid serial NOT NULL,
+    entityid integer DEFAULT nextval('entities_entityid_seq'::regclass) NOT NULL,
     oldid integer,
     primaryentityid integer NOT NULL,
     address1 character varying(100),
@@ -1563,7 +1606,9 @@ CREATE TABLE entities (
     cc_last4 character varying(4),
     cc_info character varying(255),
     cc_expdate character varying(4),
-    flag boolean DEFAULT false NOT NULL
+    flag boolean DEFAULT false NOT NULL,
+    parent1id integer,
+    parent2id integer
 );
 
 
@@ -1632,11 +1677,22 @@ COMMENT ON COLUMN entities_school.parent2id IS 'Secondary parent --- not respons
 
 
 --
+-- Name: equeries_equeryid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE equeries_equeryid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: equeries; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE equeries (
-    equeryid serial NOT NULL,
+    equeryid integer DEFAULT nextval('equeries_equeryid_seq'::regclass) NOT NULL,
     equery text,
     lastmodified timestamp without time zone,
     lastaccessed timestamp without time zone,
@@ -1702,11 +1758,22 @@ COMMENT ON COLUMN gradelevels.ngrade IS 'Numeric representation of grade (K=0)';
 
 
 --
+-- Name: holidays_holidayid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE holidays_holidayid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: holidays; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE holidays (
-    holidayid serial NOT NULL,
+    holidayid integer DEFAULT nextval('holidays_holidayid_seq'::regclass) NOT NULL,
     termid integer DEFAULT -1 NOT NULL,
     firstday date NOT NULL,
     lastday date,
@@ -1725,17 +1792,40 @@ INHERITS (groupids);
 
 
 --
+-- Name: interests_id_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE interests_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: interests; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE interests (
     byperson boolean,
     referredby character varying(50),
-    id serial NOT NULL,
+    id integer DEFAULT nextval('interests_id_seq'::regclass) NOT NULL,
     count integer,
     minid integer
 )
 INHERITS (groups);
+
+
+--
+-- Name: invoiceids_invoiceid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE invoiceids_invoiceid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
 
 
 SET default_with_oids = true;
@@ -1745,7 +1835,7 @@ SET default_with_oids = true;
 --
 
 CREATE TABLE invoiceids (
-    invoiceid serial NOT NULL,
+    invoiceid integer DEFAULT nextval('invoiceids_invoiceid_seq'::regclass) NOT NULL,
     "type" character(1) NOT NULL,
     amount numeric(9,2),
     dtime timestamp without time zone DEFAULT now() NOT NULL,
@@ -1810,11 +1900,22 @@ INHERITS (actrans_old);
 
 
 --
+-- Name: locations_locationid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE locations_locationid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: locations; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE locations (
-    locationid serial NOT NULL,
+    locationid integer DEFAULT nextval('locations_locationid_seq'::regclass) NOT NULL,
     name character varying(40)
 );
 
@@ -1863,6 +1964,17 @@ CREATE TABLE mailings (
 INHERITS (groups);
 
 
+--
+-- Name: mailprefids_mailprefid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE mailprefids_mailprefid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
 SET default_with_oids = false;
 
 --
@@ -1870,9 +1982,20 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE mailprefids (
-    mailprefid serial NOT NULL,
+    mailprefid integer DEFAULT nextval('mailprefids_mailprefid_seq'::regclass) NOT NULL,
     name character varying(30)
 );
+
+
+--
+-- Name: meetings_meetingid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE meetings_meetingid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
 
 
 SET default_with_oids = true;
@@ -1882,7 +2005,7 @@ SET default_with_oids = true;
 --
 
 CREATE TABLE meetings (
-    meetingid serial NOT NULL,
+    meetingid integer DEFAULT nextval('meetings_meetingid_seq'::regclass) NOT NULL,
     courseid integer NOT NULL,
     dtstart timestamp without time zone NOT NULL,
     dtnext timestamp without time zone NOT NULL
@@ -1930,11 +2053,22 @@ INHERITS (dtgroups);
 
 
 --
+-- Name: offercodeids_offercodeid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE offercodeids_offercodeid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: offercodeids; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE offercodeids (
-    offercodeid serial NOT NULL,
+    offercodeid integer DEFAULT nextval('offercodeids_offercodeid_seq'::regclass) NOT NULL,
     name character varying(30)
 );
 
@@ -1947,6 +2081,24 @@ CREATE TABLE organizations (
     name character varying(100)
 )
 INHERITS (entities);
+
+
+--
+-- Name: payertermregs; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
+--
+
+CREATE TABLE payertermregs (
+    termid integer NOT NULL,
+    entityid integer NOT NULL,
+    rbplan character varying(30)
+);
+
+
+--
+-- Name: COLUMN payertermregs.rbplan; Type: COMMENT; Schema: public; Owner: ballettheatre
+--
+
+COMMENT ON COLUMN payertermregs.rbplan IS 'Tuition payment plan to use for this term.';
 
 
 SET default_with_oids = true;
@@ -1962,6 +2114,18 @@ CREATE TABLE paymentallocs (
 );
 
 
+--
+-- Name: paymentids_paymentid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE paymentids_paymentid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
 SET default_with_oids = false;
 
 --
@@ -1969,7 +2133,7 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE paymentids (
-    paymentid serial NOT NULL,
+    paymentid integer DEFAULT nextval('paymentids_paymentid_seq'::regclass) NOT NULL,
     entityid integer,
     amount numeric(9,2),
     dtime timestamp without time zone DEFAULT now() NOT NULL,
@@ -2026,6 +2190,17 @@ CREATE TABLE paymenttypeids (
 COMMENT ON COLUMN paymenttypeids."table" IS 'Table in DB that holdes this type of payment';
 
 
+--
+-- Name: perftypeids_perftypeid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE perftypeids_perftypeid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
 SET default_with_oids = false;
 
 --
@@ -2033,7 +2208,7 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE perftypeids (
-    perftypeid serial NOT NULL,
+    perftypeid integer DEFAULT nextval('perftypeids_perftypeid_seq'::regclass) NOT NULL,
     name character varying(30)
 );
 
@@ -2078,16 +2253,39 @@ COMMENT ON COLUMN phoneids.letter IS 'A character used to identify phone type in
 
 
 --
+-- Name: phones_id_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE phones_id_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: phones; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE phones (
     phone character varying(20),
-    id serial NOT NULL,
+    id integer DEFAULT nextval('phones_id_seq'::regclass) NOT NULL,
     count integer,
     minid integer
 )
 INHERITS (groups);
+
+
+--
+-- Name: pplanids_pplanid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE pplanids_pplanid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
 
 
 SET default_with_oids = true;
@@ -2097,7 +2295,7 @@ SET default_with_oids = true;
 --
 
 CREATE TABLE pplanids (
-    pplanid serial NOT NULL,
+    pplanid integer DEFAULT nextval('pplanids_pplanid_seq'::regclass) NOT NULL,
     entityid integer NOT NULL,
     paymenttypeid integer NOT NULL,
     cctype character(1),
@@ -2198,11 +2396,22 @@ CREATE TABLE pplantypeids (
 
 
 --
+-- Name: programids_programid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE programids_programid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: programids; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE programids (
-    programid serial NOT NULL,
+    programid integer DEFAULT nextval('programids_programid_seq'::regclass) NOT NULL,
     termid integer,
     name character varying(50),
     needselig boolean DEFAULT true NOT NULL,
@@ -2231,6 +2440,17 @@ COMMENT ON COLUMN programids.needselig IS 'Is an eligibility record required to 
 COMMENT ON COLUMN programids.minage IS 'Minimum age (in years) for eligibility for this open program';
 
 
+--
+-- Name: querylog_queryid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE querylog_queryid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
 SET default_with_oids = false;
 
 --
@@ -2238,7 +2458,7 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE querylog (
-    queryid serial NOT NULL,
+    queryid integer DEFAULT nextval('querylog_queryid_seq'::regclass) NOT NULL,
     "type" character(1),
     dtime timestamp without time zone,
     dbtable character varying(50),
@@ -2320,6 +2540,17 @@ COMMENT ON COLUMN registrations.regdtime IS 'Date/time of registration';
 COMMENT ON COLUMN registrations.expiredate IS 'Date this registration expires --- usually @ end of YDP term, or 1 yr. from open class registration.';
 
 
+--
+-- Name: relprimarytypes_relprimarytypeid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE relprimarytypes_relprimarytypeid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
 SET default_with_oids = false;
 
 --
@@ -2327,7 +2558,7 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE relprimarytypes (
-    relprimarytypeid serial NOT NULL,
+    relprimarytypeid integer DEFAULT nextval('relprimarytypes_relprimarytypeid_seq'::regclass) NOT NULL,
     name character varying(30)
 );
 
@@ -2350,8 +2581,8 @@ CREATE TABLE resources (
     resourceid integer NOT NULL,
     uversionid integer DEFAULT 0 NOT NULL,
     version integer NOT NULL,
-    val bytea,
-    lastmodified timestamp without time zone
+    lastmodified timestamp without time zone,
+    val bytea
 );
 
 
@@ -2444,8 +2675,7 @@ CREATE TABLE termids (
     iscurrent boolean DEFAULT true NOT NULL,
     paymentdue date,
     billdtime timestamp without time zone,
-    tuitionclass character varying(200),
-    calctuition boolean DEFAULT true NOT NULL
+    rbplansetclass character varying(200)
 )
 INHERITS (groupids);
 
@@ -2472,17 +2702,10 @@ COMMENT ON COLUMN termids.billdtime IS 'Date this term is billed as of in the re
 
 
 --
--- Name: COLUMN termids.tuitionclass; Type: COMMENT; Schema: public; Owner: ballettheatre
+-- Name: COLUMN termids.rbplansetclass; Type: COMMENT; Schema: public; Owner: ballettheatre
 --
 
-COMMENT ON COLUMN termids.tuitionclass IS 'Java class to instantiate to calculate tuition for this term.  Must have no-arg constructor and be a subclass of offstage.school.TuitionCalc.';
-
-
---
--- Name: COLUMN termids.calctuition; Type: COMMENT; Schema: public; Owner: ballettheatre
---
-
-COMMENT ON COLUMN termids.calctuition IS 'False if the system should NOT be touching the tuition records for this term.';
+COMMENT ON COLUMN termids.rbplansetclass IS 'Java class of the RBPlanSet subclass to use for rate plans this term.';
 
 
 --
@@ -2493,6 +2716,17 @@ CREATE VIEW termenrolls AS
     SELECT DISTINCT cc.termid AS groupid, ee.entityid, ee.courserole, tt.name, tt.firstdate FROM enrollments ee, courseids cc, termids tt WHERE ((ee.courseid = cc.courseid) AND (cc.termid = tt.groupid)) ORDER BY cc.termid, ee.entityid, ee.courserole, tt.name, tt.firstdate;
 
 
+--
+-- Name: termids_old_termid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE termids_old_termid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
 SET default_with_oids = true;
 
 --
@@ -2500,7 +2734,7 @@ SET default_with_oids = true;
 --
 
 CREATE TABLE termids_old (
-    termid serial NOT NULL,
+    termid integer DEFAULT nextval('termids_old_termid_seq'::regclass) NOT NULL,
     termtypeid integer NOT NULL,
     name character varying(40),
     firstdate date NOT NULL,
@@ -2547,7 +2781,8 @@ CREATE TABLE termregs (
     dtsigned date,
     programid integer,
     dtregistered date NOT NULL,
-    defaulttuition numeric(9,2)
+    defaulttuition numeric(9,2),
+    payerid integer NOT NULL
 )
 INHERITS (groups);
 
@@ -2557,6 +2792,13 @@ INHERITS (groups);
 --
 
 COMMENT ON COLUMN termregs.tuition IS 'Total tuition for the term for this student.';
+
+
+--
+-- Name: COLUMN termregs.payerid; Type: COMMENT; Schema: public; Owner: ballettheatre
+--
+
+COMMENT ON COLUMN termregs.payerid IS 'entityid of person promising to pay this term bill.';
 
 
 --
@@ -2580,6 +2822,17 @@ CREATE TABLE termregs_old (
 COMMENT ON COLUMN termregs_old.tuition IS 'Total tuition for the term for this student.';
 
 
+--
+-- Name: termtypes_termtypeid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE termtypes_termtypeid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
 SET default_with_oids = true;
 
 --
@@ -2587,7 +2840,7 @@ SET default_with_oids = true;
 --
 
 CREATE TABLE termtypes (
-    termtypeid serial NOT NULL,
+    termtypeid integer DEFAULT nextval('termtypes_termtypeid_seq'::regclass) NOT NULL,
     name character varying(40) NOT NULL,
     orderid integer
 );
@@ -2635,11 +2888,22 @@ INHERITS (groups);
 
 
 --
+-- Name: tickettypes_tickettypeid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE tickettypes_tickettypeid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: tickettypes; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE tickettypes (
-    tickettypeid serial NOT NULL,
+    tickettypeid integer DEFAULT nextval('tickettypes_tickettypeid_seq'::regclass) NOT NULL,
     name character varying(20)
 );
 
@@ -2663,21 +2927,23 @@ COMMENT ON COLUMN tuitiontrans_old.studentid IS 'Student for whom this is a tuit
 
 
 --
+-- Name: venueids_venueid_seq; Type: SEQUENCE; Schema: public; Owner: ballettheatre
+--
+
+CREATE SEQUENCE venueids_venueid_seq
+    INCREMENT BY 1
+    NO MAXVALUE
+    NO MINVALUE
+    CACHE 1;
+
+
+--
 -- Name: venueids; Type: TABLE; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 CREATE TABLE venueids (
-    venueid serial NOT NULL,
+    venueid integer DEFAULT nextval('venueids_venueid_seq'::regclass) NOT NULL,
     name character varying(30) NOT NULL
-);
-
-
---
--- Name: zztest; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE zztest (
-    ddd abstime
 );
 
 
@@ -2890,19 +3156,19 @@ ALTER TABLE ONLY dtgroups
 
 
 --
--- Name: duedateids_name_key; Type: CONSTRAINT; Schema: public; Owner: ballettheatre; Tablespace: 
---
-
-ALTER TABLE ONLY duedateids
-    ADD CONSTRAINT duedateids_name_key UNIQUE (name);
-
-
---
 -- Name: duedateids_pkey; Type: CONSTRAINT; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
 ALTER TABLE ONLY duedateids
     ADD CONSTRAINT duedateids_pkey PRIMARY KEY (duedateid);
+
+
+--
+-- Name: duedateids_uniq; Type: CONSTRAINT; Schema: public; Owner: ballettheatre; Tablespace: 
+--
+
+ALTER TABLE ONLY duedateids
+    ADD CONSTRAINT duedateids_uniq UNIQUE (name);
 
 
 --
@@ -3082,6 +3348,14 @@ ALTER TABLE ONLY offercodeids
 
 
 --
+-- Name: payertermregs_pkey; Type: CONSTRAINT; Schema: public; Owner: ballettheatre; Tablespace: 
+--
+
+ALTER TABLE ONLY payertermregs
+    ADD CONSTRAINT payertermregs_pkey PRIMARY KEY (termid, entityid);
+
+
+--
 -- Name: perftypes_pkey; Type: CONSTRAINT; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
@@ -3218,14 +3492,6 @@ ALTER TABLE ONLY subs
 
 
 --
--- Name: termduedates_pkey; Type: CONSTRAINT; Schema: public; Owner: ballettheatre; Tablespace: 
---
-
-ALTER TABLE ONLY duedates_old
-    ADD CONSTRAINT termduedates_pkey PRIMARY KEY (termid, name);
-
-
---
 -- Name: termids_pkey; Type: CONSTRAINT; Schema: public; Owner: ballettheatre; Tablespace: 
 --
 
@@ -3295,14 +3561,6 @@ ALTER TABLE ONLY tuitiontrans_old
 
 ALTER TABLE ONLY venueids
     ADD CONSTRAINT venueids_pkey PRIMARY KEY (venueid);
-
-
---
--- Name: zztest_ddd_key; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY zztest
-    ADD CONSTRAINT zztest_ddd_key UNIQUE (ddd);
 
 
 --

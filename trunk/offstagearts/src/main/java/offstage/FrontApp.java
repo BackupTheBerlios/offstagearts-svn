@@ -138,7 +138,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {
 	// Make sure we have the right version
-	version = new Version("1.1.0");
+	version = new Version("1.0.2");
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
 	sysVersion = svers.maxVersion;
@@ -283,6 +283,7 @@ public void initWithDatabase()
 			if (siteCodeRes.bytes != null) {
 				// Save our site code to a temporary jar file
 				File outFile = File.createTempFile("sitecode", ".jar");
+				System.out.println("Writing sitecode to: " + outFile);
 				outFile.deleteOnExit();
 				OutputStream out = new FileOutputStream(outFile);
 				out.write(siteCodeRes.bytes);
