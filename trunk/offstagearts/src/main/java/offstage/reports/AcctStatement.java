@@ -303,7 +303,7 @@ throws Exception
 	public void run(SqlRun str) throws Exception {
 		//List models = (List)str.get("models");
 		Reports reports = fapp.reports(); //new OffstageReports(fapp);
-		File f = reports.writeJodPdfs(rep.models, null, "AcctStatement.odt", termid, null);
+		File f = reports.writeJodPdfs(rep.models, null, "AcctStatement.odt", 0, null);
 		reports.viewPdf(f);
 	}});
 	if (payerid < 0) {

@@ -97,6 +97,7 @@ public RollBook(App app, int termid)
 			" and t.groupid = " + SqlInteger.sql(termid) + "\n" +
 			" group by c.courseid) yy on (c.courseid = yy.courseid)\n" +
 		" where cr.name = 'student'" +
+		" and c.dayofweek >= 0" +
 		" and t.groupid = " + SqlInteger.sql(termid) + "\n" +
 		" order by c.dayofweek, c.tstart, c.courseid, p.lastname, p.firstname\n";
 System.out.println(sql);
@@ -111,7 +112,7 @@ System.out.println(sql);
 		" from enrollments en, courseids c, entities p, daysofweek dow\n" +
 		" where c.courseid = en.courseid\n" +
 		" and en.entityid = p.entityid\n" +
-		" and c.dayofweek = dow.javaid\n" +
+		" and c.dayofweek = dow.javaid and c.dayofweek >= 0\n" +
 		" and c.termid = " + SqlInteger.sql(termid) + "\n" +
 		" order by p.entityid, c.dayofweek\n";
 	SqlDbModel model = new SqlDbModel(new AdhocOJSqlTableModel(

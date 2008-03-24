@@ -61,6 +61,7 @@ public static String getSql(int termid, int studentid)
 		" inner join locations loc on (loc.locationid = c.locationid)\n" +
 		" left outer join programids pr  on (pr.programid = tr.programid)\n" +
 		" where t.groupid=" + SqlInteger.sql(termid) + "\n" +
+		" and c.dayofweek >= 0" +
 		(studentid < 0 ? "" : " and p.entityid = " + SqlInteger.sql(studentid)) +
 		" order by adult.lastname, adult.firstname, p.lastname, p.firstname, \n" +
 		" c.dayofweek, c.tstart\n";

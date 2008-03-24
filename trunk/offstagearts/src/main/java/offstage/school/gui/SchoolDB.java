@@ -27,9 +27,9 @@ import java.sql.*;
 import citibob.sql.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
+import java.util.Date;
 import java.util.prefs.*;
 import offstage.config.*;
-import citibob.gui.DBPrefsDialog;
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because
@@ -189,10 +189,14 @@ final int courseid, final TimeZone tz)//, final UpdTasklet2 rr)
 			final java.util.Date day0 = sdt.get(rs, 1);
 			final java.util.Date day1 = sdt.get(rs, 2);
 			final int dayofweek = rs.getInt(3);
-			final long tstartMS = stm.get(rs, 4).getTime();
-			final long tnextMS = stm.get(rs, 5).getTime();
+			final Date TstartMS = stm.get(rs, 4);
+			final Date TnextMS = stm.get(rs, 5);
 			final int xcourseid = rs.getInt(6);
 
+			if (dayofweek < 0) continue;		// day of week
+			if (TstartMS == null) continue;
+			if (TnextMS == null) continue;
+			
 			// Start generating the timestamps...
 			sbuf.append("delete from meetings where courseid = " + SqlInteger.sql(xcourseid) + ";\n");
 			Calendar cal = Calendar.getInstance(tz);
@@ -201,8 +205,8 @@ final int courseid, final TimeZone tz)//, final UpdTasklet2 rr)
 			for (;cal.getTimeInMillis() < day1.getTime(); cal.add(Calendar.WEEK_OF_YEAR, 1)) {
 				long ms0 = cal.getTimeInMillis();
 				if (holidays.contains(ms0)) continue;
-				java.util.Date ts0 = new java.util.Date(ms0 + tstartMS);
-				java.util.Date ts1 = new java.util.Date(ms0 + tnextMS);
+				java.util.Date ts0 = new java.util.Date(ms0 + TstartMS.getTime());
+				java.util.Date ts1 = new java.util.Date(ms0 + TnextMS.getTime());
 				sbuf.append("insert into meetings (courseid, dtstart, dtnext)" +
 					" values (" + SqlInteger.sql(xcourseid) + ", " +
 					sts.toSql(ts0) + ", " +

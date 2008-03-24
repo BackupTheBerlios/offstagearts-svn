@@ -579,7 +579,9 @@ void all_doSelect(SqlRun str)
 		fapp.guiRun().run(CoursesPanel.this, new ETask()
 		{ public void run() throws Exception
 		  {
-			  coursesDb.getSchemaBuf().insertRow(-1, "termid", (Integer)smod.getTermID());
+			  coursesDb.getSchemaBuf().insertRow(-1,
+				  new String[] {"termid", "dayofweek"},
+				  new Object[] {(Integer)smod.getTermID(), new Integer(-1)});
 		  }});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bAddCourseActionPerformed
