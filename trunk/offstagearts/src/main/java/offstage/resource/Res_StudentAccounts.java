@@ -36,7 +36,7 @@ public class Res_StudentAccounts extends DataResource
 
 public Res_StudentAccounts(ResSet rset)
 {
-	super(rset, "school_termids", "StudentAccounts.xls");
+	super(rset, "school", "StudentAccounts.xls");
 
 	add(new JarInstaller(this, 1));
 //	add(new JarInstaller(this, 3));

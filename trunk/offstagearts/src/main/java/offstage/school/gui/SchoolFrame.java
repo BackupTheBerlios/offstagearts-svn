@@ -412,7 +412,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 			str.execUpdate(new UpdTasklet2() {
 			public void run(SqlRun str) throws Exception {
 				Reports reports = fapp.reports(); //new OffstageReports(fapp);
-				reports.viewXls(rep.model, null, "StudentAccounts.xls", schoolModel.getTermID());
+				reports.viewXls(rep.model, null, "StudentAccounts.xls", 0); //schoolModel.getTermID());
 			}});
 		}});
 // TODO add your handling code here:

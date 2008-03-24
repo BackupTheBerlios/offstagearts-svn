@@ -36,7 +36,7 @@ public class Res_AcctStatement extends DataResource
 
 public Res_AcctStatement(ResSet rset)
 {
-	super(rset, "school", "AcctStatement.odt");
+	super(rset, "school_termids", "AcctStatement.odt");
 
 	add(new JarInstaller(this, 1));
 //	add(new JarInstaller(this, 3));
