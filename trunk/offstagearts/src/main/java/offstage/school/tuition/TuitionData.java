@@ -45,7 +45,7 @@ public String rbPlanSetClass;
 //public boolean calcTuition;
 public boolean calcTuition() { return rbPlanSetClass != null; }
 
-public Map<String,DueDate> duedates;
+//public Map<String,DueDate> duedates;
 public Map<Integer,Payer> payers;
 public Map<Integer,Student> students;
 public Map<Integer,Course> courses;
@@ -66,12 +66,13 @@ public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 		" select t.name, t.rbplansetclass" +
 		" from termids t" +
 		" where t.groupid = " + SqlInteger.sql(termid) + ";\n" +
-		
-		// rss[1]: DueDate
-		" select id.name,dd.duedate,id.description" +
-		" from duedates dd, duedateids id" +
-		" where termid = " + SqlInteger.sql(termid) +
-		" and dd.duedateid = id.duedateid;\n" +
+
+		"select 17 as number;\n" +
+//		// rss[1]: DueDate
+//		" select id.name,dd.duedate,id.description" +
+//		" from duedates dd, duedateids id" +
+//		" where termid = " + SqlInteger.sql(termid) +
+//		" and dd.duedateid = id.duedateid;\n" +
 
 		// Make temporary tables for below
 		" create temporary table _payers (entityid int);\n" +
@@ -79,11 +80,18 @@ public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 		
 		" create temporary table _students (entityid int);\n" +
 		" insert into _students\n" +
-		" select distinct es.entityid\n" +
-		" from entities_school es, entities e, _payers\n" +
-		" where es.adultid = _payers.entityid\n" +
-		" and e.entityid = es.entityid\n" +
+		" select distinct tr.entityid\n" +
+		" from termregs tr, entities e, _payers\n" +
+		" where tr.payerid = _payers.entityid\n" +
+		" and tr.groupid = " + SqlInteger.sql(termid) + "\n" +
+		" and tr.entityid = e.entityid\n" +
 		" and not e.obsolete;\n" +
+
+//		" select distinct es.entityid\n" +
+//		" from termregs tr, entities e, _payers\n" +
+//		" where es.adultid = _payers.entityid\n" +
+//		" and e.entityid = es.entityid\n" +
+//		" and not e.obsolete;\n" +
 		
 		// Delete previous tuition records in account
 		" delete from actrans using _payers,actranstypes" +
@@ -116,11 +124,11 @@ public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 		" and not e.obsolete;\n" +
 		
 		// rss[3]: Students
-		" select _students.entityid, es.adultid as payerid, e.lastname, e.firstname,\n" +
+		" select _students.entityid, tr.payerid, e.lastname, e.firstname,\n" +
 		" tr.scholarship, tr.tuition, tr.defaulttuition, tr.tuitionoverride\n" +
-		" from _students,\n" +
-		"     entities e left outer join entities_school es on (e.entityid = es.entityid),\n" +
-		"     termregs tr\n" +
+		" from _students, entities e, termregs tr\n" +
+//		"     entities e left outer join entities_school es on (e.entityid = es.entityid),\n" +
+//		"     termregs tr\n" +
 		" where tr.groupid = " + SqlInteger.sql(termid) + "\n" +
 		" and _students.entityid = tr.entityid\n" +
 		" and _students.entityid = e.entityid\n" +
@@ -166,13 +174,13 @@ public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 		rbPlanSetClass = rs.getString("rbplansetclass");
 //		calcTuition = rs.getBoolean("calctuition");
 		
-		// rss[1]: DueDate
-		rs = rss[1];
-		duedates = new TreeMap();
-		while (rs.next()) {
-			DueDate dd = new DueDate(rs, date);
-			duedates.put(dd.name, dd);
-		}
+//		// rss[1]: DueDate
+//		rs = rss[1];
+//		duedates = new TreeMap();
+//		while (rs.next()) {
+//			DueDate dd = new DueDate(rs, date);
+//			duedates.put(dd.name, dd);
+//		}
 		
 		// rss[2]: Payers
 		rs = rss[2];

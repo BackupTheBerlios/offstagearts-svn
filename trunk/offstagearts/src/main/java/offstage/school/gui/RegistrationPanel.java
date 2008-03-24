@@ -281,26 +281,26 @@ class AllRecDbModel extends MultiDbModel
 public void calcTuition(SqlRun str)
 {
 	// Calculate the tuition
-	int col = smod.studentRm.findColumn("parent1id");
-	Integer Oldparent1id = (Integer)smod.studentRm.getOrigValue(col);
-	Integer Parent1id = (Integer)smod.studentRm.get(col);
+	int col = smod.termregsRm.findColumn("payerid");
+	Integer Oldpayerid = (Integer)smod.termregsRm.getOrigValue(col);
+	Integer Payerid = (Integer)smod.termregsRm.get(col);
 
 	int termid = smod.getTermID();
 	String payerIdSql = null;
-	if (Oldparent1id != null && Parent1id != null) {
-		if (Oldparent1id.intValue() == Parent1id.intValue()) {
+	if (Oldpayerid != null && Payerid != null) {
+		if (Oldpayerid.intValue() == Payerid.intValue()) {
 			// Didn't change, they're both the same
-			payerIdSql = "select " + Oldparent1id;
+			payerIdSql = "select " + Oldpayerid;
 		} else {
 			// Changed from one payer to another
-			payerIdSql = "select " + Oldparent1id + " union select " + Parent1id;
+			payerIdSql = "select " + Oldpayerid + " union select " + Payerid;
 		}
-	} else if (Parent1id != null) {
+	} else if (Payerid != null) {
 		// Changed from no payer to a payer
-		payerIdSql = "select " + Parent1id;
-	} else if (Oldparent1id != null) {
+		payerIdSql = "select " + Payerid;
+	} else if (Oldpayerid != null) {
 		// Changed from a payer to no payer.
-		payerIdSql = "select " + Oldparent1id;
+		payerIdSql = "select " + Oldpayerid;
 	}
 	if (payerIdSql != null) {
 		TuitionCalc tc = new TuitionCalc(fapp, termid);
@@ -2528,18 +2528,18 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
 
 	private void bNewParent2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewParent2ActionPerformed
 	{//GEN-HEADEREND:event_bNewParent2ActionPerformed
-		newPayerAction("parent2id");
+		newPayerAction(smod.studentRm, "parent2id");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bNewParent2ActionPerformed
 
 	private void bNewParentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewParentActionPerformed
 	{//GEN-HEADEREND:event_bNewParentActionPerformed
-		this.newPayerAction("parentid");
+		this.newPayerAction(smod.studentRm, "parent1id");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bNewParentActionPerformed
 
 
-void newPayerAction(final String colName)
+void newPayerAction(final SchemaBufRowModel rm, final String colName)
 {
 	fapp.guiRun().run(RegistrationPanel.this, new SqlTask() {
 	public void run(SqlRun str) throws Exception {
@@ -2548,10 +2548,9 @@ void newPayerAction(final String colName)
 		wizard.runWizard();
 		Integer eid = (Integer)wizard.getVal("entityid");
 		if (eid != null) {
-			smod.termregsRm.set(colName, eid);
-			doUpdateSelect(str);
-//			allRec.doUpdate(str);
-//			allRec.doSelect(str);
+			rm.set(colName, eid);
+//			doUpdateSelect(str);		// Causes problem if record is incomplete
+			allRec.doSelect(str);
 		}
 	}});
 }
@@ -2576,7 +2575,7 @@ void newPayerAction(final String colName)
 
 	private void bNewPayerActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewPayerActionPerformed
 	{//GEN-HEADEREND:event_bNewPayerActionPerformed
-		newPayerAction("adultid");
+		newPayerAction(smod.termregsRm, "payerid");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bNewPayerActionPerformed
 
@@ -3037,35 +3036,35 @@ private void doUpdateSelect(SqlRun str) throws Exception
 //
 //			// Calculate the tuition
 //			int col = smod.studentRm.findColumn("primaryentityid");
-//			Integer Oldparent1id = (Integer)smod.studentRm.getOrigValue(col);
-//			Integer Parent1id = (Integer)smod.studentRm.get(col);
+//			Integer Oldpayerid = (Integer)smod.studentRm.getOrigValue(col);
+//			Integer Payerid = (Integer)smod.studentRm.get(col);
 //
 //			transRegister.getDbModel().doUpdate(str);
 //			
 //			int termid = smod.getTermID(); //(Integer)vTermID.getValue();
 //			String payerIdSql = null;
-//			if (Oldparent1id != null && Parent1id != null) {
-//				if (Oldparent1id.intValue() == Parent1id.intValue()) {
+//			if (Oldpayerid != null && Payerid != null) {
+//				if (Oldpayerid.intValue() == Payerid.intValue()) {
 //					// Didn't change, they're both the same
-//					payerIdSql = "select " + Oldparent1id;
+//					payerIdSql = "select " + Oldpayerid;
 //				} else {
 //					// Changed from one payer to another
-//					payerIdSql = "select " + Oldparent1id + " union select " + Parent1id;
+//					payerIdSql = "select " + Oldpayerid + " union select " + Payerid;
 //				}
-//			} else if (Parent1id != null) {
+//			} else if (Payerid != null) {
 //				// Changed from no payer to a payer
-//				payerIdSql = "select " + Parent1id;
-//			} else if (Oldparent1id != null) {
+//				payerIdSql = "select " + Payerid;
+//			} else if (Oldpayerid != null) {
 //				// Changed from a payer to no payer.
-//				payerIdSql = "select " + Oldparent1id;
+//				payerIdSql = "select " + Oldpayerid;
 //			}
 //			if (payerIdSql != null) {
 //				TuitionCalc tc = new TuitionCalc(fapp, termid);
 //					tc.setPayerIDs(payerIdSql);
 //					tc.recalcTuition(str);
 //			}
-////			if (Oldparent1id != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Oldparent1id, null);
-////			if (Parent1id != null && !Parent1id.equals(Oldparent1id)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Parent1id, null);
+////			if (Oldpayerid != null) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Oldpayerid, null);
+////			if (Payerid != null && !Payerid.equals(Oldpayerid)) SchoolDB.w_tuitiontrans_calcTuitionByAdult(str, termid, Payerid, null);
 //		}});
 //	}
 //}

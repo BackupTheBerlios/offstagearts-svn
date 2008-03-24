@@ -20,27 +20,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * and open the template in the editor.
  */
 
-package offstage.resource;
+package offstage.school.tuition;
 
-import citibob.resource.DbbCreator;
-import citibob.resource.DbbResource;
-import citibob.resource.DbbUpgrader;
-import citibob.resource.ResSet;
+import citibob.util.DayConv;
+import java.text.ParseException;
+
 
 /**
- *
+ * Don't do any billing, rely on user to do all custom billing.
  * @author citibob
  */
-public class Res_Database extends DbbResource
+public class NullBillingPlan extends BaseBillingPlan
 {
 
-public Res_Database(ResSet rset)
-{
-	super(rset, "general", "database.sql");
+int regDuedateDN;
+double regFee;
 
-	add(new DbbCreator(this, 1));
-	add(new DbbUpgrader(this, 1, 45, true));
-//	add(new DbbUpgrader(this, 2, 3, true));
+public NullBillingPlan(double regFee, String sRegDueDate)
+throws ParseException
+{
+	this.regFee = regFee;
+	this.regDuedateDN = DayConv.parse(dfmt, sRegDueDate);
 }
-	
+
+
+/** Adds the tuition billing records for a student.  Should take into account
+ the student's tuition, scholarships and any registration fees. */
+public void billAccount(TuitionCon con, Student student)
+{
+	// Registration Fee
+	if (regFee != 0) addRegFee(con, student, regDuedateDN, regFee);	
+}
 }

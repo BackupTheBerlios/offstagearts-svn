@@ -98,6 +98,7 @@ throws InstantiationException, IllegalAccessException, ClassNotFoundException
 	// Go through family by family
 	for (Payer payer : tdata.payers.values()) {
 		RBPlan rbplan = rbPlanSet.getPlan(payer.rbplan);
+System.out.println("Getting rbplan " + payer.rbplan + " = " + rbplan);
 		rbplan.getRatePlan().setTuition(tcon, payer);
 	}
 }
