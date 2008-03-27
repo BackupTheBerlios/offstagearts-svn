@@ -87,7 +87,7 @@ addState(new AbstractWizState("newquery", null, "editquery") {
 		final IntVal equeryID = SqlSerial.getNextVal(con.str, "equeries_equeryid_seq");
 		con.str.execUpdate(new UpdTasklet2() {
 		public void run(SqlRun str) {
-			con.v.put("equeryid", equeryID);
+			con.v.put("equeryid", equeryID.val);
 			String sql = "insert into equeries (equeryid, name, equery, lastmodified) values (" +
 				SqlInteger.sql(equeryID.val) + ", " +
 				SqlString.sql(con.v.getString("queryname")) +

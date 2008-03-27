@@ -62,16 +62,17 @@ public void propertyChange(final java.beans.PropertyChangeEvent evt)
 {
 		// We were started by mouse click (or some semblance thereof)
 		// But don't do a busy cursor if we're within a dropdown
-		if (inDropDown) {
+//		if (inDropDown) {
 			app.sqlRun().pushFlush();
 			EntitySelector.super.propertyChange(evt);
 			app.sqlRun().popFlush();
-		} else {
-			app.guiRun().run(EntitySelector.this, new SqlTask() {
-			public void run(SqlRun str) throws Exception {
-				EntitySelector.super.propertyChange(evt);
-			}});
-		}
+//System.out.println("Event source = " + evt.getSource());
+//		} else {
+//			app.guiRun().run(EntitySelector.this, new SqlTask() {
+//			public void run(SqlRun str) throws Exception {
+//				EntitySelector.super.propertyChange(evt);
+//			}});
+//		}
 //	} else {
 //		// We're just in the middle of a long line of cascading events
 //		EntitySelector.super.propertyChange(evt);		
