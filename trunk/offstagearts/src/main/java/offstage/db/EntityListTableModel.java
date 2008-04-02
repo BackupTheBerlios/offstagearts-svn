@@ -58,11 +58,11 @@ public void setIdSql(String idSql, String orderBy)
 
 		" insert into _ids (id) " + idSql + ";\n" +
 		
-		" (select o.entityid, 'organizations' as relation, name as name" +
-		" , o.entityid = o.primaryentityid as isprimary" +
-		" from organizations o, _ids" +
-		" where o.entityid = _ids.id\n" +
-		"   union\n" +
+//		" (select o.entityid, 'organizations' as relation, name as name" +
+//		" , o.entityid = o.primaryentityid as isprimary" +
+//		" from organizations o, _ids" +
+//		" where o.entityid = _ids.id\n" +
+//		"   union\n" +
 		" select p.entityid, 'persons' as relation," +
 		" (case when lastname is null then '' else lastname || ', ' end ||" +
 		" case when firstname is null then '' else firstname || ' ' end ||" +
@@ -71,7 +71,7 @@ public void setIdSql(String idSql, String orderBy)
 		" , p.entityid = p.primaryentityid as isprimary" +
 		" from persons p, _ids" +
 		" where p.entityid = _ids.id" +
-		" ) order by " + orderBy + ";\n" +
+		" order by " + orderBy + ";\n" +
 		
 		" drop table _ids";
 	

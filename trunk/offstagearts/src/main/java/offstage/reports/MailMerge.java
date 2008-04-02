@@ -45,7 +45,7 @@ EQuery equery, final File templateFile)
 throws Exception
 {
 	
-	String idSql = equery.getSql(fapp.equerySchema(), true);
+	String idSql = equery.getSql(fapp.equerySchema());
 	String sql = LabelReport.getSql(idSql, null);
 	
 	str.execSql(sql, new RsTasklet2() {

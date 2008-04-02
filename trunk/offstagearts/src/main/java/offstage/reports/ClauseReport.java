@@ -61,7 +61,7 @@ public ClauseReport(FrontApp fapp, SqlRun str, final SqlTypeSet tset, EQuery equ
 throws IOException
 {
 	// Create the main query
-	String idSql = equery.getSql(fapp.equerySchema(), true);
+	String idSql = equery.getSql(fapp.equerySchema());
 	StringBuffer sql = new StringBuffer(
 		" select e.entityid,customaddressto,salutation,firstname,lastname," +
 		" address1,address2,city,state,zip," +
@@ -72,7 +72,7 @@ throws IOException
 	// Add the per-clause queries, so we know which records came from which clauses
 	final List<EClause> clauses = equery.getClauses();
 	for (EClause clause : clauses) {
-		sql.append(equery.getSql(fapp.equerySchema(), clause, true));
+		sql.append(equery.getSql(fapp.equerySchema(), clause));
 		sql.append(";\n");
 	}
 
@@ -99,17 +99,19 @@ throws IOException
 		}
 		
 		// Outer-join in rss[1..x]: Queries telling us which clauses were which
+		Integer One = new Integer(1);
+		//Integer Zero = new Integer(0);
 		for (EClause clause : clauses) {
 			JTypeTableModel mod = new DefaultJTypeTableModel(
 				new String[] {clause.getName()},
-				new JType[] {new JavaJType(Boolean.class, false)},
+				new JType[] {JavaJType.jtInteger},
 				nrow);
-			for (int i=0; i<nrow; ++i) mod.setValueAt(Boolean.FALSE,i,0);
+			for (int i=0; i<nrow; ++i) mod.setValueAt(null,i,0);
 			while (rss[n].next()) {
 				int entityid = rss[n].getInt(1);
 				Integer Row = rowMap.get(entityid);
 				if (Row == null) continue;		// Not included in final output, maybe a subtract clause
-				mod.setValueAt(Boolean.TRUE, Row, 0);
+				mod.setValueAt(One, Row, 0);
 			}
 			models[n] = mod;
 			++n;

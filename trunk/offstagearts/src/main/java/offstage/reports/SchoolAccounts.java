@@ -34,6 +34,7 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.table.*;
+import offstage.school.gui.SchoolDB;
 
 /**
  * To be written out to XLS, so we don't need to include JType information
@@ -182,10 +183,13 @@ java.util.Date xasOfDate, int lateDays)
 	final java.util.Date lateCutoff = cal.getTime();
 	
 	sqlDate = new SqlDate(tz, false);
+
+	// Get payer-student associations for this term
+	final Map<Integer,String> studentNames = SchoolDB.getStudentNames(str, termid, null);
 	
 	String sql =
-		// rss[0]
-		// Non-tuition transactions
+		// rss[0] = Transactions (main report data)
+		// This should really be cleaned up and put in an AccountsData class.
 		" select ac.actranstypeid,actt.name as transtype,ac.entityid, e.lastname, e.firstname," +
 		" e.orgname, e.isorg," +
 		" ac.date,ac.amount,ac.description,ac.actransid,ac.termid" +
@@ -194,25 +198,18 @@ java.util.Date xasOfDate, int lateDays)
 		" and e.entityid = ac.entityid and not e.obsolete" +
 		" and ac.actypeid = actypes.actypeid and actypes.name = 'school'\n" +
 		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
-//		"   UNION" +
-//		// Tuition transactions
-//		" select 0,'tuitiontrans',ac.entityid,e.lastname, e.firstname, " +
-//		" e.orgname, e.isorg, ac.date," +
-//		" ac.amount,ac.description,ac.actransid,ac.termid" +
-//		" from tuitiontrans ac, entities e" +
-//		" where e.entityid = ac.entityid and not e.obsolete" +
-//		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
 		" order by isorg desc,lastname,firstname,entityid,date,amount desc;\n" +
 		
-		// rss[1]
+		// rss[1] = Name of term
 		" select name from termids where groupid=" + termid + ";\n";
+	
 	str.execSql(sql, new RssTasklet() {
 	public void run(ResultSet[] rss) throws Exception {
 		model = new TreeMap();
 		table = new DefaultTableModel(
-			new String[] {"entityid", "lastname", "firstname", "totalbilled_term",
+			new String[] {"entityid", "lastname", "firstname", "students", "totalbilled_term",
 				"(regfees_term)","(paid+adj)_term","scholarships_term","unpaid_term",
-				"unpaid_all","unpaid_late","overpay"},
+				"unpaid_all","unpaid_pastdue", "unpaid_late","overpay"},
 //			new JType[] {integer, string, string, money, money, money, money, money, money, money},
 			0);
 		unpaidLateCol = table.findColumn("unpaid_late");
@@ -260,22 +257,25 @@ java.util.Date xasOfDate, int lateDays)
 		for (Acct ac : accts) {
 			double unpaid_term = 0;
 			double unpaid_all = 0;
-			double unpaid_late = 0;
+			double unpaid_late = 0;			// >30 days past due = LATE
+			double unpaid_pastdue = 0;		// 0-30 days past due
 			for (Bill b : ac.unpaid) {
 				if (b.termid == termid) unpaid_term += b.amountUnpaid;
 				unpaid_all += b.amountUnpaid;
 				if (b.dt.getTime() < lateCutoff.getTime()) unpaid_late += b.amountUnpaid;
+				else if (b.dt.getTime() < asOfDate.getTime()) unpaid_pastdue += b.amountUnpaid;
 			}
 			String lastname = ac.lastname;
 			String firstname = ac.firstname;
 			table.addRow(new Object[] {
 				ac.entityid, lastname, firstname,
+				studentNames.get(ac.entityid),
 				ac.totalbilled_term,
 				ac.regfees_term,
 				(ac.totalbilled_term - unpaid_term - ac.rebates_term),
 				//(ac.rebates_term - ac.scholarship_term) + ", " +		// adj_term
 				ac.scholarship_term,
-				unpaid_term, unpaid_all, unpaid_late, ac.overpay});
+				unpaid_term, unpaid_all, unpaid_pastdue, unpaid_late, ac.overpay});
 		}
 		
 		// Add miscellaneous stuff

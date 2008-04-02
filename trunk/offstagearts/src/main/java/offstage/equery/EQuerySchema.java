@@ -50,6 +50,7 @@ public EQuerySchema(SchemaSet sset) throws SQLException
 		"classes.entityid = main.entityid");
 	addSchema(sset.get("termenrolls"),
 		"termenrolls.entityid = main.entityid");
+// add termregs.tuition, etc.
 	addSchema(sset.get("interests"),
 		"interests.entityid = main.entityid");
 	addSchema(sset.get("tickets"),

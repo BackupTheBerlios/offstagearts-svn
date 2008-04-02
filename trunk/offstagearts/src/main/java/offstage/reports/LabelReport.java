@@ -142,7 +142,7 @@ public static String getSql(String idSql, String orderBy)
 		" or city is null" +
 		" or state is null;\n" +
 		
-		// ================== Set physical albel
+		// ================== Set physical lalbel
 		" update _mailings set line1=trim(addressto), line2=trim(address1), line3=trim(address2)" +
 		" where address1 is not null and address2 is not null;\n" +
 

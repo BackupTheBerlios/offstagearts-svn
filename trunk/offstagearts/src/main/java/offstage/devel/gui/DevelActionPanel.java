@@ -39,6 +39,7 @@ import offstage.cleanse.*;
 import citibob.sql.*;
 import java.io.File;
 import offstage.equery.EQuery;
+import offstage.equery.Query;
 import offstage.equery.swing.EQueryWizard;
 import offstage.reports.ClauseReport;
 import offstage.reports.DonationReport;
@@ -90,7 +91,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
 		if (wizard.runSegmentation()) {
 			EQuery equery = (EQuery)wizard.getVal("equery");
-			String idSql = equery.getSql(fapp.equerySchema(), false);
+			String idSql = equery.getSql(fapp.equerySchema());
 			SegmentationReport.writeCSV(fapp, str, idSql,
 				(List<String>)wizard.getVal("segtypes"),
 				(File)wizard.getVal("file"));
@@ -110,7 +111,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
 		if (wizard.runDonationReport()) {
 			EQuery equery = (EQuery)wizard.getVal("equery");
-			String idSql = equery.getSql(fapp.equerySchema(), false);
+			String idSql = equery.getSql(fapp.equerySchema());
 			DonationReport.writeCSV(fapp, str, idSql,
 				((Number)wizard.getVal("minyear")).intValue(),
 				((Number)wizard.getVal("maxyear")).intValue(),

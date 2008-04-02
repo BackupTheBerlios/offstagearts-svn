@@ -31,16 +31,23 @@ import java.util.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import citibob.types.KeyedModel;
 import java.sql.*;
 import java.io.*;
 import com.thoughtworks.xstream.*;
-import offstage.db.TestConnPool;
 
 /**
  *
  * @author citibob
  */
 public abstract class Query {
+
+public static final int DISTINCT_ENTITYID = 0;
+public static final int DISTINCT_PRIMARYENTITYID = 1;
+public static final int DISTINCT_PARENT1ID = 2;
+public static final int DISTINCT_PAYERID = 3;
+public static final KeyedModel distinctKmodel = KeyedModel.intKeys(
+		"All Records", "Head of Household", "Parent", "Payer");
 
 //protected QuerySchema schema;
 //
@@ -68,7 +75,7 @@ protected void addTableInnerJoin(QuerySchema schema, ConsSqlQuery sql, ColName c
 ///** Creates a standard ConsSqlQuery out of the data in this query. */
 //public abstract void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql);
 // ------------------------------------------------------
-public abstract String getSql(QuerySchema qs, boolean primaryOnly)
+public abstract String getSql(QuerySchema qs) 
 throws IOException;
 //{
 //	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);

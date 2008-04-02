@@ -39,6 +39,7 @@ public Res_StudentAccounts(ResSet rset)
 	super(rset, "school", "StudentAccounts.xls");
 
 	add(new JarInstaller(this, 1));
+	add(new JarInstaller(this, 48));
 //	add(new JarInstaller(this, 3));
 //	add(new CopyUpgrader(this, 2,3));
 }

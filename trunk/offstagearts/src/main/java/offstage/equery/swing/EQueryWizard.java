@@ -264,7 +264,7 @@ public boolean runMailingLabels(SqlRun str) throws Exception
 	Wizard wizard = this;
 	EQuery equery = (EQuery)wizard.getVal("equery");
 
-	String idSql = equery.getSql(fapp.equerySchema(), false);
+	String idSql = equery.getSql(fapp.equerySchema());
 	LabelReport.viewReport(str, fapp, idSql, "zip,address1");
 //	String sql = LabelReport.getSql(idSql, "zip");
 //	str.execSql(sql, new RsTasklet2() {

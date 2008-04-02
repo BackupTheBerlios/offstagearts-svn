@@ -110,92 +110,92 @@ final String url;
 //	return groupID;
 //}
 // -------------------------------------------------------------------------------
-/** @param eqSql an idSql that selects the entityids we wish to mail to.  Assumes that
- only one of each primaryentityid has already been done. */
-public static void w_mailingids_create(SqlRun str, final String queryName,
-final String eqXml, final String eqSql, final UpdTasklet2 rr)
-{
-	final IntVal iGroupID = SqlSerial.getNextVal(str, "groupids_groupid_seq");
-	str.execUpdate(new UpdTasklet2() {
-	public void run(SqlRun str) throws Exception {
-//		final int groupID = (Integer)str.get("groupids_groupid_seq");
-		
-		String sql =
-			// Conditionally drop our temporary able before creating it
-			" select drop_table('_ids');\n" +
-
-			// Create Mailing List 
-			" insert into mailingids" + 
-			" (groupid, name, created, equery) values" + 
-			" (" + iGroupID.val + ", " + SqlString.sql(queryName) + ", now(),\n" + SqlString.sql(eqXml) + "\n);" + 
-
-			// Create temporary table of IDs for this mailing list
-			// These are primaryentityids (i.e. the people we REALLY want to send to)
-			" create temporary table _ids (id int);" + 
-			" delete from _ids;" + 
-			" insert into _ids (id) " + eqSql + ";\n" +
-//			" insert into _ids (id) " + removeDupsIDSql(eqSql) + ";\n" +
-
-			// Insert into Mailing List
-			" insert into mailings (groupid, entityid) select " + iGroupID.val + ", id from _ids;" + 
-			" drop table _ids;\n" +
-
-			// ========= Set addressto from multiple sources
-			// 1. Try customaddressto
-			"	update mailings\n" +
-			"	set addressto = customaddressto\n" +
-			"	from entities p\n" +
-			"	where p.entityid = mailings.entityid\n" +
-			"	and p.customaddressto is not null\n" +
-			"	and addressto is null\n" +
-			"	and mailings.groupid = " + iGroupID.val + ";\n" +
-
-			// 2. Try pre-computed names
-			"	update mailings\n" +
-			"	set addressto = ename\n" +
-			"	where addressto is null and ename is not null\n" +
-			"	and groupid = " + iGroupID.val + ";\n" +
-
-			// 3. Try addressto as name of person
-			"	update mailings\n" +
-			"	set addressto = \n" +
-			"		coalesce(p.firstname || ' ', '') ||\n" +
-			"		coalesce(p.middlename || ' ', '') ||\n" +
-			"		coalesce(p.lastname, '')\n" +
-			"	from entities p\n" +
-			"	where mailings.entityid = p.entityid\n" +
-			"	and mailings.groupid = " + iGroupID.val + "\n" +
-			"	and addressto is null;\n" +
-
-			// 4. Try addressto as name of organization
-			"	update mailings\n" +
-			"	set addressto = p.name\n" +
-			"	from organizations p\n" +
-			"	where mailings.entityid = p.entityid\n" +
-			"	and mailings.groupid = " + iGroupID.val + "\n" +
-			"	and addressto is null;\n" +
-
-			// Set the rest of the address\n" +
-			"	update mailings\n" +
-			"	set address1 = e.address1,\n" +
-			"	address2 = e.address2,\n" +
-			"	city = e.city,\n" +
-			"	state = e.state,\n" +
-			"	zip = e.zip,\n" +
-			"	country = e.country\n" +
-			"	from entities e\n" +
-			"	where mailings.entityid = e.entityid\n" +
-			"	and mailings.groupid = " + iGroupID.val + ";\n";
-
-		str.execSql(sql, new UpdTasklet2() {
-		public void run(SqlRun str) throws Exception {
-			if (rr != null) rr.run(str);
-		}});
-	}});
-//System.out.println(sql);
-//	st.executeUpdate(sql);
-//	return groupID;
-}
+///** @param eqSql an idSql that selects the entityids we wish to mail to.  Assumes that
+// only one of each primaryentityid has already been done. */
+//public static void w_mailingids_create(SqlRun str, final String queryName,
+//final String eqXml, final String eqSql, final UpdTasklet2 rr)
+//{
+//	final IntVal iGroupID = SqlSerial.getNextVal(str, "groupids_groupid_seq");
+//	str.execUpdate(new UpdTasklet2() {
+//	public void run(SqlRun str) throws Exception {
+////		final int groupID = (Integer)str.get("groupids_groupid_seq");
+//		
+//		String sql =
+//			// Conditionally drop our temporary able before creating it
+//			" select drop_table('_ids');\n" +
+//
+//			// Create Mailing List 
+//			" insert into mailingids" + 
+//			" (groupid, name, created, equery) values" + 
+//			" (" + iGroupID.val + ", " + SqlString.sql(queryName) + ", now(),\n" + SqlString.sql(eqXml) + "\n);" + 
+//
+//			// Create temporary table of IDs for this mailing list
+//			// These are primaryentityids (i.e. the people we REALLY want to send to)
+//			" create temporary table _ids (id int);" + 
+//			" delete from _ids;" + 
+//			" insert into _ids (id) " + eqSql + ";\n" +
+////			" insert into _ids (id) " + removeDupsIDSql(eqSql) + ";\n" +
+//
+//			// Insert into Mailing List
+//			" insert into mailings (groupid, entityid) select " + iGroupID.val + ", id from _ids;" + 
+//			" drop table _ids;\n" +
+//
+//			// ========= Set addressto from multiple sources
+//			// 1. Try customaddressto
+//			"	update mailings\n" +
+//			"	set addressto = customaddressto\n" +
+//			"	from entities p\n" +
+//			"	where p.entityid = mailings.entityid\n" +
+//			"	and p.customaddressto is not null\n" +
+//			"	and addressto is null\n" +
+//			"	and mailings.groupid = " + iGroupID.val + ";\n" +
+//
+//			// 2. Try pre-computed names
+//			"	update mailings\n" +
+//			"	set addressto = ename\n" +
+//			"	where addressto is null and ename is not null\n" +
+//			"	and groupid = " + iGroupID.val + ";\n" +
+//
+//			// 3. Try addressto as name of person
+//			"	update mailings\n" +
+//			"	set addressto = \n" +
+//			"		coalesce(p.firstname || ' ', '') ||\n" +
+//			"		coalesce(p.middlename || ' ', '') ||\n" +
+//			"		coalesce(p.lastname, '')\n" +
+//			"	from entities p\n" +
+//			"	where mailings.entityid = p.entityid\n" +
+//			"	and mailings.groupid = " + iGroupID.val + "\n" +
+//			"	and addressto is null;\n" +
+//
+//			// 4. Try addressto as name of organization
+//			"	update mailings\n" +
+//			"	set addressto = p.name\n" +
+//			"	from organizations p\n" +
+//			"	where mailings.entityid = p.entityid\n" +
+//			"	and mailings.groupid = " + iGroupID.val + "\n" +
+//			"	and addressto is null;\n" +
+//
+//			// Set the rest of the address\n" +
+//			"	update mailings\n" +
+//			"	set address1 = e.address1,\n" +
+//			"	address2 = e.address2,\n" +
+//			"	city = e.city,\n" +
+//			"	state = e.state,\n" +
+//			"	zip = e.zip,\n" +
+//			"	country = e.country\n" +
+//			"	from entities e\n" +
+//			"	where mailings.entityid = e.entityid\n" +
+//			"	and mailings.groupid = " + iGroupID.val + ";\n";
+//
+//		str.execSql(sql, new UpdTasklet2() {
+//		public void run(SqlRun str) throws Exception {
+//			if (rr != null) rr.run(str);
+//		}});
+//	}});
+////System.out.println(sql);
+////	st.executeUpdate(sql);
+////	return groupID;
+//}
 // -------------------------------------------------------------------------------
 public static void w_mailings_makereport(SqlRun str, int mailingID)
 {
@@ -363,34 +363,34 @@ public static IntVal countIDList(final String retVar, SqlRun str, String idSql)
 //	return sql;
 //}
 // -------------------------------------------------------------------------------
-public static String sql_entities_namesByIDList2(String idSql, String orderBy)
-//throws SQLException
-{
-	if (orderBy == null) orderBy = "relation, name";
-	String sql =
-		" create temporary table _ids (id int); delete from _ids;\n" +
-
-		" delete from _ids;\n" +
-
-		" insert into _ids (id) " + idSql + ";\n" +
-		
-		" select p.entityid, 'persons' as relation," +
-		" (case when lastname is null then '' else lastname || ', ' end ||" +
-		" case when firstname is null then '' else firstname || ' ' end ||" +
-		" case when middlename is null then '' else middlename end ||" +
-		" case when orgname is null then '' else ' (' || orgname || ')' end) as name" +
-		" , p.entityid = p.primaryentityid as isprimary" +
-		", p.city, p.state, p.occupation, p.email" +
-		" from persons p, _ids" +
-		" where p.entityid = _ids.id" +
-		" ) order by " + orderBy + ";\n" +
-		
-		" drop table _ids";
-	return sql;
-//System.out.println(sql);
-//	ResultSet rs = st.executeQuery(sql);
-//	return rs;
-}
+//public static String sql_entities_namesByIDList2(String idSql, String orderBy)
+////throws SQLException
+//{
+//	if (orderBy == null) orderBy = "relation, name";
+//	String sql =
+//		" create temporary table _ids (id int); delete from _ids;\n" +
+//
+//		" delete from _ids;\n" +
+//
+//		" insert into _ids (id) " + idSql + ";\n" +
+//		
+//		" select p.entityid, 'persons' as relation," +
+//		" (case when lastname is null then '' else lastname || ', ' end ||" +
+//		" case when firstname is null then '' else firstname || ' ' end ||" +
+//		" case when middlename is null then '' else middlename end ||" +
+//		" case when orgname is null then '' else ' (' || orgname || ')' end) as name" +
+//		" , p.entityid = p.primaryentityid as isprimary" +
+//		", p.city, p.state, p.occupation, p.email" +
+//		" from persons p, _ids" +
+//		" where p.entityid = _ids.id" +
+//		" ) order by " + orderBy + ";\n" +
+//		
+//		" drop table _ids";
+//	return sql;
+////System.out.println(sql);
+////	ResultSet rs = st.executeQuery(sql);
+////	return rs;
+//}
 // -------------------------------------------------------------------------------
 
 // -------------------------------------------------------------------------------

@@ -40,6 +40,7 @@ import offstage.schema.*;
 import java.text.*;
 import citibob.types.*;
 import offstage.accounts.gui.AccountsDB;
+import offstage.school.gui.SchoolDB;
 
 /**
  *
@@ -52,61 +53,61 @@ public class AcctStatement
 /** Data created in making this report.  To be read out later. */
 public List<HashMap<String,Object>> models;
 /** Temporary data... */
-private Map<Integer,String> studentNames;
+//private Map<Integer,String> studentNames;
 
 	
-/**
-     * Get a listing of students for each parent.  Calls rr on 
-     * @param app 
-     * @param str Returns result (HashMap<Integer, String>) under name studentNames
-     * @param termid 
-     * @param payerid 
- @param Handler for results, takes type 
-     * @throws java.sql.SQLException 
-     *
-     */
-void getStudentNames(SqlRun str, App app, int termid, String payerIdSql)
-//throws SQLException
-{
-	String sql =
-		" select es.adultid, p.lastname, p.firstname" +
-		" from persons p, entities_school es, termregs tr\n" +
-		(payerIdSql == null ? "" : ", (" + payerIdSql + ") xx") +
-		" where p.entityid = es.entityid\n" +
-//		" and es.entityid <> es.adultid" +
-		" and tr.entityid = es.entityid" +
-		" and tr.groupid = " + SqlInteger.sql(termid) +
-		" and tr.tuition <> 0" +
-//		(payerid < 0 ? "" : " and es.adultid = " + SqlInteger.sql(payerid)) +
-		(payerIdSql == null ? "" : " and es.adultid = xx.id") +
-		" order by es.adultid";
-System.out.println(sql);
-	final RSTableModel mod = new RSTableModel(app.sqlTypeSet());
-	mod.executeQuery(str, sql);
-	str.execUpdate(new UpdTasklet2() {
-	public void run(SqlRun str) throws SQLException {
-		Map<Integer,String> map = new HashMap();
-		TableModelGrouper grouper = new TableModelGrouper(mod,
-			new String[][] {{"adultid"}});
-		List<Map> groups = grouper.groupRowsList();
-		if (groups != null) for (Map gmap : groups) {
-			JTypeTableModel tt = (JTypeTableModel)gmap.get("rs");
-			for (int i=0; i<tt.getRowCount(); ++i) {
-				String fname = (String)tt.getValueAt(i,2) + " " + (String)tt.getValueAt(i,1);
-				Integer id = (Integer)tt.getValueAt(i,0);
-				String names = map.get(id);
-				if (names == null) {
-					names = fname;
-				} else {
-					names = names + ", " + fname;
-				}
-				map.put(id, names);
-			}
-		}
-		AcctStatement.this.studentNames = map;
-//		str.put("studentNames", map);
-	}});
-}
+///**
+//     * Get a listing of students for each parent.  Calls rr on 
+//     * @param app 
+//     * @param str Returns result (HashMap<Integer, String>) under name studentNames
+//     * @param termid 
+//     * @param payerid 
+// @param Handler for results, takes type 
+//     * @throws java.sql.SQLException 
+//     *
+//     */
+//void getStudentNames(SqlRun str, App app, int termid, String payerIdSql)
+////throws SQLException
+//{
+//	String sql =
+//		" select es.adultid, p.lastname, p.firstname" +
+//		" from persons p, entities_school es, termregs tr\n" +
+//		(payerIdSql == null ? "" : ", (" + payerIdSql + ") xx") +
+//		" where p.entityid = es.entityid\n" +
+////		" and es.entityid <> es.adultid" +
+//		" and tr.entityid = es.entityid" +
+//		" and tr.groupid = " + SqlInteger.sql(termid) +
+//		" and tr.tuition <> 0" +
+////		(payerid < 0 ? "" : " and es.adultid = " + SqlInteger.sql(payerid)) +
+//		(payerIdSql == null ? "" : " and es.adultid = xx.id") +
+//		" order by es.adultid";
+//System.out.println(sql);
+//	final RSTableModel mod = new RSTableModel(app.sqlTypeSet());
+//	mod.executeQuery(str, sql);
+//	str.execUpdate(new UpdTasklet2() {
+//	public void run(SqlRun str) throws SQLException {
+//		Map<Integer,String> map = new HashMap();
+//		TableModelGrouper grouper = new TableModelGrouper(mod,
+//			new String[][] {{"adultid"}});
+//		List<Map> groups = grouper.groupRowsList();
+//		if (groups != null) for (Map gmap : groups) {
+//			JTypeTableModel tt = (JTypeTableModel)gmap.get("rs");
+//			for (int i=0; i<tt.getRowCount(); ++i) {
+//				String fname = (String)tt.getValueAt(i,2) + " " + (String)tt.getValueAt(i,1);
+//				Integer id = (Integer)tt.getValueAt(i,0);
+//				String names = map.get(id);
+//				if (names == null) {
+//					names = fname;
+//				} else {
+//					names = names + ", " + fname;
+//				}
+//				map.put(id, names);
+//			}
+//		}
+//		AcctStatement.this.studentNames = map;
+////		str.put("studentNames", map);
+//	}});
+//}
 
 ///* @param str Stores result under "models" List<HashMap<String,Object>> */
 ////public static void makeJodModels(
@@ -121,7 +122,7 @@ SqlRun str, final App app,
 int termid, String payerIdSql, final java.util.Date today)
 {
 	// Fetch name of students in family
-	getStudentNames(str, app, termid, payerIdSql);
+	final Map<Integer,String> studentNames = SchoolDB.getStudentNames(str, termid, payerIdSql);
 	
 	// Fetch main stuff
 	int actypeid = ActransSchema.AC_SCHOOL;

@@ -216,22 +216,23 @@ throws SQLException
 			EQuery eqy = eQueryEditor.getEQuery();
 			
 			// Main table
-			String sql0_all = eqy.getSql(fapp.equerySchema(), false);
-			String sql0_primaryOnly = eqy.getSql(fapp.equerySchema(), true);
-			testResults.setIdSql(sql0_primaryOnly, null);
+			String sql0_all = eqy.getSql(fapp.equerySchema());
+//			String sql0_primaryOnly = eqy.getSql(fapp.equerySchema());
+//			testResults.setIdSql(sql0_primaryOnly, null);
+			testResults.setIdSql(sql0_all, null);
 			testResults.executeQuery(str);
 			
 			// Summary counts
 			String sql =
-				DB.sqlCountIDList(sql0_all) + ";\n" +
-				DB.sqlCountIDList(sql0_primaryOnly);
+				DB.sqlCountIDList(sql0_all); // + ";\n" +
+//				DB.sqlCountIDList(sql0_primaryOnly);
 			str.execSql(sql, new RssTasklet() {
 			public void run(ResultSet[] rss) throws SQLException {
 				rss[0].next();
 				int fullSize = rss[0].getInt(1);
-				rss[1].next();
-				int nodupSize = rss[1].getInt(1);
-				lQuerySize.setText(""+fullSize + " (" + nodupSize + " merged households)");
+//				rss[1].next();
+//				int nodupSize = rss[1].getInt(1);
+				lQuerySize.setText(""+fullSize); // + " (" + nodupSize + " merged households)");
 			}});
 		}});
 	}//GEN-LAST:event_bApplyActionPerformed

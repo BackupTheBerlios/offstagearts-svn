@@ -31,21 +31,26 @@ import offstage.db.*;
 public class EQuery extends Query
 {
 
+
 // Info on the query
 ArrayList<EClause> clauses = new ArrayList();
 java.util.Date lastUpdatedFirst;
 java.util.Date lastUpdatedNext;
+int distinctType = Query.DISTINCT_PRIMARYENTITYID;
 // ============================================
 
 public void setLastUpdatedFirst(java.util.Date dt)
 	{ this.lastUpdatedFirst = dt; }
 public void setLastUpdatedNext(java.util.Date dt)
 	{ this.lastUpdatedNext = dt; }
+public void setDistinctType(int dt)
+	{ this.distinctType = dt; }
 public java.util.Date getLastUpdatedFirst()
 	{ return this.lastUpdatedFirst; }
 public java.util.Date getLastUpdatedNext()
 	{ return this.lastUpdatedNext; }
-
+public int getDistinctType()
+	{ return this.distinctType; }
 
 /** Inserts clause before clause #ix */
 public void insertClause(int ix, EClause c)
@@ -127,7 +132,7 @@ throws IOException
 
 
 /** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
-public String getSql(QuerySchema schema, EClause clause, boolean primaryOnly)
+public String getSql(QuerySchema schema, EClause clause)
 throws IOException
 {
 	if (clause.elements.size() == 0) return null;
@@ -135,12 +140,28 @@ throws IOException
 	sql.addTable("entities as main");
 	String ewhere = getWhereSql(schema, sql, clause);
 	sql.addWhereClause("(" + ewhere + ")");
-	if (primaryOnly) {
-		sql.addColumn("main.primaryentityid as id");
-		sql.setDistinct(true);
-	} else {
-		sql.addColumn("main.entityid as id");
+//	sql.setDistinct(true);			// Seems like a good idea whether or not we reduce by household/etc
+	switch(distinctType) {
+		case DISTINCT_PRIMARYENTITYID :
+			sql.addColumn("main.primaryentityid as id");
+		break;
+		case DISTINCT_PARENT1ID :
+			sql.addColumn("main.parent1id as id");
+		break;
+		case DISTINCT_PAYERID :
+			sql.addColumn("_tr.payerid as id");
+// For now, just hack in join to termregs; do this properly later, with
+// transitive table-join requirements in the EQuerySchema.
+//			if (!sql.containsTable("termregs"))		// doesn't work, since table names not kept.
+			sql.addTable("termregs", "_tr", "inner join",
+				"_tr.entityid = termenrolls.entityid and _tr.groupid = termenrolls.groupid");
+		break;
+		case DISTINCT_ENTITYID :
+		default :
+			sql.addColumn("main.entityid as id");
+		break;
 	}
+
 	sql.addWhereClause("not main.obsolete");
 	sql.setDistinct(true);
 	String ssql = sql.getSql();
@@ -149,23 +170,46 @@ throws IOException
 
 }
 
-/** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
-public String getSql(QuerySchema schema, boolean primaryOnly)
+/** @param primaryOnly Select only head of household (dinstinct primaryentityid)?
+ @param termid Term we're matching against (if distinctType == DISTINCT_PAYERID.  Can be -1
+ for non-school queries (as long as distinctType != DISTINCT_PAYERID). */
+public String getSql(QuerySchema schema)
+//public String getSql(QuerySchema schema, int termid)
 throws IOException
 {
+//	if (distinctType == DISTINCT_PAYERID && termid < 0)
+//		throw new IllegalArgumentException(
+//		"EQuery.getSql() does not work on DISTINCT_PAYERID without a termid.");
+	
 	boolean first = true;
 	StringBuffer sql = new StringBuffer();
 	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {
 		EClause clause = (EClause)ii.next();
-		String csql = getSql(schema, clause, primaryOnly);
+		String csql = getSql(schema, clause);
 		if (csql == null) continue;
 		if (clause.type == EClause.ZERO) continue;		// Clause temporary disabled
 		if (!first) sql.append(clause.type == EClause.ADD ? "\n    UNION\n" : "\n    EXCEPT\n");
 		sql.append("(" + csql + ")");
 		first = false;
 	}
-	return sql.toString();
+//	if (distinctType == DISTINCT_PAYERID) {
+//		// Wrap WHOLE QUERY to do distinct payer
+//		return
+//			" select distinct tr.payerid as id\n" +
+//			" from termregs tr, (" + sql.toString() + ") xx\n" +
+//			" where tr.groupid = " + termid +
+//			" and tr.entityid = xx.id";
+//	} else {
+		// Distinctification was done in individual clauses in an easier fashion.
+		return sql.toString();
+//	}
 }
+///** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
+//public String getSql(QuerySchema schema)
+//throws IOException
+//{
+//	return getSql(schema, -1);
+//}
 
 //// -----------------------------------------------
 ///** Creates a standard SqlQuery out of the data in this query. */
@@ -227,16 +271,16 @@ throws IOException
 //	return ssql;
 //}
 // ------------------------------------------------------
-/** Returns the mailing id */
-public void makeMailing(SqlRun str, String queryName, EQuerySchema schema,
-final UpdTasklet2 rr) throws SQLException, IOException
-{
-	String eqXml = toXML();
-	String eqSql = getSql(schema, true);
-
-	// Create the mailing list and insert EntityID records
-	DB.w_mailingids_create(str, queryName, eqXml, eqSql, rr);
-}
+///** Returns the mailing id */
+//public void makeMailing(SqlRun str, String queryName, EQuerySchema schema,
+//final UpdTasklet2 rr) throws SQLException, IOException
+//{
+//	String eqXml = toXML();
+//	String eqSql = getSql(schema, true);
+//
+//	// Create the mailing list and insert EntityID records
+//	DB.w_mailingids_create(str, queryName, eqXml, eqSql, rr);
+//}
 // ------------------------------------------------------
 
 static final int STRING = 0;
