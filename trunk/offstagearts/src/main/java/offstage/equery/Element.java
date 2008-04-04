@@ -17,12 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package offstage.equery;
 
+import citibob.types.JType;
+
 public class Element
 {
-	public ColName colName;
-	public String comparator;
+	ColName colName;
+	String comparator;
 	public Object value;
-
+	public transient JType cachedValueType;		// Type we determined for this element, if nothing has changed...
+	
 	public Element(ColName colName, String comparator, Object value)
 	{
 		this.colName = colName;
@@ -31,4 +34,17 @@ public class Element
 	}
 	public Element()
 	{ }
+	
+	public String getComparator() { return comparator; }
+	public void setComparator(String comparator)
+	{
+		this.comparator = comparator;
+		cachedValueType = null;
+	}
+	public ColName getColName() { return colName; }
+	public void setColName(ColName colName)
+	{
+		this.colName = colName;
+		cachedValueType = null;
+	}
 }

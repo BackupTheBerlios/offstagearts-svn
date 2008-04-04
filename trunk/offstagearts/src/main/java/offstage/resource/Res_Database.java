@@ -40,6 +40,7 @@ public Res_Database(ResSet rset)
 
 	add(new DbbCreator(this, 1));
 	add(new DbbUpgrader(this, 1, 45, true));
+	add(new DbbUpgrader(this, 45, 50, true));
 //	add(new DbbUpgrader(this, 2, 3, true));
 }
 	

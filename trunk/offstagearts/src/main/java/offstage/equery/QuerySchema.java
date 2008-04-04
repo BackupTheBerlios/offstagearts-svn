@@ -23,14 +23,6 @@ import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.typed.*;
 import java.sql.*;
-import offstage.schema.OffstageSchemaSet;
-import offstage.schema.OrgSchema;
-import offstage.schema.NotesSchema;
-import offstage.schema.PersonsSchema;
-import offstage.schema.PhonesSchema;
-import offstage.schema.EventsSchema;
-import offstage.schema.DonationsSchema;
-import offstage.schema.EntitiesSchema;
 import citibob.types.*;
 import offstage.equery.*;
 
@@ -46,13 +38,24 @@ JEnum colsJType;
 HashMap tabs = new HashMap();	// Maps "table" -> String
 HashMap typeComparators = new HashMap();	// Maps SqlType --> list of comparators
 // -----------------------------------------------
+public static interface ColTyper
+{
+	/** Returns the type of a particular column in a particular clause in a particular element. */
+	public JType getType(EClause clause, Element el, QuerySchema.Col col);
+}
+public static class DefaultColTyper implements ColTyper {
+public JType getType(EClause clause, Element el, QuerySchema.Col col) {
+	return col.col.getType();
+}}
+public static final ColTyper defaultColTyper = new DefaultColTyper();
+// -----------------------------------------------
 public static class Col
 {
 	public ColName cname;
 //	public String table;
 	public SqlCol col;
 	public JEnum comparators;
-	
+	public ColTyper typer = defaultColTyper;			// How to get the type of this column.  Can create new object...
 	
 	String viewName;
 	public void setViewName(String vn)
@@ -92,6 +95,10 @@ public Col getCol(ColName cname)
 {
 	if (cname == null) return null;
 	return (Col)cols.get(cname).obj;
+}
+public Col getCol(String fullName)
+{
+	return getCol(new ColName(fullName));
 }
 //public Iterator colIterator()
 //	{ return colList.iterator(); }
@@ -160,6 +167,23 @@ System.out.println("Looking in schema: " + cname + "(size = " + cols.getItemMap(
 //		if (!col.hasViewName()) ii.remove();
 //	}
 }
+
+/** Returns the type of a particular column in a particular clause in a particular element. */
+public JType getType(EClause clause, Element el, QuerySchema.Col col)
+{
+	if (el.cachedValueType != null) return el.cachedValueType;
+	
+	// Type not cached, fetch it.
+	JType jt = col.typer.getType(clause, el, col);
+	
+	// Save and return
+	el.cachedValueType = jt;
+	return jt;
+}
+//				return schema.getType(getClause(rs), el, col.col);
+//				return col.col.getType();
+//					Clause clause, Element el, SqlCol col
+
 // --------------------------------------------------------
 protected QuerySchema()
 {

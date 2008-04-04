@@ -252,7 +252,7 @@ class AllRecDbModel extends MultiDbModel
 	public void forceUpdate(SqlRun str) {
 //		if (!valueChanged()) return;
 
-		if (smod.studentRm.get("parent1id") == null || smod.termregsRm.get("payerid") == null) {
+		if (!recordValid()) {
 			JOptionPane.showMessageDialog(RegistrationPanel.this,
 				"Cannot save record.  You must have a payer\nand parent in order to save.");
 			return;
@@ -278,6 +278,10 @@ class AllRecDbModel extends MultiDbModel
 	}
 }
 
+boolean recordValid()
+{
+	return smod.studentRm.get("parent1id") != null && smod.termregsRm.get("payerid") != null;
+}
 public void calcTuition(SqlRun str)
 {
 	// Calculate the tuition
@@ -2624,6 +2628,13 @@ void newPayerAction(final SchemaBufRowModel rm, final String colName)
 	{//GEN-HEADEREND:event_bAddEnrollmentActionPerformed
 		fapp.guiRun().run(RegistrationPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
+
+			if (!recordValid()) {
+				JOptionPane.showMessageDialog(RegistrationPanel.this,
+					"You must have a payer\nand parent in order to enroll in courses.");
+				return;
+			}
+
 			enrolledDb.doUpdate(str);
 			Wizard wizard = new EnrollWizard(fapp, RegistrationPanel.this);
 //			TypedHashMap v = new TypedHashMap();

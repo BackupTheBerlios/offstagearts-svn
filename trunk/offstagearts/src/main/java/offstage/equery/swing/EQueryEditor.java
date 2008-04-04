@@ -47,7 +47,7 @@ public class EQueryEditor extends javax.swing.JPanel
 implements TypedWidget
 {
 
-	EQueryTableModel2 model;
+	EQueryTableModel model;
 
     /** Creates new form EQueryEditor */
     public EQueryEditor() {
@@ -56,11 +56,11 @@ implements TypedWidget
 		eClauseScrollPane.setRowHeaderView(new TableRowHeader(eClauseScrollPane, eQueryTable, 15));
     }
 
-	public void initRuntime(EQueryTableModel2 qm, SwingerMap smap, TimeZone tz)
+	public void initRuntime(EQueryTableModel qm, SwingerMap smap, TimeZone tz)
 	throws SQLException
 	{
 		this.model = qm;
-//		eQueryTable.setModel(new EQueryTableModel2());
+//		eQueryTable.setModel(new EQueryTableModel());
 		eQueryTable.setModel(qm);
 		eQueryTable.setSwingerMap(smap);
 

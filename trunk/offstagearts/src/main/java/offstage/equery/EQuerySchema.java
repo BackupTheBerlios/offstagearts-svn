@@ -53,11 +53,31 @@ public EQuerySchema(SchemaSet sset) throws SQLException
 	addSchema(sset.get("termregs"),
 		"termregs.entityid = termenrolls.entityid and termregs.groupid = termenrolls.groupid",
 		"termenrolls");
+	addSchema(sset.get("enrollments"),
+		"enrollments.entityid = main.entityid");
+	super.getCol("enrollments.courseid").typer = new ColTyper() {
+	public JType getType(EClause clause, Element el, QuerySchema.Col col) {
+		JEnum baseEnum = (JEnum)col.col.getType();
+		ColName cn = new ColName("termenrolls.groupid");
+		for (Element ee : clause.getElements()) {
+			if (ee == el) continue;
+			if (ee.colName.equals(cn)) {
+				// We've found what we're looking for!
+				Object segment = ee.value;
+				JEnum limitEnum = new JEnumSegment(baseEnum, segment);
+				return limitEnum;
+			}
+		}
+		return baseEnum;		// term element not in clause, return the full monty
+	}};
+	
+	
 // add termregs.tuition, etc.
 	addSchema(sset.get("interests"),
 		"interests.entityid = main.entityid");
 	addSchema(sset.get("tickets"),
 		"ticketeventsales.entityid = main.entityid");
+	
 	doAlias(alias);
 }
 
@@ -93,6 +113,8 @@ private static final String[] alias = {
 	"classes.groupid", "classes (deprecated)",
 	"termenrolls.groupid", "terms",
 	"termenrolls.courserole", "termrole",
+	"enrollments.courseid", "courses",
+	"enrollments.courserole", "courserole",
 	"termregs.programid", "level",
 	"termregs.tuition", "tuition",
 	"termregs.scholarship", "scholarship",

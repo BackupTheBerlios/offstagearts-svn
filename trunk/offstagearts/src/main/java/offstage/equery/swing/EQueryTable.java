@@ -49,8 +49,8 @@ static Color purple = new Color(204, 204, 255);
 public Color getFore(boolean isSelected, boolean hasFocus, int row, int col)
 {
 //	if (isSelected) return SystemColor.activeCaptionText;
-//	EQueryTableModel2 m = (EQueryTableModel2)getModel();
-//	EQueryTableModel2.RowSpec rs = m.getRow(row);
+//	EQueryTableModel m = (EQueryTableModel)getModel();
+//	EQueryTableModel.RowSpec rs = m.getRow(row);
 //	if (rs.isElement()) return null;
 //	return Color.black;
 	return null;
@@ -58,9 +58,9 @@ public Color getFore(boolean isSelected, boolean hasFocus, int row, int col)
 public Color getBack(boolean isSelected, boolean hasFocus, int row, int col)
 {
 	if (isSelected) return purple; //SystemColor.controlLtHighlight;
-	if (!(getModel() instanceof EQueryTableModel2)) return null;
-	EQueryTableModel2 m = (EQueryTableModel2)getModel();
-	EQueryTableModel2.RowSpec rs = m.getRow(row);
+	if (!(getModel() instanceof EQueryTableModel)) return null;
+	EQueryTableModel m = (EQueryTableModel)getModel();
+	EQueryTableModel.RowSpec rs = m.getRow(row);
 	if (rs.isElement()) return null;
 	return Color.pink;
 }
