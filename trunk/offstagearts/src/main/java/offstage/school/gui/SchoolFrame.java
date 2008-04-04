@@ -43,6 +43,7 @@ import offstage.reports.SchoolAccounts;
 import offstage.reports.StudentConfirmationLetter;
 import offstage.*;
 import offstage.reports.StudentSchedule;
+import offstage.schema.TermidsSchema;
 import offstage.school.tuition.TuitionCalc;
 
 /**
@@ -76,8 +77,9 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 
 	// Set up terms selector
 //setKeyedModel selects the term --- but the KeyedModel is not getting filled in till afterwards
-	final DbKeyedModel tkmodel = new DbKeyedModel(str, fapp.dbChange(), "termids",
-		"select groupid, name from termids where iscurrent order by firstdate desc");
+	final DbKeyedModel tkmodel = ((TermidsSchema)fapp.getSchema("termids")).currentTermsKmodel;
+//			new DbKeyedModel(str, fapp.dbChange(), "termids",
+//		"select groupid, name, null from termids where iscurrent order by firstdate desc");
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 		vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
@@ -86,7 +88,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 			schoolModel.setTermID((Integer)(vTermID.getValue()));
 			fapp.sqlRun().popFlush();		// Flush, conditional on no other items around us.
 		}});
-		vTermID.setKeyedModel(tkmodel);
+		vTermID.setKeyedModel(tkmodel, null);
 //		if (tkmodel.size() > 0) vTermID.setSelectedIndex(0);
 	}});
 
@@ -327,7 +329,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 	private void miRefreshActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miRefreshActionPerformed
 	{//GEN-HEADEREND:event_miRefreshActionPerformed
 // TODO: This is just here for testing.
-vTermID.setKeyedModel(vTermID.getKeyedModel());
+vTermID.setKeyedModel(vTermID.getKeyedModel(), null);
 // TODO add your handling code here:
 	}//GEN-LAST:event_miRefreshActionPerformed
 

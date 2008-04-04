@@ -426,7 +426,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 		gmodel.addItem(null, "<Unknown>");
 		gmodel.addItem("M", "Male");
 		gmodel.addItem("F", "Female");
-		gender.setKeyedModel(gmodel);
+		gender.setKeyedModel(gmodel, null);
 		new TypedWidgetBinder().bind(gender, smod.studentRm, "gender", BT_READWRITE);
 //		new TypedWidgetBinder().bind(familyTable, smod.studentRm, "primaryentityid", BT_READ);
 	TypedWidgetBinder.bindRecursive(StudentTab, smod.studentRm, smap);
@@ -575,13 +575,13 @@ void refreshRBPlanSet(SqlRun str)
 				kmodel.addItem(plans[i].getKey(), plans[i].getName());
 			}
 //				KeyedModel kmodel = KeyedModel.sameKeys(names);
-			rbPlans.setKeyedModel(kmodel);
+			rbPlans.setKeyedModel(kmodel, null);
 			rbPlans.setEnabled(true);
 		} else {
 			// No tuition plan for this term.
 			// OffstageArts will not bill!
 			rbPlanSet = null;
-			rbPlans.setKeyedModel(KeyedModel.sameKeys(new Object[0]));
+			rbPlans.setKeyedModel(KeyedModel.sameKeys(new Object[0]), null);
 			rbPlans.setEnabled(false);
 		}
 

@@ -54,22 +54,39 @@ public static final KeyedModel distinctKmodel = KeyedModel.intKeys(
 //protected Query(QuerySchema schema)
 //{ this.schema = schema; }
 
+///** Used in constructing queries... */
+//protected void addTableOuterJoin(QuerySchema schema, ConsSqlQuery sql, ColName cn)
+//{
+//	String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
+//	String tabString = " left outer join " + cn.getTable() + " on (" + joinClause + ")";
+//	if (!sql.containsTable(tabString)) {
+//		sql.addTable(tabString);
+//	}
+//}
+///** Used in constructing queries... */
+//protected void addTableForColumn(QuerySchema schema, ConsSqlQuery sql, ColName cn)
+//{
+////	String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
+//	String tabString = " inner join " + cn.getTable() + " on (" + joinClause + ")";
+//	if (!sql.containsTable(tabString)) {
+//		sql.addTable(tabString);
+//	}
+//}
 /** Used in constructing queries... */
-protected void addTableOuterJoin(QuerySchema schema, ConsSqlQuery sql, ColName cn)
+protected void addTable(QuerySchema schema, ConsSqlQuery sql, String tableName)
 {
-	String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
-	String tabString = " left outer join " + cn.getTable() + " on (" + joinClause + ")";
-	if (!sql.containsTable(tabString)) {
-		sql.addTable(tabString);
-	}
-}
-/** Used in constructing queries... */
-protected void addTableInnerJoin(QuerySchema schema, ConsSqlQuery sql, ColName cn)
-{
-	String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
-	String tabString = " inner join " + cn.getTable() + " on (" + joinClause + ")";
-	if (!sql.containsTable(tabString)) {
-		sql.addTable(tabString);
+	QuerySchema.Tab tab = schema.getTab(tableName);
+	if (sql.getTables(tableName) == null) {
+		// This table hasn't been added yet
+		
+		// Add dependencies (circular dependencies will be broken)
+		if (tab.requiredTables != null) {
+			for (String req : tab.requiredTables) addTable(schema, sql, req);
+		}
+
+		// Add this table (AFTER dependencies; required for SQL)
+		sql.addTable(tableName, null, SqlQuery.JT_INNER, tab.joinClause);
+
 	}
 }
 ///** Creates a standard ConsSqlQuery out of the data in this query. */

@@ -255,7 +255,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 		fapp.guiRun().run(TermsAddPanel.this, new ETask() {
 		public void run() throws Exception {
 			JEnum tt = (JEnum)termsDm.getSchemaBuf().getJType(0, "termtypeid");
-			Object defaultTermTypeID = tt.getKeyedModel().getKeyList().get(0);
+			Object defaultTermTypeID = tt.getKeyedModel().getKey(0); //getKeyList().get(0);
 			termsDm.getSchemaBuf().insertRow(0,
 				new String[] {"termtypeid", "iscurrent"},
 				new Object[] {defaultTermTypeID, Boolean.TRUE});

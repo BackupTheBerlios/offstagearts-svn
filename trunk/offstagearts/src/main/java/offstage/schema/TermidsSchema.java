@@ -28,9 +28,15 @@ import citibob.types.*;
 public class TermidsSchema extends GroupidsSchema
 {
 
+public final DbKeyedModel currentTermsKmodel;
+
+
+	
 public TermidsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException{
 	table = "termids";
+	currentTermsKmodel = new DbKeyedModel(str, change, "termids",
+		"select groupid, name, null from termids where iscurrent order by firstdate desc");
 	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"termtypes", "termtypeid", "name", "orderid");
 	appendCols(new SqlCol[] {

@@ -56,7 +56,7 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	final KeyedModel crModel = new citibob.sql.DbKeyedModel(str, null,
 		"courseroles", "courseroleid", "name", "orderid");
 	String sql =
-		" select courseid, c.name || ' (' || dw.shortname || ')'" +
+		" select courseid, c.name || ' (' || dw.shortname || ')', c.termid" +
 		" from courseids c, daysofweek dw" +
 		" where c.dayofweek = dw.javaid" +
 		" and termid = " + v.get("termid") +

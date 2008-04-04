@@ -72,7 +72,10 @@ addState(new AbstractWizState("listquery", null, "editquery") {
 			  new ListQueryWiz(con.str, fapp)); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		if ("newquery".equals(con.v.get("submit"))) stateName = "newquery";
+		int equeryid = con.v.getInt("equeryid");
+		if ("newquery".equals(con.v.get("submit")) ||
+			equeryid < 0)
+			stateName = "newquery";
 	}
 });
 // ---------------------------------------------

@@ -121,7 +121,7 @@ throws IOException
 		ColName cn = e.colName;
 		QuerySchema.Col qsc = (QuerySchema.Col) schema.getCol(cn);
 		SqlCol c = qsc.col;
-		addTableInnerJoin(schema, sql, cn);
+		addTable(schema, sql, cn.getTable());
 		if (ewhere == null) ewhere = new StringBuffer("(");
 		else ewhere.append(" and\n");
 		ewhere.append(getSql(c, e, qsc.viewName));
@@ -149,12 +149,13 @@ throws IOException
 			sql.addColumn("main.parent1id as id");
 		break;
 		case DISTINCT_PAYERID :
-			sql.addColumn("_tr.payerid as id");
+			sql.addColumn("termregs.payerid as id");
+			addTable(schema, sql, "termregs");
 // For now, just hack in join to termregs; do this properly later, with
 // transitive table-join requirements in the EQuerySchema.
 //			if (!sql.containsTable("termregs"))		// doesn't work, since table names not kept.
-			sql.addTable("termregs", "_tr", "inner join",
-				"_tr.entityid = termenrolls.entityid and _tr.groupid = termenrolls.groupid");
+//			sql.addTable("termregs", "_tr", SqlQuery.JT_INNER,
+//				"_tr.entityid = termenrolls.entityid and _tr.groupid = termenrolls.groupid");
 		break;
 		case DISTINCT_ENTITYID :
 		default :
@@ -204,83 +205,6 @@ throws IOException
 		return sql.toString();
 //	}
 }
-///** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
-//public String getSql(QuerySchema schema)
-//throws IOException
-//{
-//	return getSql(schema, -1);
-//}
-
-//// -----------------------------------------------
-///** Creates a standard SqlQuery out of the data in this query. */
-//public void writeSqlQuery(QuerySchema schema, ConsSqlQuery sql)
-//{
-//	String cwhere = "(1=0";
-//	for (Iterator ii=clauses.iterator(); ii.hasNext(); ) {
-//		EClause clause = (EClause)ii.next();
-//		List elements = clause.elements;
-//		if (elements.size() == 0) continue;
-//		StringBuffer ewhere = null;
-//		for (Iterator jj=elements.iterator() ; jj.hasNext(); ) {
-//			Element e = (Element)jj.next();
-//			ColName cn = e.colName;
-//System.out.println("cn = " + cn);
-//			QuerySchema.Col qsc = (QuerySchema.Col) schema.getCol(cn);
-//System.out.println("qsc = " + qsc);
-//			Column c = qsc.col;
-//			addTableOuterJoin(schema, sql, cn);
-////			if (!sql.containsTable(e.colName.getTable())) {
-////				String joinClause = (((QuerySchema.Tab) schema.getTab(cn.getTable()))).joinClause;
-////				sql.addWhereClause(joinClause);
-////				sql.addTable(cn.getTable());
-////			}
-//			if (ewhere == null) ewhere = new StringBuffer("(");
-//			else ewhere.append(" and\n");
-//			if (clause.type == EClause.SUBTRACT) {
-//				// subtle outer join semantics issue...
-//				ewhere.append(e.colName.toString() + " is not null and ");
-//			}
-//			ewhere.append(e.colName.toString() + " " + e.comparator + " " +
-//				" (" + c.getType().toSql(e.value) + ")");
-//		}
-//		ewhere.append(")");
-//		String joiner = (clause.type == EClause.ADD ? "or" : "and not");
-//		cwhere = "(" + cwhere + ") " + joiner + " \n" + ewhere.toString();
-//	}
-//	cwhere = cwhere + ")";
-//	sql.addWhereClause(cwhere);
-//	
-//	// Add where clause for lastupdated date range
-//	if (lastUpdatedFirst != null) sql.addWhereClause(
-//		"main.lastupdated >= " + SqlTimestamp.gmt(lastUpdatedFirst));
-//	if (lastUpdatedNext != null) sql.addWhereClause(
-//		"main.lastupdated < " + SqlTimestamp.gmt(lastUpdatedNext));
-//}
-//// ------------------------------------------------------
-//// ------------------------------------------------------
-//public String getSql(QuerySchema qs)
-//{
-//	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
-//	sql.addTable("entities as main");
-//	this.writeSqlQuery(qs, sql);
-//	sql.addColumn("main.entityid as id");
-//	sql.addWhereClause("not main.obsolete");
-//	sql.setDistinct(true);
-//	String ssql = sql.getSql();
-////System.out.println("ssql = " + ssql);
-//	return ssql;
-//}
-// ------------------------------------------------------
-///** Returns the mailing id */
-//public void makeMailing(SqlRun str, String queryName, EQuerySchema schema,
-//final UpdTasklet2 rr) throws SQLException, IOException
-//{
-//	String eqXml = toXML();
-//	String eqSql = getSql(schema, true);
-//
-//	// Create the mailing list and insert EntityID records
-//	DB.w_mailingids_create(str, queryName, eqXml, eqSql, rr);
-//}
 // ------------------------------------------------------
 
 static final int STRING = 0;

@@ -41,6 +41,7 @@ import citibob.sql.pgsql.*;
 import citibob.swing.sql.*;
 import citibob.sql.*;
 import citibob.types.*;
+import offstage.schema.TermidsSchema;
 
 /**
  *
@@ -62,8 +63,10 @@ throws SQLException
 
 	// Set up terms selector
 //	SqlBatchSet str0 = new SqlBatchSet();
-	terms.setKeyedModel(new DbKeyedModel(str, fapp.dbChange(), "termids",
-		"select groupid, name from termids where iscurrent order by firstdate"));
+	terms.setKeyedModel(((TermidsSchema)fapp.getSchema("termids")).currentTermsKmodel, null);
+	
+//	terms.setKeyedModel(new DbKeyedModel(str, fapp.dbChange(), "termids",
+//		"select groupid, name, null from termids where iscurrent order by firstdate"));
 //	str0.runBatches(fapp);
 
 	str.execUpdate(new UpdTasklet2() {

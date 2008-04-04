@@ -33,7 +33,7 @@ throws SQLException
 	super();
 	table = "termregs";
 	KeyedModel kmodel = new DbKeyedModel(str, change, "programids",
-		"select programid, name from programids order by name");
+		"select programid, name, termid from programids order by name");
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "groupid", true),	// links to termids; this should really be enum, except that's not needed...
 		new SqlCol(new SqlInteger(false), "entityid", true),
