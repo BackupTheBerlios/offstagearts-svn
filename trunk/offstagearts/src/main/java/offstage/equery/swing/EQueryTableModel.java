@@ -232,7 +232,10 @@ public void removeElement(int row)
 //	ArrayListUtil.setSize(rows, rows.size() - 1);
 
 	// Modify indices in all others
-	for (int i=rs.eix+1; i<clause.getElements().size(); ++i) --getRow(row-rs.eix+i).eix;
+	for (int i=rs.eix; i<clause.getElements().size(); ++i) {
+		int irow = row - rs.eix + i;
+		--getRow(irow).eix;
+	}
 
 	this.fireTableRowsDeleted(row, row);
 }
@@ -386,7 +389,7 @@ public Object getValueAt(int row, int column)
 		}
 		return null;
 	} else {
-//System.err.println(row + ", " + column);
+System.err.println(row + ", " + column);
 		Element el = getElement(rs);
 		if (el == null) return null;
 		switch(column) {
