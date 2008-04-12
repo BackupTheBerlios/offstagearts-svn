@@ -128,6 +128,8 @@ public void refresh(SqlRun str) // throws SQLException
 //	}});
 }
 
+public Double getBalance() { return (Double)acbal.getValue(); }
+
 
 	/** This method is called from within the constructor to
 	 * initialize the form.

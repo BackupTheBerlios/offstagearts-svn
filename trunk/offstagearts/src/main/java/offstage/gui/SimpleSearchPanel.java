@@ -22,13 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package offstage.gui;
+import citibob.app.App;
 import java.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
-import offstage.FrontApp;
 import offstage.devel.gui.*;
-import offstage.devel.gui.DevelModel;
 import offstage.db.*;
 import java.awt.event.*;
 import offstage.swing.typed.*;
@@ -42,7 +41,7 @@ import citibob.sql.*;
 public class SimpleSearchPanel extends javax.swing.JPanel
 implements java.beans.PropertyChangeListener
 {
-	DevelModel dmod;
+	DbModel dmod;
 	citibob.app.App app;
 	
 	/** Creates new form SimpleSearchPanel */
@@ -51,7 +50,7 @@ implements java.beans.PropertyChangeListener
 
 		selector.addPropertyChangeListener("value", this);
 	}
-	public void initRuntime(FrontApp fapp, DevelModel dmod) //SqlRun str, FullEntityDbModel dm)
+	public void initRuntime(App fapp, DbModel dmod) //SqlRun str, FullEntityDbModel dm)
 	{
 		this.app = fapp;
 		this.dmod = dmod;

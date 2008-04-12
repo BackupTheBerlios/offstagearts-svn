@@ -50,25 +50,26 @@ IntKeyedDbModel terms;
 IntKeyedDbModel interests;
 
 
-public void setKey(int entityID)
-{
-	this.entityID = entityID;
-
-	// First, figure out whether 
-	onePerson.setKey(entityID);
-	phones.setKey(entityID);
-	donations.setKey(entityID);
-	flags.setKey(entityID);
-	notes.setKey(entityID);
-	tickets.setKey(entityID);
-	events.setKey(entityID);
-//	classes.setKey(entityID);
-	terms.setKey(entityID);
-	interests.setKey(entityID);
-}
+//public void setKey(int entityID)
+//{
+//	this.entityID = entityID;
+//
+//	// First, figure out whether 
+//	onePerson.setKey(entityID);
+//	phones.setKey(entityID);
+//	donations.setKey(entityID);
+//	flags.setKey(entityID);
+//	notes.setKey(entityID);
+//	tickets.setKey(entityID);
+//	events.setKey(entityID);
+////	classes.setKey(entityID);
+//	terms.setKey(entityID);
+//	interests.setKey(entityID);
+//}
 public int getEntityId()
 {
-	return entityID;
+	return onePerson.getIntKey();
+//	return entityID;
 }
 // ---------------------------------------------------------
 // Return the various SchemaBufs that make up this super-record.
