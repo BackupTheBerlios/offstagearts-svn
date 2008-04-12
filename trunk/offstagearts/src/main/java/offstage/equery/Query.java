@@ -108,14 +108,14 @@ throws IOException;
 // ------------------------------------------------------
 /** Sets the value.  Same as method in JFormattedTextField.  Fires a
  * propertyChangeEvent("value") when calling setValue() changes the value. */
-public static Query fromXML(String squery)
+public static Query fromXML(QuerySchema schema, String squery)
 {
 	if (squery == null) return null;
 	
 	Object obj = null;
 	try {
 		StringReader fin = new StringReader(squery);
-		XStream xs = new QueryXStream();
+		XStream xs = new QueryXStream(schema);
 		ObjectInputStream ois = xs.createObjectInputStream(fin);
 		obj = ois.readObject();
 	} catch(ClassNotFoundException e) {
@@ -136,11 +136,11 @@ public static Query fromXML(String squery)
 	}
 }
 
-public String toXML()
+public String toXML(QuerySchema schema)
 {
 	// Serialize using XML
 	StringWriter fout = new StringWriter();
-	XStream xs = new QueryXStream();
+	XStream xs = new QueryXStream(schema);
 	try {
 		ObjectOutputStream oos = xs.createObjectOutputStream(fout);
 		oos.writeObject(this);

@@ -30,7 +30,9 @@ public final static int SUBTRACT = -1;
 	public int type = ADD;			// ADD or SUBTRACT; not really public
 	protected ArrayList<Element> elements;
 	public String name;		// Not really public
-
+	public Integer minDups;
+	public Integer maxDups;
+	
 	public EClause(String name)
 	{
 		this.name = name;

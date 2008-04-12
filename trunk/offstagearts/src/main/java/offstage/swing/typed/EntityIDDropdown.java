@@ -37,11 +37,11 @@ import citibob.app.*;
 import citibob.sql.pgsql.*;
 import citibob.types.*;
 
-public class EntityIDEditableLabel extends JTypedEditableLabelDB
+public class EntityIDDropdown extends JTypedDropdownDB
 {
 
 
-public EntityIDEditableLabel() {}
+public EntityIDDropdown() {}
 
 App app;
 EntitySelector sel;

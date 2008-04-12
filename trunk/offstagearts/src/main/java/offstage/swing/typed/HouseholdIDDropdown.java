@@ -36,7 +36,7 @@ import citibob.sql.pgsql.*;
 import citibob.sql.*;
 import citibob.util.IntVal;
 
-public class HouseholdIDEditableLabel extends EntityIDEditableLabel
+public class HouseholdIDDropdown extends EntityIDDropdown
 {
 
 int entityid;		// EntityID of the person having this widget.
@@ -91,8 +91,8 @@ public void setValue(Object o)
 	final IntVal ival = offstage.db.DB.getPrimaryEntityID(str, ID);
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
-		HouseholdIDEditableLabel.super.setValue((Integer)ival.val);
-	}});
+		HouseholdIDDropdown.super.setValue((Integer)ival.val);
+	}	});
 	str.popFlush();
 }
 }

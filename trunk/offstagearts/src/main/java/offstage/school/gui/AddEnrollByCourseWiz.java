@@ -34,7 +34,7 @@ import java.sql.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.types.*;
-import offstage.swing.typed.EntityIDEditableLabel;
+import offstage.swing.typed.EntityIDDropdown;
 
 /**
  *
@@ -50,7 +50,7 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
 	super(owner, app.swingerMap());
 	setSize(600,460);
-	final EntityIDEditableLabel entityid = new EntityIDEditableLabel();
+	final EntityIDDropdown entityid = new EntityIDDropdown();
 		entityid.initRuntime(app, v.getInteger("termid"));
 	
 	final KeyedModel crModel = new citibob.sql.DbKeyedModel(str, null,

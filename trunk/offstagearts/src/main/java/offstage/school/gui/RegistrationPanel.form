@@ -2353,7 +2353,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="offstage.swing.typed.EntityIDEditableLabel" name="vPayerID">
+                <Component class="offstage.swing.typed.EntityIDDropdown" name="vPayerID">
                   <Properties>
                     <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <PlainString value="payerid"/>
@@ -2491,7 +2491,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="offstage.swing.typed.EntityIDEditableLabel" name="vParent1ID">
+                <Component class="offstage.swing.typed.EntityIDDropdown" name="vParent1ID">
                   <Properties>
                     <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <PlainString value="parent1id"/>
@@ -2536,7 +2536,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="offstage.swing.typed.EntityIDEditableLabel" name="vParent2ID">
+                <Component class="offstage.swing.typed.EntityIDDropdown" name="vParent2ID">
                   <Properties>
                     <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                       <PlainString value="parent2id"/>

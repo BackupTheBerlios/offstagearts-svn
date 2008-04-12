@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.types;
 
+import offstage.equery.ListAndRangeJType;
 import citibob.swing.typed.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
@@ -34,6 +35,9 @@ import citibob.swing.sql.*;
 import citibob.types.*;
 import citibob.swingers.*;
 import java.util.*;
+import offstage.equery.swing.IntRange;
+import offstage.equery.swing.IntRangeTW;
+import offstage.equery.swing.ListAndRangeTW;
 
 /**
  *
@@ -61,6 +65,37 @@ public OffstageSwingerMap(final java.util.TimeZone tz) {
 			new String[] {"hh:mm a", "HH:mm"},
 			"", TimeZone.getTimeZone("GMT"), null);
 		//return new SqlTimeSwinger((SqlTime)sqlType, "HH:mm");
+	}});
+
+	// ListAndRange (for the Query Editor)
+	this.addMaker(ListAndRangeJType.class, new BaseSwingerMap.Maker() {
+	public Swinger newSwinger(JType sqlType) {
+		return new AbstractSwinger(sqlType, null, true) {
+			/** Just create the widget, do not configure it. */
+			public void configureWidget(TypedWidget tw) {
+				JEnumMulti tt = ((ListAndRangeJType)jType).subJType;
+				ListAndRangeTW w = (ListAndRangeTW)tw;
+				w.setKeyedModel(tt);
+			}
+			protected citibob.swing.typed.TypedWidget createWidget() {
+				return new ListAndRangeTW();
+				
+			}
+		};
+	}});
+
+	// IntRange (for the Query Editor)
+	this.addMaker(IntRange.class, new BaseSwingerMap.Maker() {
+	public Swinger newSwinger(JType sqlType) {
+		return new AbstractSwinger(sqlType, null, true) {
+			/** Just create the widget, do not configure it. */
+			public void configureWidget(TypedWidget tw) {
+			}
+			protected citibob.swing.typed.TypedWidget createWidget() {
+				return new IntRangeTW();
+				
+			}
+		};
 	}});
 	
 }

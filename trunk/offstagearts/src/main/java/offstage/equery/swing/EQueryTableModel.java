@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.equery.swing;
 
+import static offstage.equery.QuerySchema.*;
 import citibob.util.*;
 import citibob.swing.*;
 import citibob.swing.table.*;
@@ -37,6 +38,7 @@ import citibob.jschema.*;
 import offstage.equery.*;
 import java.io.*;
 import citibob.types.*;
+import offstage.equery.compare.Comp;
 
 /**
  *
@@ -62,7 +64,8 @@ static {
 		new JEnum(new KeyedModel(
 			new Object[] {new Integer(EClause.ADD), new Integer(EClause.SUBTRACT), new Integer(EClause.ZERO)},
 			new Object[] {"+", "-", "0"})),
-		new JavaJType(String.class), null};
+		JavaJType.jtString,
+		new JavaJType(IntRange.class)};
 }
 public EQueryTableModel(QuerySchema schema)
 {
@@ -117,7 +120,7 @@ public EQuery setSQuery(String squery)
 		setQuery(new EQuery());
 		return getQuery();
 	}
-	EQuery eqy = (EQuery)Query.fromXML(squery);
+	EQuery eqy = (EQuery)Query.fromXML(schema, squery);
 	if (eqy == null) eqy = new EQuery();
 	setQuery(eqy);
 	return getQuery();
@@ -151,7 +154,7 @@ public String getSQuery()
 {
 	EQuery q = getQuery();
 	if (q == null) return null;
-	return getQuery().toXML();
+	return getQuery().toXML(schema);
 //	// Serialize using XML
 //	StringWriter fout = new StringWriter();
 //	EQueryXStream xs = new EQueryXStream();
@@ -308,7 +311,8 @@ public boolean isCellEditable(int rowIndex, int columnIndex)
 	RowSpec rs = getRow(rowIndex);
 	if (rs.isDummy()) return false;
 	if (rs.isClause()) {
-		return (columnIndex < 2);
+		return true;
+//		return (columnIndex < 2);
 	} else {
 		return (query != null);
 	}
@@ -322,10 +326,20 @@ public void setValueAt(Object val, int row, int col)
 	if (rs.isDummy()) return;
 	if (rs.isClause()) {
 		if (query == null) return;
-		EClause c = query.getClause(rs.cix);
+		EClause clause = query.getClause(rs.cix);
 		switch(col) {
-			case C_ADDSUB : c.type = ((Integer)val).intValue(); break;
-			case C_NAME : c.name = (String)val; break;
+			case C_ADDSUB : clause.type = ((Integer)val).intValue(); break;
+			case C_NAME : clause.name = (String)val; break;
+			case C_VALUE : {
+				if (val == null) {
+					clause.minDups = null;
+					clause.maxDups = null;
+				} else {
+					IntRange range = (IntRange)val;
+					clause.minDups = range.min;
+					clause.maxDups = range.max;
+				}
+			} break;
 		}
 		// Redisplay the entire row!
 		this.fireTableCellUpdated(row, col);		
@@ -345,8 +359,9 @@ public void setValueAt(Object val, int row, int col)
 
 				// Update other cols if needed...
 				if (oldCompareType == null || !oldCompareType.equals(getJType(row, C_COMPARE))) {
-					el.setComparator("=");
+					el.setComparator(QuerySchema.eqCP);
 					this.fireTableCellUpdated(row, C_COMPARE);
+					this.fireTableCellUpdated(row, C_VALUE);
 				}
 				if (oldValueType == null || !oldValueType.equals(getJType(row, C_VALUE))) {
 					QuerySchema.Col scol = schema.getCol(el.getColName());
@@ -357,9 +372,10 @@ public void setValueAt(Object val, int row, int col)
 
 			break;
 			case C_COMPARE :
-				String s = (String)val;
-				el.setComparator(s);
-				this.fireTableCellUpdated(row, col);
+				el.setComparator((Comp)val);
+//				this.fireTableRowsUpdated(row, row);
+				this.fireTableCellUpdated(row, C_COMPARE);
+				this.fireTableCellUpdated(row, C_VALUE);
 			break;
 			case C_VALUE :
 				el.value = val;
@@ -386,10 +402,16 @@ public Object getValueAt(int row, int column)
 		switch(column) {
 			case C_ADDSUB : return new Integer(c.type);
 			case C_NAME : return c.name;
+			case C_VALUE : {
+				IntRange range = new IntRange();
+					range.min = c.minDups;
+					range.max = c.maxDups;
+				return range;
+			}
 		}
 		return null;
 	} else {
-System.err.println(row + ", " + column);
+//System.err.println(row + ", " + column);
 		Element el = getElement(rs);
 		if (el == null) return null;
 		switch(column) {
@@ -413,16 +435,15 @@ System.err.println(row + ", " + column);
 // Implementation of CitibobTableModel (prototype stuff)
 // ===============================================================
 // Implementation of JTypeTableModel (prototype stuff)
-JFile jFile = new JFile(new javax.swing.filechooser.FileFilter() {
-	public boolean accept(File file) { return file.getName().endsWith(".csv"); }
-	public String getDescription() { return "*.csv"; }
-}, new File("."), true);
 public JType getJType(int row, int column)
 {
 	RowSpec rs = getRow(row);
 	if (rs.isDummy()) {
 		return null;
 	} if (rs.isClause()) {
+//if (column == C_VALUE) {
+//	System.out.println("hoi");
+//}
 		return jtypesQuery[column];	
 	} else {
 		if (column == C_COLUMN) return schema.getColsJType();
@@ -434,14 +455,17 @@ public JType getJType(int row, int column)
 		if (column == C_COMPARE) return col.comparators;
 		if (col.col == null) return null;
 		if (column == C_VALUE) {
-			if (el.getComparator().contains("file")) {
-//				return JavaJType.jtString;
-				return jFile;
-			} else {
+//			Comp comp = el.getComparator();
+//			if (comp == inFileCP || comp == ninFileCP) {
+////				return JavaJType.jtString;
+//				return jFile;
+//			} else if (comp == inCP_JEnum || comp == ninCP_JEnum) {
+//				return new JEnumMulti(col)
+//			} else {
 				return schema.getType(getClause(rs), el, col);
 //				return col.col.getType();
 //					Clause clause, Element el, SqlCol col
-			}
+//			}
 		}
 		return null;
 	}

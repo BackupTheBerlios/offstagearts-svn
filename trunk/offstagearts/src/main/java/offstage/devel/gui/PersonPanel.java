@@ -206,7 +206,7 @@ extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
-        vHouseholdID = new offstage.swing.typed.HouseholdIDEditableLabel();
+        vHouseholdID = new offstage.swing.typed.HouseholdIDDropdown();
         phonePanel = new offstage.gui.GroupPanel();
         lPhoneNumbers = new javax.swing.JLabel();
         FirstMiddleLast = new javax.swing.JPanel();
@@ -871,7 +871,7 @@ private void relprimarytypeidActionPerformed(java.awt.event.ActionEvent evt) {//
     private citibob.swing.typed.JTypedTextField title;
     private javax.swing.JRadioButton unknownGenderButton;
     private citibob.swing.typed.JTypedTextField url;
-    private offstage.swing.typed.HouseholdIDEditableLabel vHouseholdID;
+    private offstage.swing.typed.HouseholdIDDropdown vHouseholdID;
     private citibob.swing.typed.JTypedTextField zip;
     // End of variables declaration//GEN-END:variables
 	// --------------------------------------------------------------

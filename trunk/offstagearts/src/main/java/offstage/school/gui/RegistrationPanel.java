@@ -812,7 +812,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         PeopleHeader1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        vPayerID = new offstage.swing.typed.EntityIDEditableLabel();
+        vPayerID = new offstage.swing.typed.EntityIDDropdown();
         jToolBar1 = new javax.swing.JToolBar();
         bSave = new javax.swing.JButton();
         bUndo = new javax.swing.JButton();
@@ -822,10 +822,10 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         bNewStudent = new javax.swing.JButton();
         bNewPayer = new javax.swing.JButton();
         jLabel20 = new javax.swing.JLabel();
-        vParent1ID = new offstage.swing.typed.EntityIDEditableLabel();
+        vParent1ID = new offstage.swing.typed.EntityIDDropdown();
         bNewParent = new javax.swing.JButton();
         jLabel21 = new javax.swing.JLabel();
-        vParent2ID = new offstage.swing.typed.EntityIDEditableLabel();
+        vParent2ID = new offstage.swing.typed.EntityIDDropdown();
         bNewParent2 = new javax.swing.JButton();
         TermRegPanel = new javax.swing.JPanel();
         jLabel30 = new javax.swing.JLabel();
@@ -2907,9 +2907,9 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JTypedTextField state3;
     private offstage.accounts.gui.TransRegPanel transRegister;
     private citibob.swing.typed.JTypedTextField tuitionOverride;
-    private offstage.swing.typed.EntityIDEditableLabel vParent1ID;
-    private offstage.swing.typed.EntityIDEditableLabel vParent2ID;
-    private offstage.swing.typed.EntityIDEditableLabel vPayerID;
+    private offstage.swing.typed.EntityIDDropdown vParent1ID;
+    private offstage.swing.typed.EntityIDDropdown vParent2ID;
+    private offstage.swing.typed.EntityIDDropdown vPayerID;
     private offstage.swing.typed.EntityIDLabel vStudentID;
     private citibob.swing.typed.JTypedTextField zip;
     private citibob.swing.typed.JTypedTextField zip1;

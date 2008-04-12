@@ -33,7 +33,12 @@ import com.thoughtworks.xstream.*;
 public class QueryXStream extends XStream {
 
     /** Creates a new instance of EQueryXStream */
-    public QueryXStream() {
+    public QueryXStream(QuerySchema schema) {
+		super();
+		registerConverter(new CompConverter(schema));
+// This breaks backwards compatibility... :-(  SOmday, I'll do it, and
+// get the versioning right.
+//		registerConverter(new ColNameConverter());
     }
 
 }

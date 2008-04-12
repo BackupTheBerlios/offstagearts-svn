@@ -24,7 +24,15 @@ import citibob.jschema.*;
 import citibob.swing.typed.*;
 import java.sql.*;
 import citibob.types.*;
+import java.io.File;
+import java.io.IOException;
 import offstage.equery.*;
+import offstage.equery.compare.BaseComp;
+import offstage.equery.compare.Comp;
+import offstage.equery.compare.InFileComp;
+import offstage.equery.compare.JEnum_InComp;
+import offstage.equery.compare.String_InComp;
+import offstage.equery.ListAndRangeJType;
 
 public class QuerySchema
 {
@@ -108,10 +116,19 @@ public Col getCol(String fullName)
 //{
 //	return new DbKeyedModel(st, null, table, "groupid", "name", "name");
 //}
-private void addTypeComparator(Class klass, String[] vals)
+//private void addTypeComparator(Class klass, String[] vals)
+TreeMap<String,Comp> compsBySaveName = new TreeMap();
+static final JType jtComp = new JavaJType(Comp.class);
+private void addTypeComparator(Class klass, Comp... vals)
 {
-	typeComparators.put(klass, new JEnum(KeyedModel.sameKeys(vals)));
+	KeyedModel kmodel = new KeyedModel();
+	for (Comp c : vals) {
+		kmodel.addItem(c, c.getDisplayName());
+		compsBySaveName.put(c.getSaveName(), c);
+	}
+	typeComparators.put(klass, new JEnum(jtComp, kmodel));
 }
+public Comp getComp(String saveName) { return compsBySaveName.get(saveName); }
 // --------------------------------------------------
 protected void addSchema(SqlSchema sc, String joinClause, String... requiredTables)
 {
@@ -168,16 +185,34 @@ System.out.println("Looking in schema: " + cname + "(size = " + cols.getItemMap(
 //	}
 }
 
+JFile jFile = new JFile(new javax.swing.filechooser.FileFilter() {
+	public boolean accept(File file) { return file.getName().endsWith(".csv"); }
+	public String getDescription() { return "*.csv"; }
+}, new File("."), true);
+
 /** Returns the type of a particular column in a particular clause in a particular element. */
 public JType getType(EClause clause, Element el, QuerySchema.Col col)
 {
 	if (el.cachedValueType != null) return el.cachedValueType;
 	
-	// Type not cached, fetch it.
-	JType jt = col.typer.getType(clause, el, col);
+	Comp comp = el.getComparator();
+	JType jt;
+	if (comp == inFileCP || comp == ninFileCP) {
+		jt = jFile;
+	} else if (comp == inCP_JEnum || comp == ninCP_JEnum) {
+		JEnum baseEnum = (JEnum)col.typer.getType(clause, el, col);
+		JEnumMulti multi = new JEnumMulti(baseEnum.getBaseJType(),
+			baseEnum.getKeyedModel(), baseEnum.getSegment());
+//		jt = new ListAndRangeJType(multi);
+		jt = multi;
+	} else {
+		// Type not cached, fetch it.
+		jt = col.typer.getType(clause, el, col);
+	}
 	
 	// Save and return
 	el.cachedValueType = jt;
+System.out.println("QuerySchema.getType = ) " + jt + " (" + el.colName + ")");
 	return jt;
 }
 //				return schema.getType(getClause(rs), el, col.col);
@@ -187,14 +222,64 @@ public JType getType(EClause clause, Element el, QuerySchema.Col col)
 // --------------------------------------------------------
 protected QuerySchema()
 {
-	addTypeComparator(SqlBool.class, new String[] {"="});
-	addTypeComparator(SqlDate.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
-	addTypeComparator(SqlInteger.class, new String[] {"=", "in file", "not in file", ">", "<", ">=", "<=", "<>"});
-	addTypeComparator(SqlNumeric.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
-	addTypeComparator(SqlEnum.class, new String[] {"=", "<>"});
-	addTypeComparator(SqlString.class, new String[] {"=", "in", "not in", "in file", "not in file", "<>", "ilike", "not ilike", "similar to", "not similar to"});
-	addTypeComparator(SqlTimestamp.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
+//	addTypeComparator(SqlBool.class, new String[] {"="});
+//	addTypeComparator(SqlDate.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
+//	addTypeComparator(SqlInteger.class, new String[] {"=", "in file", "not in file", ">", "<", ">=", "<=", "<>"});
+//	addTypeComparator(SqlNumeric.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
+//	addTypeComparator(SqlEnum.class, new String[] {"=", "<>"});
+//	addTypeComparator(SqlString.class, new String[] {"=", "in", "not in", "in file", "not in file", "<>", "ilike", "not ilike", "similar to", "not similar to"});
+//	addTypeComparator(SqlTimestamp.class, new String[] {"=", ">", "<", ">=", "<=", "<>"});
+
+	addTypeComparator(SqlBool.class, eqCP);
+	addTypeComparator(SqlDate.class, eqCP, gtCP, ltCP, geqCP, leqCP, neqCP);
+	addTypeComparator(SqlInteger.class, eqCP, inFileCP, ninFileCP, gtCP, ltCP, geqCP, leqCP, neqCP);
+	addTypeComparator(SqlNumeric.class, eqCP, gtCP, ltCP, geqCP, leqCP, neqCP);
+	addTypeComparator(SqlEnum.class, eqCP, neqCP, inCP_JEnum, ninCP_JEnum);
+	addTypeComparator(SqlString.class, eqCP,
+			inCP_String, ninCP_String, inFileCP, ninFileCP,
+			neqCP, ilikeCP, nilikeCP, similarCP, nsimilarCP);
+	addTypeComparator(SqlTimestamp.class, eqCP, gtCP, ltCP, geqCP, leqCP, neqCP);
 	cols = new KeyedModel();
 	colsJType = new JEnum(cols);
 }
+
+// =======================================================================
+// Comparators
+
+public static final Comp eqCP = new BaseComp("=") {
+protected String getSql(SqlCol sqlCol, String colName, Object value)
+throws IOException
+{
+	if (value == null) return colName + " is null";
+	return super.getSql(sqlCol, colName, value);
+}};
+
+public static final Comp neqCP = new BaseComp("<>") {
+protected String getSql(SqlCol sqlCol, String colName, Object value)
+throws IOException
+{
+	if (value == null) return colName + " is not null";
+	return super.getSql(sqlCol, colName, value);
+}};
+
+public static final Comp inFileCP = new InFileComp(true);
+public static final Comp ninFileCP = new InFileComp(false);
+
+public static final Comp inCP_JEnum = new JEnum_InComp(true);
+public static final Comp ninCP_JEnum = new JEnum_InComp(false);
+
+public static final Comp inCP_String = new String_InComp(true);
+public static final Comp ninCP_String = new String_InComp(false);
+
+
+public static final Comp gtCP = new BaseComp(">");
+public static final Comp ltCP = new BaseComp("<");
+public static final Comp geqCP = new BaseComp(">=");
+public static final Comp leqCP = new BaseComp("<=");
+
+public static final Comp ilikeCP = new BaseComp("ilike");
+public static final Comp similarCP = new BaseComp("silimar to");
+public static final Comp nilikeCP = new BaseComp("not ilike");
+public static final Comp nsimilarCP = new BaseComp("not silimar to");
+
 }

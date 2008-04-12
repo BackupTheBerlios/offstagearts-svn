@@ -27,6 +27,7 @@ import com.Ostermiller.util.CSVParser;
 import java.sql.*;
 import java.io.*;
 import offstage.db.*;
+import offstage.equery.compare.Comp;
 
 public class EQuery extends Query
 {
@@ -74,40 +75,43 @@ public ArrayList<EClause> getClauses()
 public String getSql(SqlCol c, Element e, String viewName)
 throws IOException
 {
-	if ("=".equals(e.comparator) && e.value == null) {
-		// Ferret out "is null" and "is not null""
-		return e.colName.toString() + " is null";
-	} else if ("<>".equals(e.comparator) && e.value == null) {
-		// Ferret out "is null" and "is not null""
-		return e.colName.toString() + " is not null";
-	} else if (("in".equals(e.comparator) || "not in".equals(e.comparator)) &&
-	String.class.isAssignableFrom(e.value.getClass())) {
-		// Handle in lists for strings
-		StringBuffer sql = new StringBuffer(e.colName.toString() + " " + e.comparator + " (");
-		String[] ll = ((String)(e.value)).trim().split(",");
-		if (ll.length == 0) return "false";
-		for (int i=0; ;) {
-			sql.append(SqlString.sql(ll[i].trim()));
-			if (++i >= ll.length) {
-				sql.append(")");
-				break;
-			}
-			sql.append(",");
-		}
-		return sql.toString();
-	} else if (("in file".equals(e.comparator) || "not in file".equals(e.comparator))) {
-		String vals = readCSVColumn((File)e.value, viewName, c.getType());
-		
-		// Remove "file" from end of string
-		String comp = e.comparator;
-		int space = comp.lastIndexOf(' ');
-		comp = comp.substring(0,space);
-		
-		return e.colName.toString() + " " + comp + " (" + vals + ")";
-	} else {
-		return e.colName.toString() + " " + e.comparator + " " +
-			" (" + c.toSql(e.value) + ")";
-	}
+	Comp comp = e.getComparator();
+	return comp.getSql(c, e.colName.toString(), viewName, e.value);
+//	if (comp == eqCP && e.value == null) {
+//	if ("=".equals(e.comparator) && e.value == null) {
+//		// Ferret out "is null" and "is not null""
+//		return e.colName.toString() + " is null";
+//	} else if ("<>".equals(e.comparator) && e.value == null) {
+//		// Ferret out "is null" and "is not null""
+//		return e.colName.toString() + " is not null";
+//	} else if (("in".equals(e.comparator) || "not in".equals(e.comparator)) &&
+//	String.class.isAssignableFrom(e.value.getClass())) {
+//		// Handle in lists for strings
+//		StringBuffer sql = new StringBuffer(e.colName.toString() + " " + e.comparator + " (");
+//		String[] ll = ((String)(e.value)).trim().split(",");
+//		if (ll.length == 0) return "false";
+//		for (int i=0; ;) {
+//			sql.append(SqlString.sql(ll[i].trim()));
+//			if (++i >= ll.length) {
+//				sql.append(")");
+//				break;
+//			}
+//			sql.append(",");
+//		}
+//		return sql.toString();
+//	} else if (("in file".equals(e.comparator) || "not in file".equals(e.comparator))) {
+//		String vals = readCSVColumn((File)e.value, viewName, c.getType());
+//		
+//		// Remove "file" from end of string
+//		Comp comp = e.comparator;
+////		int space = comp.lastIndexOf(' ');
+////		comp = comp.substring(0,space);
+//		
+//		return e.colName.toString() + " " + comp + " (" + vals + ")";
+//	} else {
+//		return e.colName.toString() + " " + e.comparator + " " +
+//			" (" + c.toSql(e.value) + ")";
+//	}
 }
 // -----------------------------------------------
 public String getWhereSql(QuerySchema schema, ConsSqlQuery sql, EClause clause)
@@ -132,7 +136,7 @@ throws IOException
 
 
 /** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
-public String getSql(QuerySchema schema, EClause clause)
+public String getSqlNoDistinct(QuerySchema schema, EClause clause)
 throws IOException
 {
 	if (clause.elements.size() == 0) return null;
@@ -140,36 +144,145 @@ throws IOException
 	sql.addTable("entities as main");
 	String ewhere = getWhereSql(schema, sql, clause);
 	sql.addWhereClause("(" + ewhere + ")");
-//	sql.setDistinct(true);			// Seems like a good idea whether or not we reduce by household/etc
+	sql.addColumn("main.entityid as id");
+
+//	sql.addWhereClause("not main.obsolete");
+//	sql.setDistinct(true);
+	String ssql = sql.getSql();
+//System.out.println("ssql = " + ssql);
+	
+	// Add the group by and order by stuff
+	StringBuffer sb = new StringBuffer(ssql + "\n");
+	sb.append(" group by main.entityid\n");
+	if (clause.minDups == null && clause.maxDups == null) {
+		// Nothing here is equivalent to distinct
+//		sb.append(" having count(*) = 1");		// Equivalent to distinct
+	} else if (clause.minDups == null) {
+		sb.append(" having count(*) <= " + clause.maxDups);
+	} else if (clause.maxDups == null) {
+		sb.append(" having count(*) >= " + clause.minDups);		
+	} else {
+		if (clause.minDups.intValue() == clause.maxDups.intValue()) {
+			sb.append(" having count(*) = " + clause.minDups);
+		} else if (clause.minDups.intValue() > clause.maxDups.intValue()) {
+			// Trivially false
+			return "false";
+		} else {
+			sb.append(" having count(*) >= " + clause.minDups +
+				" and count(*) <= " + clause.maxDups);
+		}
+	}
+	return sb.toString();
+
+}
+
+
+
+/** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
+public String getSql(QuerySchema schema, EClause clause)
+throws IOException
+{
+	String sql0 = getSqlNoDistinct(schema, clause);
+	if (sql0 == null) return null;
+
+	if (distinctType == DISTINCT_ENTITYID) return sql0;
+	
+	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
+	sql.addTable("entities as main");
+	sql.addTable("(" + sql0 + ")", "yy", SqlQuery.JT_INNER,
+		"main.entityid = yy.id");
+	sql.addWhereClause("not main.obsolete");
+	sql.setDistinct(true);
+	
+	//	sql.setDistinct(true);			// Seems like a good idea whether or not we reduce by household/etc
 	switch(distinctType) {
 		case DISTINCT_PRIMARYENTITYID :
 			sql.addColumn("main.primaryentityid as id");
+			sql.addWhereClause("main.primaryentityid is not null");
 		break;
 		case DISTINCT_PARENT1ID :
 			sql.addColumn("main.parent1id as id");
+			sql.addWhereClause("main.parent1id is not null");
 		break;
 		case DISTINCT_PAYERID :
 			sql.addColumn("termregs.payerid as id");
+			sql.addWhereClause("termregs.payerid is not null");
 			addTable(schema, sql, "termregs");
-// For now, just hack in join to termregs; do this properly later, with
-// transitive table-join requirements in the EQuerySchema.
-//			if (!sql.containsTable("termregs"))		// doesn't work, since table names not kept.
-//			sql.addTable("termregs", "_tr", SqlQuery.JT_INNER,
-//				"_tr.entityid = termenrolls.entityid and _tr.groupid = termenrolls.groupid");
 		break;
-		case DISTINCT_ENTITYID :
-		default :
-			sql.addColumn("main.entityid as id");
-		break;
+//		case DISTINCT_ENTITYID :
+//		default :
+//			sql.addColumn("main.entityid as id");
+//		break;
 	}
-
-	sql.addWhereClause("not main.obsolete");
-	sql.setDistinct(true);
+	
+//	sql.addWhereClause("not main.obsolete");
+//	sql.setDistinct(true);
 	String ssql = sql.getSql();
 //System.out.println("ssql = " + ssql);
 	return ssql;
-
 }
+
+///** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
+//public String getSql(QuerySchema schema, EClause clause)
+//throws IOException
+//{
+//	if (clause.elements.size() == 0) return null;
+//	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
+//	sql.addTable("entities as main");
+//	String ewhere = getWhereSql(schema, sql, clause);
+//	sql.addWhereClause("(" + ewhere + ")");
+////	sql.setDistinct(true);			// Seems like a good idea whether or not we reduce by household/etc
+//	switch(distinctType) {
+//		case DISTINCT_PRIMARYENTITYID :
+//			sql.addColumn("main.primaryentityid as id");
+//		break;
+//		case DISTINCT_PARENT1ID :
+//			sql.addColumn("main.parent1id as id");
+//		break;
+//		case DISTINCT_PAYERID :
+//			sql.addColumn("termregs.payerid as id");
+//			addTable(schema, sql, "termregs");
+//// For now, just hack in join to termregs; do this properly later, with
+//// transitive table-join requirements in the EQuerySchema.
+////			if (!sql.containsTable("termregs"))		// doesn't work, since table names not kept.
+////			sql.addTable("termregs", "_tr", SqlQuery.JT_INNER,
+////				"_tr.entityid = termenrolls.entityid and _tr.groupid = termenrolls.groupid");
+//		break;
+//		case DISTINCT_ENTITYID :
+//		default :
+//			sql.addColumn("main.entityid as id");
+//		break;
+//	}
+//
+//	sql.addWhereClause("not main.obsolete");
+////	sql.setDistinct(true);
+//	String ssql = sql.getSql();
+////System.out.println("ssql = " + ssql);
+//	
+//	// Add the group by and order by stuff
+//	StringBuffer sb = new StringBuffer(ssql + "\n");
+//	sb.append(" group by id\n");
+//	if (clause.minDups == null && clause.maxDups == null) {
+//		sb.append(" having count(*) = 1");		// Equivalent to distinct
+//	} else if (clause.minDups == null) {
+//		sb.append(" having count(*) <= " + clause.maxDups);
+//	} else if (clause.maxDups == null) {
+//		sb.append(" having count(*) >= " + clause.minDups);		
+//	} else {
+//		if (clause.minDups.intValue() == clause.maxDups.intValue()) {
+//			sb.append(" having count(*) = " + clause.minDups);
+//		} else if (clause.minDups.intValue() > clause.maxDups.intValue()) {
+//			// Trivially false
+//			return "false";
+//		} else {
+//			sb.append(" having count(*) >= " + clause.minDups +
+//				" and count(*) <= " + clause.maxDups);
+//		}
+//	}
+//	return sb.toString();
+//
+//}
+
 
 /** @param primaryOnly Select only head of household (dinstinct primaryentityid)?
  @param termid Term we're matching against (if distinctType == DISTINCT_PAYERID.  Can be -1

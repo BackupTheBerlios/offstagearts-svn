@@ -339,7 +339,7 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="offstage.swing.typed.HouseholdIDEditableLabel" name="vHouseholdID">
+            <Component class="offstage.swing.typed.HouseholdIDDropdown" name="vHouseholdID">
               <Properties>
                 <Property name="colName" type="java.lang.String" value="primaryentityid"/>
               </Properties>

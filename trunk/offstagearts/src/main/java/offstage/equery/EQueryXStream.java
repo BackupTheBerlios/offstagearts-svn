@@ -29,10 +29,11 @@ import com.thoughtworks.xstream.*;
  * XStream class, customized for reading and writing EQuery in XML.
  * @author citibob
  */
-public class EQueryXStream extends XStream {
+public class EQueryXStream extends QueryXStream {
 
     /** Creates a new instance of EQueryXStream */
-    public EQueryXStream() {
+    public EQueryXStream(QuerySchema schema) {
+		super(schema);
     }
 
 }
