@@ -45,6 +45,7 @@ import citibob.version.SvnVersion;
 import citibob.version.Version;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.Policy;
 import javax.swing.JOptionPane;
 import offstage.config.ConfigChooser;
 import offstage.config.UpgradesDialog;
@@ -173,8 +174,26 @@ throws Exception
 	// Set up exception handler
 	expHandler = new MailExpHandler(this, //mailSender,
 		new InternetAddress(props.getProperty("mail.bugs.recipient")),
-//		new InternetAddress("citibob@citibob.net"),
-		"OffstageArts", consoleFrame.getDocument());
+		"OffstageArts", consoleFrame.getDocument()) {
+	public void consume(Throwable e) {
+		if (e instanceof org.postgresql.util.PSQLException &&
+			e.getMessage().contains("Connection refused")) {
+			super.consume(new FatalAppError(
+				"Cannot connect to database.\n" +
+				"Please check your network settings.\n" +
+				"OffstageArts is now exiting.",
+				(Exception)e));
+		} else {
+			super.consume(e);
+		}
+	}};
+	
+//			// Re-interpret PostgreSQL connection problems
+//			if (!psqle.getMessage().contains("Connection refused")) throw psqle;
+//			throw new FatalAppError
+//		}
+
+//	}
 	guiRun = new BusybeeDbJobRun(this, expHandler);
 	//appRunner = new SimpleDbJobRun(this, expHandler);
 
@@ -227,43 +246,49 @@ throws Exception
 public boolean checkResources()  throws Exception
 {
 	boolean ret = true;
-	try {
-		final FrontApp app = this;
+//	try {
+		try {
+			final FrontApp app = this;
 
-		dbChange = new DbChangeModel();
-		final SqlRun str = app.sqlRun();
-		createResSet(str);
-		resData = new ResData(str, resSet, sqlTypeSet());
-		str.flush();	
+			dbChange = new DbChangeModel();
+			final SqlRun str = app.sqlRun();
+			createResSet(str);
+			resData = new ResData(str, resSet, sqlTypeSet());
+			str.flush();	
 
-		// See if resources need upgrading
-		final UpgradePlanSet upset = new UpgradePlanSet(resData, app.sysVersion());
-		if (upset.reqCannotCreate.size() != 0 || upset.reqNotUpgradeable.size() != 0) {
-			upset.print(System.out);
-			throw new IOException("Cannot upgrade resources!");
-		}
-		if (upset.uplans.size() != 0) {
-			UpgradesDialog udialog = new UpgradesDialog(null, true);
-			udialog.initRuntime(str, app, upset.uplans);
-			udialog.setVisible(true);
-			if (udialog.doUpgrade) {
-//				app.runApp(new BatchRunnable() {
-//				public void run(SqlRun xstr) throws Exception {
-					for (UpgradePlan up : upset.uplans) {
-						up.applyPlan(str, app.pool());
+			// See if resources need upgrading
+			final UpgradePlanSet upset = new UpgradePlanSet(resData, app.sysVersion());
+			if (upset.reqCannotCreate.size() != 0 || upset.reqNotUpgradeable.size() != 0) {
+				upset.print(System.out);
+				throw new IOException("Cannot upgrade resources!");
+			}
+			if (upset.uplans.size() != 0) {
+				UpgradesDialog udialog = new UpgradesDialog(null, true);
+				udialog.initRuntime(str, app, upset.uplans);
+				udialog.setVisible(true);
+				if (udialog.doUpgrade) {
+	//				app.runApp(new BatchRunnable() {
+	//				public void run(SqlRun xstr) throws Exception {
+						for (UpgradePlan up : upset.uplans) {
+							up.applyPlan(str, app.pool());
+						}
+						createResSet(str);		// We might now have a database!
+	//				}});
+
+				} else {
+					if (udialog.required) {
+						JOptionPane.showMessageDialog(null,
+							"OffstageArts cannot run without the required upgrades.\n");
+						ret = false;
 					}
-					createResSet(str);		// We might now have a database!
-//				}});
-
-			} else {
-				if (udialog.required) {
-					JOptionPane.showMessageDialog(null,
-						"OffstageArts cannot run without the required upgrades.\n");
-					ret = false;
 				}
 			}
-		}
-		str.flush();
+			str.flush();
+//		} catch(org.postgresql.util.PSQLException psqle) {
+//			// Re-interpret PostgreSQL connection problems
+//			if (!psqle.getMessage().contains("Connection refused")) throw psqle;
+//			throw new FatalAppError
+//		}
 	} catch(Exception e) {
 		expHandler.consume(e);
 		System.exit(-1);
@@ -290,8 +315,12 @@ public void initWithDatabase()
 				out.close();
 
 				// Create a classloader on that jar file
-				siteCode = new URLClassLoader(new URL[] {new URL(
-					"file:///" + outFile.getPath())});
+				URL siteCodeURL = new URL("file:///" + outFile.getPath());
+				siteCode = new URLClassLoader(new URL[] {siteCodeURL});
+				
+				// Set up security policy to prevent malicious code from sitecode.jar
+				Policy.setPolicy(new OffstagePolicy(siteCodeURL));
+				System.setSecurityManager(new SecurityManager());
 			} else {
 				// No site code available!
 				// Just use current classloader, hope for the best
