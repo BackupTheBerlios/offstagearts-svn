@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /*
- * ConfigFrame.java
+ * ResourcesFrame.java
  *
  * Created on February 24, 2008, 4:35 PM
  */
@@ -30,11 +30,11 @@ import citibob.sql.SqlRun;
  
  @author  citibob
  */
-public class ConfigFrame extends javax.swing.JFrame
+public class ResourcesFrame extends javax.swing.JFrame
 {
 	
-	/** Creates new form ConfigFrame */
-	public ConfigFrame()
+	/** Creates new form ResourcesFrame */
+	public ResourcesFrame()
 	{
 		initComponents();
 	}

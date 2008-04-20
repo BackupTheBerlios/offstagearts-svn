@@ -39,6 +39,7 @@ public class ConfigChooser extends javax.swing.JDialog
 {
 	ConfigSetup setup;
 	ConfigModel model;
+	protected boolean isDemo;
 	
 	/** Creates new form ConfigChooserPanel */
 	public ConfigChooser(Preferences prefs, SwingerMap smap, Preferences userRoot, Version version)
@@ -55,6 +56,7 @@ public class ConfigChooser extends javax.swing.JDialog
 		configs.setValueColU("Folder");
 		configs.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(java.beans.PropertyChangeEvent evt) {
+			isDemo = false;
 			setVisible(false);
 		}});
 
@@ -65,6 +67,7 @@ public class ConfigChooser extends javax.swing.JDialog
 	
 	public File getConfigFile() { return (File)configs.getValue(); }
 	public String getConfigName() { return (String)configs.getValue("Name"); }
+	public boolean isDemo() { return isDemo; }
 	
 	/** This method is called from within the constructor to
 	 initialize the form.
@@ -82,6 +85,7 @@ public class ConfigChooser extends javax.swing.JDialog
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        bDemo = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -132,18 +136,32 @@ public class ConfigChooser extends javax.swing.JDialog
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel1.add(jLabel2, gridBagConstraints);
 
+        bDemo.setText("Run OffstageArts Demo");
+        bDemo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bDemoActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
-                .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(jButton1)))
+                    .add(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(jButton1))))
+                    .add(layout.createSequentialGroup()
+                        .add(70, 70, 70)
+                        .add(bDemo)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -154,8 +172,10 @@ public class ConfigChooser extends javax.swing.JDialog
                     .add(jButton1)
                     .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 37, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
-                .addContainerGap())
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 213, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(bDemo)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -171,6 +191,13 @@ public class ConfigChooser extends javax.swing.JDialog
 		setup.setVisible(true);
 		// TODO add your handling code here:
 	}//GEN-LAST:event_jButton1ActionPerformed
+
+	private void bDemoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDemoActionPerformed
+	{//GEN-HEADEREND:event_bDemoActionPerformed
+		isDemo = true;
+		setVisible(false);
+		// TODO add your handling code here:
+}//GEN-LAST:event_bDemoActionPerformed
 	
 //	/**
 //	 @param args the command line arguments
@@ -195,6 +222,7 @@ public class ConfigChooser extends javax.swing.JDialog
 //	}
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton bDemo;
     private citibob.swing.typed.JTypedSelectTable configs;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;

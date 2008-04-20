@@ -28,8 +28,15 @@ import citibob.swing.typed.SwingerMap;
 import citibob.text.StringSFormat;
 import citibob.version.Version;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URL;
 import java.util.prefs.Preferences;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  
@@ -54,14 +61,44 @@ public class ConfigSetup extends javax.swing.JDialog
 			smap);
 //		configs.setValueColU("Folder");
 
-		tfName.setJType(String.class, new StringSFormat());
+//		tfName.setJType(String.class, new StringSFormat());
 		
 		new SwingPrefs().setPrefs(this, userRoot.node("ConfigSetup"));
 	
 	}
 	
 	public File getFile() { return (File)configs.getValue(); }
+
+// --------------------------------------------------------------	
+	void copyTextFile(URL url, File dest) throws IOException
+	{
+		Writer out = new FileWriter(dest);
+		char[] cbuf = new char[8192];
+		Reader in = new InputStreamReader(url.openStream());
+		for (;;) {
+			int n = in.read(cbuf);
+			if (n <= 0) break;
+			out.write(cbuf, 0, n);
+		}
+		out.close();
+	}
 	
+	void copyResource(File dir, String name) throws IOException
+	{
+		ClassLoader cl = getClass().getClassLoader();
+		URL url = cl.getResource("offstage/config/" + name);
+		copyTextFile(url, new File(dir, name));
+	}
+	
+	public void newConfig(String name, File dir) throws IOException
+	{
+		dir.mkdirs();
+		copyResource(dir, "app.properties");
+		copyResource(dir, "Mac.properties");
+		copyResource(dir, "Windows.properties");
+		copyResource(dir, "Linux.properties");
+	}
+// --------------------------------------------------------------	
 	/** This method is called from within the constructor to
 	 initialize the form.
 	 WARNING: Do NOT modify this code. The content of this method is
@@ -70,14 +107,16 @@ public class ConfigSetup extends javax.swing.JDialog
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents()
     {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jScrollPane1 = new javax.swing.JScrollPane();
         configs = new citibob.swing.typed.JTypedSelectTable();
+        jPanel1 = new javax.swing.JPanel();
+        bEdit = new javax.swing.JButton();
         bAdd = new javax.swing.JButton();
-        tfName = new citibob.swing.typed.JTypedTextField();
         bDel = new javax.swing.JButton();
         bOK = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        bNew = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -103,7 +142,23 @@ public class ConfigSetup extends javax.swing.JDialog
         });
         jScrollPane1.setViewportView(configs);
 
-        bAdd.setText("+");
+        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        bEdit.setText("Edit");
+        bEdit.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bEditActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jPanel1.add(bEdit, gridBagConstraints);
+
+        bAdd.setText("Add Existing");
         bAdd.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -111,8 +166,13 @@ public class ConfigSetup extends javax.swing.JDialog
                 bAddActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jPanel1.add(bAdd, gridBagConstraints);
 
-        bDel.setText("-");
+        bDel.setText("Del");
         bDel.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -120,6 +180,11 @@ public class ConfigSetup extends javax.swing.JDialog
                 bDelActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jPanel1.add(bDel, gridBagConstraints);
 
         bOK.setText("OK");
         bOK.addActionListener(new java.awt.event.ActionListener()
@@ -129,43 +194,27 @@ public class ConfigSetup extends javax.swing.JDialog
                 bOKActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 10, 2, 2);
+        jPanel1.add(bOK, gridBagConstraints);
 
-        jLabel1.setText("Name:");
+        bNew.setText("New");
+        bNew.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                bNewActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+        jPanel1.add(bNew, gridBagConstraints);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
-                        .add(jLabel1)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(tfName, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(bAdd)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(bDel)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(bOK)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(bOK)
-                    .add(bDel)
-                    .add(bAdd)
-                    .add(jLabel1)
-                    .add(tfName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
+        getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -177,7 +226,12 @@ public class ConfigSetup extends javax.swing.JDialog
 
 	private void bAddActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bAddActionPerformed
 	{//GEN-HEADEREND:event_bAddActionPerformed
-		model.addRow((String)tfName.getValue());
+		NewConfigDialog dialog = new NewConfigDialog(null, "Add Existing Configuration", null, null);
+		dialog.setVisible(true);
+		if (!dialog.isOKPressed()) return;
+		
+		model.addRow(dialog.getConfigName(), dialog.getDir());
+		//		model.addRow((String)tfName.getValue());
 		// TODO add your handling code here:
 }//GEN-LAST:event_bAddActionPerformed
 
@@ -192,6 +246,55 @@ public class ConfigSetup extends javax.swing.JDialog
 		setVisible(false);
 		// TODO add your handling code here:
 }//GEN-LAST:event_bOKActionPerformed
+
+	private void bEditActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEditActionPerformed
+	{//GEN-HEADEREND:event_bEditActionPerformed
+		try {
+			int row = configs.getSelectedRow();
+			EditConfigDialog dia = new EditConfigDialog(this);
+			dia.loadConfig((String)configs.getValue("Name"),
+				(File)configs.getValue("Folder"));
+	//			WidgetTree.getJFrame(this), true);
+			dia.setVisible(true);
+			if (dia.okPressed) {
+				model.setValueAt(dia.getName(), row, "Name");
+			}
+		} catch(IOException e) {
+			JOptionPane.showMessageDialog(this,
+				"Cannot load configuration for edit!");
+			e.printStackTrace();
+		}
+		
+		// TODO add your handling code here:
+}//GEN-LAST:event_bEditActionPerformed
+
+	private void bNewActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewActionPerformed
+	{//GEN-HEADEREND:event_bNewActionPerformed
+		try {
+			NewConfigDialog dialog = new NewConfigDialog(null, "Add Existing Configuration", null, null);
+			dialog.setVisible(true);
+			if (!dialog.isOKPressed()) return;
+
+			String name = dialog.getConfigName();
+			File dir = dialog.getDir();
+
+			newConfig(name, dir);
+			model.addRow(name, dir);
+
+			// Now edit it!
+			EditConfigDialog dia = new EditConfigDialog(this);
+			dia.loadConfig(name, dir);
+			dia.setVisible(true);
+		} catch(IOException e) {
+			JOptionPane.showMessageDialog(this,
+				"Cannot load configuration for edit!");
+			e.printStackTrace();
+		}
+
+}//GEN-LAST:event_bNewActionPerformed
+
+	
+
 	
 //	/**
 //	 @param args the command line arguments
@@ -218,11 +321,12 @@ public class ConfigSetup extends javax.swing.JDialog
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bAdd;
     private javax.swing.JButton bDel;
+    private javax.swing.JButton bEdit;
+    private javax.swing.JButton bNew;
     private javax.swing.JButton bOK;
     private citibob.swing.typed.JTypedSelectTable configs;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private citibob.swing.typed.JTypedTextField tfName;
     // End of variables declaration//GEN-END:variables
 //public static void main(String[] args)
 //{

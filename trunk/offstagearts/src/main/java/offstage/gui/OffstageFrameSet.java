@@ -33,7 +33,7 @@ import javax.swing.*;
 import offstage.FrontApp;
 import offstage.accounts.gui.AccountFrame;
 import offstage.cleanse.CleanseFrame;
-import offstage.config.ConfigFrame;
+import offstage.config.ResourcesFrame;
 import offstage.devel.gui.DevelFrame;
 import offstage.frontdesk.FrontDeskFrame;
 import offstage.school.gui.SchoolFrame;
@@ -131,9 +131,9 @@ public JFrame newFrame() throws Exception {
 	frame.initRuntime(fapp);
 	return frame;
 }});
-addMaker("config", new Maker() {
+addMaker("resources", new Maker() {
 public JFrame newFrame() throws Exception {
-	ConfigFrame frame = new ConfigFrame();
+	ResourcesFrame frame = new ResourcesFrame();
 	SqlRun str = fapp.sqlRun();
 	frame.initRuntime(str, fapp);
 	str.flush();

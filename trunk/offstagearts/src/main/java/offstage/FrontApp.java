@@ -112,11 +112,13 @@ void loadPropFile(Properties props, String name) throws IOException
 	in.close();
 
 	// Next: Override with anything in user-created overrides
-	File f = new File(configDir, name);
-	if (f.exists()) {
-		in = new FileInputStream(f);
-		props.load(in);
-		in.close();
+	if (configDir != null) {
+		File f = new File(configDir, name);
+		if (f.exists()) {
+			in = new FileInputStream(f);
+			props.load(in);
+			in.close();
+		}
 	}
 }	
 Properties loadProps() throws IOException
@@ -156,9 +158,14 @@ throws Exception
 		new JavaSwingerMap(TimeZone.getDefault()), userRoot(), version);
 	dialog.setVisible(true);
 	System.out.println(dialog.getConfigFile());
-	configDir = dialog.getConfigFile();
-	configName = dialog.getConfigName();
-	if (configDir == null) System.exit(0);
+	if (dialog.isDemo()) {
+		configDir = null;
+		configName = "OffstageArts Demo";
+	} else {
+		configDir = dialog.getConfigFile();
+		configName = dialog.getConfigName();
+	}
+//	if (configDir == null) System.exit(0);
 	
 	// Load up properties from the configuration
 	props = loadProps();
@@ -205,21 +212,23 @@ throws Exception
 		this.sqlRun = new BatchSqlRun(pool, expHandler);
 
 		// Load the crypto keys
-		String pubLeaf = props.getProperty("crypt.pubdir");
-		File pubDir = (pubLeaf.charAt(0) == File.separatorChar ?
-			new File(pubLeaf) : new File(configDir, pubLeaf)); 
+		if (configDir != null) {
+			String pubLeaf = props.getProperty("crypt.pubdir");
+			File pubDir = (pubLeaf.charAt(0) == File.separatorChar ?
+				new File(pubLeaf) : new File(configDir, pubLeaf)); 
 
-		String privLeaf = props.getProperty("crypt.privdir");
-		File privDir = (privLeaf.charAt(0) == File.separatorChar ?
-			new File(privLeaf) : new File(configDir, privLeaf)); 
-		keyRing = new KeyRing(pubDir, privDir);
-		if (!keyRing.pubKeyLoaded()) {
-			// Alert user...?
-			//			javax.swing.JOptionPane.showMessageDialog(null,
-			//				"The public key failed to load.\n" +
-			//				"You will be unable to enter credit card details.");
+			String privLeaf = props.getProperty("crypt.privdir");
+			File privDir = (privLeaf.charAt(0) == File.separatorChar ?
+				new File(privLeaf) : new File(configDir, privLeaf)); 
+			keyRing = new KeyRing(pubDir, privDir);
+			if (!keyRing.pubKeyLoaded()) {
+				// Alert user...?
+				//			javax.swing.JOptionPane.showMessageDialog(null,
+				//				"The public key failed to load.\n" +
+				//				"You will be unable to enter credit card details.");
+			}
 		}
-
+		
 		this.mailSender = new citibob.mail.ConstMailSender(props);
 		this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
 		this.swingerMap = new offstage.types.OffstageSwingerMap(timeZone());
