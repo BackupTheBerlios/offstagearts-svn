@@ -1,0 +1,20 @@
+
+ 1. Go to http://offstagearts.org with FIREFOX
+ 2. Click on "Run OffstageArts."
+ 3. Click on "Current Release."
+ 4. If it comes up with a box that says "You have chosen to open...", click on "Do this automatically for files like this from now on" and then "OK."
+ 5. Wait a while while it loads.  This only happens the FIRST time you run OffstageArts.
+ 6. Box will say "This application was signed by Robert Fischer, but Java cannot verify the authenticity..."  Click on "Trust."
+
+You are now running.  In the future, OffstageArts can be launched the same way.
+
+How to put it into your dock for easy access:
+
+ 1. Launch Applications -> Utilities -> Java -> Java Web Start
+ 2. Click on the OffstageArts line.
+ 3. Select Application -> Create Desktop Application from the menu bar.
+ 4. Press "Save"
+ 5. Go to Applications in Finder.
+ 6. Drag OffstageArts to your dock.
+ 7. Quit Java Web Start application.
+
