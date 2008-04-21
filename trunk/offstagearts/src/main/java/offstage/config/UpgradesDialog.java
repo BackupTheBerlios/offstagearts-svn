@@ -83,7 +83,7 @@ public boolean required;		// true if all resources to be created are required
 			}
 		}});
 
-		app.swingPrefs().setPrefs(this, "",
+		app.swingPrefs().setPrefs(this,
 			app.userRoot().node("dialog-UpgradesDialog"));
 	};
 

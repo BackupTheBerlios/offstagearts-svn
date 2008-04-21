@@ -79,28 +79,49 @@ EQuerySchema equerySchema;
 public EQuerySchema equerySchema() { return equerySchema; }
 // ==========================================================================
 	
-/** Make sure preferences are initialized on first run. */
-private void initPrefs()
-throws BackingStoreException, IOException, InvalidPreferencesFormatException
+///** Make sure preferences are initialized on first run. */
+//private void initPrefs()
+//throws BackingStoreException, IOException, InvalidPreferencesFormatException
+//{
+//	Preferences prefs = Preferences.userRoot().node("offstage").node("gui");
+//	Version[] pvers = Version.getAvailablePrefVersions(prefs);
+//	
+//	// Ignore versions greater than our version
+//	for (int iver = pvers.length - 1; iver >= 0; --iver) {
+//		if (pvers[iver].size() < 2) continue;	// Ignore
+//		if (version.compareTo(pvers[iver], 2) == 0) {
+//			// We have the version we want.  Use it!
+//			userRoot = prefs.node(pvers[iver].toString());
+//			return;
+//		}
+//	}
+//	
+//	// Our version does not exist; create it.
+//	userRoot = prefs.node(version.toString(2));
+//	Preferences.importPreferences(getClass().getClassLoader().getResourceAsStream(
+//		"offstage/config/prefs.xml"));
+//}
+
+/** Read our base preferences from the JAR file */
+private Map<String,String> readBasePrefs() throws IOException
 {
-	Preferences prefs = Preferences.userRoot().node("offstage").node("gui");
-	Version[] pvers = Version.getAvailablePrefVersions(prefs);
+	Map<String,String> map = new TreeMap();
 	
-	// Ignore versions greater than our version
-	for (int iver = pvers.length - 1; iver >= 0; --iver) {
-		if (pvers[iver].size() < 2) continue;	// Ignore
-		if (version.compareTo(pvers[iver], 2) == 0) {
-			// We have the version we want.  Use it!
-			userRoot = prefs.node(pvers[iver].toString());
-			return;
-		}
+	URL url = getClass().getClassLoader().getResource("offstage/config/prefs.txt");
+	BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+	String line;
+	while ((line = in.readLine()) != null) {
+		int equals = line.indexOf('=');
+		if (equals < 0) continue;
+		
+		String key = line.substring(0,equals);
+		String value = line.substring(equals+1);
+		map.put(key,value);
 	}
-	
-	// Our version does not exist; create it.
-	userRoot = prefs.node(version.toString(2));
-	Preferences.importPreferences(getClass().getClassLoader().getResourceAsStream(
-		"offstage/config/prefs.xml"));
+	in.close();
+	return map;
 }
+
 // -------------------------------------------------------
 void loadPropFile(Properties props, String name) throws IOException
 {
@@ -148,14 +169,16 @@ throws Exception
 //	sysVersion = 17;			// Internal version number
 
 	// Set up Swing GUI preferences, so we can display stuff
-	initPrefs();
-	swingPrefs = new SwingPrefs();
+	// initPrefs();
+	userRoot = Preferences.userRoot().node("offstagearts").node("gui");
+	Map<String,String> basePrefs = readBasePrefs();
+	swingPrefs = new SwingPrefs(basePrefs);
 	
 	// Choose the configuration directory, so we can get the rest of
 	// the configuration
-	Preferences configPrefs = Preferences.userRoot().node("offstage").node("config");
+	Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
 	ConfigChooser dialog = new ConfigChooser(configPrefs,
-		new JavaSwingerMap(TimeZone.getDefault()), userRoot(), version);
+		new JavaSwingerMap(TimeZone.getDefault()), swingPrefs, userRoot(), version);
 	dialog.setVisible(true);
 	System.out.println(dialog.getConfigFile());
 	if (dialog.isDemo()) {

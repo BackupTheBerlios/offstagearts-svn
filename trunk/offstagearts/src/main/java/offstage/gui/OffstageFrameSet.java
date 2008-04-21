@@ -116,7 +116,8 @@ public JFrame newFrame() throws Exception {
 addMaker("console", new Maker() {
 public JFrame newFrame() {
 	ConsoleFrame consoleFrame = new ConsoleFrame();
-	consoleFrame.initRuntime("Java Console", fapp.userRoot().node("ConsoleFrame"));
+	consoleFrame.initRuntime("Java Console",
+		fapp.swingPrefs(), fapp.userRoot().node("ConsoleFrame"));
 	return consoleFrame;
 }});
 addMaker("maintenance", new Maker() {

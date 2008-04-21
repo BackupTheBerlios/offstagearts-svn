@@ -54,7 +54,7 @@ FrontApp fapp;
 		
 		// Mess with preferences
 		Preferences prefs = fapp.userRoot().node("OffstageGui");
-		new SwingPrefs().setPrefs(this, "", prefs);
+		fapp.swingPrefs().setPrefs(this, prefs);
 	}
 
 	/** This method is called from within the constructor to
@@ -206,7 +206,7 @@ final JPanel panel, final String frameTitle, final String frameName)
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(panel);
-			new citibob.swing.prefs.SwingPrefs().setPrefs(frame, "", fapp.userRoot().node(frameName));
+			fapp.swingPrefs().setPrefs(frame, fapp.userRoot().node(frameName));
 
 		frame.setVisible(true);
 	}});

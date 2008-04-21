@@ -47,7 +47,7 @@ public class ConfigSetup extends javax.swing.JDialog
 	ConfigModel model;
 	
 	/** Creates new form ConfigChooserPanel */
-	public ConfigSetup(ConfigModel model, SwingerMap smap, Preferences userRoot, Version version)
+	public ConfigSetup(ConfigModel model, SwingerMap smap, SwingPrefs swingPrefs, Preferences userRoot, Version version)
 	{
 		super((JFrame)null, true);
 		this.model = model;
@@ -63,7 +63,7 @@ public class ConfigSetup extends javax.swing.JDialog
 
 //		tfName.setJType(String.class, new StringSFormat());
 		
-		new SwingPrefs().setPrefs(this, userRoot.node("ConfigSetup"));
+		swingPrefs.setPrefs(this, userRoot.node("ConfigSetup"));
 	
 	}
 	
