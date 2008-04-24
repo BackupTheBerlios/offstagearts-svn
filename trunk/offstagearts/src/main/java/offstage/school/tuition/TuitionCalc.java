@@ -67,7 +67,7 @@ public void setPayerIDs(Set<Integer> payerIDs)
 public void setAllPayerIDs()
 {
 	setPayerIDs(
-		" select distinct adultid from termregs tr, entities_school es" +
+		" select distinct payerid from termregs tr, entities es" +
 		" where tr.groupid = " + SqlInteger.sql(termid) +
 		" and tr.entityid = es.entityid");
 }

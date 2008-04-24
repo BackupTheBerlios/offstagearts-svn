@@ -54,15 +54,15 @@ throws Exception
 		idSql =
 			" select xx.entityid\n" +
 			" from (\n" +
-			" 	select distinct s.parentid as entityid\n" +
-			" 	from termregs tr, entities_school s\n" +
+			" 	select distinct s.parent1id as entityid\n" +
+			" 	from termregs tr, entities s\n" +
 			" 	where tr.groupid = " + termid + "\n" +
 			" 	and tr.entityid = s.entityid\n" +
 			" ) xx, persons p\n" +
 			" where xx.entityid = p.entityid\n" +
 			" order by p.lastname, p.firstname";
 	} else {
-		idSql = "select parentid from entities e, entities_school s where e.entityid = s.entityid and e.entityid = " + entityid;
+		idSql = "select parent1id from entities e where e.entityid = " + entityid;
 	}
 	String sql = LabelReport.getSql(idSql, null);
 	

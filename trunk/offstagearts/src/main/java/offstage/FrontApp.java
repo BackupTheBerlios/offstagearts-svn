@@ -162,7 +162,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {
 	// Make sure we have the right version
-	version = new Version("1.0.6");
+	version = new Version("1.1.0");
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
 	sysVersion = svers.maxVersion;
@@ -301,10 +301,17 @@ public boolean checkResources()  throws Exception
 				if (udialog.doUpgrade) {
 	//				app.runApp(new BatchRunnable() {
 	//				public void run(SqlRun xstr) throws Exception {
+//					try {
 						for (UpgradePlan up : upset.uplans) {
 							up.applyPlan(str, app.pool());
 						}
 						createResSet(str);		// We might now have a database!
+//					} catch(Exception e) {
+//						throw new FatalAppError(
+//							"Error encountered while upgrading resources!\n" +
+//							"Please consult your system administrator.",
+//							e);
+//					}
 	//				}});
 
 				} else {

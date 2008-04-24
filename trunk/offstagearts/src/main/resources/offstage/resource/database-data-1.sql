@@ -89,7 +89,7 @@ SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('duedateids', 'duedat
 -- Name: duedates_old_termid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('duedates_old', 'termid'), 1, false);
+--SELECT pg_catalog.setval(pg_catalog.pg_get_serial_sequence('duedates_old', 'termid'), 1, false);
 
 
 --
@@ -272,7 +272,7 @@ INSERT INTO actranstypes (actranstypeid, name, description) VALUES (3, 'adj', NU
 INSERT INTO actranstypes (actranstypeid, name, description) VALUES (4, 'cash', NULL);
 INSERT INTO actranstypes (actranstypeid, name, description) VALUES (5, 'credit', NULL);
 INSERT INTO actranstypes (actranstypeid, name, description) VALUES (6, 'check', NULL);
-
+ALTER SEQUENCE actranstypes_actranstypeid_seq RESTART WITH 7;
 
 --
 -- Data for Name: actypes; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -282,6 +282,7 @@ INSERT INTO actypes (actypeid, name) VALUES (1, 'school');
 INSERT INTO actypes (actypeid, name) VALUES (2, 'ticket');
 INSERT INTO actypes (actypeid, name) VALUES (3, 'pledge');
 INSERT INTO actypes (actypeid, name) VALUES (4, 'openclass');
+ALTER SEQUENCE actypes_actypeid_seq RESTART WITH 5;
 
 
 --
@@ -351,6 +352,7 @@ INSERT INTO actypes (actypeid, name) VALUES (4, 'openclass');
 INSERT INTO courseroles (courseroleid, name, orderid) VALUES (1, 'student                       ', 1);
 INSERT INTO courseroles (courseroleid, name, orderid) VALUES (2, 'teacher                       ', 2);
 INSERT INTO courseroles (courseroleid, name, orderid) VALUES (3, 'pianist                       ', 3);
+ALTER SEQUENCE courseroles_courseroleid_seq RESTART WITH 4;
 
 
 --
@@ -437,6 +439,7 @@ INSERT INTO duedateids (duedateid, name, description) VALUES (3, 'q4', 'Fourth Q
 INSERT INTO duedateids (duedateid, name, description) VALUES (4, 'q1', 'First Quarter Tuition');
 INSERT INTO duedateids (duedateid, name, description) VALUES (5, 'y', 'Yearly Tuition');
 INSERT INTO duedateids (duedateid, name, description) VALUES (6, 'r', 'Registration Fee');
+ALTER SEQUENCE duedateids_duedateid_seq RESTART WITH 7;
 
 
 --
@@ -581,6 +584,7 @@ INSERT INTO mailprefids (mailprefid, name) VALUES (2, 'SnailMail Preferred');
 INSERT INTO mailprefids (mailprefid, name) VALUES (3, 'NO SnailMail');
 INSERT INTO mailprefids (mailprefid, name) VALUES (4, 'NO Email');
 INSERT INTO mailprefids (mailprefid, name) VALUES (5, 'NO MAIL AT ALL');
+ALTER SEQUENCE mailprefids_mailprefid_seq RESTART WITH 6;
 
 
 --
@@ -599,7 +603,7 @@ INSERT INTO mailprefids (mailprefid, name) VALUES (5, 'NO MAIL AT ALL');
 -- Data for Name: noteids; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO noteids (groupid, name) VALUES (88, 'NOTES');
+INSERT INTO noteids (groupid, name) VALUES (7, 'NOTES');
 
 
 --
@@ -639,6 +643,7 @@ INSERT INTO noteids (groupid, name) VALUES (88, 'NOTES');
 INSERT INTO paymenttypeids (paymenttypeid, "table", name) VALUES (2, 'cashpayments', 'Cash');
 INSERT INTO paymenttypeids (paymenttypeid, "table", name) VALUES (3, 'checkpayments', 'Check');
 INSERT INTO paymenttypeids (paymenttypeid, "table", name) VALUES (1, 'ccpayments', 'Credit Card (MC/Visa)');
+--ALTER SEQUENCE paymenttypeids_paymenttypeid_seq RESTART WITH 4;
 
 
 --
@@ -741,6 +746,7 @@ INSERT INTO relprimarytypes (relprimarytypeid, name) VALUES (9, 'sibling');
 INSERT INTO relprimarytypes (relprimarytypeid, name) VALUES (10, 'spouse');
 INSERT INTO relprimarytypes (relprimarytypeid, name) VALUES (11, 'au pair');
 INSERT INTO relprimarytypes (relprimarytypeid, name) VALUES (12, 'ex-spouse');
+ALTER SEQUENCE relprimarytypes_relprimarytypeid_seq RESTART WITH 13;
 
 
 --
@@ -793,6 +799,7 @@ INSERT INTO termtypes (termtypeid, name, orderid) VALUES (1, 'Fall', NULL);
 INSERT INTO termtypes (termtypeid, name, orderid) VALUES (2, 'Spring', NULL);
 INSERT INTO termtypes (termtypeid, name, orderid) VALUES (3, 'Summer', NULL);
 INSERT INTO termtypes (termtypeid, name, orderid) VALUES (4, 'Full Year', NULL);
+ALTER SEQUENCE termtypes_termtypeid_seq RESTART WITH 5;
 
 
 --
@@ -819,6 +826,7 @@ INSERT INTO tickettypes (tickettypeid, name) VALUES (5, 'free');
 INSERT INTO tickettypes (tickettypeid, name) VALUES (6, 'senior');
 INSERT INTO tickettypes (tickettypeid, name) VALUES (7, 'vip');
 INSERT INTO tickettypes (tickettypeid, name) VALUES (8, 'usher');
+ALTER SEQUENCE tickettypes_tickettypeid_seq RESTART WITH 9;
 
 
 --
@@ -837,9 +845,12 @@ INSERT INTO tickettypes (tickettypeid, name) VALUES (8, 'usher');
 -- Data for Name: zztest; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-
+ALTER SEQUENCE groupids_groupid_seq RESTART WITH 20;
 
 --
 -- PostgreSQL database dump complete
 --
+
+
+
 

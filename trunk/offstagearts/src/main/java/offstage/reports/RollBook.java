@@ -76,7 +76,7 @@ public RollBook(App app, int termid)
 		" inner join courseids c on (c.termid = t.groupid)\n" +
 		" inner join enrollments en on (en.courseid = c.courseid)\n" +
 		" inner join persons p on (p.entityid = en.entityid)\n" +
-		" inner join entities_school ps on (p.entityid = ps.entityid)\n" +
+//		" inner join entities_school ps on (p.entityid = ps.entityid)\n" +
 		" inner join daysofweek dow on (dow.javaid = c.dayofweek)\n" +
 		" inner join courseroles cr on (cr.courseroleid = en.courserole)" +
 		" inner join termregs tr on (tr.groupid = t.groupid and tr.entityid = p.entityid)\n" +

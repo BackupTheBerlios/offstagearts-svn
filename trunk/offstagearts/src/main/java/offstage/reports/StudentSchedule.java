@@ -55,8 +55,8 @@ public static String getSql(int termid, int studentid)
 		" inner join enrollments en on (en.courseid = c.courseid)\n" +
 		" inner join persons p on (p.entityid = en.entityid)\n" +
 		" inner join termregs tr on (t.groupid = tr.groupid and p.entityid = tr.entityid)" +
-		" inner join entities_school ps on (p.entityid = ps.entityid)\n" +
-		" inner join entities adult on (ps.adultid = adult.entityid)\n" +
+//		" inner join entities_school ps on (p.entityid = ps.entityid)\n" +
+		" inner join entities adult on (p.parent1id = adult.entityid)\n" +
 		" inner join daysofweek dow on (dow.javaid = c.dayofweek)\n" +
 		" inner join locations loc on (loc.locationid = c.locationid)\n" +
 		" left outer join programids pr  on (pr.programid = tr.programid)\n" +

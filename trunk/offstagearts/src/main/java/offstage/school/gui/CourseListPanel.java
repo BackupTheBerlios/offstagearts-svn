@@ -136,11 +136,11 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 			" (case when p1.firstname is null then '' else p1.firstname || ' ' end ||\n" +
 			"  case when p1.lastname is null then '' else p1.lastname end) as p1_name,\n" +
 			" e.entityid, e.courseid, p1.entityid as p1_entityid, st_s.adultid\n" +
-			" from courseids c, enrollments e, persons st, entities_school st_s\n" +
-			" left outer join persons p1 on st_s.parentid = p1.entityid\n" +
+			" from courseids c, enrollments e, persons st\n" + //, entities_school st_s\n" +
+			" left outer join persons p1 on st.parent1id = p1.entityid\n" +
 			" where e.courseid = c.courseid\n" +
 			" and e.entityid = st.entityid\n" +
-			" and st_s.entityid = st.entityid\n" +
+//			" and st_s.entityid = st.entityid\n" +
 			" and c.courseid = " + SqlInteger.sql(courseid) +
 			" order by e.courserole,st.lastname,st.firstname\n";
 	}};
@@ -430,7 +430,7 @@ void all_doSelect(SqlRun str)
 			if (wizard.runWizard("addbycourse")) {
 				TuitionCalc tc = new TuitionCalc(fapp, smod.getTermID());
 					tc.setPayerIDs(
-						" select adultid from entities_school es" +
+						" select parent1id from entities es" +
 						" where entityid = " + wizard.getVal("entityid"));
 					tc.recalcTuition(str);
 				enrolledDb.doSelect(str);

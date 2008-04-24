@@ -430,13 +430,13 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 				String idSql =
 					" select xx.entityid\n" +
 					" from (\n" +
-					" 	select distinct s.adultid as entityid\n" +
-					" 	from termregs tr, entities_school s\n" +
+					" 	select distinct s.payerid as entityid\n" +
+					" 	from termregs tr, entities s\n" +
 					" 	where tr.groupid = " + termid + "\n" +
 					" 	and tr.entityid = s.entityid\n" +
 					"          UNION\n" +
-					" 	select distinct s.parentid as entityid\n" +
-					" 	from termregs tr, entities_school s\n" +
+					" 	select distinct s.parent1id as entityid\n" +
+					" 	from termregs tr, entities s\n" +
 					" 	where tr.groupid = " + termid + "\n" +
 					" 	and tr.entityid = s.entityid\n" +
 					" ) xx, persons p\n" +

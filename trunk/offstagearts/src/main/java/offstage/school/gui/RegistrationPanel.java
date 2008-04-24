@@ -559,7 +559,8 @@ void refreshRBPlanSet(SqlRun str)
 	// Make sure we have our Tuition Plans in place
 	str.execSql(sql, new RsTasklet2() {
 	public void run(SqlRun str, ResultSet rs) throws Exception {
-		rs.next();
+		if (!rs.next()) return;		// No terms yet!
+		
 		String className = rs.getString("rbplansetclass");
 		boolean good = true;
 

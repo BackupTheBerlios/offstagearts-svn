@@ -29,11 +29,14 @@ public class SchoolFamilySelectorTable extends FamilySelectorTable
 public void setPrimaryEntityID(SqlRun str, Integer primaryEntityID)
 {
 	executeQuery(str,
-		" select pe.entityid from entities_school pe, entities ee, entities_school pq" +
-		" where pq.entityid = " + SqlInteger.sql(primaryEntityID) +
-		" and pe.adultid = pq.adultid" +
-		" and pe.entityid = ee.entityid" +
-		" and not ee.obsolete",
+		" select entityid from entities e" +
+		" where e.payerid = " + SqlInteger.sql(primaryEntityID) +
+		" and not e.obsolete",
+//		" select pe.entityid from entities_school pe, entities ee, entities_school pq" +
+//		" where pq.entityid = " + SqlInteger.sql(primaryEntityID) +
+//		" and pe.adultid = pq.adultid" +
+//		" and pe.entityid = ee.entityid" +
+//		" and not ee.obsolete",
 		"isprimary desc, name");
 }
 	
