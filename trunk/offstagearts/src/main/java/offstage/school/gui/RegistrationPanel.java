@@ -221,11 +221,14 @@ class AllRecDbModel extends MultiDbModel
 	{
 		allStudent.setTermID(termid);
 		allPayer.setTermID(termid);		
+		familyTable.setTermID(termid);
 	}
 	public void resetTermID(SqlRun str, Integer termid)
 	{
 		allStudent.resetTermID(str, termid);
 		allPayer.resetTermID(str, termid);
+		familyTable.setTermID(termid);
+
 	}
 	public void doSelect(SqlRun str)
 	{

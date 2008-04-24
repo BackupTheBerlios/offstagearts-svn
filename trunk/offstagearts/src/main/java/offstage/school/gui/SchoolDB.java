@@ -188,7 +188,8 @@ public static Map<Integer,String> getStudentNames(SqlRun str, int termid, String
 				studentNames.append(", " + name);
 			}
 		}
-		map.put(lastPayerid, studentNames.toString());
+		if (studentNames == null) map.put(lastPayerid, "<none>");
+		else map.put(lastPayerid, studentNames.toString());
 	}});
 	return map;
 }

@@ -135,7 +135,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 			"  case when st.lastname is null then '' else st.lastname end) as st_name,\n" +
 			" (case when p1.firstname is null then '' else p1.firstname || ' ' end ||\n" +
 			"  case when p1.lastname is null then '' else p1.lastname end) as p1_name,\n" +
-			" e.entityid, e.courseid, p1.entityid as p1_entityid, st_s.adultid\n" +
+			" e.entityid, e.courseid, p1.entityid as p1_entityid, st.parent1id\n" +
 			" from courseids c, enrollments e, persons st\n" + //, entities_school st_s\n" +
 			" left outer join persons p1 on st.parent1id = p1.entityid\n" +
 			" where e.courseid = c.courseid\n" +

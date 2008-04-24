@@ -58,6 +58,7 @@ public Res_Database(ResSet rset)
 	add(new DbbUpgrader(this, 59, 60, true) {
 	public void upgrade(SqlRun str, final ConnPool pool, int uversionid0, final int uversionid1)
 	throws Exception {
+		super.upgrade(str, pool, uversionid0, uversionid1);
 		dropTable(pool, "entities_school", false);
 	}});
 //	add(new DbbUpgrader(this, 2, 3, true));

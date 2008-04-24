@@ -26,11 +26,23 @@ import offstage.swing.typed.FamilySelectorTable;
  */
 public class SchoolFamilySelectorTable extends FamilySelectorTable
 {
-public void setPrimaryEntityID(SqlRun str, Integer primaryEntityID)
+Integer termid;
+int primaryEntityID;
+
+public void setTermID(Integer termid) { this.termid = termid; }
+	
+public void setPrimaryEntityID(SqlRun str, int primaryEntityID)
+{
+	this.primaryEntityID = primaryEntityID;
+	requery(str);
+}
+
+public void requery(SqlRun str)
 {
 	executeQuery(str,
-		" select entityid from entities e" +
-		" where e.payerid = " + SqlInteger.sql(primaryEntityID) +
+		" select e.entityid from entities e, termregs tr" +
+		" where tr.payerid = " + SqlInteger.sql(primaryEntityID) +
+		" and e.entityid = tr.entityid and tr.groupid = " + SqlInteger.sql(termid) +
 		" and not e.obsolete",
 //		" select pe.entityid from entities_school pe, entities ee, entities_school pq" +
 //		" where pq.entityid = " + SqlInteger.sql(primaryEntityID) +

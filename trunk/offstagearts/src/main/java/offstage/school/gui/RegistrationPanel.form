@@ -122,9 +122,7 @@
                           <SubComponents>
                             <Component class="javax.swing.JButton" name="bAddEnrollment">
                               <Properties>
-                                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                  <PlainString value="Add Enrollment"/>
-                                </Property>
+                                <Property name="text" type="java.lang.String" value="Add Enrollment" noResource="true"/>
                               </Properties>
                               <Events>
                                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bAddEnrollmentActionPerformed"/>
@@ -132,9 +130,7 @@
                             </Component>
                             <Component class="javax.swing.JButton" name="bRemoveEnrollment">
                               <Properties>
-                                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                  <PlainString value="Remove Enrollment"/>
-                                </Property>
+                                <Property name="text" type="java.lang.String" value="Remove Enrollment" noResource="true"/>
                               </Properties>
                               <Events>
                                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bRemoveEnrollmentActionPerformed"/>
@@ -212,9 +208,7 @@
                               <SubComponents>
                                 <Component class="javax.swing.JLabel" name="lFirst">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="First"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="First" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -224,9 +218,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="lMiddle">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Mid"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Mid" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -236,9 +228,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="lLast">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Last"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Last" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -248,9 +238,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="salutation">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="salutation"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="salutation" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[40, 19]"/>
                                     </Property>
@@ -263,9 +251,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="firstname">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="firstname"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="firstname" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -275,9 +261,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="middlename">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="middlename"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="middlename" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -287,9 +271,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="lastname">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="lastname"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="lastname" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[10, 19]"/>
                                     </Property>
@@ -371,9 +353,7 @@
                                     </Component>
                                     <Component class="javax.swing.JLabel" name="jLabel16">
                                       <Properties>
-                                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                          <PlainString value="Billing Type:"/>
-                                        </Property>
+                                        <Property name="text" type="java.lang.String" value="Billing Type:" noResource="true"/>
                                       </Properties>
                                       <Constraints>
                                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -416,9 +396,7 @@
                                       <SubComponents>
                                         <Component class="javax.swing.JLabel" name="jLabel7">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="ID"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="ID" noResource="true"/>
                                           </Properties>
                                           <Constraints>
                                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -428,9 +406,7 @@
                                         </Component>
                                         <Component class="javax.swing.JLabel" name="jLabel8">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="Last Modified"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="Last Modified" noResource="true"/>
                                           </Properties>
                                           <Constraints>
                                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -441,9 +417,7 @@
                                         <Component class="citibob.swing.typed.JTypedTextField" name="entityid">
                                           <Properties>
                                             <Property name="editable" type="boolean" value="false"/>
-                                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="entityid"/>
-                                            </Property>
+                                            <Property name="colName" type="java.lang.String" value="entityid" noResource="true"/>
                                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                               <Dimension value="[100, 19]"/>
                                             </Property>
@@ -457,9 +431,7 @@
                                         <Component class="citibob.swing.typed.JTypedTextField" name="lastupdated">
                                           <Properties>
                                             <Property name="editable" type="boolean" value="false"/>
-                                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="lastupdated"/>
-                                            </Property>
+                                            <Property name="colName" type="java.lang.String" value="lastupdated" noResource="true"/>
                                           </Properties>
                                           <Constraints>
                                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -484,9 +456,7 @@
                               <SubComponents>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="address1">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="address1"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="address1" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -496,9 +466,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="address2">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="address2"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="address2" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -508,9 +476,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="city">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="city"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="city" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -520,9 +486,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="state">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="state"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="state" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[30, 19]"/>
                                     </Property>
@@ -535,9 +499,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="zip">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="zip"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="zip" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[80, 19]"/>
                                     </Property>
@@ -550,9 +512,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel6">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Address / City,State,Zip"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Address / City,State,Zip" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -573,9 +533,7 @@
                               <SubComponents>
                                 <Component class="javax.swing.JLabel" name="jLabel11">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Email"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Email" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -585,9 +543,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="email1">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="email"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="email" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -597,9 +553,7 @@
                                 </Component>
                                 <Component class="javax.swing.JButton" name="bLaunchEmail">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="*"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="*" noResource="true"/>
                                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                                       <Insets value="[1, 1, 1, 1]"/>
                                     </Property>
@@ -629,9 +583,7 @@
                               <SubComponents>
                                 <Component class="javax.swing.JLabel" name="lFirst5">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Org Name"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Org Name" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -641,9 +593,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="orgname">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="orgname"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="orgname" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -653,12 +603,8 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JBoolCheckbox" name="isorg">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="is Org?"/>
-                                    </Property>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="isorg"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="is Org?" noResource="true"/>
+                                    <Property name="colName" type="java.lang.String" value="isorg" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -694,9 +640,7 @@
                               <SubComponents>
                                 <Component class="javax.swing.JLabel" name="lFirst3">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="First"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="First" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -706,9 +650,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="lMiddle3">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Mid"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Mid" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -718,9 +660,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="lLast3">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Last"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Last" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -730,9 +670,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="salutation3">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="salutation"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="salutation" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[40, 19]"/>
                                     </Property>
@@ -745,9 +683,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="firstname3">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="firstname"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="firstname" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -757,9 +693,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="middlename3">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="middlename"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="middlename" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -769,9 +703,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="lastname3">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="lastname"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="lastname" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[10, 19]"/>
                                     </Property>
@@ -864,9 +796,7 @@
                                       <SubComponents>
                                         <Component class="javax.swing.JLabel" name="jLabel22">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="ID"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="ID" noResource="true"/>
                                           </Properties>
                                           <Constraints>
                                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -876,9 +806,7 @@
                                         </Component>
                                         <Component class="javax.swing.JLabel" name="jLabel23">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="Last Modified"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="Last Modified" noResource="true"/>
                                           </Properties>
                                           <Constraints>
                                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -889,9 +817,7 @@
                                         <Component class="citibob.swing.typed.JTypedTextField" name="entityid2">
                                           <Properties>
                                             <Property name="editable" type="boolean" value="false"/>
-                                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="entityid"/>
-                                            </Property>
+                                            <Property name="colName" type="java.lang.String" value="entityid" noResource="true"/>
                                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                               <Dimension value="[100, 19]"/>
                                             </Property>
@@ -905,9 +831,7 @@
                                         <Component class="citibob.swing.typed.JTypedTextField" name="lastupdated2">
                                           <Properties>
                                             <Property name="editable" type="boolean" value="false"/>
-                                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="lastupdated"/>
-                                            </Property>
+                                            <Property name="colName" type="java.lang.String" value="lastupdated" noResource="true"/>
                                           </Properties>
                                           <Constraints>
                                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -932,9 +856,7 @@
                               <SubComponents>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="address5">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="address1"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="address1" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -944,9 +866,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="address6">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="address2"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="address2" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -956,9 +876,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="city2">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="city"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="city" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -968,9 +886,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="state2">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="state"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="state" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[30, 19]"/>
                                     </Property>
@@ -983,9 +899,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="zip2">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="zip"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="zip" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[80, 19]"/>
                                     </Property>
@@ -998,9 +912,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel24">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Address / City,State,Zip"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Address / City,State,Zip" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1021,9 +933,7 @@
                               <SubComponents>
                                 <Component class="javax.swing.JLabel" name="jLabel25">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Email"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Email" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1033,9 +943,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="email3">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="email"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="email" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1045,9 +953,7 @@
                                 </Component>
                                 <Component class="javax.swing.JButton" name="bLaunchEmail2">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="*"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="*" noResource="true"/>
                                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                                       <Insets value="[1, 1, 1, 1]"/>
                                     </Property>
@@ -1089,9 +995,7 @@
                               <SubComponents>
                                 <Component class="javax.swing.JLabel" name="lFirst4">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="First"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="First" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1101,9 +1005,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="lMiddle4">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Mid"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Mid" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1113,9 +1015,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="lLast4">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Last"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Last" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1125,9 +1025,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="salutation4">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="salutation"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="salutation" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[40, 19]"/>
                                     </Property>
@@ -1140,9 +1038,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="firstname4">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="firstname"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="firstname" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1152,9 +1048,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="middlename4">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="middlename"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="middlename" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1164,9 +1058,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="lastname4">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="lastname"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="lastname" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[10, 19]"/>
                                     </Property>
@@ -1259,9 +1151,7 @@
                                       <SubComponents>
                                         <Component class="javax.swing.JLabel" name="jLabel26">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="ID"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="ID" noResource="true"/>
                                           </Properties>
                                           <Constraints>
                                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1271,9 +1161,7 @@
                                         </Component>
                                         <Component class="javax.swing.JLabel" name="jLabel27">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="Last Modified"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="Last Modified" noResource="true"/>
                                           </Properties>
                                           <Constraints>
                                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1284,9 +1172,7 @@
                                         <Component class="citibob.swing.typed.JTypedTextField" name="entityid3">
                                           <Properties>
                                             <Property name="editable" type="boolean" value="false"/>
-                                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="entityid"/>
-                                            </Property>
+                                            <Property name="colName" type="java.lang.String" value="entityid" noResource="true"/>
                                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                               <Dimension value="[100, 19]"/>
                                             </Property>
@@ -1300,9 +1186,7 @@
                                         <Component class="citibob.swing.typed.JTypedTextField" name="lastupdated3">
                                           <Properties>
                                             <Property name="editable" type="boolean" value="false"/>
-                                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="lastupdated"/>
-                                            </Property>
+                                            <Property name="colName" type="java.lang.String" value="lastupdated" noResource="true"/>
                                           </Properties>
                                           <Constraints>
                                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1327,9 +1211,7 @@
                               <SubComponents>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="address7">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="address1"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="address1" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1339,9 +1221,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="address8">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="address2"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="address2" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1351,9 +1231,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="city3">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="city"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="city" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1363,9 +1241,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="state3">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="state"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="state" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[30, 19]"/>
                                     </Property>
@@ -1378,9 +1254,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="zip3">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="zip"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="zip" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[80, 19]"/>
                                     </Property>
@@ -1393,9 +1267,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel28">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Address / City,State,Zip"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Address / City,State,Zip" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1416,9 +1288,7 @@
                               <SubComponents>
                                 <Component class="javax.swing.JLabel" name="jLabel29">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Email"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Email" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1428,9 +1298,7 @@
                                 </Component>
                                 <Component class="citibob.swing.typed.JTypedTextField" name="email4">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="email"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="email" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1440,9 +1308,7 @@
                                 </Component>
                                 <Component class="javax.swing.JButton" name="bLaunchEmail3">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="*"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="*" noResource="true"/>
                                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                                       <Insets value="[1, 1, 1, 1]"/>
                                     </Property>
@@ -1512,9 +1378,7 @@
                                   <SubComponents>
                                     <Component class="javax.swing.JLabel" name="lFirst2">
                                       <Properties>
-                                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                          <PlainString value="First"/>
-                                        </Property>
+                                        <Property name="text" type="java.lang.String" value="First" noResource="true"/>
                                       </Properties>
                                       <Constraints>
                                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1524,9 +1388,7 @@
                                     </Component>
                                     <Component class="javax.swing.JLabel" name="lMiddle2">
                                       <Properties>
-                                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                          <PlainString value="Mid"/>
-                                        </Property>
+                                        <Property name="text" type="java.lang.String" value="Mid" noResource="true"/>
                                       </Properties>
                                       <Constraints>
                                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1536,9 +1398,7 @@
                                     </Component>
                                     <Component class="javax.swing.JLabel" name="lLast2">
                                       <Properties>
-                                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                          <PlainString value="Last"/>
-                                        </Property>
+                                        <Property name="text" type="java.lang.String" value="Last" noResource="true"/>
                                       </Properties>
                                       <Constraints>
                                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1548,9 +1408,7 @@
                                     </Component>
                                     <Component class="citibob.swing.typed.JTypedTextField" name="salutation2">
                                       <Properties>
-                                        <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                          <PlainString value="salutation"/>
-                                        </Property>
+                                        <Property name="colName" type="java.lang.String" value="salutation" noResource="true"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                           <Dimension value="[40, 19]"/>
                                         </Property>
@@ -1563,9 +1421,7 @@
                                     </Component>
                                     <Component class="citibob.swing.typed.JTypedTextField" name="firstname2">
                                       <Properties>
-                                        <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                          <PlainString value="firstname"/>
-                                        </Property>
+                                        <Property name="colName" type="java.lang.String" value="firstname" noResource="true"/>
                                       </Properties>
                                       <Constraints>
                                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1575,9 +1431,7 @@
                                     </Component>
                                     <Component class="citibob.swing.typed.JTypedTextField" name="middlename2">
                                       <Properties>
-                                        <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                          <PlainString value="middlename"/>
-                                        </Property>
+                                        <Property name="colName" type="java.lang.String" value="middlename" noResource="true"/>
                                       </Properties>
                                       <Constraints>
                                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1587,9 +1441,7 @@
                                     </Component>
                                     <Component class="citibob.swing.typed.JTypedTextField" name="lastname2">
                                       <Properties>
-                                        <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                          <PlainString value="lastname"/>
-                                        </Property>
+                                        <Property name="colName" type="java.lang.String" value="lastname" noResource="true"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                           <Dimension value="[10, 19]"/>
                                         </Property>
@@ -1604,9 +1456,7 @@
                                 </Container>
                                 <Component class="citibob.swing.typed.JTypedDateChooser" name="dob">
                                   <Properties>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="dob"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="dob" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[122, 19]"/>
                                     </Property>
@@ -1619,9 +1469,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel17">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="DOB: "/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="DOB: " noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1639,9 +1487,7 @@
                                         <StringItem index="3" value="Item 4"/>
                                       </StringArray>
                                     </Property>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value=""/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1651,9 +1497,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="lGender">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Gender: "/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Gender: " noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1724,16 +1568,12 @@
                                       <SubComponents>
                                         <Component class="javax.swing.JLabel" name="jLabel15">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="Transaction:"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="Transaction:" noResource="true"/>
                                           </Properties>
                                         </Component>
                                         <Component class="javax.swing.JButton" name="bCash">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="Cash"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="Cash" noResource="true"/>
                                             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                                               <Insets value="[2, 2, 2, 2]"/>
                                             </Property>
@@ -1741,9 +1581,7 @@
                                         </Component>
                                         <Component class="javax.swing.JButton" name="bCheck">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="Check"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="Check" noResource="true"/>
                                             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                                               <Insets value="[2, 2, 2, 2]"/>
                                             </Property>
@@ -1751,9 +1589,7 @@
                                         </Component>
                                         <Component class="javax.swing.JButton" name="bCc">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="Credit"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="Credit" noResource="true"/>
                                             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                                               <Insets value="[2, 2, 2, 2]"/>
                                             </Property>
@@ -1761,9 +1597,7 @@
                                         </Component>
                                         <Component class="javax.swing.JButton" name="bOtherTrans">
                                           <Properties>
-                                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                              <PlainString value="Other"/>
-                                            </Property>
+                                            <Property name="text" type="java.lang.String" value="Other" noResource="true"/>
                                             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                                               <Insets value="[2, 2, 2, 2]"/>
                                             </Property>
@@ -1839,9 +1673,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Press the &quot;Save&quot; button to display student details."/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Press the &quot;Save&quot; button to display student details." noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1862,16 +1694,12 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel5">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Household:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Household:" noResource="true"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JButton" name="bEmancipate">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Emancipate"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Emancipate" noResource="true"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bEmancipateActionPerformed"/>
@@ -1879,9 +1707,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="bNewHousehold">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="New"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="New" noResource="true"/>
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[0, 0, 0, 0]"/>
                     </Property>
@@ -1905,9 +1731,7 @@
                       <SubComponents>
                         <Component class="javax.swing.JLabel" name="lFirst1">
                           <Properties>
-                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="First"/>
-                            </Property>
+                            <Property name="text" type="java.lang.String" value="First" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1917,9 +1741,7 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="lMiddle1">
                           <Properties>
-                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="Mid"/>
-                            </Property>
+                            <Property name="text" type="java.lang.String" value="Mid" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1929,9 +1751,7 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="lLast1">
                           <Properties>
-                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="Last"/>
-                            </Property>
+                            <Property name="text" type="java.lang.String" value="Last" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1941,9 +1761,7 @@
                         </Component>
                         <Component class="citibob.swing.typed.JTypedTextField" name="salutation1">
                           <Properties>
-                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="salutation"/>
-                            </Property>
+                            <Property name="colName" type="java.lang.String" value="salutation" noResource="true"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[40, 19]"/>
                             </Property>
@@ -1956,9 +1774,7 @@
                         </Component>
                         <Component class="citibob.swing.typed.JTypedTextField" name="firstname1">
                           <Properties>
-                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="firstname"/>
-                            </Property>
+                            <Property name="colName" type="java.lang.String" value="firstname" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1968,9 +1784,7 @@
                         </Component>
                         <Component class="citibob.swing.typed.JTypedTextField" name="middlename1">
                           <Properties>
-                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="middlename"/>
-                            </Property>
+                            <Property name="colName" type="java.lang.String" value="middlename" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -1980,9 +1794,7 @@
                         </Component>
                         <Component class="citibob.swing.typed.JTypedTextField" name="lastname1">
                           <Properties>
-                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="lastname"/>
-                            </Property>
+                            <Property name="colName" type="java.lang.String" value="lastname" noResource="true"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[10, 19]"/>
                             </Property>
@@ -2099,9 +1911,7 @@
                               <SubComponents>
                                 <Component class="javax.swing.JLabel" name="jLabel9">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="ID"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ID" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2111,9 +1921,7 @@
                                 </Component>
                                 <Component class="javax.swing.JLabel" name="jLabel10">
                                   <Properties>
-                                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="Last Modified"/>
-                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Last Modified" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2124,9 +1932,7 @@
                                 <Component class="citibob.swing.typed.JTypedTextField" name="entityid1">
                                   <Properties>
                                     <Property name="editable" type="boolean" value="false"/>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="entityid"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="entityid" noResource="true"/>
                                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                                       <Dimension value="[100, 19]"/>
                                     </Property>
@@ -2140,9 +1946,7 @@
                                 <Component class="citibob.swing.typed.JTypedTextField" name="lastupdated1">
                                   <Properties>
                                     <Property name="editable" type="boolean" value="false"/>
-                                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                                      <PlainString value="lastupdated"/>
-                                    </Property>
+                                    <Property name="colName" type="java.lang.String" value="lastupdated" noResource="true"/>
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2167,9 +1971,7 @@
                       <SubComponents>
                         <Component class="citibob.swing.typed.JTypedTextField" name="address3">
                           <Properties>
-                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="address1"/>
-                            </Property>
+                            <Property name="colName" type="java.lang.String" value="address1" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2179,9 +1981,7 @@
                         </Component>
                         <Component class="citibob.swing.typed.JTypedTextField" name="address4">
                           <Properties>
-                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="address2"/>
-                            </Property>
+                            <Property name="colName" type="java.lang.String" value="address2" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2191,9 +1991,7 @@
                         </Component>
                         <Component class="citibob.swing.typed.JTypedTextField" name="city1">
                           <Properties>
-                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="city"/>
-                            </Property>
+                            <Property name="colName" type="java.lang.String" value="city" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2203,9 +2001,7 @@
                         </Component>
                         <Component class="citibob.swing.typed.JTypedTextField" name="state1">
                           <Properties>
-                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="state"/>
-                            </Property>
+                            <Property name="colName" type="java.lang.String" value="state" noResource="true"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[30, 19]"/>
                             </Property>
@@ -2218,9 +2014,7 @@
                         </Component>
                         <Component class="citibob.swing.typed.JTypedTextField" name="zip1">
                           <Properties>
-                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="zip"/>
-                            </Property>
+                            <Property name="colName" type="java.lang.String" value="zip" noResource="true"/>
                             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                               <Dimension value="[80, 19]"/>
                             </Property>
@@ -2233,9 +2027,7 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel12">
                           <Properties>
-                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="Address / City,State,Zip"/>
-                            </Property>
+                            <Property name="text" type="java.lang.String" value="Address / City,State,Zip" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2256,9 +2048,7 @@
                       <SubComponents>
                         <Component class="javax.swing.JLabel" name="jLabel13">
                           <Properties>
-                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="Email"/>
-                            </Property>
+                            <Property name="text" type="java.lang.String" value="Email" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2268,9 +2058,7 @@
                         </Component>
                         <Component class="citibob.swing.typed.JTypedTextField" name="email2">
                           <Properties>
-                            <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="email"/>
-                            </Property>
+                            <Property name="colName" type="java.lang.String" value="email" noResource="true"/>
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2280,9 +2068,7 @@
                         </Component>
                         <Component class="javax.swing.JButton" name="bLaunchEmail1">
                           <Properties>
-                            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                              <PlainString value="*"/>
-                            </Property>
+                            <Property name="text" type="java.lang.String" value="*" noResource="true"/>
                             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                               <Insets value="[1, 1, 1, 1]"/>
                             </Property>
@@ -2331,9 +2117,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel2">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Student:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Student:" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2343,9 +2127,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel4">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Payer:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Payer:" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2355,9 +2137,7 @@
                 </Component>
                 <Component class="offstage.swing.typed.EntityIDDropdown" name="vPayerID">
                   <Properties>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="payerid"/>
-                    </Property>
+                    <Property name="colName" type="java.lang.String" value="payerid" noResource="true"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[200, 19]"/>
                     </Property>
@@ -2379,9 +2159,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JButton" name="bSave">
                       <Properties>
-                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                          <PlainString value="Save"/>
-                        </Property>
+                        <Property name="text" type="java.lang.String" value="Save" noResource="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bSaveActionPerformed"/>
@@ -2389,9 +2167,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="bUndo">
                       <Properties>
-                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                          <PlainString value="Undo"/>
-                        </Property>
+                        <Property name="text" type="java.lang.String" value="Undo" noResource="true"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bUndoActionPerformed"/>
@@ -2399,9 +2175,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="bRecalcTuition">
                       <Properties>
-                        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                          <PlainString value="Recalc Tuition"/>
-                        </Property>
+                        <Property name="text" type="java.lang.String" value="Recalc Tuition" noResource="true"/>
                         <Property name="enabled" type="boolean" value="false"/>
                         <Property name="focusable" type="boolean" value="false"/>
                         <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -2415,12 +2189,8 @@
                 </Container>
                 <Component class="offstage.swing.typed.EntityIDLabel" name="vStudentID">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="entityIDLabel1"/>
-                    </Property>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="entityid"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="entityIDLabel1" noResource="true"/>
+                    <Property name="colName" type="java.lang.String" value="entityid" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2430,12 +2200,8 @@
                 </Component>
                 <Component class="citibob.swing.typed.JTypedLabel" name="lEntityID">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="jTypedLabel1"/>
-                    </Property>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="entityid"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="jTypedLabel1" noResource="true"/>
+                    <Property name="colName" type="java.lang.String" value="entityid" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2445,9 +2211,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="bNewStudent">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="New"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="New" noResource="true"/>
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[0, 0, 0, 0]"/>
                     </Property>
@@ -2463,9 +2227,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="bNewPayer">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="New"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="New" noResource="true"/>
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[0, 0, 0, 0]"/>
                     </Property>
@@ -2481,9 +2243,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel20">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Parent 1:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Parent 1:" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2493,9 +2253,7 @@
                 </Component>
                 <Component class="offstage.swing.typed.EntityIDDropdown" name="vParent1ID">
                   <Properties>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="parent1id"/>
-                    </Property>
+                    <Property name="colName" type="java.lang.String" value="parent1id" noResource="true"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[200, 19]"/>
                     </Property>
@@ -2508,9 +2266,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="bNewParent">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="New"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="New" noResource="true"/>
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[0, 0, 0, 0]"/>
                     </Property>
@@ -2526,9 +2282,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel21">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Parent 2:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Parent 2:" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2538,9 +2292,7 @@
                 </Component>
                 <Component class="offstage.swing.typed.EntityIDDropdown" name="vParent2ID">
                   <Properties>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="parent2id"/>
-                    </Property>
+                    <Property name="colName" type="java.lang.String" value="parent2id" noResource="true"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[200, 19]"/>
                     </Property>
@@ -2553,9 +2305,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="bNewParent2">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="New"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="New" noResource="true"/>
                     <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
                       <Insets value="[0, 0, 0, 0]"/>
                     </Property>
@@ -2577,9 +2327,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel30">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Date Registered:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Date Registered:" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2589,12 +2337,8 @@
                 </Component>
                 <Component class="citibob.swing.typed.JTypedLabel" name="lDtregistered">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="jTypedLabel1"/>
-                    </Property>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="dtregistered"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="jTypedLabel1" noResource="true"/>
+                    <Property name="colName" type="java.lang.String" value="dtregistered" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2604,9 +2348,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel31">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Registration Signed:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Registration Signed:" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2616,9 +2358,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel14">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Tuition Plan:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Tuition Plan:" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2636,9 +2376,7 @@
                         <StringItem index="3" value="Item 4"/>
                       </StringArray>
                     </Property>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="programid"/>
-                    </Property>
+                    <Property name="colName" type="java.lang.String" value="programid" noResource="true"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[120, 19]"/>
                     </Property>
@@ -2651,9 +2389,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel19">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Calculated Tuition: "/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Calculated Tuition: " noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2663,9 +2399,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel32">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Tuition Override:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Tuition Override:" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2675,12 +2409,8 @@
                 </Component>
                 <Component class="citibob.swing.typed.JTypedLabel" name="lTuition1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="2500"/>
-                    </Property>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="defaulttuition"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="2500" noResource="true"/>
+                    <Property name="colName" type="java.lang.String" value="defaulttuition" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2690,9 +2420,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel33">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Scholarship:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Scholarship:" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2702,12 +2430,8 @@
                 </Component>
                 <Component class="citibob.swing.typed.JTypedTextField" name="tuitionOverride">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="jTypedTextField1"/>
-                    </Property>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="tuitionoverride"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="jTypedTextField1" noResource="true"/>
+                    <Property name="colName" type="java.lang.String" value="tuitionoverride" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2717,12 +2441,8 @@
                 </Component>
                 <Component class="citibob.swing.typed.JTypedTextField" name="scholarship">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="jTypedTextField1"/>
-                    </Property>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="scholarship"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="jTypedTextField1" noResource="true"/>
+                    <Property name="colName" type="java.lang.String" value="scholarship" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2732,9 +2452,7 @@
                 </Component>
                 <Component class="citibob.swing.typed.JTypedDateChooser" name="dtSigned">
                   <Properties>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="dtsigned"/>
-                    </Property>
+                    <Property name="colName" type="java.lang.String" value="dtsigned" noResource="true"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[140, 19]"/>
                     </Property>
@@ -2747,9 +2465,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel18">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Level:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Level:" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2767,9 +2483,7 @@
                         <StringItem index="3" value="Item 4"/>
                       </StringArray>
                     </Property>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="rbplan"/>
-                    </Property>
+                    <Property name="colName" type="java.lang.String" value="rbplan" noResource="true"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                       <Dimension value="[120, 19]"/>
                     </Property>
