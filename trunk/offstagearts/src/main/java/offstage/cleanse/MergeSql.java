@@ -80,6 +80,8 @@ public void mergeEntities(Object entityid0, Object entityid1)
 	mergeOneRow(sset.get("persons"), "entityid", entityid0, entityid1);
 	mergeOneRowEntityID(sset.get("persons"), "entityid", new String[] {"primaryentityid"}, entityid0, entityid1);
 	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
+	searchAndReplace(sset.get("persons"), "parent1id", entityid0, entityid1);
+	searchAndReplace(sset.get("persons"), "parent2id", entityid0, entityid1);
 	moveRows(sset.get("classes"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("donations"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("events"), "entityid", entityid0, entityid1);
@@ -98,14 +100,17 @@ public void mergeEntities(Object entityid0, Object entityid1)
 
 	// School
 	moveRows(sset.get("entities_school"), "entityid", entityid0, entityid1);
-	mergeOneRow(sset.get("entities_school"), "entityid", entityid0, entityid1);
-	mergeOneRowEntityID(sset.get("entities_school"), "entityid",
-		new String[] {"adultid", "parentid", "parent2id"}, entityid0, entityid1);
-	searchAndReplace(sset.get("entities_school"), "adultid", entityid0, entityid1);
-	searchAndReplace(sset.get("entities_school"), "parentid", entityid0, entityid1);
-	searchAndReplace(sset.get("entities_school"), "parent2id", entityid0, entityid1);
+//	mergeOneRow(sset.get("entities_school"), "entityid", entityid0, entityid1);
+//	mergeOneRowEntityID(sset.get("entities_school"), "entityid",
+//		new String[] {"adultid", "parentid", "parent2id"}, entityid0, entityid1);
+//	searchAndReplace(sset.get("entities_school"), "adultid", entityid0, entityid1);
+//	searchAndReplace(sset.get("entities_school"), "parentid", entityid0, entityid1);
+//	searchAndReplace(sset.get("entities_school"), "parent2id", entityid0, entityid1);
 	moveRows(sset.get("termregs"), "entityid", entityid0, entityid1);
+	searchAndReplace(sset.get("termregs"), "payerid", entityid0, entityid1);
+	moveRows(sset.get("payertermregs"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("enrollments"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("subs"), "entityid", entityid0, entityid1);
 
 //Main Record
 //===========

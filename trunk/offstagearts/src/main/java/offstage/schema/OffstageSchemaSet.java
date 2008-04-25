@@ -82,6 +82,7 @@ throws SQLException
 	map.put("phoneids", new PhoneidsSchema());
 	map.put("meetings", new MeetingsSchema());
 	map.put("enrollments", new EnrollmentsSchema(str, change, tz));
+	map.put("subs", new SubsSchema(str, change, tz));
 //	map.put("entities_school", new EntitiesSchoolSchema(str, change));
 	map.put("actrans", new ActransSchema(str, change, tz));
 //	map.put("cashpayments", new CashpaymentsSchema(str, change,tz));

@@ -4,8 +4,7 @@
 psql template1 -U postgres <<EOF
 CREATE ROLE $1 LOGIN PASSWORD '$2'
    VALID UNTIL 'infinity'
-   CONNECTION LIMIT 50
-   IN ROLE offstageusers;
+   CONNECTION LIMIT 50;
 
 CREATE DATABASE $1
   WITH ENCODING='UTF8'
