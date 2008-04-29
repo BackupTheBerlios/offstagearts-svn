@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
@@ -37,10 +39,6 @@ String password;
 
 public Object clone() throws CloneNotSupportedException { return super.clone(); }
 
-// Save disk, use MD5 sums instead...
-//    MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
-//    digest.update(...your data here...);
-//    byte[] hash = digest.digest();
 
 // Copies src file to dst file.
 // If the dst file does not exist, it is created
@@ -97,7 +95,67 @@ public int cmp(File a, File b) throws IOException
 		inb.close();
 	}
 }
+// ----------------------------------------------------------------------
+public byte[] readFile(File f) throws IOException
+{
+	long len = f.length();
+	byte[] ret = new byte[(int)len];
+	InputStream in = new FileInputStream(f);
+	try {
+		in.read(ret);
+		return ret;
+	} finally {
+		in.close();
+	}
+}
 
+/** Save disk, use MD5 sums instead... */
+public byte[] md5File(File src) throws IOException
+{
+	MessageDigest digest = null;
+	try {
+		digest = java.security.MessageDigest.getInstance("MD5");
+	} catch(NoSuchAlgorithmException e) {
+		IOException io = new IOException(e.getMessage());
+		io.initCause(e);
+		throw io;
+	}
+	
+	InputStream in = new FileInputStream(src);
+
+	try {
+		// Transfer bytes from in to out
+		byte[] buf = new byte[8192];
+		int len;
+		while ((len = in.read(buf)) > 0) {
+			digest.update(buf, 0, len);
+		}
+		return digest.digest();
+	} finally {
+		in.close();
+	}
+}
+public void copyMd5(File src, File dstMd5) throws IOException
+{
+	byte[] md5 = md5File(src);
+	OutputStream out = new FileOutputStream(dstMd5);
+	try {
+		out.write(md5);
+	} finally {
+		out.close();
+	}
+}
+public int cmpMd5(File a, File bMd5) throws IOException
+{
+	if (a.exists() && !bMd5.exists()) return CMP_AONLY;
+	if (bMd5.exists() && !a.exists()) return CMP_BONLY;
+	
+	byte[] bytesA = md5File(a);
+	byte[] bytesB = readFile(bMd5);
+	
+	if (Arrays.equals(bytesA, bytesB)) return CMP_EQ;
+	return CMP_NEQ;
+}// ----------------------------------------------------------------------
 public void sign(File f) throws IOException
 {
 	Process proc = Runtime.getRuntime().exec("jarsigner -storepass " + password + " " +
@@ -109,11 +167,12 @@ public void sign(File f) throws IOException
 
 public void processFile(String name) throws IOException
 {
+System.out.println("Process file: " + name);
 	File src = new File(srcDir, name);
-	File unsigned = new File(unsignedDir, name);
+	File unsigned = new File(unsignedDir, name + ".md5");
 	File signed = new File(signedDir, name);
 	
-	int xcmp = cmp(src, unsigned);
+	int xcmp = cmpMd5(src, unsigned);
 //	System.out.println("xcmp = " + xcmp);
 	switch(xcmp) {
 		case CMP_AONLY :
@@ -121,9 +180,9 @@ public void processFile(String name) throws IOException
 			// Copy file and sign it
 			System.out.println("Copying and signing " + name);
 			unsigned.getParentFile().mkdirs();
-			copy(src, unsigned);
+			copyMd5(src, unsigned);
 			signed.getParentFile().mkdirs();
-			copy(unsigned, signed);
+			copy(src, signed);
 			sign(signed);
 		} break;
 		case CMP_BONLY : {
