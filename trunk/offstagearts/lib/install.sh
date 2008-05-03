@@ -39,3 +39,22 @@ mvn install:install-file  -Dfile=secondstring/secondstring.jar \
                           -Dversion=0 \
                           -Dpackaging=jar \
                           -DgeneratePom=true
+
+
+
+
+
+% ---------- Temporary...
+mvn install:install-file  -Dfile=stringtemplate/stringtemplate.jar \
+                          -DgroupId=org.citibob.jar \
+                          -DartifactId=stringtemplate \
+                          -Dversion=3.1 \
+                          -Dpackaging=jar \
+                          -DgeneratePom=true
+
+mvn install:install-file  -Dfile=stringtemplate/antlr-2.7.7.jar \
+                          -DgroupId=org.citibob.jar \
+                          -DartifactId=antlr \
+                          -Dversion=2.7.7 \
+                          -Dpackaging=jar \
+                          -DgeneratePom=true

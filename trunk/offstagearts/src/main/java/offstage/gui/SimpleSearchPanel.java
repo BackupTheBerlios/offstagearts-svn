@@ -33,6 +33,7 @@ import java.awt.event.*;
 import offstage.swing.typed.*;
 import citibob.swing.typed.*;
 import citibob.sql.*;
+import offstage.reports.SummaryReport;
 
 /**import 
  *
@@ -66,6 +67,12 @@ public void propertyChange(final java.beans.PropertyChangeEvent evt)
 		if (entityid < 0) return;
 		dmod.setKey(entityid);
 		dmod.doSelect(str);
+		
+// TEST: print it out
+str.execUpdate(new UpdTasklet() {
+public void run() throws Exception {
+	SummaryReport.getHtml((DevelModel)dmod, app.sFormatMap());
+}});
 }	
 
 /** This method is called from within the constructor to

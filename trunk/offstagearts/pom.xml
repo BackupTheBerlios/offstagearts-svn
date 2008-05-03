@@ -242,6 +242,18 @@
       <version>2.0.0</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+            <groupId>org.citibob.jar</groupId>
+            <artifactId>stringtemplate</artifactId>
+            <version>3.1</version>
+            <scope>compile</scope>
+        </dependency>
+    <dependency>
+            <groupId>org.citibob.jar</groupId>
+            <artifactId>antlr</artifactId>
+            <version>2.7.7</version>
+            <scope>compile</scope>
+        </dependency>
 
 
 </dependencies>
