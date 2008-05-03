@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.reports;
 
 import citibob.app.*;
+import citibob.reports.Reports;
 import citibob.resource.ResResult;
 import citibob.resource.Resource;
 import java.io.*;
@@ -37,7 +38,7 @@ import javax.swing.*;
  *
  * @author citibob
  */
-public class OffstageReports extends citibob.reports.Reports
+public class OffstageReports extends Reports
 {
 
 public OffstageReports(App app)

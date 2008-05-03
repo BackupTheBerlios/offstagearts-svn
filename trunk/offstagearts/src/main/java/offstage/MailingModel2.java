@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage;
 import citibob.jschema.*;
+import citibob.reports.Reports;
+import citibob.reports.ReportsApp;
 import java.sql.*;
 import java.sql.*;
 import java.io.*;
@@ -30,8 +32,6 @@ import net.sf.jasperreports.engine.*;
 import java.util.*;
 import javax.swing.event.*;
 import offstage.db.DB;
-import offstage.schema.MailingsSchema;
-import offstage.schema.MailingidsSchema;
 import citibob.task.*;
 import offstage.schema.*;
 import net.sf.jasperreports.engine.export.*;
@@ -39,7 +39,6 @@ import javax.print.*;
 import javax.print.attribute.*;
 import javax.print.attribute.standard.*;
 import citibob.sql.*;
-import citibob.reports.*;
 
 /**
  *
@@ -54,7 +53,7 @@ IntKeyedDbModel mailings;		// Set to entire mailing info
 //int mailingID;					// Current mailing ID
 //SqlRun str;
 JobRun runner;
-citibob.app.App app;
+ReportsApp app;
 
 public IntKeyedDbModel getMailingsDb()
 	{ return mailings; }
@@ -80,7 +79,7 @@ public void newAddress() throws KeyViolationException
 
 
 /** Creates a new instance of MailingDbModel */
-public MailingModel2(final SqlRun str, citibob.app.App app) //OffstageSchemaSet sset)
+public MailingModel2(final SqlRun str, ReportsApp app) //OffstageSchemaSet sset)
 //throws SQLException
 {
 	this.app = app;

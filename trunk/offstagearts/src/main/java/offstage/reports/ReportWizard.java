@@ -26,7 +26,6 @@ package offstage.reports;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import citibob.reports.*;
 import offstage.reports.*;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.*;
@@ -39,6 +38,7 @@ import offstage.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import citibob.reports.Reports;
 import java.awt.Component;
 import offstage.equery.*;
 import offstage.reports.*;

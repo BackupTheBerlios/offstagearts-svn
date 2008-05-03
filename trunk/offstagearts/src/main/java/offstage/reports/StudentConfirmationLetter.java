@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.reports;
 
+import citibob.reports.Reports;
 import java.io.*;
 import java.util.*;
 import com.pdfhacks.*;
@@ -44,7 +45,7 @@ import citibob.reports.*;
 public class StudentConfirmationLetter
 {
 
-public static void viewReport(SqlRun str, final citibob.app.App app,
+public static void viewReport(SqlRun str, final ReportsApp app,
 final int termid, int entityid)
 throws Exception
 {

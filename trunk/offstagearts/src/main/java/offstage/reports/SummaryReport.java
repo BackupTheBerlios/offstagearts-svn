@@ -5,7 +5,7 @@
 
 package offstage.reports;
 
-import citibob.reports.StringTableModel;
+import citibob.swing.table.StringTableModel;
 import citibob.text.SFormatMap;
 import java.io.IOException;
 import java.io.InputStream;

@@ -30,6 +30,8 @@ import citibob.sql.AdhocOJSqlTableModel;
 import citibob.app.*;
 import java.sql.*;
 import citibob.jschema.*;
+import citibob.reports.Reports;
+import citibob.reports.ReportsApp;
 import java.util.*;
 import citibob.sql.*;
 import offstage.db.*;
@@ -103,14 +105,14 @@ System.out.println("year = " + year);
 //	setTableModel();
 }
 
-public static void writeCSV(final App app, SqlRun str,
+public static void writeCSV(final ReportsApp app, SqlRun str,
 String idSql, int minYear, int maxYear, final File outFile) throws Exception
 {
 	final DonationReport report = new DonationReport(app, idSql, minYear, maxYear);
 	report.doSelect(str);
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
-		citibob.reports.Reports rr = app.reports();
+				Reports rr = app.reports();
 		rr.writeCSV(rr.format(report.newTableModel()), outFile);
 	}});
 }

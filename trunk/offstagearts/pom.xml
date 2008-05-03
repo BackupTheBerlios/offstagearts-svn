@@ -50,71 +50,69 @@
                                     <classpathPrefix>lib</classpathPrefix>
                                     <mainClass>offstage.gui.OffstageLauncher</mainClass>
 </manifest>
-<manifestEntries>
-<Class-Path>lib/bsh-2.0b4.jar
- lib/MVCGen-0.jar
- lib/TableLayout-0.jar
- lib/activation-1.1.jar
- lib/antlr-2.7.2.jar
- lib/aopalliance-1.0.jar
- lib/cls-0.jar
- lib/commons-beanutils-1.7.0.jar
- lib/commons-collections-2.1.jar
- lib/commons-digester-1.7.jar
- lib/commons-io-1.3.2.jar
- lib/commons-logging-1.0.3.jar
- lib/dom-0.jar
- lib/dom4j-1.6.1.jar
- lib/freemarker-2.3.9.jar
- lib/holyokefw-1.0-SNAPSHOT.jar
- lib/iReport-2.0.0.jar
- lib/itext-1.3.1.jar
- lib/jasperreports-1.3.4.jar
- lib/jaxen-1.1-beta-8.jar
- lib/jcommon-1.0.0.jar
- lib/jdom-1.0.jar
- lib/jdt-compiler-3.1.1.jar
- lib/jdtcore-3.1.0.jar
- lib/jfreechart-1.0.1.jar
- lib/jodconverter-2.2.1.jar
- lib/jooreports-2.0.0.jar
- lib/js-0.jar
- lib/jstl-1.0.jar
- lib/juh-2.2.0.jar
- lib/jurt-2.2.0.jar
- lib/jwf-0.jar
- lib/klingerIncludes-0.jar
- lib/log4j-1.2.8.jar
- lib/mail-1.4.jar
- lib/objcobra-1.0-SNAPSHOT.jar
- lib/oro-2.0.8.jar
- lib/ostermillerutils-1_04_03_for_java_1_4.jar
- lib/poi-3.0.1-FINAL.jar
- lib/postgresql-8.1-408.jdbc3.jar
- lib/prefedit-0.7.jar
- lib/ridl-2.2.0.jar
- lib/secondstring-0.jar
- lib/servlet-api-2.5.jar
- lib/slf4j-api-1.4.0.jar
- lib/slf4j-jdk14-1.4.0.jar
- lib/spring-aop-1.2.6.jar
- lib/spring-beans-1.2.6.jar
- lib/spring-context-1.2.6.jar
- lib/spring-core-1.2.6.jar
- lib/spring-web-1.2.6.jar
- lib/spring-webmvc-1.2.6.jar
- lib/standard-1.0.6.jar
- lib/stringtemplate-2.2.jar
- lib/swing-layout-1.0.2.jar
- lib/unoil-2.2.0.jar
- lib/xalan-2.7.0.jar
- lib/xercesImpl-2.6.2.jar
- lib/xml-apis-1.3.02.jar
- lib/xmlParserAPIs-2.6.2.jar
- lib/xom-1.1.jar
- lib/xpp3-1.1.4c.jar
- lib/xpp3_min-1.1.3.4.O.jar
- lib/xstream-1.2.2.jar</Class-Path></manifestEntries>
+<!-- <manifestEntries>
+<Class-Path>lib/activation-1.1.jar
+lib/antlr-2.7.7.jar
+lib/aopalliance-1.0.jar
+lib/cls-0.jar
+lib/commons-beanutils-1.7.0.jar
+lib/commons-collections-3.1.jar
+lib/commons-digester-1.7.jar
+lib/commons-io-1.3.2.jar
+lib/commons-logging-1.1.jar
+lib/dom-0.jar
+lib/dom4j-1.6.1.jar
+lib/freemarker-2.3.9.jar
+lib/holyokefw-1.0-SNAPSHOT.jar
+lib/holyokereports-1.0-SNAPSHOT.jar
+lib/holyokewiz-1.0-SNAPSHOT.jar
+lib/iReport-2.0.0.jar
+lib/itext-1.3.1.jar
+lib/jasperreports-1.3.4.jar
+lib/jaxen-1.1-beta-8.jar
+lib/jcommon-1.0.0.jar
+lib/jdom-1.0.jar
+lib/jdtcore-3.1.0.jar
+lib/jfreechart-1.0.1.jar
+lib/jodconverter-2.2.1.jar
+lib/jooreports-2.0.0.jar
+lib/js-0.jar
+lib/jstl-1.0.jar
+lib/juh-2.2.0.jar
+lib/jurt-2.2.0.jar
+lib/jwf-0.jar
+lib/klingerIncludes-0.jar
+lib/log4j-1.2.13.jar
+lib/mail-1.4.jar
+lib/MVCGen-0.jar
+lib/objcobra-1.0-SNAPSHOT.jar
+lib/oro-2.0.8.jar
+lib/ostermillerutils-1_04_03_for_java_1_4.jar
+lib/poi-3.0.1-FINAL.jar
+lib/postgresql-8.1-408.jdbc3.jar
+lib/ridl-2.2.0.jar
+lib/secondstring-0.jar
+lib/servlet-api-2.5.jar
+lib/slf4j-api-1.4.3.jar
+lib/spring-aop-1.2.6.jar
+lib/spring-beans-1.2.6.jar
+lib/spring-context-1.2.6.jar
+lib/spring-core-1.2.6.jar
+lib/spring-web-1.2.6.jar
+lib/spring-webmvc-1.2.6.jar
+lib/standard-1.0.6.jar
+lib/stringtemplate-3.1.jar
+lib/swing-layout-1.0.2.jar
+lib/unoil-2.2.0.jar
+lib/xalan-2.7.0.jar
+lib/xercesImpl-2.6.2.jar
+lib/xml-apis-1.3.02.jar
+lib/xmlParserAPIs-2.6.2.jar
+lib/xom-1.1.jar
+lib/xpp3-1.1.4c.jar
+lib/xpp3_min-1.1.3.4.O.jar
+lib/xstream-1.2.2.jar
+</Class-Path></manifestEntries> -->
 							</archive>
                         </configuration>
                     </plugin>
@@ -139,24 +137,35 @@
         </profile>
     </profiles>
   <dependencies>
+	<!-- The necessary Holyoke Libraries -->
     <dependency>
-            <groupId>org.beanshell</groupId>
-            <artifactId>bsh</artifactId>
-            <version>2.0b4</version>
+            <groupId>org.citibob</groupId>
+            <artifactId>holyokefw</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
-        </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.1</version>
-      <scope>test</scope>
     </dependency>
+    <dependency>
+            <groupId>org.citibob</groupId>
+            <artifactId>holyokewiz</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+    </dependency>
+    <dependency>
+            <groupId>org.citibob</groupId>
+            <artifactId>holyokereports</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+    </dependency>
+		
+	<!-- Our JDBC Driver -->
     <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>8.1-408.jdbc3</version>
             <scope>compile</scope>
         </dependency>
+		
+	<!-- Compatibility for Java <1.5 -->
     <dependency>
         <groupId>net.java.dev.swing-layout</groupId>
         <artifactId>swing-layout</artifactId>
@@ -164,18 +173,8 @@
         <scope>compile</scope>
     </dependency>
 
-	<dependency>
-      <groupId>org.citibob.jar</groupId>
-      <artifactId>TableLayout</artifactId>
-      <version>0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.citibob.jar</groupId>
-      <artifactId>iReport</artifactId>
-      <version>2.0.0</version>
-      <scope>compile</scope>
-    </dependency>
+	
+	<!-- Duplicate Elimination -->
     <dependency>
       <groupId>org.citibob.jar</groupId>
       <artifactId>secondstring</artifactId>
@@ -200,48 +199,16 @@
       <version>0</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-            <groupId>org.citibob</groupId>
-            <artifactId>holyokefw</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-    <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4</version>
-            <scope>compile</scope>
-        </dependency>
-    <dependency>
-            <groupId>org.citibob</groupId>
-            <artifactId>objcobra</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
+
+	<!-- CSV Parser -->
     <dependency>
       <groupId>org.citibob.jar</groupId>
       <artifactId>ostermillerutils</artifactId>
       <version>1_04_03_for_java_1_4</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-            <groupId>jasperreports</groupId>
-            <artifactId>jasperreports</artifactId>
-            <version>1.3.4</version>
-            <scope>compile</scope>
-        </dependency>
-    <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.2.2</version>
-            <scope>compile</scope>
-        </dependency>
-    <dependency>
-      <groupId>org.citibob.jar</groupId>
-      <artifactId>jooreports</artifactId>
-      <version>2.0.0</version>
-      <scope>compile</scope>
-    </dependency>
+
+	<!-- Template for HTML generation -->
     <dependency>
             <groupId>org.citibob.jar</groupId>
             <artifactId>stringtemplate</artifactId>
@@ -254,6 +221,30 @@
             <version>2.7.7</version>
             <scope>compile</scope>
         </dependency>
+	
+	
+	
+	
+<!--	<dependency>
+      <groupId>org.citibob.jar</groupId>
+      <artifactId>TableLayout</artifactId>
+      <version>0</version>
+      <scope>compile</scope>
+    </dependency> -->
+
+		
+<!--    <dependency>
+            <groupId>jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>1.3.4</version>
+            <scope>compile</scope>
+        </dependency> -->
+<!--    <dependency>
+      <groupId>org.citibob.jar</groupId>
+      <artifactId>jooreports</artifactId>
+      <version>2.0.0</version>
+      <scope>compile</scope>
+    </dependency> -->
 
 
 </dependencies>

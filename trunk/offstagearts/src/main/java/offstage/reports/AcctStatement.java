@@ -26,7 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.reports;
 
-import citibob.reports.*;
 import java.io.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
@@ -36,6 +35,9 @@ import citibob.sql.*;
 import citibob.swing.table.*;
 import citibob.text.*;
 import citibob.app.*;
+import citibob.reports.Reports;
+import citibob.reports.TableModelGrouper;
+import citibob.reports.TemplateTableModel;
 import offstage.schema.*;
 import java.text.*;
 import citibob.types.*;

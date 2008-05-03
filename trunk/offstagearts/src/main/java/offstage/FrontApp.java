@@ -36,6 +36,7 @@ import citibob.swing.prefs.*;
 import java.io.*;
 import offstage.crypt.*;
 import citibob.gui.*;
+import citibob.reports.ReportsApp;
 import citibob.resource.ResData;
 import citibob.resource.ResResult;
 import citibob.resource.UpgradePlan;
@@ -43,6 +44,7 @@ import citibob.resource.UpgradePlanSet;
 import citibob.swingers.JavaSwingerMap;
 import citibob.version.SvnVersion;
 import citibob.version.Version;
+import com.sun.java_cup.internal.version;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Policy;
@@ -51,7 +53,7 @@ import offstage.config.ConfigChooser;
 import offstage.config.UpgradesDialog;
 import offstage.resource.OffstageResSet;
 
-public class FrontApp extends citibob.app.App
+public class FrontApp extends ReportsApp
 {
 
 // ==========================================================================

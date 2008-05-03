@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.reports;
 
-import citibob.app.App;
+import citibob.reports.Reports;
+import citibob.reports.ReportsApp;
 import citibob.sql.pgsql.*;
 import java.sql.*;
 import citibob.sql.*;
@@ -69,13 +70,13 @@ public static String getSql(int termid, int studentid)
 }
 
 
-public static void viewStudentSchedules(final App app, SqlRun str, final int termid, int entityid)
+public static void viewStudentSchedules(final ReportsApp app, SqlRun str, final int termid, int entityid)
 throws Exception
 {
 	String sql = offstage.reports.StudentSchedule.getSql(termid, entityid);
 	str.execSql(sql, new RsTasklet2() {
 	public void run(SqlRun str, ResultSet rs) throws Exception {
-		citibob.reports.Reports reports = app.reports();
+				Reports reports = app.reports();
 		
 		java.util.List models = reports.toJodList(rs,
 			new String[][] {{"lastname", "firstname", "programname", "firstdate", "lastdate", "firstyear", "lastyear", "afirstname", "alastname"}},

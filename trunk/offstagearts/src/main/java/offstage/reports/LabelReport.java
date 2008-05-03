@@ -27,8 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.reports;
 
 import citibob.app.*;
-import java.sql.*;
 import citibob.reports.Reports;
+import citibob.reports.ReportsApp;
+import java.sql.*;
 import citibob.sql.*;
 
 /**
@@ -159,7 +160,7 @@ public static String getSql(String idSql, String orderBy)
 	return sql;
 }
 
-public static void viewReport(SqlRun str, final App app, String idSql, String orderBy)
+public static void viewReport(SqlRun str, final ReportsApp app, String idSql, String orderBy)
 {
 	String sql = LabelReport.getSql(idSql, orderBy);
 	str.execSql(sql, new RsTasklet2() {

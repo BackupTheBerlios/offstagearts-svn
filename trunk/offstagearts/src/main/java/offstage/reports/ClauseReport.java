@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.reports;
 
+import citibob.reports.Reports;
 import offstage.*;
 import citibob.swing.table.*;
 import java.util.*;
@@ -131,7 +132,7 @@ EQuery equery, final File outFile) throws Exception
 		fapp.sqlTypeSet(), equery);
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
-		citibob.reports.Reports rr = fapp.reports();
+				Reports rr = fapp.reports();
 		rr.writeCSV(rr.format(report.model), outFile);
 	}});
 }

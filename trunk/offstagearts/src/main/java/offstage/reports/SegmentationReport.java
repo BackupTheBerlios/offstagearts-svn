@@ -26,11 +26,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.reports;
 
-import citibob.sql.AdhocOJSqlTableModel;
 import offstage.*;
 import citibob.app.*;
 import java.sql.*;
 import citibob.jschema.*;
+import citibob.reports.Reports;
+import citibob.reports.ReportsApp;
 import citibob.swing.table.*;
 import java.util.*;
 import citibob.swing.typed.*;
@@ -146,14 +147,14 @@ List<String> segmentTypes)
 	super.executeQuery(str, sql);
 }
 
-public static void writeCSV(final App app, SqlRun str,
+public static void writeCSV(final ReportsApp app, SqlRun str,
 String idSql, List<String> segmentTypes, final File outFile) throws Exception
 {
 	final SegmentationReport report = new SegmentationReport(str, app.sqlTypeSet(),
 		idSql, segmentTypes);
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
-		citibob.reports.Reports rr = app.reports();
+				Reports rr = app.reports();
 		rr.writeCSV(rr.format(report), outFile);
 	}});
 }
