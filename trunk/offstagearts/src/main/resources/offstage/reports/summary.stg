@@ -1,0 +1,19 @@
+
+summary(entity,phones) ::= <<
+<ul>
+<li>Name: $entity.firstname+" "+entity.lastname$</li>
+<li>Email: $entity.email$</li>
+</ul>
+
+
+<h3>Phones</h3>
+<table border=1>
+$phones:{
+  <tr>
+    <td>$it.type$</td><td>$it.number$</td>
+  </tr>
+}$
+</table>
+>>
+
+
