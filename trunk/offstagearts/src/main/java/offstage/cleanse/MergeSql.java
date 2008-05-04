@@ -28,7 +28,6 @@ package offstage.cleanse;
 
 import citibob.jschema.*;
 import citibob.sql.*;
-import citibob.sql.pgsql.SqlInteger;
 import java.util.*;
 import java.sql.*;
 import offstage.schema.*;
@@ -37,6 +36,7 @@ import offstage.db.*;
 import offstage.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
+import offstage.devel.gui.DevelModel;
 
 public class MergeSql
 {
@@ -99,7 +99,7 @@ public void mergeEntities(Object entityid0, Object entityid1)
 	moveRows(sset.get("actrans"), "entityid", entityid0, entityid1);
 
 	// School
-	moveRows(sset.get("entities_school"), "entityid", entityid0, entityid1);
+//	moveRows(sset.get("entities_school"), "entityid", entityid0, entityid1);
 //	mergeOneRow(sset.get("entities_school"), "entityid", entityid0, entityid1);
 //	mergeOneRowEntityID(sset.get("entities_school"), "entityid",
 //		new String[] {"adultid", "parentid", "parent2id"}, entityid0, entityid1);
@@ -239,7 +239,7 @@ public void mergeOneRow(SqlSchema schema, String sEntityCol, Object entityid0, O
 //	System.out.println(sql);
 }
 // -------------------------------------------------------------------
-public int[] getKeyCols(SqlSchema schema, int entityColIx)
+public static int[] getKeyCols(SqlSchema schema, int entityColIx)
 {
 	// Collect keys from schema
 	int ncols = schema.size();
@@ -359,23 +359,80 @@ public void moveRows(SqlSchema schema, String sEntityCol, Object entityid0, Obje
 	System.out.println(sql);
 }
 // -------------------------------------------------------------------
-// Old merge that worked on SchemaBufs, rather than directly on database.
-///** Merge main part of the record.. */
-//public void mergeRecMain(SchemaBuf sb0, SchemaBuf sb1)
-//{
-//	for (int col=0; col < sb0.getColumnCount(); ++col) mergeCol(sb0, sb1, col);
-//}
-//
-///** Merge main part of the record.. */
-//public static void mergeCol(SchemaBuf sb0, SchemaBuf sb1, int col)
-//{
-//	Object val1 = sb1.getValueAt(0, col);
-//System.out.println(col + " val1 = " + val1);
-//	if (val1 == null) {
-//		Object val0 = sb0.getValueAt(0, col);
-//		sb1.setValueAt(val0, 0, col);
-//	}
-//}
+// =====================================================================
+// Schema-based merges --- for preview
+
+public static void bufMerge(DevelModel dmod0, DevelModel dmod1)
+{
+	bufMergeMain(dmod0.getPersonSb(), dmod1.getPersonSb());
+	Integer entityid1 = (Integer)dmod1.getPersonSb().getValueAt(0, "entityid");
+	bufMoveRows("entityid", entityid1, dmod0.getDonationSb(), dmod1.getDonationSb());
+	bufMoveRows("entityid", entityid1, dmod0.getEventsSb(), dmod1.getEventsSb());
+	bufMoveRows("entityid", entityid1, dmod0.getNotesSb(), dmod1.getNotesSb());
+	bufMoveRows("entityid", entityid1, dmod0.getTicketsSb(), dmod1.getTicketsSb());
+	bufMoveRows("entityid", entityid1, dmod0.getInterestsSb(), dmod1.getInterestsSb());
+	bufMoveRows("entityid", entityid1, dmod0.getTermsSb(), dmod1.getTermsSb());
+	bufMoveRows("entityid", entityid1, dmod0.getFlagSb(), dmod1.getFlagSb());
+}
+/** Merge main part of the record.. */
+public static void bufMergeMain(SchemaBuf sb0, SchemaBuf sb1)
+{
+	for (int col=0; col < sb0.getColumnCount(); ++col) bufMergeCol(sb0, sb1, col);
+}
+
+/** Merge main part of the record.. */
+public static void bufMergeCol(SchemaBuf sb0, SchemaBuf sb1, int col)
+{
+	Object val1 = sb1.getValueAt(0, col);
+System.out.println(col + " val1 = " + val1);
+	if (val1 == null) {
+		Object val0 = sb0.getValueAt(0, col);
+		sb1.setValueAt(val0, 0, col);
+	}
+}
+
+
+/** Moves row from one JTypeTableModel to another: from aux0 to aux1 */
+public static void bufMoveRows(String sEntityCol, Object entityid1,
+SchemaBuf aux0, SchemaBuf aux1)
+{
+	SqlSchema schema = (SqlSchema)aux0.getSchema();
+	int entityColIx = schema.findCol(sEntityCol);
+//	SqlCol entityCol = (SqlCol)schema.getCol(entityColIx);
+//	String table = schema.getDefaultTable();
+	int[] keyCols = getKeyCols(schema, entityColIx);
+
+level0:
+	for (int row=0; row<aux0.getRowCount(); ++row) {
+level1:
+		// Look for a matching row in aux1
+		for (int i=0; i<aux1.getRowCount(); ++i) {
+			// Compare aux0(row,...) with aux1(i,...)
+			for (int j=0; ;) {
+				int col = keyCols[j];
+				Object val0 = aux0.getValueAt(row, col);
+				Object val1 = aux1.getValueAt(i, col);
+				boolean eq = (val0 == val1 || (val0 != null && val0.equals(val1)));
+				if (!eq) continue level1;	// Rows do not match
+				// Increment
+				++j;
+				if (j == keyCols.length) {
+					// Found a match in aux1; don't copy this
+					continue level0;
+				}
+			}
+		}
+		
+		// No rows in aux1 match; copy from aux0 to aux1
+		int newRow = aux1.insertRow(-1);
+		for (int col=0; col<aux0.getColumnCount(); ++col) {
+			aux1.setValueAt(aux0.getValueAt(row, col),newRow, col);
+		}
+		aux1.setValueAt(entityid1, newRow, entityColIx);
+		
+	}
+}
+
 //
 ///** Merges columns that refer to other records, and by default are set to self. */
 //public static void mergeEntityIDCol(SchemaBuf sb0, SchemaBuf sb1, int col)

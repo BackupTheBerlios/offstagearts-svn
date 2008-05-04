@@ -1,8 +1,9 @@
+group summaryGroup;
 
-summary(entity,phones) ::= <<
+summary(person,phones) ::= "
 <ul>
-<li>Name: $entity.firstname+" "+entity.lastname$</li>
-<li>Email: $entity.email$</li>
+<li>Name: $person.firstname$ $person.lastname$</li>
+<li>Email: $person.email$</li>
 </ul>
 
 
@@ -14,6 +15,6 @@ $phones:{
   </tr>
 }$
 </table>
->>
+"
 
 

@@ -210,9 +210,9 @@ lib/xstream-1.2.2.jar
 
 	<!-- Template for HTML generation -->
     <dependency>
-            <groupId>org.citibob.jar</groupId>
+            <groupId>org.citibob</groupId>
             <artifactId>stringtemplate</artifactId>
-            <version>3.1</version>
+            <version>3.1-MODIFIED</version>
             <scope>compile</scope>
         </dependency>
     <dependency>

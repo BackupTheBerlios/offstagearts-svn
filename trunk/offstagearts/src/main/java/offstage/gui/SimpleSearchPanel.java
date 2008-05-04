@@ -65,14 +65,10 @@ public void propertyChange(final java.beans.PropertyChangeEvent evt)
 		if (Entityid == null) return;
 		int entityid = Entityid;
 		if (entityid < 0) return;
+		if (Entityid.equals(dmod.getKey())) return;
+
 		dmod.setKey(entityid);
-		dmod.doSelect(str);
-		
-// TEST: print it out
-str.execUpdate(new UpdTasklet() {
-public void run() throws Exception {
-	SummaryReport.getHtml((DevelModel)dmod, app.sFormatMap());
-}});
+		dmod.doSelect(str);		
 }	
 
 /** This method is called from within the constructor to
