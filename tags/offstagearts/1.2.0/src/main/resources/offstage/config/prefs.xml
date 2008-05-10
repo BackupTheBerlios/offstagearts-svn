@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE preferences SYSTEM "http://java.sun.com/dtd/preferences.dtd">
+<preferences EXTERNAL_XML_VERSION="1.0">
+  <root type="user">
+    <map></map>
+
+    <node name="offstage">
+      <map></map>
+
+      <node name="gui">
+        <map></map>
+
+        <node name="1.0">
+          <map></map>
+
+          <node name="ConfigChooser">
+            <map></map>
+
+            <node name="ConfigChooser1">
+              <map>
+                <entry key=".size.height" value="325" />
+
+                <entry key=".size.width" value="328" />
+              </map>
+
+              <node name="JTypedSelectTable1">
+                <map>
+                  <entry key=".column[0].width" value="291" />
+
+                  <entry key=".column[1].width" value="327" />
+                </map>
+              </node>
+            </node>
+          </node>
+
+          <node name="ConsoleFrame">
+            <map></map>
+
+            <node name="ConsoleFrame1">
+              <map>
+                <entry key=".size.height" value="682" />
+
+                <entry key=".size.width" value="577" />
+              </map>
+            </node>
+          </node>
+
+          <node name="MailExpDialog">
+            <map></map>
+
+            <node name="MailExpDialog1">
+              <map>
+                <entry key=".size.height" value="464" />
+
+                <entry key=".size.width" value="410" />
+              </map>
+            </node>
+          </node>
+
+          <node name="OffstageGui">
+            <map></map>
+
+            <node name="OffstageGui1">
+              <map>
+                <entry key=".size.height" value="632" />
+
+                <entry key=".size.width" value="630" />
+              </map>
+            </node>
+          </node>
+
+          <node name="frame-accounting">
+            <map></map>
+
+            <node name="AccountFrame1">
+              <map>
+                <entry key=".size.height" value="790" />
+
+                <entry key=".size.width" value="1035" />
+              </map>
+
+              <node name="JSplitPane1">
+                <map>
+                  <entry key=".dividerLocation" value="814" />
+                </map>
+
+                <node name="JSplitPane2">
+                  <map>
+                    <entry key=".dividerLocation" value="390" />
+                  </map>
+
+                  <node name="SchemaBufTable1">
+                    <map>
+                      <entry key=".column[0].width" value="55" />
+
+                      <entry key=".column[1].width" value="96" />
+
+                      <entry key=".column[2].width" value="121" />
+
+                      <entry key=".column[3].width" value="78" />
+
+                      <entry key=".column[4].width" value="458" />
+                    </map>
+                  </node>
+                </node>
+
+                <node name="JSplitPane3">
+                  <map>
+                    <entry key=".dividerLocation" value="243" />
+                  </map>
+
+                  <node name="IdSqlTable1">
+                    <map>
+                      <entry key=".column[0].width" value="190" />
+                    </map>
+                  </node>
+
+                  <node name="JTypeColTable1">
+                    <map>
+                      <entry key=".column[0].width" value="48" />
+
+                      <entry key=".column[1].width" value="47" />
+
+                      <entry key=".column[2].width" value="48" />
+
+                      <entry key=".column[3].width" value="47" />
+                    </map>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+
+          <node name="frame-console">
+            <map></map>
+
+            <node name="ConsoleFrame1">
+              <map>
+                <entry key=".size.height" value="682" />
+
+                <entry key=".size.width" value="577" />
+              </map>
+            </node>
+          </node>
+
+          <node name="frame-devel">
+            <map></map>
+
+            <node name="DevelFrame1">
+              <map>
+                <entry key=".size.height" value="826" />
+
+                <entry key=".size.width" value="1210" />
+              </map>
+
+              <node name="FamilySelectorTable1">
+                <map>
+                  <entry key=".column[0].width" value="328" />
+                </map>
+              </node>
+
+              <node name="GroupsTable1">
+                <map>
+                  <entry key=".column[0].width" value="33" />
+
+                  <entry key=".column[1].width" value="172" />
+
+                  <entry key=".column[2].width" value="200" />
+                </map>
+              </node>
+
+              <node name="GroupsTable2">
+                <map>
+                  <entry key=".column[0].width" value="63" />
+
+                  <entry key=".column[1].width" value="456" />
+
+                  <entry key=".column[2].width" value="138" />
+
+                  <entry key=".column[3].width" value="120" />
+                </map>
+              </node>
+
+              <node name="GroupsTable3">
+                <map>
+                  <entry key=".column[0].width" value="71" />
+
+                  <entry key=".column[1].width" value="706" />
+                </map>
+              </node>
+
+              <node name="GroupsTable4">
+                <map>
+                  <entry key=".column[0].width" value="69" />
+
+                  <entry key=".column[1].width" value="107" />
+
+                  <entry key=".column[2].width" value="156" />
+
+                  <entry key=".column[3].width" value="445" />
+                </map>
+              </node>
+
+              <node name="GroupsTable5">
+                <map>
+                  <entry key=".column[0].width" value="43" />
+
+                  <entry key=".column[1].width" value="246" />
+
+                  <entry key=".column[2].width" value="102" />
+
+                  <entry key=".column[3].width" value="59" />
+
+                  <entry key=".column[4].width" value="82" />
+
+                  <entry key=".column[5].width" value="81" />
+
+                  <entry key=".column[6].width" value="29" />
+
+                  <entry key=".column[7].width" value="68" />
+
+                  <entry key=".column[8].width" value="67" />
+                </map>
+              </node>
+
+              <node name="GroupsTable6">
+                <map>
+                  <entry key=".column[0].width" value="38" />
+
+                  <entry key=".column[1].width" value="322" />
+
+                  <entry key=".column[2].width" value="75" />
+
+                  <entry key=".column[3].width" value="342" />
+                </map>
+              </node>
+
+              <node name="GroupsTable7">
+                <map>
+                  <entry key=".column[0].width" value="39" />
+
+                  <entry key=".column[1].width" value="377" />
+
+                  <entry key=".column[2].width" value="361" />
+                </map>
+              </node>
+
+              <node name="GroupsTable8">
+                <map>
+                  <entry key=".column[0].width" value="51" />
+
+                  <entry key=".column[1].width" value="726" />
+                </map>
+              </node>
+
+              <node name="IdSqlTable1">
+                <map>
+                  <entry key=".column[0].width" value="394" />
+                </map>
+              </node>
+            </node>
+          </node>
+
+          <node name="frame-dups">
+            <map></map>
+
+            <node name="CleanseFrame1">
+              <map>
+                <entry key=".size.height" value="1027" />
+
+                <entry key=".size.width" value="1510" />
+              </map>
+
+              <node name="JSplitPane1">
+                <map>
+                  <entry key=".dividerLocation" value="616" />
+                </map>
+
+                <node name="FamilySelectorTable1">
+                  <map></map>
+                </node>
+
+                <node name="FamilySelectorTable2">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable1">
+                  <map>
+                    <entry key=".column[0].width" value="44" />
+
+                    <entry key=".column[1].width" value="150" />
+
+                    <entry key=".column[2].width" value="211" />
+                  </map>
+                </node>
+
+                <node name="GroupsTable10">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable11">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable12">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable13">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable14">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable15">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable16">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable2">
+                  <map>
+                    <entry key=".column[0].width" value="83" />
+
+                    <entry key=".column[1].width" value="212" />
+
+                    <entry key=".column[2].width" value="217" />
+
+                    <entry key=".column[3].width" value="217" />
+                  </map>
+                </node>
+
+                <node name="GroupsTable3">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable4">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable5">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable6">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable7">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable8">
+                  <map></map>
+                </node>
+
+                <node name="GroupsTable9">
+                  <map>
+                    <entry key=".column[0].width" value="42" />
+
+                    <entry key=".column[1].width" value="161" />
+
+                    <entry key=".column[2].width" value="202" />
+                  </map>
+                </node>
+
+                <node name="JTypedSelectTable1">
+                  <map>
+                    <entry key=".column[0].width" value="53" />
+
+                    <entry key=".column[1].width" value="238" />
+
+                    <entry key=".column[2].width" value="242" />
+
+                    <entry key=".column[3].width" value="236" />
+
+                    <entry key=".column[4].width" value="247" />
+
+                    <entry key=".column[5].width" value="246" />
+                  </map>
+                </node>
+              </node>
+            </node>
+          </node>
+
+          <node name="frame-maintenance">
+            <map></map>
+
+            <node name="OffstageGui1">
+              <map>
+                <entry key=".size.height" value="632" />
+
+                <entry key=".size.width" value="630" />
+              </map>
+            </node>
+          </node>
+
+          <node name="frame-school">
+            <map></map>
+
+            <node name="SchoolFrame1">
+              <map>
+                <entry key=".size.height" value="849" />
+
+                <entry key=".size.width" value="1133" />
+              </map>
+
+              <node name="GroupsTable1">
+                <map>
+                  <entry key=".column[0].width" value="43" />
+
+                  <entry key=".column[1].width" value="120" />
+
+                  <entry key=".column[2].width" value="119" />
+                </map>
+              </node>
+
+              <node name="GroupsTable2">
+                <map>
+                  <entry key=".column[0].width" value="47" />
+
+                  <entry key=".column[1].width" value="118" />
+
+                  <entry key=".column[2].width" value="117" />
+                </map>
+              </node>
+
+              <node name="GroupsTable3">
+                <map>
+                  <entry key=".column[0].width" value="46" />
+
+                  <entry key=".column[1].width" value="118" />
+
+                  <entry key=".column[2].width" value="118" />
+                </map>
+              </node>
+
+              <node name="GroupsTable4">
+                <map></map>
+              </node>
+
+              <node name="IdSqlTable1">
+                <map></map>
+              </node>
+
+              <node name="JSplitPane1">
+                <map>
+                  <entry key=".dividerLocation" value="454" />
+                </map>
+
+                <node name="JTypeTable1">
+                  <map></map>
+                </node>
+
+                <node name="SchemaBufTable2">
+                  <map>
+                    <entry key=".column[0].width" value="43" />
+
+                    <entry key=".column[1].width" value="123" />
+
+                    <entry key=".column[2].width" value="126" />
+
+                    <entry key=".column[3].width" value="358" />
+                  </map>
+                </node>
+
+                <node name="SchemaBufTable3">
+                  <map>
+                    <entry key=".column[0].width" value="46" />
+
+                    <entry key=".column[1].width" value="139" />
+
+                    <entry key=".column[2].width" value="265" />
+                  </map>
+                </node>
+              </node>
+
+              <node name="JSplitPane2">
+                <map>
+                  <entry key=".dividerLocation" value="660" />
+                </map>
+
+                <node name="SchemaBufTable4">
+                  <map>
+                    <entry key=".column[0].width" value="30" />
+
+                    <entry key=".column[1].width" value="42" />
+
+                    <entry key=".column[2].width" value="151" />
+
+                    <entry key=".column[3].width" value="79" />
+
+                    <entry key=".column[4].width" value="120" />
+
+                    <entry key=".column[5].width" value="111" />
+
+                    <entry key=".column[6].width" value="69" />
+
+                    <entry key=".column[7].width" value="54" />
+                  </map>
+                </node>
+
+                <node name="SchemaBufTable5">
+                  <map>
+                    <entry key=".column[0].width" value="45" />
+
+                    <entry key=".column[1].width" value="43" />
+
+                    <entry key=".column[2].width" value="178" />
+
+                    <entry key=".column[3].width" value="178" />
+                  </map>
+                </node>
+              </node>
+
+              <node name="JSplitPane3">
+                <map>
+                  <entry key=".dividerLocation" value="454" />
+                </map>
+
+                <node name="SchemaBufTable7">
+                  <map>
+                    <entry key=".column[0].width" value="39" />
+
+                    <entry key=".column[1].width" value="130" />
+
+                    <entry key=".column[2].width" value="59" />
+
+                    <entry key=".column[3].width" value="75" />
+
+                    <entry key=".column[4].width" value="74" />
+
+                    <entry key=".column[5].width" value="73" />
+                  </map>
+                </node>
+
+                <node name="SchemaBufTable8">
+                  <map>
+                    <entry key=".column[0].width" value="31" />
+
+                    <entry key=".column[1].width" value="29" />
+
+                    <entry key=".column[2].width" value="148" />
+
+                    <entry key=".column[3].width" value="103" />
+
+                    <entry key=".column[4].width" value="93" />
+
+                    <entry key=".column[5].width" value="82" />
+
+                    <entry key=".column[6].width" value="164" />
+                  </map>
+                </node>
+              </node>
+
+              <node name="SchemaBufTable1">
+                <map>
+                  <entry key=".column[0].width" value="45" />
+
+                  <entry key=".column[1].width" value="106" />
+
+                  <entry key=".column[2].width" value="319" />
+
+                  <entry key=".column[3].width" value="165" />
+
+                  <entry key=".column[4].width" value="160" />
+
+                  <entry key=".column[5].width" value="160" />
+
+                  <entry key=".column[6].width" value="160" />
+                </map>
+              </node>
+
+              <node name="SchemaBufTable6">
+                <map>
+                  <entry key=".column[0].width" value="47" />
+
+                  <entry key=".column[1].width" value="72" />
+
+                  <entry key=".column[2].width" value="132" />
+
+                  <entry key=".column[3].width" value="77" />
+
+                  <entry key=".column[4].width" value="287" />
+                </map>
+              </node>
+
+              <node name="SchoolFamilySelectorTable1">
+                <map>
+                  <entry key=".column[0].width" value="315" />
+                </map>
+              </node>
+
+              <node name="StatusTable1">
+                <map>
+                  <entry key=".column[0].width" value="150" />
+
+                  <entry key=".column[1].width" value="97" />
+
+                  <entry key=".column[2].width" value="97" />
+
+                  <entry key=".column[3].width" value="99" />
+
+                  <entry key=".column[4].width" value="116" />
+
+                  <entry key=".column[5].width" value="168" />
+
+                  <entry key=".column[6].width" value="168" />
+                </map>
+              </node>
+            </node>
+          </node>
+
+          <node name="wizard">
+            <map></map>
+
+            <node name="New Category">
+              <map></map>
+
+              <node name="grouplist">
+                <map></map>
+
+                <node name="GroupListWiz1">
+                  <map>
+                    <entry key=".size.height" value="400" />
+
+                    <entry key=".size.width" value="600" />
+                  </map>
+                </node>
+              </node>
+            </node>
+
+            <node name="Query Wizard">
+              <map></map>
+
+              <node name="editquery">
+                <map></map>
+
+                <node name="JPanelWizWrapper1">
+                  <map>
+                    <entry key=".size.height" value="565" />
+
+                    <entry key=".size.width" value="1160" />
+                  </map>
+
+                  <node name="JSplitPane1">
+                    <map>
+                      <entry key=".dividerLocation" value="835" />
+                    </map>
+
+                    <node name="EQueryTable1">
+                      <map>
+                        <entry key=".column[0].width" value="267" />
+
+                        <entry key=".column[1].width" value="223" />
+
+                        <entry key=".column[2].width" value="311" />
+                      </map>
+                    </node>
+
+                    <node name="FamilyTable1">
+                      <map>
+                        <entry key=".column[0].width" value="301" />
+                      </map>
+                    </node>
+                  </node>
+                </node>
+              </node>
+
+              <node name="listquery">
+                <map></map>
+
+                <node name="JPanelWizWrapper1">
+                  <map>
+                    <entry key=".size.height" value="543" />
+
+                    <entry key=".size.width" value="682" />
+                  </map>
+
+                  <node name="SchemaBufTable1">
+                    <map>
+                      <entry key=".column[0].width" value="96" />
+
+                      <entry key=".column[1].width" value="350" />
+
+                      <entry key=".column[2].width" value="208" />
+                    </map>
+                  </node>
+                </node>
+              </node>
+            </node>
+          </node>
+        </node>
+      </node>
+    </node>
+  </root>
+</preferences>
