@@ -105,6 +105,13 @@ throws org.xml.sax.SAXException, java.io.IOException
 		wizard.runMailingLabels(str);
 	}}));
 
+	actionMap.put("emails", new Job("", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
+//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
+		wizard.runEmails(str);
+	}}));
+
 	actionMap.put("donationreport", new Job("", new SqlTask() {
 	public void run(SqlRun str) throws Exception {
 //		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());

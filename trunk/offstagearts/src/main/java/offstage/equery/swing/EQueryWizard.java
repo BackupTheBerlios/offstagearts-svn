@@ -203,6 +203,16 @@ addState(new AbstractWizState("donationyears") {
 	{}
 });
 
+addState(new AbstractWizState("emailmsg") {
+	public Wiz newWiz(Wizard.Context con) throws Exception
+		{ return new EmailMsgWiz(frame, app); }
+	public void process(Wizard.Context con) throws Exception
+	{
+		byte[] buf = (byte[])v.get("emails");
+System.out.println("Email =\n" + new String(buf));
+	}
+});
+
 
 
 
@@ -276,6 +286,17 @@ public boolean runMailingLabels(SqlRun str) throws Exception
 //		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml");
 //	}});
 	return true;
+}
+
+public boolean runEmails(SqlRun str) throws Exception
+{
+	setWizardName("Bulk Mail --- Email Only");
+	setNavigator(new HashNavigator(new String[] {
+		"editquery", "emailmsg",
+		"emailmsg", "<end>"
+	}));
+	return runWizard("listquery");	
+	
 }
 
 }
