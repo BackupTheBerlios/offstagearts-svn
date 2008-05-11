@@ -1,1 +1,0 @@
-pg_dump --encoding=UNICODE --disable-dollar-quoting --data-only --column-inserts --no-owner --no-privileges -U postgres test >../src/main/resources/offstage/resource/database-data-$1.sql
