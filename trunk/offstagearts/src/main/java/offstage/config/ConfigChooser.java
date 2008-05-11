@@ -42,7 +42,7 @@ public class ConfigChooser extends javax.swing.JDialog
 	protected boolean isDemo;
 	
 	/** Creates new form ConfigChooserPanel */
-	public ConfigChooser(Preferences prefs, SwingerMap smap, SwingPrefs swingPrefs, Preferences userRoot, Version version)
+	public ConfigChooser(Preferences prefs, SwingerMap smap, SwingPrefs swingPrefs, Preferences userRoot, String version)
 	{
 		super((JFrame)null, true);
 		initComponents();
@@ -62,7 +62,7 @@ public class ConfigChooser extends javax.swing.JDialog
 
 		swingPrefs.setPrefs(this, userRoot.node("ConfigChooser"));
 		
-		setup = new ConfigSetup(model, smap, swingPrefs, userRoot, version);
+		setup = new ConfigSetup(model, smap, swingPrefs, userRoot, version.toString());
 	}
 	
 	public File getConfigFile() { return (File)configs.getValue(); }

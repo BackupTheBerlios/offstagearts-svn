@@ -105,11 +105,11 @@ public EQuerySchema equerySchema() { return equerySchema; }
 //}
 
 /** Read our base preferences from the JAR file */
-private Map<String,String> readBasePrefs() throws IOException
+public static Map<String,String> readBasePrefs() throws IOException
 {
 	Map<String,String> map = new TreeMap();
 	
-	URL url = getClass().getClassLoader().getResource("offstage/config/prefs.txt");
+	URL url = FrontApp.class.getClassLoader().getResource("offstage/config/prefs.txt");
 	BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 	String line;
 	while ((line = in.readLine()) != null) {
@@ -164,7 +164,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {
 	// Make sure we have the right version
-	version = new Version("1.1.0");
+	version = new Version("1.2.0");
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
 	sysVersion = svers.maxVersion;
@@ -172,7 +172,7 @@ throws Exception
 
 	// Set up Swing GUI preferences, so we can display stuff
 	// initPrefs();
-	userRoot = Preferences.userRoot().node("offstagearts").node("gui");
+	userRoot = Preferences.userRoot().node("offstagearts/gui");
 	Map<String,String> basePrefs = readBasePrefs();
 	swingPrefs = new SwingPrefs(basePrefs);
 	
@@ -180,7 +180,7 @@ throws Exception
 	// the configuration
 	Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
 	ConfigChooser dialog = new ConfigChooser(configPrefs,
-		new JavaSwingerMap(TimeZone.getDefault()), swingPrefs, userRoot(), version);
+		new JavaSwingerMap(TimeZone.getDefault()), swingPrefs, userRoot(), version.toString());
 	dialog.setVisible(true);
 	System.out.println(dialog.getConfigFile());
 	if (dialog.isDemo()) {

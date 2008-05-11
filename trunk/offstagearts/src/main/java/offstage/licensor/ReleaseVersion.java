@@ -14,20 +14,17 @@ import java.net.URLClassLoader;
  * @author citibob
  */
 public class ReleaseVersion {
-public static void main(String[] args)
+public static String getReleaseVersion()
 {
-	try {
-		URLClassLoader cl = (URLClassLoader)ReleaseVersion.class.getClassLoader();
-		URL[] urls = cl.getURLs();
-		String surl = urls[0].toString();
+	URLClassLoader cl = (URLClassLoader)ReleaseVersion.class.getClassLoader();
+	URL[] urls = cl.getURLs();
+	String surl = urls[0].toString();
 //System.out.println(surl);
-		int slash = surl.lastIndexOf('/');
-		int dash = surl.indexOf('-', slash+1);
-		int dot = surl.lastIndexOf('.');
-		String version = surl.substring(dash+1,dot);
-		System.out.println(version);
-	} catch(Exception e) {
-		e.printStackTrace();
-	}
+	int slash = surl.lastIndexOf('/');
+	int dash = surl.indexOf('-', slash+1);
+	int dot = surl.lastIndexOf('.');
+	String version = surl.substring(dash+1,dot);
+	return version;
+//	System.out.println(version);
 }
 }

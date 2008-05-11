@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package offstage.licensor;
 
+import citibob.reflect.ClassPathUtils;
 import java.io.*;
 
 /**
@@ -31,8 +32,10 @@ public Licensor() throws IOException
 
 public static void main(String[] args) throws Exception
 {
+	File projDir = ClassPathUtils.getMavenProjectRoot();
+	File offstageDir = new File(projDir, "src/main/java/offstage");
 	Licensor l = new Licensor();
-	l.relicenseDir(new File("/home/citibob/svn/offstage/src/offstage"));
+	l.relicenseDir(offstageDir);
 }
 
 }

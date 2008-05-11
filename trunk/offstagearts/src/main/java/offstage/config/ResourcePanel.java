@@ -630,7 +630,7 @@ boolean inUpdate;
 			chooser.setDialogTitle("Export Resource");
 			File file = GuiUtil.chooseSaveFileCheckOverwrite(ResourcePanel.this,
 				chooser, suffix,
-				app.userRoot(), "resourceExportDir");
+				app.userRoot(), "_resourceExportDir");
 			if (file == null) return;
 
 			// Save it

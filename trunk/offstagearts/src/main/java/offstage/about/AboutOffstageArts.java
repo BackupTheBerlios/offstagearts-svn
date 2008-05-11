@@ -7,16 +7,15 @@
 package offstage.about;
 
 import citibob.app.App;
-import citibob.reflect.ClassPathUtils;
-import citibob.reflect.JarURL;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import javax.swing.DefaultListModel;
 import offstage.licensor.Licensor;
 
@@ -44,7 +43,6 @@ static {
 	alias.put("activation", "sun-gpl2");
 	alias.put("mail", "sun-gpl2");
 	alias.put("cls", "secondstring");
-	alias.put("jwf", "secondstring");
 //	alias.put("objcobra", "lgpl21");
 	alias.put("xalan", "apache2");
 	alias.put("xercesImpl", "apache2");
@@ -56,10 +54,30 @@ static {
 	alias.put("poi", "apache2");
 	alias.put("oro", "apache2");
 	alias.put("log4j", "apache2");
+	alias.put("xml-apis", "apache2");
+	alias.put("xpp3_min", "xpp3");
+	alias.put("standard", "apache2");
+	alias.put("spring-aop", "spring");
+	alias.put("spring-beans", "spring");
+	alias.put("spring-context", "spring");
+	alias.put("spring-core", "spring");
+	alias.put("spring-web", "spring");
+	alias.put("spring-webmvc", "spring");
+	alias.put("servlet-api", "apache2");
+	alias.put("", "");
+	alias.put("", "");
+	alias.put("", "");
+	alias.put("", "");
 	alias.put("", "");
 	alias.put("", "");
 }
 	
+static class Jar implements Comparable<Jar> {
+	public String name;
+	public String version;
+	public int compareTo(Jar b) { return name.compareTo(b.name); }
+	public String toString() { return name + '-' + version; }
+}
 	/** Creates new form AboutOffstageArts */
 	public AboutOffstageArts(java.awt.Frame parent, boolean modal)
 	throws MalformedURLException, IOException
@@ -67,17 +85,26 @@ static {
 		super(parent, false);
 		initComponents();
 
+		// Read and parse jarlist.txt
+		List<Jar> jars = new ArrayList();
 		ClassLoader cl = getClass().getClassLoader();
-		List<JarURL> urls = ClassPathUtils.getClassPath((URLClassLoader)cl);
-		Set<String> deps = new TreeSet();
-//		List<String> deps = new ArrayList(urls.size());
-		for (JarURL url : urls) {
-			deps.add(url.getName());
+		BufferedReader in = new BufferedReader(new InputStreamReader(
+			cl.getResourceAsStream("offstage/jarlist.txt")));
+		String line;
+		while ((line = in.readLine()) != null) {
+			String[] ll = line.split(",");
+			Jar jar = new Jar();
+				jar.name = ll[0];
+				jar.version = ll[1];
+			jars.add(jar);
 		}
+		in.close();
+		
+		Collections.sort(jars);
 		
 		// Set model in GUI
 		DefaultListModel model = new DefaultListModel();
-		for (String dep : deps) model.addElement(dep);
+		for (Jar jar : jars) model.addElement(jar);
 		depList.setModel(model);
 	}
 	
@@ -141,7 +168,7 @@ static {
         mainLicense.setContentType("text/html");
         mainLicense.setEditable(false);
         mainLicense.setFont(mainLicense.getFont());
-        mainLicense.setText("<html>\n  <body>\n    <p style=\"margin-top: 0\">OffstageArts: Enterprise Database for Arts Organizations<br>\nCopyright © 2005-2008 by Robert Fischer</p>\n\n<p>This program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.</p>\n\n<p>This program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License below for more details.</p>\n\n<p>OffstageArts incorporates a number of free software products, each with its own\nlicensing terms.  See below for further details.</p>\n  </body>\n</html>\n");
+        mainLicense.setText("<html>\n  <body>\n    <p style=\"margin-top: 0\">OffstageArts: Enterprise Database for Arts Organizations<br>\nCopyright ï¿½ 2005-2008 by Robert Fischer</p>\n\n<p>This program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.</p>\n\n<p>This program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License below for more details.</p>\n\n<p>OffstageArts incorporates a number of free software products, each with its own\nlicensing terms.  See below for further details.</p>\n  </body>\n</html>\n");
         mainLicense.setPreferredSize(new java.awt.Dimension(600, 600));
         jScrollPane3.setViewportView(mainLicense);
 
@@ -158,7 +185,8 @@ static {
 	}//GEN-LAST:event_jButton1ActionPerformed
 
 	private void depListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_depListValueChanged
-		String name = (String)depList.getSelectedValue();
+		Jar jar = (Jar)depList.getSelectedValue();
+		String name = jar.name;
 		String n2 = alias.get(name);
 		name = (n2 == null ? name : n2);
 		String license = null;

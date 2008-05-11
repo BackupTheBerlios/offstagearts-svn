@@ -1,4 +1,4 @@
-XOM License
+http://www.cafeconleche.org/XOM/
 
 Elliotte Rusty Harold
 
