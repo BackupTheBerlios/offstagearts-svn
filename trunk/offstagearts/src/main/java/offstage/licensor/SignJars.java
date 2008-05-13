@@ -30,6 +30,8 @@ public static final int CMP_NEQ = 1;
 public static final int CMP_AONLY = 2;
 public static final int CMP_BONLY = 3;
 	
+VersionMap vm;
+
 File srcDir;
 File unsignedDir;
 File signedDir;
@@ -156,6 +158,7 @@ public int cmpMd5(File a, File bMd5) throws IOException
 	if (Arrays.equals(bytesA, bytesB)) return CMP_EQ;
 	return CMP_NEQ;
 }// ----------------------------------------------------------------------
+
 public void sign(File f) throws IOException
 {
 	Process proc = Runtime.getRuntime().exec("jarsigner -storepass " + password + " " +
@@ -165,12 +168,16 @@ public void sign(File f) throws IOException
 	while ((b = in.read()) >= 0) System.out.write(b);
 }
 
-public void processFile(String name) throws IOException
+/** @param destFiles IN/OUT: Set of destinations we decided we want (either we left
+ * it alone, or we wrote it.  Everything else must be delted. */
+public void processFile(String srcName, Set<File> keepUnsigned, Set<File> keepSigned) throws IOException
 {
-System.out.println("Process file: " + name);
-	File src = new File(srcDir, name);
-	File unsigned = new File(unsignedDir, name + ".md5");
-	File signed = new File(signedDir, name);
+	String destName = vm.getJawsName(srcName);
+	
+System.out.println("Process file: " + srcName + " -> " + destName);
+	File src = new File(srcDir, srcName);
+	File unsigned = new File(unsignedDir, destName + ".md5");
+	File signed = new File(signedDir, destName);
 	
 	int xcmp = cmpMd5(src, unsigned);
 //	System.out.println("xcmp = " + xcmp);
@@ -178,20 +185,25 @@ System.out.println("Process file: " + name);
 		case CMP_AONLY :
 		case CMP_NEQ : {
 			// Copy file and sign it
-			System.out.println("Copying and signing " + name);
+			System.out.println("Copying and signing " + srcName + " -> " + destName);
 			unsigned.getParentFile().mkdirs();
 			copyMd5(src, unsigned);
 			signed.getParentFile().mkdirs();
 			copy(src, signed);
 			sign(signed);
+			keepSigned.add(signed);
+			keepUnsigned.add(unsigned);
 		} break;
-		case CMP_BONLY : {
-			// Delete file
-			System.out.println("Deleting " + name);
-			unsigned.delete();
-			signed.delete();
+//		case CMP_BONLY : {
+//			// Delete file
+//			System.out.println("Deleting " + destName);
+//			unsigned.delete();
+//			signed.delete();
+//		} break;
+		case CMP_EQ : {	// nothing
+			keepSigned.add(signed);
+			keepUnsigned.add(unsigned);
 		} break;
-		case CMP_EQ : break;	// nothing
 	}
 }
 	
@@ -211,21 +223,28 @@ public void processDirRecursive() throws IOException
 	// Get the files in this directory
 	Set<String> jars = new TreeSet();
 	Set<String> dirs = new TreeSet();
+//	File[] files = signedDir.listFiles();
+//	if (files != null) for (File f : files) {
+//		if (f.getName().endsWith(".jar")) jars.add(f.getName());
+//		if (f.isDirectory()) dirs.add(f.getName());
+//	}
 	File[] files = srcDir.listFiles();
 	if (files != null) for (File f : files) {
-		if (f.getName().endsWith(".jar")) jars.add(f.getName());
-		if (f.isDirectory()) dirs.add(f.getName());
-	}
-	files = signedDir.listFiles();
-	if (files != null) for (File f : files) {
-		if (f.getName().endsWith(".jar")) jars.add(f.getName());
+		if (f.getName().endsWith(".jar")) {
+			jars.remove(vm.getJawsName(f.getName()));	// Prevents needless file deletions
+			jars.add(f.getName());
+		}
 		if (f.isDirectory()) dirs.add(f.getName());
 	}
 	
 	// Process these jars
+	Set<File> keepUnsigned = new TreeSet();
+	Set<File> keepSigned = new TreeSet();
 	for (String name : jars) {
-		processFile(name);
+		processFile(name, keepUnsigned, keepSigned);
 	}
+	removeExcept(unsignedDir, keepUnsigned);
+	removeExcept(signedDir, keepSigned);
 	
 	// Process the dirs
 	for (String name : dirs) {
@@ -233,8 +252,26 @@ public void processDirRecursive() throws IOException
 	}
 }
 
+public void removeExcept(File dir, Set<File> keep)
+{
+	Set<File> all = new TreeSet();
+	File[] files = dir.listFiles();
+	for (File f : files) {
+		if (!f.isFile()) continue;
+		all.add(f);
+	}
+	for (File f : keep) all.remove(f);
+	for (File f : all) {
+		System.out.println("Deleting: " + f);
+		f.delete();
+	}
+}
+
 public static void main(String[] args) throws Exception
 {
+	
+	VersionMap vm = WriteJNLP.newVersionMap(args[0]);
+	
 //	if (args.length == 0) {
 //		System.out.println("Usage: SignJars ");
 //	}
@@ -249,6 +286,7 @@ System.out.println("Base dir = " + dir);
 			sj.srcDir = new File(dir, "target/executable-netbeans.dir");
 			sj.unsignedDir = new File(dir, "jaws/unsigned");
 			sj.signedDir = new File(dir, "jaws/signed");
+			sj.vm = vm;
 //		sj.processFile("offstagearts-1.0-SNAPSHOT.jar");
 		sj.processDirRecursive();
 	} catch(Exception e) {

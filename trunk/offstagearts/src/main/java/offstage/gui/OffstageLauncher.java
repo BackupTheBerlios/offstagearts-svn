@@ -50,33 +50,15 @@ import offstage.config.*;
  */
 public class OffstageLauncher {
 
-protected OffstageGui offstageGui;
-protected ConsoleFrame consoleFrame;
+//protected OffstageGui offstageGui;
+//protected ConsoleFrame consoleFrame;
 
 
 
 
     /** Creates a new instance of FrameSetX */
-    public OffstageLauncher() throws Exception {
-//new com.Ostermiller.util.CSVPrinter(System.out);
-
-//		ConnPool pool = offstage.db.DB.newConnPool();
-//		Connection dbb = pool.checkout();
-//
-//		// Get database version
-//		Statement st = dbb.createStatement();
-//		OffstageVersion.fetchDbVersion(st);
-//		
-//// TODO: This should not be needed.  But run for now until upgrade is in place.
-//st.execute("update entities set primaryentityid=entityid where primaryentityid is null");
-//		st.close();
-//		pool.checkin(dbb);
-
-//		SqlBatchSet str = new SqlBatchSet();
-		
-		
-//		FrontApp app = new FrontApp(pool, consoleFrame.getDocument());
-		final FrontApp app = new FrontApp(); //new File("/export/home/citibob/svn/offstage/config"));
+    public static void launch(boolean demo) throws Exception {
+		final FrontApp app = new FrontApp(demo); //new File("/export/home/citibob/svn/offstage/config"));
 		boolean resGood = app.checkResources();
 		app.initWithDatabase();
 		
@@ -102,7 +84,8 @@ protected ConsoleFrame consoleFrame;
 		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 		
 		try {
-			new OffstageLauncher();
+			boolean demo = (args.length > 0 && args[0].toLowerCase().equals("demo"));
+			launch(demo);
 //OffstageResSet.main(args);
 		} catch(Exception e) {
 			e.printStackTrace();

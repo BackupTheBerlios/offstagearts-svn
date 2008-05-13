@@ -120,9 +120,7 @@ static class Jar implements Comparable<Jar> {
 	 */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
-        jButton1 = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         jSplitPane2 = new javax.swing.JSplitPane();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -131,16 +129,10 @@ static class Jar implements Comparable<Jar> {
         depList = new javax.swing.JList();
         jScrollPane3 = new javax.swing.JScrollPane();
         mainLicense = new javax.swing.JTextPane();
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        jButton1.setText("OK");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButton1, java.awt.BorderLayout.SOUTH);
 
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
@@ -168,13 +160,23 @@ static class Jar implements Comparable<Jar> {
         mainLicense.setContentType("text/html");
         mainLicense.setEditable(false);
         mainLicense.setFont(mainLicense.getFont());
-        mainLicense.setText("<html>\n  <body>\n    <p style=\"margin-top: 0\">OffstageArts: Enterprise Database for Arts Organizations<br>\nCopyright � 2005-2008 by Robert Fischer</p>\n\n<p>This program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.</p>\n\n<p>This program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License below for more details.</p>\n\n<p>OffstageArts incorporates a number of free software products, each with its own\nlicensing terms.  See below for further details.</p>\n  </body>\n</html>\n");
+        mainLicense.setText("<html>\n  <body>\n    <p style=\"margin-top: 0\">OffstageArts: Enterprise Database for Arts Organizations<br>\nCopyright &copy; 2005-2008 by Robert Fischer</p>\n\n<p>This program is free software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option) any later version.</p>\n\n<p>This program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License below for more details.</p>\n\n<p>OffstageArts incorporates a number of free software products, each with its own\nlicensing terms.  See below for further details.</p>\n  </body>\n</html>\n");
         mainLicense.setPreferredSize(new java.awt.Dimension(600, 600));
         jScrollPane3.setViewportView(mainLicense);
 
         jSplitPane1.setTopComponent(jScrollPane3);
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
+
+        jButton1.setText("OK");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton1);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -219,6 +221,7 @@ static class Jar implements Comparable<Jar> {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList depList;
     private javax.swing.JButton jButton1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

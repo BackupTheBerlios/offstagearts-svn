@@ -1,7 +1,12 @@
 #!/bin/sh
 
+# Usage:
+#   deploy.sh release
+#   deploy.sh latest
+
 # Sign all the jarfiles
-java -cp target/executable-netbeans.dir/offstagearts-*.jar offstage.licensor.SignJars
+java -cp target/executable-netbeans.dir/offstagearts-*.jar offstage.licensor.SignJars $1
+java -cp target/executable-netbeans.dir/offstagearts-*.jar offstage.licensor.WriteJNLP $1
 
 # Deploy to Java Web Start
 rsync -avz jaws/signed/ citibob@offstagearts.org:/home/citibob/offstagearts.org/jars

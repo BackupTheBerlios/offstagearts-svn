@@ -19,9 +19,12 @@
 	<j2se version="1.5"
 	      href="http://java.sun.com/products/autodl/j2se"/>
 
-$jars:{<jar href="$jarbase$$it$"/>
+$jars:{<jar href="$jarBase$$it$"/>
 }$
 
    </resources>
-   <application-desc main-class="offstage.gui.OffstageLauncher"/>
+   <application-desc main-class="offstage.gui.OffstageLauncher">
+$args:{		<argument>$it$</argument>
+}$
+	</application-desc>
 </jnlp>
