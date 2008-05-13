@@ -54,11 +54,12 @@
         <listitem>
           <para>Java JDK version 1.5:
           <uri>http://java.sun.com/javase/downloads/index_jdk5.jsp</uri>.
-          OffstageArts has not been tested with Java version 1.6.</para>
+          <emphasis>OffstageArts does not work with Java
+          1.6.</emphasis></para>
         </listitem>
 
         <listitem>
-          <para>NetBeans 6.0: <uri>http://www.netbeans.org/</uri>. As a
+          <para>NetBeans 6.0 or 6.1: <uri>http://www.netbeans.org/</uri>. As a
           Swing-based application, OffstageArts makes extensive use of the
           visual form builder in NetBeans. Eclipse unfortunately does not have
           a well-developed visual builder.</para>
@@ -84,10 +85,21 @@
     <section>
       <title>Configure Software</title>
 
-      <para>After downloading the above tools, it is necessary to configure
-      them.</para>
+      <para>After downloading and installing the above tools, it is necessary
+      to configure them.</para>
 
       <orderedlist>
+        <listitem>
+          <para>Maven:</para>
+
+          <para><orderedlist>
+              <listitem>
+                <para>Make sure you have Maven installed such that the command
+                "mvn" works from your command shell.</para>
+              </listitem>
+            </orderedlist></para>
+        </listitem>
+
         <listitem>
           <para>NetBeans:</para>
 
@@ -102,9 +114,10 @@
             </listitem>
 
             <listitem>
-              <para>Go to Tools-&gt;Options-&gt;Editor-&gt;Indentation.
-              Un-check 'Expand Tabs to Spaces." Set "Number of Spaces per
-              Indent" and "Tab Size" both to 4.</para>
+              <para>Set up tab sizes: Go to
+              Tools-&gt;Options-&gt;Editor-&gt;Indentation. Un-check 'Expand
+              Tabs to Spaces." Set "Number of Spaces per Indent" and "Tab
+              Size" both to 4.</para>
             </listitem>
 
             <listitem>
@@ -113,11 +126,11 @@
             </listitem>
 
             <listitem>
-              <para>Go to Tools-&gt;Plugins-&gt;Available Plugins. If your
-              HTTP proxy settings are not set right, you will see a blank
-              screen. Once you see something, make a checkmark by "Maven" and
-              click the "Install" button on the lower-left. Follow
-              instructions.</para>
+              <para>Get the Maven Plug-in: Go to
+              Tools-&gt;Plugins-&gt;Available Plugins. If your HTTP proxy
+              settings are not set right, you will see a blank screen. Once
+              you see something, make a checkmark by "Maven" and click the
+              "Install" button on the lower-left. Follow instructions.</para>
             </listitem>
           </orderedlist>
         </listitem>
@@ -178,7 +191,22 @@
         </listitem>
 
         <listitem>
+          <para><filename>trunk/holyokewiz</filename> from the holyokefw
+          repository.</para>
+        </listitem>
+
+        <listitem>
+          <para><filename>trunk/holyokereports</filename> from the holyokefw
+          repository.</para>
+        </listitem>
+
+        <listitem>
           <para><filename>trunk/objcobra</filename> from the holyokefw
+          repository.</para>
+        </listitem>
+
+        <listitem>
+          <para><filename>trunk/stringtemplate</filename> from the holyokefw
           repository.</para>
         </listitem>
       </orderedlist>
@@ -188,10 +216,10 @@
       <title>Open the Projects and Install into the Maven Repository</title>
 
       <para>Once you have downloaded all source code, use File-&gt;Open
-      Project on the three project directories. If NetBeans does not recognize
-      them as project directories, you might not have your Maven option
-      installed. With all three projects open, set offstagearts as the main
-      project in NetBeans: right-click on it and choose "Set as Main
+      Project on the downloaded project directories. If NetBeans does not
+      recognize them as project directories, you might not have your Maven
+      option installed. With all three projects open, set offstagearts as the
+      main project in NetBeans: right-click on it and choose "Set as Main
       Project."</para>
 
       <para>Now, run the following commands to install required JAR files into
@@ -199,11 +227,11 @@
       install.sh files to Windows .bat files).</para>
 
       <programlisting>cd ~/mvn/objcobra/lib
-sh ./install.sh
+sh ./install.bat
 cd ~/mvn/holyokefw/lib
-sh ./install.sh
+sh ./install.bat
 cd ~/mvn/offstagearts/lib
-sh ./install.sh</programlisting>
+sh ./install.bat</programlisting>
     </section>
 
     <section>
@@ -217,11 +245,20 @@ sh ./install.sh</programlisting>
 
       <orderedlist>
         <listitem>
+          <para>Clean and compile stringtemplate.</para>
+        </listitem>
+
+        <listitem>
           <para>Clean and compile objcobra.</para>
         </listitem>
 
         <listitem>
           <para>Clean and compile holyokefw.</para>
+        </listitem>
+
+        <listitem>
+          <para>Right-click on offstagearts in the "Projects" tabe of NetBeans
+          and select "Set as Main Project."</para>
         </listitem>
 
         <listitem>
@@ -254,11 +291,23 @@ sh ./install.sh</programlisting>
 
       <orderedlist>
         <listitem>
+          <para>Clean and compile stringtemplate.</para>
+        </listitem>
+
+        <listitem>
           <para>Clean and compile objcobra.</para>
         </listitem>
 
         <listitem>
           <para>Clean and compile holyokefw.</para>
+        </listitem>
+
+        <listitem>
+          <para>Clean and compile holyokewiz.</para>
+        </listitem>
+
+        <listitem>
+          <para>Clean and compile holyokereports.</para>
         </listitem>
 
         <listitem>
@@ -276,31 +325,64 @@ sh ./install.sh</programlisting>
     <title>Database Administration</title>
 
     <para>OffstageArts requires a database hosted on a server running
-    PostgreSQL version 8 or higher. Although database administrators may
-    choose to set up databases in a variety of different ways, we have
-    provided scripts in the <filename>serverscripts</filename> directory of
-    offstagearts. These scripts set up a dedicated PostgreSQL server that
-    hosts a number of databases, in which the username and the database name
-    are the same.</para>
+    PostgreSQL version 8 or higher. When installing your PostgreSQL database
+    server for the first time, two configuration files need to be set up
+    properly:</para>
 
-    <para>To intialize the server for use with OffstageArts:</para>
+    <orderedlist>
+      <listitem>
+        <para><filename>pg_hba.conf:</filename> This configures how PostgreSQL
+        authenticates the various users. The user named "postgres" is the
+        superuser for the database system. Depending on your installation
+        requirements, you may wish to set up different forms of
+        authentication. On a development laptop, it would be normal to use
+        "trust" authentication.</para>
+      </listitem>
 
-    <programlisting>./initserver.sh</programlisting>
+      <listitem>
+        <para><filename>postgresql.conf:</filename> The option
+        "listen_addresses" in this file determines the IP address of clients
+        that will be allowed to connect to PostgreSQL. This should be
+        configured to allow connections from any clients that would be running
+        OffstageArts.</para>
+      </listitem>
+    </orderedlist>
 
-    <para>The following creates a new user/database pair named
-    "danceschool":</para>
+    <para>The script <filename>serverscripts/newuser.sh</filename> creates a
+    new user and database, ready for OffstageArts; see the script for details
+    on command line arguments. A few notes:</para>
 
-    <para><programlisting>./newuser.sh danceschool &lt;password&gt;   # create user and database
-./initdb.sh danceshool                # load auto-generated database schema
-./initdata.sh danceschool             # laod initial data into database</programlisting>These
-    scripts may need modification, depending on your local PostgreSQL
-    installation.</para>
+    <orderedlist>
+      <listitem>
+        <para>By convention, we create OffstageArts users and databases in
+        PostgreSQL using the same name. Thus, the database "tinytheater" is
+        associated with the user "tinytheater."
+        <filename>newuser.sh</filename> sfollows these conventions</para>
+      </listitem>
+
+      <listitem>
+        <para><filename>newuser.sh requires that the postgres user
+        authentication be set to "trust." If this is not the case for your
+        PostgreSQL, a little bit of modification may be
+        necessary</filename></para>
+      </listitem>
+
+      <listitem>
+        <para>newuser.sh creates essentially a blank database. The
+        OffstageArts client fills in the schema as needed.</para>
+      </listitem>
+    </orderedlist>
+
+    <para>Finally, some people have reported problems with PostgreSQL version
+    8.3 with some applications. If you have problems with version 8.3, please
+    try 8.2 or 8.1 instead. </para>
   </chapter>
 
   <chapter>
     <title>Database Schema</title>
 
-    <para></para>
+    <para>NOTE: This schema is out of date. Tables have been added and
+    removed.</para>
 
     <section>
       <title>Core CRM</title>
@@ -655,19 +737,6 @@ sh ./install.sh</programlisting>
           </glossentry>
 
           <glossentry>
-            <glossterm>entities_school</glossterm>
-
-            <glossdef>
-              <para>Extension of the entities table, including columns of
-              interest only to people involved with the school. It was done in
-              this way in the interests of making the school a separate module
-              that does not necessarily interfere with the core CRM. In
-              general, one should be able to add or remove various modules
-              without interfering with each other.</para>
-            </glossdef>
-          </glossentry>
-
-          <glossentry>
             <glossterm>courseids</glossterm>
 
             <glossdef>
@@ -783,24 +852,52 @@ sh ./install.sh</programlisting>
               specific to a student on a per-term basis.</para>
             </glossdef>
           </glossentry>
+
+          <glossentry>
+            <glossterm>payertermregs</glossterm>
+
+            <glossdef>
+              <para>Per-term information for the payer of a student.</para>
+            </glossdef>
+          </glossentry>
         </glosslist></para>
+    </section>
+
+    <section>
+      <title>Resources</title>
+
+      <para>OffstageArts maintains a system of versioned resource in the
+      database. These resources consist of report templates, and even the
+      database schema itself. Resources have a version number (corresponding
+      with the SVN version number of the code), as well as an overion number
+      (which corresponds to a term or season, for resources that get their
+      text changed every term or season.)</para>
+
+      <glosslist>
+        <glossentry>
+          <glossterm>resourceids</glossterm>
+
+          <glossdef>
+            <para>Names of the various resources the system keeps (versioned)
+            track of.</para>
+          </glossdef>
+        </glossentry>
+
+        <glossentry>
+          <glossterm>resources</glossterm>
+
+          <glossdef>
+            <para>The actual resources, as well as versioning information
+            (both by version and oversion).</para>
+          </glossdef>
+        </glossentry>
+      </glosslist>
     </section>
 
     <section>
       <title>DB Administration</title>
 
       <para><glosslist>
-          <glossentry>
-            <glossterm>dbversion</glossterm>
-
-            <glossdef>
-              <para>Used to figure out which version of the database schema is
-              being used. This can be matched against the front-end version to
-              ensure compatibility between the front-end and the schema. This
-              feature is not yet being used.</para>
-            </glossdef>
-          </glossentry>
-
           <glossentry>
             <glossterm>accounts (web users)</glossterm>
 
