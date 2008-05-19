@@ -24,24 +24,24 @@ import citibob.sql.DbChangeModel;
 import java.sql.*;
 import citibob.types.*;
 
-public class ActransSchema extends ConstSqlSchema
+public class Actrans2Schema extends ConstSqlSchema
 {
 
-public static final int AC_SCHOOL = 1;
-public static final int AC_TICKET = 2;
-public static final int AC_PLEDGE = 3;
-public static final int AC_OPENCLASS = 4;
-public static final int AC_EXPENSE = 5;
+//public static final int AC_SCHOOL = 1;
+//public static final int AC_TICKET = 2;
+//public static final int AC_PLEDGE = 3;
+//public static final int AC_OPENCLASS = 4;
+//public static final int AC_EXPENSE = 5;
 	
 public final KeyedModel actranstypeKmodel;
 public final KeyedModel actypeKmodel;
 
-public ActransSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
+public Actrans2Schema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
 	super();
 	
-	table = "actrans";
+	table = "actrans2";
 	actypeKmodel = new DbKeyedModel(str, change,
 		"actypes", "actypeid", "name", "name");
 	actranstypeKmodel = new DbKeyedModel(str, change,
@@ -49,11 +49,13 @@ throws SQLException
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "actransid", true),
 		new SqlCol(new SqlEnum(actranstypeKmodel, false), "actranstypeid"),
-		new SqlCol(new SqlInteger(false), "entityid"),
-		new SqlCol(new SqlEnum(actypeKmodel, false), "actypeid"),
+		new SqlCol(new SqlInteger(false), "cr_entityid"),
+		new SqlCol(new SqlInteger(false), "db_entityid"),
+		new SqlCol(new SqlEnum(actypeKmodel, false), "cr_actypeid"),
+		new SqlCol(new SqlEnum(actypeKmodel, false), "db_actypeid"),
 		new SqlCol(new SqlDate(tz, false), "date"),
 		new SqlCol(new SqlDate(tz, false), "datecreated"),
-		new SqlCol(new SqlNumeric(9,2), "amount"),
+//		new SqlCol(new SqlNumeric(9,2), "amount"),
 		new SqlCol(new SqlString(300,true), "description"),
 		new SqlCol(new SqlInteger(true), "studentid"),
 		new SqlCol(new SqlInteger(true), "termid"),

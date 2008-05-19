@@ -61,6 +61,9 @@ public Res_Database(ResSet rset)
 		super.upgrade(str, pool, uversionid0, uversionid1);
 		dropTable(pool, "entities_school", false);
 	}});
+	
+	add(new DbbUpgrader(this, 60, 78, true));
+	
 //	add(new DbbUpgrader(this, 2, 3, true));
 }
 	

@@ -127,21 +127,30 @@ int termid, String payerIdSql, final java.util.Date today)
 	final Map<Integer,String> studentNames = SchoolDB.getStudentNames(str, termid, payerIdSql);
 	
 	// Fetch main stuff
-	int actypeid = ActransSchema.AC_SCHOOL;
+	int actypeid = ((Actrans2Schema)app.getSchema("actrans2")).actypeKmodel.getIntKey("school");
 	String sql =
-		" select act.*," +
+		" select act.*,amt.amount,act.cr_entityid as entityid" +
 		" p.cc_last4,\n" +
 		" (case when p.firstname is null then '' else p.firstname || ' ' end ||" +
 		" case when p.lastname is null then '' else p.lastname end) as payername\n" +
-//		" case when p.orgname is null then '' else ' (' || p.orgname || ')' end) as name" +
-//		p.firstname || ' ' || p.lastname as payername" +
-		" from actrans act, persons p" +		// p is payer
+		" from actrans2 act, actrans2amt amt, persons p" +		// p is payer
 		(payerIdSql == null ? "" : ", (" + payerIdSql + ") xx") +
-		" where act.entityid = p.entityid" +
+		" where act.cr_entityid = p.entityid" +
+		" and act.actransid = amt.actransid and amt.assetid = 0" +
 		" and actypeid = " + SqlInteger.sql(actypeid) +
 		(payerIdSql == null ? "" : " and act.entityid = xx.id") +
-//		" and act.termid = " + SqlInteger.sql(termid) + "\n" +
-		" order by p.lastname, p.firstname, act.entityid, act.date, act.actransid";
+		"        UNION\n" +
+		" select act.*,-amt.amount,act.db_entityid as entityid" +
+		" p.cc_last4,\n" +
+		" (case when p.firstname is null then '' else p.firstname || ' ' end ||" +
+		" case when p.lastname is null then '' else p.lastname end) as payername\n" +
+		" from actrans2 act, actrans2amt amt, persons p" +		// p is payer
+		(payerIdSql == null ? "" : ", (" + payerIdSql + ") xx") +
+		" where act.db_entityid = p.entityid" +
+		" and act.actransid = amt.actransid and amt.assetid = 0" +
+		" and actypeid = " + SqlInteger.sql(actypeid) +
+		(payerIdSql == null ? "" : " and act.entityid = xx.id") +
+		" order by p.lastname, p.firstname, entityid, act.date, act.actransid";
 	final RSTableModel rsmod = new RSTableModel(app.sqlTypeSet());
 	rsmod.executeQuery(str, sql);
 	
@@ -288,7 +297,8 @@ throws Exception
 	if (dt == null) dt = new java.util.Date();
 	String idSql;
 	if (payerid < 0) {
-		str.execSql(AccountsDB.w_tmp_acct_balance_sql(null, ActransSchema.AC_SCHOOL));
+		int actypeid = ((Actrans2Schema)fapp.getSchema("actrans2")).actypeKmodel.getIntKey("school");
+		str.execSql(AccountsDB.w_tmp_acct_balance_sql(null, actypeid, 0));
 		idSql = " select e.entityid as id" +
 			" from _bal, entities e" +
 			" where _bal.entityid = e.entityid" +

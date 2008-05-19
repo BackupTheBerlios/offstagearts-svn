@@ -36,6 +36,7 @@ public class Student implements Comparable<Student>
 	public int payerid;
 	public String lastname, firstname;
 	public double scholarship;
+	public double scholarshippct;
 	public Double tuitionoverride;			// Manual override tuition
 	public List<Enrollment> enrollments;	// Courses we're enrolled in
 
@@ -57,6 +58,7 @@ public class Student implements Comparable<Student>
 		lastname = rs.getString("lastname");
 		firstname = rs.getString("firstname");
 		scholarship = TuitionData.getMoney(rs, "scholarship");
+		scholarshippct = rs.getDouble("scholarshippct");
 //		Double Tuition = TuitionData.getMoney(rs, "tuition");
 //			tuition = (Tuition == null ? 0 : Tuition);
 		tuitionoverride = TuitionData.getMoney(rs, "tuitionoverride");

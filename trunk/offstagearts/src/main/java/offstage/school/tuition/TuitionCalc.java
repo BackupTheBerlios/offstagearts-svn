@@ -28,7 +28,10 @@ import java.util.*;
 import citibob.sql.pgsql.*;
 import citibob.types.KeyedModel;
 import citibob.util.DayConv;
+import citibob.wizard.TypedHashMap;
 import offstage.FrontApp;
+import offstage.accounts.gui.AccountsDB;
+import offstage.schema.Actrans2Schema;
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because
@@ -175,15 +178,25 @@ int duedateDN, double amount, String description)
 	int studentid = student.entityid;
 	
 	KeyedModel transtypes = app.schemaSet().getKeyedModel("actrans", "actranstypeid");
-	sql.append(
-		" insert into actrans " +
-		" (entityid, actranstypeid, actypeid, date, amount, description, studentid, termid)" +
-		" values (" + SqlInteger.sql(payerid) + ", " +
-		SqlInteger.sql(transtypes.getIntKey("tuition")) + ", " +
-		" (select actypeid from actypes where name = 'school'), " +
-		date.toSql(duedate) + ", " + TuitionData.money.toSql(amount) + "," +
-		SqlString.sql(description) + ", " + SqlInteger.sql(studentid) + ", " +
-		SqlInteger.sql(termid) + ");\n");
+	int schoolid = ((Actrans2Schema)app.getSchema("actrans2")).actypeKmodel.getIntKey("school");
+	TypedHashMap optional = new TypedHashMap();
+		optional.put("description", description);
+		optional.put("studentid", studentid);
+		optional.put("termid", termid);
+	sql.append(AccountsDB.w_actrans2_insert_sql(app, payerid, "billed",
+		schoolid, "tuition", duedate, optional,
+		new int[] {0}, new double[] {amount}));
+//			
+//			app, termid, description, payerid, description, duedate, optional, assetids, amounts))
+//	sql.append(
+//		" insert into actrans " +
+//		" (entityid, actranstypeid, actypeid, date, amount, description, studentid, termid)" +
+//		" values (" + SqlInteger.sql(payerid) + ", " +
+//		SqlInteger.sql(transtypes.getIntKey("tuition")) + ", " +
+//		" (select actypeid from actypes where name = 'school'), " +
+//		date.toSql(duedate) + ", " + TuitionData.money.toSql(amount) + "," +
+//		SqlString.sql(description) + ", " + SqlInteger.sql(studentid) + ", " +
+//		SqlInteger.sql(termid) + ");\n");
 }
 
 /** Gives us the data set, in case we need it. */

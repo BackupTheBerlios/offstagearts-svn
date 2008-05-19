@@ -9,24 +9,24 @@ package offstage.frontdesk;
 import citibob.jschema.DbModel;
 import citibob.jschema.SchemaBuf;
 import citibob.jschema.SqlBufDbModel;
-import citibob.jschema.SqlSchema;
-import citibob.sql.SqlDouble;
 import citibob.sql.SqlRun;
 import citibob.sql.UpdTasklet;
-import citibob.sql.pgsql.SqlString;
 import citibob.sql.pgsql.SqlDate;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.typed.Swinger;
 import citibob.swing.typed.SwingerMap;
 import citibob.task.SqlTask;
+import citibob.wizard.TypedHashMap;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import offstage.FrontApp;
-import offstage.schema.ActransSchema;
-import offstage.school.tuition.TuitionData;
+import offstage.accounts.gui.AccountsDB;
+import offstage.accounts.gui.TransRegPanel;
+import offstage.schema.Actrans2AmtSchema;
+import offstage.schema.Actrans2Schema;
 
 /**
  
@@ -75,19 +75,21 @@ SqlDate sqlDate;
 		
 		// ========================================================
 		// User Transactions
-		SqlSchema actransSchema = app.getSchema("actrans");
-		SchemaBuf actransSb = new SchemaBuf(actransSchema) {
-		public boolean isCellEditable(int row, int col) {
-			return false;
-//			if (col >= getColumnCount()) return false;
-//			if (row >= getRowCount()) return false;
-//			if (col == tableoidCol) return false;
-//			java.util.Date created = (java.util.Date)getValueAt(row, createdCol);
-//			if (created == null) return false;
-//			java.util.Date now = new java.util.Date();
-//			return (now.getTime() - created.getTime() < 86400 * 1000L);
-		}};
-		transReg.initRuntime(app, actransSb, ActransSchema.AC_OPENCLASS, false);
+		Actrans2Schema actrans2Schema = (Actrans2Schema)app.getSchema("actrans2");
+//		SchemaBuf actransSb = new SchemaBuf(actrans2Schema) {
+//		public boolean isCellEditable(int row, int col) {
+//			return false;
+////			if (col >= getColumnCount()) return false;
+////			if (row >= getRowCount()) return false;
+////			if (col == tableoidCol) return false;
+////			java.util.Date created = (java.util.Date)getValueAt(row, createdCol);
+////			if (created == null) return false;
+////			java.util.Date now = new java.util.Date();
+////			return (now.getTime() - created.getTime() < 86400 * 1000L);
+//		}};
+		int actypeid = actrans2Schema.actypeKmodel.getIntKey("openclass");
+		int assetid = ((Actrans2AmtSchema)app.getSchema("actrans2amt")).assetKmodel.getIntKey("openclass");
+		transReg.initRuntime(app, TransRegPanel.EM_NONE, actypeid, assetid);
 		// ========================================================
 		// ========================================================
 		// tMeetings...
@@ -446,18 +448,29 @@ SqlDate sqlDate;
 			// Debit the account
 			Date today = new Date();
 			sqlDate.truncate(today);
-			sql =
-				" insert into actrans " +
-				" (entityid, actranstypeid, actypeid, date, amount, description, studentid, termid)" +
-				" values (" + SqlInteger.sql(entityid) + ", " +
-				" (select actranstypeid from actranstypes where name = 'openclass'),\n" +
-				" (select actypeid from actypes where name = 'openclass'),\n " +
-				sqlDate.toSql(today) + ", " +
-				SqlDouble.sql(price) + ", " +
-				"'Open Class', " +
-				SqlInteger.sql(entityid) + ", " +
-				SqlInteger.sql((Integer)tMeetings.getValue()) +		// Store the meetingid, so we can yank later on an undo
-				")";
+			
+			int actypeid = ((Actrans2Schema)app.getSchema("actrans2")).actypeKmodel.getIntKey("openclass");
+			int assetid = ((Actrans2AmtSchema)app.getSchema("actrans2amt")).assetKmodel.getIntKey("openclass");
+			TypedHashMap optional = new TypedHashMap();
+				optional.put("description", "Open Class");
+				optional.put("studentid", entityid);
+				optional.put("termid", (Integer)tMeetings.getValue()); // Store the meetingid, so we can yank later on an undo
+			sql = AccountsDB.w_actrans2_insert_sql(app, entityid, "received", actypeid,
+				"openclass", today, optional,
+				new int[] {assetid}, new double[] {1});
+
+//			sql =
+//				" insert into actrans " +
+//				" (entityid, actranstypeid, actypeid, date, amount, description, studentid, termid)" +
+//				" values (" + SqlInteger.sql(entityid) + ", " +
+//				" (select actranstypeid from actranstypes where name = 'openclass'),\n" +
+//				" (select actypeid from actypes where name = 'openclass'),\n " +
+//				sqlDate.toSql(today) + ", " +
+//				SqlDouble.sql(price) + ", " +
+//				"'Open Class', " +
+//				SqlInteger.sql(entityid) + ", " +
+//				SqlInteger.sql((Integer)tMeetings.getValue()) +		// Store the meetingid, so we can yank later on an undo
+//				")";
 			str.execSql(sql);
 				
 			// Refresh
@@ -493,16 +506,7 @@ SqlDate sqlDate;
 				return;
 			}
 			
-			String sql =
-				// Remove sub record
-				" delete from subs" +
-				" where entityid = " + SqlInteger.sql(entityid) +
-				" and meetingid = " + SqlInteger.sql(meetingid) + ";\n" +			
-				// Remove payment record
-				" delete from actrans" +
-				" where entityid = " + SqlInteger.sql(entityid) + "\n" +
-				" and actypeid = (select actypeid from actypes where name = 'openclass')\n " +
-				" and termid = " + SqlInteger.sql(meetingid) + ";\n";
+			String sql = AccountsDB.w_actrans2_deleteOpenClassByMeeting_sql(entityid, meetingid);
 			str.execSql(sql);
 			
 			// Refresh display
@@ -510,6 +514,8 @@ SqlDate sqlDate;
 			transReg.refresh(str);
 		}});
 }//GEN-LAST:event_bRemoveActionPerformed
+
+
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables

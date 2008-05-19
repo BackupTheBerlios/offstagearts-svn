@@ -96,7 +96,8 @@ public void mergeEntities(Object entityid0, Object entityid1)
 	sql.append("update entities set obsolete=true where entityid=" + entityid0 + ";\n");
 
 	// Accounting
-	moveRows(sset.get("actrans"), "entityid", entityid0, entityid1);
+	moveRows(sset.get("actrans2"), "cr_entityid", entityid0, entityid1);
+	moveRows(sset.get("actrans2"), "db_entityid", entityid0, entityid1);
 
 	// School
 //	moveRows(sset.get("entities_school"), "entityid", entityid0, entityid1);

@@ -23,11 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.accounts.gui;
 
-import citibob.jschema.IntsKeyedDbModel;
 import citibob.jschema.SchemaBuf;
+import citibob.jschema.SqlBufDbModel;
 import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
+import citibob.sql.UpdTasklet2;
 import citibob.sql.pgsql.*;
+import citibob.swing.table.JTypeTableModel;
 import citibob.task.SqlTask;
 import citibob.task.JobMap;
 import citibob.task.SqlTask;
@@ -41,9 +43,113 @@ import offstage.FrontApp;
 public class TransRegPanel extends javax.swing.JPanel
 {
 	
-public IntsKeyedDbModel actransDb;
+public SqlBufDbModel actransDb;
 FrontApp fapp;
+int assetid;
 JobMap taskMap;
+Integer entityid;
+int actypeid;
+
+// =====================================================
+class Actrans2DbModel extends SqlBufDbModel
+{
+	public Actrans2DbModel(SqlRun str) {
+		super(str, fapp,
+			new String[] {"actrans2", "actrans2amt"},
+			null,
+			new String[] {"actrans2", "actrans2amt"});
+	}
+	public String getSelectSql(boolean proto) {
+		return
+			" select ac.actransid, ac.actranstypeid, ac.date," +
+			" 1 as multiplier, amt.amount as amount, ac.description" +
+			" from actrans2 ac, actrans2amt amt" +
+			" where ac.cr_entityid = " + entityid + " and ac.actypeid = " + actypeid +
+			" and ac.actransid = amt.actransid and amt.assetid = " + assetid +
+			" and now()-ac.date < '450 days'" +
+			(proto ? " and 1=0" : "") +
+			"      UNION" +
+			" select ac.actransid, ac.actranstypeid, ac.date," +
+			" -1 as multiplier, amt.amount as amount, ac.description" +
+			" from actrans2 ac, actrans2amt amt" +
+			" where ac.db_entityid = " + entityid + " and ac.actypeid = " + actypeid +
+			" and ac.actransid = amt.actransid and amt.assetid = " + assetid +
+			" and now()-ac.date < '450 days'" +
+			(proto ? " and 1=0" : "") +
+			" order by date desc, actransid desc";
+	}
+}
+// =====================================================
+
+public static final int EM_NONE = 0;
+public static final int EM_RECENT = 1;
+public static final int EM_ALL = 2;
+static class TransTableModel extends citibob.swing.table.WrapJTypeTableModel
+{
+int multiplierCol;
+int amountCol;
+int createdCol;
+int editMode;
+
+	public TransTableModel(JTypeTableModel xsub, int editMode) {
+		super(xsub);
+		this.editMode = editMode;
+		
+		multiplierCol = sub.findColumn("multiplier");
+		amountCol = sub.findColumn("amount");
+		createdCol = sub.findColumn("datecreated");
+	}
+	public void setValueAt(Object val, int row, int col)
+	{
+		// Convert single-entry accounting on screen to double-entry in database.
+		if (col == amountCol) {
+			if (val == null) {
+				super.setValueAt(null, row, col);
+				return;
+			}
+			int mult = ((Number)getValueAt(row, multiplierCol)).intValue();
+			double vval = ((Number)getValueAt(row, col)).doubleValue();
+			super.setValueAt(mult * vval, row, col);
+			return;
+		}
+		super.setValueAt(val, row, col);
+	}
+	
+	public Object getValueAt(int row, int col)
+	{
+		// Convert single-entry accounting on screen to double-entry in database.
+		if (col == amountCol) {
+			Object val = super.getValueAt(row, col);
+			if (val == null) return null;
+			return new Double(((Number)val).doubleValue());
+		}
+		return super.getValueAt(row, col);
+	}
+	
+	public boolean isCellEditable(int row, int col) {
+		switch(editMode) {
+			case EM_NONE : return false;
+			case EM_ALL : return super.isCellEditable(row, col);
+			case EM_RECENT : {
+				if (col >= getColumnCount()) return false;
+				if (row >= getRowCount()) return false;
+				java.util.Date created = (java.util.Date)getValueAt(row, createdCol);
+				if (created == null) return false;
+				java.util.Date now = new java.util.Date();
+				return (now.getTime() - created.getTime() < 86400 * 1000L);
+			}
+		}
+		return false;
+	};
+	
+}
+// =====================================================
+//		str.execUpdate(new UpdTasklet() {
+//		public void run() {
+//			multiplierCol = getSchemaBuf().findColumn("multiplier");
+//			amountCol = getSchemaBuf().findColumn("amount");
+//		}});
+
 
 /** Creates new form AccountsPanel */
 public TransRegPanel()
@@ -51,26 +157,39 @@ public TransRegPanel()
 	initComponents();
 }
 
-public IntsKeyedDbModel getDbModel() { return actransDb; }
+public SqlBufDbModel getDbModel() { return actransDb; }
 
-/** @param superuser Should we allow superuser access to this stuff? */
-public void initRuntime(FrontApp fapp, SchemaBuf actransSb, int actypeid, boolean superuser)
+
+
+
+public void initRuntime(final FrontApp fapp, final int editMode, int actypeid, int assetid) //, boolean superuser)
 {
 	this.fapp = fapp;
-	actransDb = new IntsKeyedDbModel(actransSb, new String[] {"entityid", "actypeid"}, true);
-	actransDb.setKey(1, actypeid);
-	actransDb.setWhereClause(
-//		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
-		" now()-date < '450 days'");
-	actransDb.setOrderClause("date desc, actransid desc");
-	trans.setModelU(actransDb.getSchemaBuf(),
-		new String[] {"Status", "Type", "Date", "Amount", "Description"},
-		new String[] {"__status__", "actranstypeid", "date", "amount", "description"},
-		new String[] {null, null, null, null, "description"},
-		superuser ? new boolean[] {false,false,true,true,true} : null,
-//		new boolean[] {false, false, false, false},
-		fapp.swingerMap());
-	actransDb.setLogger(fapp.queryLogger());
+	this.assetid = assetid;
+	
+	SqlRun str = fapp.sqlRun();
+	actransDb = new Actrans2DbModel(str);
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) {
+		JTypeTableModel model = new TransTableModel(
+			actransDb.getSchemaBuf(), editMode);
+		trans.setModelU(model, //actransDb.getSchemaBuf(),
+			new String[] {"Status", "Type", "Date", "Amount", "Description"},
+			new String[] {"__status__", "actranstypeid", "date", "amount", "description"},
+			new String[] {null, null, null, null, "description"},
+			editMode == EM_ALL ? new boolean[] {false,false,true,true,true} : null,
+	//		new boolean[] {false, false, false, false},
+			fapp.swingerMap());
+		actransDb.setLogger(fapp.queryLogger());		
+	}});
+
+	
+//	actransDb = new IntsKeyedDbModel(actransSb, new String[] {"entityid", "actypeid"}, true);
+//	actransDb.setKey(1, actypeid);
+//	actransDb.setWhereClause(
+////		" actypeid = " + SqlInteger.sql(ActransSchema.AC_SCHOOL) +
+//		" now()-date < '450 days'");
+//	actransDb.setOrderClause("date desc, actransid desc");
 
 	// Set up the task map, which will be used to bind actions to buttons
 	taskMap = new JobMap();
@@ -88,18 +207,20 @@ public void initRuntime(FrontApp fapp, SchemaBuf actransSb, int actypeid, boolea
 }
 
 public JobMap getTaskMap() { return taskMap; }
-public Integer getEntityID() { return actransDb.getIntKey(0); }
-public Integer getAcTypeID() { return actransDb.getIntKey(1); }
+public Integer getEntityID() { return entityid; }
+public Integer getAcTypeID() { return actypeid; }
 
 
 public void setEntityID(SqlRun str, Integer entityid) // throws SQLException
 {
-	actransDb.setKey(0, entityid);
+//	actransDb.setKey(0, entityid);
+	this.entityid = entityid;
 	refresh(str);
 }
 public void setAcTypeID(SqlRun str, int actypeid)
 {
-	actransDb.setKey(1, actypeid);
+//	actransDb.setKey(1, actypeid);
+	this.actypeid = actypeid;
 	refresh(str);	
 }
 public void refresh(SqlRun str) // throws SQLException
@@ -108,10 +229,10 @@ public void refresh(SqlRun str) // throws SQLException
 	
 	// Set up account balance
 	acbal.setJType(Double.class, java.text.NumberFormat.getCurrencyInstance());
-	Integer entityid = actransDb.getIntKey(0);
-	Integer actransid = actransDb.getIntKey(1);
+//	Integer entityid = actransDb.getIntKey(0);
+//	Integer actypeid = actransDb.getIntKey(1);
 	String sql =
-		AccountsDB.w_tmp_acct_balance_sql("select " + entityid + " as id", actransid) +
+		AccountsDB.w_tmp_acct_balance_sql("select " + entityid + " as id", actypeid, assetid) +
 		" select bal from _bal;\n" +
 		" drop table _bal;";
 	str.execSql(sql, new RsTasklet2() {

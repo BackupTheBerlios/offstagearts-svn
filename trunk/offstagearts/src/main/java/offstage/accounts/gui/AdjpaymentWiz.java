@@ -54,14 +54,15 @@ throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner, app.swingerMap());
 	
-	SqlSchema schema = app.getSchema("actrans");
+	SqlSchema actrans2 = app.getSchema("actrans2");
+	SqlSchema actrans2amt = app.getSchema("actrans2amt");
 //	SwingerMap swingers = app.getSwingerMap();
 	
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
-	addWidget("amount", "amount", schema);
-	addTextField("description", schema);
-	addWidget("date", schema).setValue(schema.getCol("date").newDate());
+	addWidget("amount", "amount", actrans2amt);
+	addTextField("description", actrans2);
+	addWidget("date", actrans2).setValue(actrans2.getCol("date").newDate());
 	loadHtml();
 }
 

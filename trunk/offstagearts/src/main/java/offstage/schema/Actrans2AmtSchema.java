@@ -17,27 +17,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package offstage.schema;
 
-import citibob.jschema.*;
-import citibob.sql.pgsql.*;
 import citibob.sql.*;
-import citibob.types.*;
+import citibob.sql.pgsql.*;
+import citibob.jschema.*;
+import citibob.sql.DbChangeModel;
 import java.sql.*;
+import citibob.types.*;
 
-
-public class CashpaymentsSchema extends ActransSchema
+public class Actrans2AmtSchema extends ConstSqlSchema
 {
 
-public CashpaymentsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
+public final KeyedModel assetKmodel;
+	
+public Actrans2AmtSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
-	super(str, change, tz);
-	table = "cashpayments";
-//	appendCols(new Column[] {
-//		new Column(new SqlChar(), "gender", false),
-//		new Column(new SqlDate(tz, true), "dob", false),
-//		new Column(new SqlString(100), "email", false),
-//		new Column(new SqlString(200), "url", false)
-//	});
+	super();
+	
+	table = "actrans2amt";
+	assetKmodel = new DbKeyedModel(str, change,
+		"assetids", "assetid", "name", "name");
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(false), "actransid", true),		
+		new SqlCol(new SqlEnum(assetKmodel, false), "assetid", true),
+		new SqlCol(new SqlNumeric(9,2), "amount")
+	};
 }
 
 }

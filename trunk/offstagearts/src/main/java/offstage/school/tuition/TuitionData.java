@@ -51,7 +51,7 @@ public Map<Integer,Student> students;
 public Map<Integer,Course> courses;
 
 // ==========================================================
-static SqlNumeric money = new SqlNumeric(9, 2, true);
+public static SqlNumeric money = new SqlNumeric(9, 2, true);
 static SqlTime time = new SqlTime(true);
 static Double getMoney(ResultSet rs, String col) throws SQLException
 	{ return (Double)money.get(rs, col); }
@@ -94,8 +94,14 @@ public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 //		" and not e.obsolete;\n" +
 		
 		// Delete previous tuition records in account
-		" delete from actrans using _payers,actranstypes" +
-		" where actrans.entityid = _payers.entityid\n" +
+		" delete from actrans2 using _payers,actranstypes" +
+		" where actrans.cr_entityid = _payers.entityid\n" +
+		" and actrans.actranstypeid = actranstypes.actranstypeid\n" +
+		" and actranstypes.name = 'tuition'\n" +
+		" and actrans.termid = " + SqlInteger.sql(termid) + ";\n" +
+		
+		" delete from actrans2 using _payers,actranstypes" +
+		" where actrans.db_entityid = _payers.entityid\n" +
 		" and actrans.actranstypeid = actranstypes.actranstypeid\n" +
 		" and actranstypes.name = 'tuition'\n" +
 		" and actrans.termid = " + SqlInteger.sql(termid) + ";\n" +
@@ -125,7 +131,7 @@ public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 		
 		// rss[3]: Students
 		" select _students.entityid, tr.payerid, e.lastname, e.firstname,\n" +
-		" tr.scholarship, tr.tuition, tr.defaulttuition, tr.tuitionoverride\n" +
+		" tr.scholarship, tr.scholarshippct, tr.tuition, tr.defaulttuition, tr.tuitionoverride\n" +
 		" from _students, entities e, termregs tr\n" +
 //		"     entities e left outer join entities_school es on (e.entityid = es.entityid),\n" +
 //		"     termregs tr\n" +

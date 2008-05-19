@@ -348,7 +348,7 @@ vTermID.setKeyedModel(vTermID.getKeyedModel(), null);
 //				cal.set(Calendar.MILLISECOND, 0);
 //				cal.add(Calendar.DAY_OF_MONTH, -30);
 System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
-			final SchoolAccounts rep = new SchoolAccounts(str, fapp.timeZone(), -1,
+			final SchoolAccounts rep = new SchoolAccounts(fapp, str, fapp.timeZone(), -1,
 				(java.util.Date)wizard.getVal("asofdate"), (Integer)wizard.getVal("latedays"));
 			str.execUpdate(new UpdTasklet2() {
 			public void run(SqlRun str) throws Exception {
@@ -409,7 +409,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 //				cal.set(Calendar.SECOND, 0);
 //				cal.set(Calendar.MILLISECOND, 0);
 //				cal.add(Calendar.DAY_OF_MONTH, -30);
-			final SchoolAccounts rep = new SchoolAccounts(str, fapp.timeZone(),
+			final SchoolAccounts rep = new SchoolAccounts(fapp, str, fapp.timeZone(),
 				termid, new java.util.Date(), 30);
 			str.execUpdate(new UpdTasklet2() {
 			public void run(SqlRun str) throws Exception {

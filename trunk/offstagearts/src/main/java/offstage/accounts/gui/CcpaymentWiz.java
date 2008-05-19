@@ -58,18 +58,18 @@ throws org.xml.sax.SAXException, java.io.IOException, java.sql.SQLException
 {
 	super(owner, app.swingerMap());
 	
-	SqlSchema schema = app.getSchema("actrans");
-//	SwingerMap swingers = app.getSwingerMap();
+	SqlSchema actrans2 = app.getSchema("actrans2");
+	SqlSchema actrans2amt = app.getSchema("actrans2amt");
 	
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
-	addWidget("namount", "amount", schema);		// Negative of amount...
-	addTextField("description", schema);
+	addWidget("amount", "amount", actrans2amt);		// Negative of amount...
+	addTextField("description", actrans2);
 	offstage.swing.typed.CCChooser ccchooser = new CCChooser();
 		ccchooser.initRuntime(app.keyRing());
 		ccchooser.setEntityID(str, entityid, app);
 	addComponent("ccchooser", ccchooser);
-	addWidget("date", schema).setValue(schema.getCol("date").newDate());
+	addWidget("date", actrans2).setValue(actrans2.getCol("date").newDate());
 //	addWidgetRecursive(ccinfo);
 	loadHtml();
 }

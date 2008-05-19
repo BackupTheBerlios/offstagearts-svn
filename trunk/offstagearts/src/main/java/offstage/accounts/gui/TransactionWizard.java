@@ -26,6 +26,7 @@ package offstage.accounts.gui;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
+import citibob.app.App;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.html.*;
 import citibob.wizard.*;
@@ -48,30 +49,12 @@ import offstage.swing.typed.*;
  */
 public class TransactionWizard extends OffstageWizard {
 
+//	final static String sinkName = "received";
 	int entityid, actypeid;
-	SqlDate sqlDate;
-/*
-addState(new AbstractWizState("", "", "") {
-	public HtmlWiz newWiz(WizState.Context con)
-		{ return new }
-	public void process(citibob.sql.SqlRun str)
-	{
-		
-	}
-});
-*/
 
-/** Does an insert, using all the field names in v automatically. */
-void vInsert(Wizard.Context con, String actranstype) throws SQLException
-{
-	ConsSqlQuery sql = newInsertQuery("actrans", con.v);
-	if (!sql.containsColumn("entityid")) sql.addColumn("entityid", SqlInteger.sql(entityid));
-	sql.addColumn("actranstypeid", "(select actranstypeid from actranstypes where name = '" + actranstype + "')");
-	sql.addColumn("actypeid", SqlInteger.sql(actypeid));
-//	sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
-	sql.addColumn("datecreated", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
-	con.str.execSql(sql.getSql());
-}
+
+	
+	
 
 public TransactionWizard(offstage.FrontApp xfapp, Component comp,
 Integer xentityid, int xactypeid)
@@ -79,7 +62,6 @@ Integer xentityid, int xactypeid)
 	super("Transactions", xfapp, comp);
 	this.entityid = xentityid;
 	this.actypeid = xactypeid;
-	sqlDate = new SqlDate(fapp.timeZone(), false);
 // ---------------------------------------------
 //addState(new AbstractWizState("init", "init", "init") {
 //	public HtmlWiz newWiz(WizState.Context con) throws Exception
@@ -102,9 +84,12 @@ addState(new AbstractWizState("cashpayment", null, null) {
 		{ return new CashpaymentWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		double namount = ((Number)v.get("namount")).doubleValue();
-		con.v.put("amount", new Double(-namount));
-		vInsert(con, "cash");
+		double amount = -((Number)v.get("amount")).doubleValue();
+		String sql = AccountsDB.w_actrans2_insert_sql(
+			fapp, entityid, "received", actypeid,
+			"cash", (Date)v.get("date"), con.v,
+			new int[] {0}, new double[] {amount});
+		con.str.execSql(sql);
 	}
 });
 addState(new AbstractWizState("cashrefund", null, null) {
@@ -112,7 +97,12 @@ addState(new AbstractWizState("cashrefund", null, null) {
 		{ return new CashRefundWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		vInsert(con, "cash");
+		double amount = ((Number)v.get("amount")).doubleValue();
+		String sql = AccountsDB.w_actrans2_insert_sql(
+			fapp, entityid, "received", actypeid,
+			"cash", (Date)v.get("date"), con.v,
+			new int[] {0}, new double[] {amount});
+		con.str.execSql(sql);
 	}
 });
 addState(new AbstractWizState("adjpayment", null, null) {
@@ -120,9 +110,12 @@ addState(new AbstractWizState("adjpayment", null, null) {
 		{ return new AdjpaymentWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-//		double namount = ((Number)v.get("namount")).doubleValue();
-//		con.v.put("amount", new Double(-namount));
-		vInsert(con, "adj");
+		double amount = ((Number)v.get("amount")).doubleValue();
+		String sql = AccountsDB.w_actrans2_insert_sql(
+			fapp, entityid, "received", actypeid,
+			"adj", (Date)v.get("date"), con.v,
+			new int[] {0}, new double[] {amount});
+		con.str.execSql(sql);
 	}
 });
 addState(new AbstractWizState("checkpayment", null, null) {
@@ -130,9 +123,12 @@ addState(new AbstractWizState("checkpayment", null, null) {
 		{ return new CheckpaymentWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		double namount = ((Number)v.get("namount")).doubleValue();
-		v.put("amount", new Double(-namount));
-		vInsert(con, "check");
+		double amount = -((Number)v.get("amount")).doubleValue();
+		String sql = AccountsDB.w_actrans2_insert_sql(
+			fapp, entityid, "received", actypeid,
+			"check", (Date)v.get("date"), con.v,
+			new int[] {0}, new double[] {amount});
+		con.str.execSql(sql);
 	}
 });
 addState(new AbstractWizState("checkrefund", null, null) {
@@ -140,7 +136,12 @@ addState(new AbstractWizState("checkrefund", null, null) {
 		{ return new CheckRefundWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		vInsert(con, "check");
+		double amount = ((Number)v.get("amount")).doubleValue();
+		String sql = AccountsDB.w_actrans2_insert_sql(
+			fapp, entityid, "received", actypeid,
+			"cash", (Date)v.get("date"), con.v,
+			new int[] {0}, new double[] {amount});
+		con.str.execSql(sql);
 	}
 });
 addState(new AbstractWizState("ccpayment", null, null) {
@@ -148,22 +149,12 @@ addState(new AbstractWizState("ccpayment", null, null) {
 		{ return new CcpaymentWiz(frame, con.str, entityid, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		CcpaymentWiz cwiz = (CcpaymentWiz)wiz;
-//		cwiz.getWidget("ccchooser")
-		CCChooser cc = (CCChooser)cwiz.getComponent("ccchooser");
-		// TODO: Log change to credit card # on file (or should I?)
-		cc.saveNewCardIfNeeded(con.str);
-		
-		ConsSqlQuery sql = new ConsSqlQuery("actrans", ConsSqlQuery.INSERT);
-		sql.addColumn("actranstypeid", "(select actranstypeid from actranstypes where name = 'credit')");
-		cc.getCard(sql);
-		sql.addColumn("amount", SqlDouble.sql(-((Number)v.get("namount")).doubleValue()));
-		sql.addColumn("description", SqlString.sql((String)v.get("description")));
-		sql.addColumn("entityid", SqlInteger.sql(entityid));
-		sql.addColumn("actypeid", SqlInteger.sql(actypeid));
-		sql.addColumn("date", sqlDate.toSql(v.get("date")));		// Store day that it is in home timezone
-//		sql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
-		con.str.execSql(sql.getSql());
+		double amount = -((Number)v.get("amount")).doubleValue();
+		String sql = AccountsDB.w_actrans2_insert_sql(
+			fapp, entityid, "received", actypeid,
+			"credit", (Date)v.get("date"), con.v,
+			new int[] {0}, new double[] {amount});
+		con.str.execSql(sql);
 	}
 });
 // ---------------------------------------------

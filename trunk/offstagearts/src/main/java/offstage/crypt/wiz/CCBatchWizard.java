@@ -146,6 +146,8 @@ void processBatch(SqlRun str)
 	final IntVal iccbatchid = SqlSerial.getNextVal(str, "ccbatch_ccbatchid_seq");
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) {
+		// ************************ TODO: Queries need to be updated for current double-entry bookkeeping system.
+		// This WILL throw an SqlException!!!
 		String sql =
 			" insert into ccbatches (ccbatchid) values (" + SqlInteger.sql(iccbatchid.val) + ");" +
 			

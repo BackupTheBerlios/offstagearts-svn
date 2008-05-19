@@ -64,6 +64,7 @@ public void billAccount(TuitionCon con, Student student)
 	int lastCumT00 = 0;
 	int lastCumS00 = 0;
 	double student_tuition = student.getTuition();
+	double xscholarship = student.scholarship + student.scholarshippct * student_tuition;
 	for (int i=0; i < ninstallments; ++i) {
 		double frac = (double)(i+1) / (double)ninstallments;
 		
@@ -74,7 +75,7 @@ public void billAccount(TuitionCon con, Student student)
 		lastCumT00 = cumT00;
 
 		// Scholarship
-		int cumS00 = (int)Math.round(100.0 * student.scholarship * frac);
+		int cumS00 = (int)Math.round(100.0 * xscholarship * frac);
 		double scholarship = .01D * (double)(cumS00 - lastCumS00);
 		addScholarship(con, student, duedatesDN[i], -scholarship, labels[i]);		
 		lastCumS00 = cumS00;

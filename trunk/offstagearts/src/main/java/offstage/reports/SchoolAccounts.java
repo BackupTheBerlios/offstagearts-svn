@@ -26,14 +26,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.reports;
 
+import citibob.app.App;
 import citibob.sql.*;
 import java.sql.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
+import citibob.wizard.TypedHashMap;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.table.*;
+import offstage.accounts.gui.AccountsDB;
+import offstage.schema.Actrans2Schema;
 import offstage.school.gui.SchoolDB;
 
 /**
@@ -152,6 +156,7 @@ SqlDate sqlDate;		// Used for reading date from database
 int lateDays;					// Apply late fee after # days late
 java.util.Date asOfDate;		// Apply late fee as of this date.
 //java.util.Date transCutoff;		// Don't accept payments after this date.  null: accept all payments
+App app;
 
 /** Report result */
 public Map<String,Object> model;
@@ -164,13 +169,14 @@ int entityidCol;
  @param xtransCutoff Don't list transactions after this date.  If null, list all transactions.
  @param lateDays Something is late if it was billed before xlateAsOfDate - lateDays and is not yet paid.
  */
-public SchoolAccounts(SqlRun str, TimeZone tz, final int termid,
+public SchoolAccounts(App app, SqlRun str, TimeZone tz, final int termid,
 java.util.Date xasOfDate, int lateDays)
 //int xlateDays, java.util.Date xlateAsOf)
 {
 	this.lateDays = lateDays;
 	this.tz = tz;
-
+	this.app = app;
+	
 	// Calculate when a bill becomes late
 	Calendar cal = Calendar.getInstance(tz);
 		cal.setTime(xasOfDate);
@@ -190,12 +196,25 @@ java.util.Date xasOfDate, int lateDays)
 	String sql =
 		// rss[0] = Transactions (main report data)
 		// This should really be cleaned up and put in an AccountsData class.
-		" select ac.actranstypeid,actt.name as transtype,ac.entityid, e.lastname, e.firstname," +
+		" select ac.actranstypeid,actt.name as transtype," +
+		" ac.cr_entityid as entityid, e.lastname, e.firstname," +
 		" e.orgname, e.isorg," +
-		" ac.date,ac.amount,ac.description,ac.actransid,ac.termid" +
-		" from actrans ac, actypes, entities e, actranstypes actt" +
+		" ac.date,amt.amount,ac.description,ac.actransid,ac.termid" +
+		" from actrans2 ac, actrans2amt amt, actypes, entities e, actranstypes actt" +
 		" where actt.actranstypeid = ac.actranstypeid" +
-		" and e.entityid = ac.entityid and not e.obsolete" +
+		" and ac.actransid = amt.actransid and amt.assetid = 0\n" +
+		" and e.entityid = ac.cr_entityid and not e.obsolete\n" +
+		" and ac.actypeid = actypes.actypeid and actypes.name = 'school'\n" +
+		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
+		"           UNION" +
+		" select ac.actranstypeid,actt.name as transtype," +
+		" ac.db_entityid as entityid, e.lastname, e.firstname," +
+		" e.orgname, e.isorg," +
+		" ac.date,amt.amount,ac.description,ac.actransid,ac.termid" +
+		" from actrans2 ac, actrans2amt amt, actypes, entities e, actranstypes actt" +
+		" where actt.actranstypeid = ac.actranstypeid" +
+		" and ac.actransid = amt.actransid and amt.assetid = 0\n" +
+		" and e.entityid = ac.db_entityid and not e.obsolete\n" +
 		" and ac.actypeid = actypes.actypeid and actypes.name = 'school'\n" +
 		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
 		" order by isorg desc,lastname,firstname,entityid,date,amount desc;\n" +
@@ -303,12 +322,21 @@ public void applyLateFees(SqlRun str, double multiplier)
 		if (unpaidLate < 1.0D) continue;
 		double lateFee = unpaidLate * multiplier;
 		String description = "Late fee on " + lateDays + "-day overdue balance of " + nfmt.format(unpaidLate);
-		sql.append(
-			" insert into actrans (entityid, actypeid, actranstypeid, date, amount, description, datecreated) values (" +
-			entityid + ",(select actypeid from actypes where name = 'school')," +
-			"(select actranstypeid from actranstypes where name = 'latefee')," +
-			sqlDate.toSql(asOfDate) + "," + lateFee + "," +
-			SqlString.sql(description) + ",now());\n");
+		int actypeid = ((Actrans2Schema)app.getSchema("actrans2")).actypeKmodel.getIntKey("school");
+		TypedHashMap optional = new TypedHashMap();
+			optional.put("description", description);
+		sql.append(AccountsDB.w_actrans2_insert_sql(app, entityid, "billed",
+			actypeid, "latefee", asOfDate, optional,
+			new int[] {0}, new double[] {lateFee}));
+			
+		
+		
+//		sql.append(
+//			" insert into actrans (entityid, actypeid, actranstypeid, date, amount, description, datecreated) values (" +
+//			entityid + ",(select actypeid from actypes where name = 'school')," +
+//			"(select actranstypeid from actranstypes where name = 'latefee')," +
+//			sqlDate.toSql(asOfDate) + "," + lateFee + "," +
+//			SqlString.sql(description) + ",now());\n");
 	}
 	str.execSql(sql.toString());
 }

@@ -54,16 +54,13 @@ throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner, app.swingerMap());
 	
-	SqlSchema schema = app.getSchema("actrans");
-//	SwingerMap swingers = app.getSwingerMap();
+	SqlSchema actrans2 = app.getSchema("actrans2");
+	SqlSchema actrans2amt = app.getSchema("actrans2amt");
 	
 	setSize(600,460);
-//	TypedWidgetMap map = new TypedWidgetMap();
-	addWidget("namount", "amount", schema);		// Negative of amount...
-	addTextField("description", schema);
-//	addWidget("dtime", schema).setValue(null);
-	addWidget("date", schema).setValue(schema.getCol("date").newDate());
-//		schema.getCol("date").getJDateType().truncate(new java.util.Date()));
+	addWidget("amount", "amount", actrans2amt);		// Negative of amount...
+	addTextField("description", actrans2);
+	addWidget("date", actrans2).setValue(actrans2.getCol("date").newDate());
 	loadHtml();
 }
 
