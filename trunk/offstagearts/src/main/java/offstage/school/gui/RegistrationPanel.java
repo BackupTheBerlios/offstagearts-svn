@@ -165,7 +165,8 @@ class AllPayerDbModel extends MultiDbModel
 //		if (oldPayerID != null && payerid != null && payerid.equals(oldPayerID)) return;
 		smod.payerDm.setKey(payerid);
 		smod.payertermregsDm.setKey("entityid", payerid);
-		transRegister.getDbModel().setKey("entityid", payerid);
+//		transRegister.getDbModel().setKey("entityid", payerid);
+		transRegister.setEntityID(payerid);
 		familyTable.setPrimaryEntityID(fapp.sqlRun(), payerid);
 	}
 	public Integer getPayerID()

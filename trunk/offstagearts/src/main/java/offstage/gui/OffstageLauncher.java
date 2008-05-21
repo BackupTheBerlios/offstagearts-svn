@@ -71,7 +71,7 @@ public class OffstageLauncher {
     }
 
 
-	
+	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
 		/* see:
@@ -84,7 +84,7 @@ public class OffstageLauncher {
 		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 		
 		try {
-			boolean demo = (args.length > 0 && args[0].toLowerCase().equals("demo"));
+			boolean demo = (args.length > 0 && args[0] != null && args[0].toLowerCase().equals("demo"));
 			launch(demo);
 //OffstageResSet.main(args);
 		} catch(Exception e) {

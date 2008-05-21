@@ -64,7 +64,7 @@ class Actrans2DbModel extends SqlBufDbModel
 			" select ac.actransid, ac.actranstypeid, ac.date," +
 			" 1 as multiplier, amt.amount as amount, ac.description" +
 			" from actrans2 ac, actrans2amt amt" +
-			" where ac.cr_entityid = " + entityid + " and ac.actypeid = " + actypeid +
+			" where ac.cr_entityid = " + entityid + " and ac.cr_actypeid = " + actypeid +
 			" and ac.actransid = amt.actransid and amt.assetid = " + assetid +
 			" and now()-ac.date < '450 days'" +
 			(proto ? " and 1=0" : "") +
@@ -72,7 +72,7 @@ class Actrans2DbModel extends SqlBufDbModel
 			" select ac.actransid, ac.actranstypeid, ac.date," +
 			" -1 as multiplier, amt.amount as amount, ac.description" +
 			" from actrans2 ac, actrans2amt amt" +
-			" where ac.db_entityid = " + entityid + " and ac.actypeid = " + actypeid +
+			" where ac.db_entityid = " + entityid + " and ac.db_actypeid = " + actypeid +
 			" and ac.actransid = amt.actransid and amt.assetid = " + assetid +
 			" and now()-ac.date < '450 days'" +
 			(proto ? " and 1=0" : "") +
@@ -216,6 +216,11 @@ public void setEntityID(SqlRun str, Integer entityid) // throws SQLException
 //	actransDb.setKey(0, entityid);
 	this.entityid = entityid;
 	refresh(str);
+}
+public void setEntityID(Integer entityid) // throws SQLException
+{
+//	actransDb.setKey(0, entityid);
+	this.entityid = entityid;
 }
 public void setAcTypeID(SqlRun str, int actypeid)
 {

@@ -48,7 +48,7 @@
                                 <manifest>
                                     <addClasspath>true</addClasspath>
                                     <classpathPrefix>lib</classpathPrefix>
-                                    <mainClass>offstage.gui.OffstageLauncher</mainClass>
+                                    <mainClass>Main</mainClass>
 </manifest>
 <!-- <manifestEntries>
 <Class-Path>lib/activation-1.1.jar

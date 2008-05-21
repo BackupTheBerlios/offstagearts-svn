@@ -54,21 +54,21 @@ CREATE TABLE acbal2
   acbalid serial NOT NULL,
   dtime timestamp without time zone NOT NULL DEFAULT now(),
 --  bal numeric(9,2),
-  CONSTRAINT acbal_pkey PRIMARY KEY (entityid, actypeid)
-)
+  PRIMARY KEY (entityid, actypeid), UNIQUE (acbalid)
+);
 
 CREATE TABLE acbal2amt
 (
-  acbalid integer NOT NULL REFERENCES acbal2 ON DELETE CASCADE,
+  acbalid integer NOT NULL REFERENCES acbal2(acbalid) ON DELETE CASCADE,
   assetid int NOT NULL,
   bal numeric(9,2),
   PRIMARY KEY (acbalid, assetid)
-)
+);
 
 create table acsinks (
   entityid integer NOT NULL,
   name varchar(20) NOT NULL
-)
+);
 
 ALTER TABLE entities
    ADD COLUMN sink boolean;
@@ -83,9 +83,24 @@ insert into entities (orgname, obsolete, sink, primaryentityid) values ('receive
 insert into entities (orgname, obsolete, sink, primaryentityid) values ('billed', true, true, -1);
 update entities set primaryentityid=entityid where sink;
 
-insert into acsinks (entityid, name) values (
-	select entityid from entities where orgname='received' and sink, 'received');
-insert into acsinks (entityid, name) values (
-	select entityid from entities where orgname='billed' and sink, 'billed');
+--insert into acsinks (entityid, name) values (
+--	select entityid from entities where orgname='received' and sink, 'received');
+--insert into acsinks (entityid, name) values (
+--	select entityid from entities where orgname='billed' and sink, 'billed');
+
+insert into acsinks (entityid, name) values (-1, 'received');
+update acsinks
+set entityid = e.entityid
+from entities e
+where e.orgname = 'received' and e.sink
+and acsinks.entityid = -1;
+
+insert into acsinks (entityid, name) values (-1, 'received');
+update acsinks
+set entityid = e.entityid
+from entities e
+where e.orgname = 'received' and e.sink
+and acsinks.entityid = -1;
+
 
 

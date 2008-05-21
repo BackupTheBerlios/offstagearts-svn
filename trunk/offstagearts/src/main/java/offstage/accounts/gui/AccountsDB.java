@@ -70,18 +70,18 @@ public static String w_tmp_acct_balance_sql(String idSql, final int actypeid, fi
 		" update _bal" +
 		" set bal=bal+xx.amount\n" +
 		" from (\n" +
-		"     select actrans2.cr_entityid, sum(actrans2amt.amount) as amount" +
+		"     select actrans2.cr_entityid as entityid, sum(actrans2amt.amount) as amount" +
 		"     from actrans2, actrans2amt, _bal" +
-		"     where actypeid = " + SqlInteger.sql(actypeid) +
+		"     where cr_actypeid = " + SqlInteger.sql(actypeid) +
 		"     and _bal.entityid = actrans2.cr_entityid" +
 		"     and actrans2.actransid = actrans2amt.actransid" +
 		"     and actrans2amt.assetid = " + assetid +
 		"     and (_bal.date is null or actrans2.date >= _bal.date)" +
 		"     group by actrans2.cr_entityid" +
 		"            UNION\n" +
-		"     select actrans2.db_entityid, -sum(actrans2amt.amount) as amount" +
+		"     select actrans2.db_entityid as entityid, -sum(actrans2amt.amount) as amount" +
 		"     from actrans2, actrans2amt, _bal" +
-		"     where actypeid = " + SqlInteger.sql(actypeid) +
+		"     where db_actypeid = " + SqlInteger.sql(actypeid) +
 		"     and _bal.entityid = actrans2.db_entityid" +
 		"     and actrans2.actransid = actrans2amt.actransid" +
 		"     and actrans2amt.assetid = " + assetid +
