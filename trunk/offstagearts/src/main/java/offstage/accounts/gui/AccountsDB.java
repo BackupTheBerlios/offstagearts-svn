@@ -128,10 +128,12 @@ int[] assetids, double[] amounts)
 	// Set up which account is "credited" and which is "debited"
 	if (!reverse) {
 		csql.addColumn("cr_entityid", SqlInteger.sql(entityid));
-		csql.addColumn("db_entityid", "(select entityid from acsinks where name = " + SqlString.sql(sinkName) + ")");
+		csql.addColumn("db_entityid", "(select entityid from entities" +
+			" where orgname = " + SqlString.sql(sinkName) + " and sink)");
 	} else {
 		csql.addColumn("db_entityid", SqlInteger.sql(entityid));
-		csql.addColumn("cr_entityid", "(select entityid from acsinks where name = " + SqlString.sql(sinkName) + ")");
+		csql.addColumn("cr_entityid", "(select entityid from entities" +
+			" where orgname = " + SqlString.sql(sinkName) + " and sink)");
 	}
 	
 	// Add required fields

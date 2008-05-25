@@ -65,10 +65,11 @@ CREATE TABLE acbal2amt
   PRIMARY KEY (acbalid, assetid)
 );
 
-create table acsinks (
-  entityid integer NOT NULL,
-  name varchar(20) NOT NULL
-);
+--create table acsinks (
+--  entityid integer NOT NULL,
+--  name varchar(20) NOT NULL,
+--  primary key(entityid), unique(name)
+--);
 
 ALTER TABLE entities
    ADD COLUMN sink boolean;
@@ -88,19 +89,19 @@ update entities set primaryentityid=entityid where sink;
 --insert into acsinks (entityid, name) values (
 --	select entityid from entities where orgname='billed' and sink, 'billed');
 
-insert into acsinks (entityid, name) values (-1, 'received');
-update acsinks
-set entityid = e.entityid
-from entities e
-where e.orgname = 'received' and e.sink
-and acsinks.entityid = -1;
-
-insert into acsinks (entityid, name) values (-1, 'received');
-update acsinks
-set entityid = e.entityid
-from entities e
-where e.orgname = 'received' and e.sink
-and acsinks.entityid = -1;
+--insert into acsinks (entityid, name) values (-1, 'received');
+--update acsinks
+--set entityid = e.entityid
+--from entities e
+--where e.orgname = 'received' and e.sink
+--and acsinks.entityid = -1;
+--
+--insert into acsinks (entityid, name) values (-1, 'billed');
+--update acsinks
+--set entityid = e.entityid
+--from entities e
+--where e.orgname = 'billed' and e.sink
+--and acsinks.entityid = -1;
 
 
 
