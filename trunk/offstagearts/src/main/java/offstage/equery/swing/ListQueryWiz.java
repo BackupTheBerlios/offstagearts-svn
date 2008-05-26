@@ -70,7 +70,7 @@ throws SQLException
 		new String[] {"ID", "Name", "Modified"},
 		new String[] {"equeryid", "name", "lastmodified"},
 		new boolean[] {false, false, false},
-		fapp.swingerMap());
+		false, fapp.swingerMap());
 	
 	// Read the data
 	equeriesDm.setOrderClause("lastmodified desc");

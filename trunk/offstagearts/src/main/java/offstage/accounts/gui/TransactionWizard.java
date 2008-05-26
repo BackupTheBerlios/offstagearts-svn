@@ -16,6 +16,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package offstage.accounts.gui;
+
+import citibob.swing.html.HtmlWiz;
+import citibob.wizard.AbstractWizState;
+import citibob.wizard.Wizard;
+import java.awt.Component;
+import java.util.Date;
+import offstage.wizards.OffstageWizard;
+
 /*
  * NewRecordWizard.java
  *
@@ -26,22 +34,6 @@ package offstage.accounts.gui;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import citibob.app.App;
-import citibob.sql.pgsql.SqlInteger;
-import citibob.swing.html.*;
-import citibob.wizard.*;
-import javax.swing.*;
-import java.sql.*;
-import offstage.db.*;
-import offstage.wizards.*;
-import offstage.*;
-import citibob.sql.*;
-import citibob.sql.pgsql.*;
-import citibob.jschema.*;
-import citibob.jschema.log.*;
-import java.awt.Component;
-import offstage.crypt.*;
-import offstage.swing.typed.*;
 
 /**
  *

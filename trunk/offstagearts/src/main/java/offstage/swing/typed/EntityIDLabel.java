@@ -55,10 +55,13 @@ protected static class EntityIDDBFormat implements DBFormat
 TextTypedWidget tw;
 	
 public EntityIDDBFormat(TextTypedWidget tw)
-	{ this.tw = tw; }
+{
+	this.tw = tw;
+}
 	
 public void setDisplayValue(SqlRun str, final Object value)
 {
+	tw.setHorizontalAlignment(SFormat.LEFT);
 	if (value == null) {
 		tw.setDisplayValue(null, "");
 		return;

@@ -95,7 +95,7 @@ public void initRuntime(FrontApp fapp)
 		Actypeid = (Integer)selActypeid.getValue();
 		refreshActypeid(app.sqlRun());
 	}});
-	selActypeid.setKeyedModel(osset, "actrans", "actypeid");
+	selActypeid.setKeyedModel(osset, "actrans2", "cr_actypeid");
 }
 
 /** Called when Entityid changes */

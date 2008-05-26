@@ -36,7 +36,7 @@ import citibob.text.*;
  *strin
  * @author citibob
  */
-public class ExpDateSFormat extends AbstractSFormat
+public class ExpDateSFormat extends BaseSFormat
 {
 	
 	

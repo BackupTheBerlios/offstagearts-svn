@@ -35,7 +35,7 @@ import citibob.text.*;
  *strin
  * @author citibob
  */
-public class PhoneSFormat extends AbstractSFormat
+public class PhoneSFormat extends BaseSFormat
 {
 	
 	

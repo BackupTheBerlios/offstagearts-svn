@@ -36,7 +36,7 @@ import citibob.text.*;
  *strin
  * @author citibob
  */
-public class DigitsSFormat extends AbstractSFormat
+public class DigitsSFormat extends BaseSFormat
 {
 	
 int ndigits;

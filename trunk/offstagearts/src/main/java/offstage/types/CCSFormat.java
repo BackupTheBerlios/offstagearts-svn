@@ -35,7 +35,7 @@ import citibob.text.*;
  *strin
  * @author citibob
  */
-public class CCSFormat extends AbstractSFormat
+public class CCSFormat extends BaseSFormat
 {
 
 static int countDigits(String s)

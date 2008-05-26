@@ -68,7 +68,7 @@ public static String w_tmp_acct_balance_sql(String idSql, final int actypeid, fi
 		" and actypeid = " + SqlInteger.sql(actypeid) + ";\n" +
 
 		" update _bal" +
-		" set bal=bal+xx.amount\n" +
+		" set bal=bal + cr.amount - db.amount\n" +
 		" from (\n" +
 		"     select actrans2.cr_entityid as entityid, sum(actrans2amt.amount) as amount" +
 		"     from actrans2, actrans2amt, _bal" +
@@ -77,9 +77,8 @@ public static String w_tmp_acct_balance_sql(String idSql, final int actypeid, fi
 		"     and actrans2.actransid = actrans2amt.actransid" +
 		"     and actrans2amt.assetid = " + assetid +
 		"     and (_bal.date is null or actrans2.date >= _bal.date)" +
-		"     group by actrans2.cr_entityid" +
-		"            UNION\n" +
-		"     select actrans2.db_entityid as entityid, -sum(actrans2amt.amount) as amount" +
+		"     group by actrans2.cr_entityid) cr,\n" +
+		" (select actrans2.db_entityid as entityid, sum(actrans2amt.amount) as amount" +
 		"     from actrans2, actrans2amt, _bal" +
 		"     where db_actypeid = " + SqlInteger.sql(actypeid) +
 		"     and _bal.entityid = actrans2.db_entityid" +
@@ -88,8 +87,8 @@ public static String w_tmp_acct_balance_sql(String idSql, final int actypeid, fi
 		"     and (_bal.date is null or actrans2.date >= _bal.date)" +
 		"     group by actrans2.db_entityid" +
 		
-		" \n) xx" +
-		" where xx.entityid = _bal.entityid;\n";
+		" \n) db" +
+		" where cr.entityid = _bal.entityid and db.entityid = _bal.entityid;\n";
 		
 //		" drop table _bal0";
 	
@@ -137,7 +136,8 @@ int[] assetids, double[] amounts)
 	}
 	
 	// Add required fields
-	csql.addColumn("actypeid", SqlInteger.sql(actypeid));
+	csql.addColumn("cr_actypeid", SqlInteger.sql(actypeid));
+	csql.addColumn("db_actypeid", SqlInteger.sql(actypeid));
 	csql.addColumn("actranstypeid",
 		"(select actranstypeid from actranstypes where name = " + SqlString.sql(acTransTypeName) + ")");
 	SqlDate sqlDate = new SqlDate(app.timeZone(), false);
@@ -150,7 +150,7 @@ int[] assetids, double[] amounts)
 	// Add on inserts for vector asset amounts
 	StringBuffer sql = new StringBuffer(csql.getSql() + ";\n");
 	for (int i=0; i<assetids.length; ++i) {
-		sql.append("insert into actrans2amt (actransid, assetid, amount) values (last(), " +
+		sql.append("insert into actrans2amt (actransid, assetid, amount) values (lastval(), " +
 			assetids[i] + ", " + TuitionData.money.toSql(amounts[i]) + ");\n");
 	}
 

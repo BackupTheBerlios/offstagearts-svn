@@ -177,7 +177,7 @@ int duedateDN, double amount, String description)
 	int payerid = student.payerid;
 	int studentid = student.entityid;
 	
-	KeyedModel transtypes = app.schemaSet().getKeyedModel("actrans", "actranstypeid");
+	KeyedModel transtypes = app.schemaSet().getKeyedModel("actrans2", "actranstypeid");
 	int schoolid = ((Actrans2Schema)app.getSchema("actrans2")).actypeKmodel.getIntKey("school");
 	TypedHashMap optional = new TypedHashMap();
 		optional.put("description", description);

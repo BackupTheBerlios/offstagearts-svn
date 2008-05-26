@@ -61,7 +61,7 @@ class Actrans2DbModel extends SqlBufDbModel
 	}
 	public String getSelectSql(boolean proto) {
 		return
-			" select ac.actransid, ac.actranstypeid, ac.date," +
+			" select ac.actransid, ac.actranstypeid, ac.date, ac.datecreated," +
 			" 1 as multiplier, amt.amount as amount, ac.description" +
 			" from actrans2 ac, actrans2amt amt" +
 			" where ac.cr_entityid = " + entityid + " and ac.cr_actypeid = " + actypeid +
@@ -69,7 +69,7 @@ class Actrans2DbModel extends SqlBufDbModel
 			" and now()-ac.date < '450 days'" +
 			(proto ? " and 1=0" : "") +
 			"      UNION" +
-			" select ac.actransid, ac.actranstypeid, ac.date," +
+			" select ac.actransid, ac.actranstypeid, ac.date, ac.datecreated," +
 			" -1 as multiplier, amt.amount as amount, ac.description" +
 			" from actrans2 ac, actrans2amt amt" +
 			" where ac.db_entityid = " + entityid + " and ac.db_actypeid = " + actypeid +
@@ -108,7 +108,8 @@ int editMode;
 				return;
 			}
 			int mult = ((Number)getValueAt(row, multiplierCol)).intValue();
-			double vval = ((Number)getValueAt(row, col)).doubleValue();
+//			double vval = ((Number)getValueAt(row, col)).doubleValue();
+			double vval = ((Number)val).doubleValue();
 			super.setValueAt(mult * vval, row, col);
 			return;
 		}
@@ -121,7 +122,8 @@ int editMode;
 		if (col == amountCol) {
 			Object val = super.getValueAt(row, col);
 			if (val == null) return null;
-			return new Double(((Number)val).doubleValue());
+			int mult = ((Number)getValueAt(row, multiplierCol)).intValue();
+			return new Double(mult * ((Number)val).doubleValue());
 		}
 		return super.getValueAt(row, col);
 	}
@@ -166,6 +168,7 @@ public void initRuntime(final FrontApp fapp, final int editMode, int actypeid, i
 {
 	this.fapp = fapp;
 	this.assetid = assetid;
+	this.actypeid = actypeid;
 	
 	SqlRun str = fapp.sqlRun();
 	actransDb = new Actrans2DbModel(str);
@@ -180,7 +183,12 @@ public void initRuntime(final FrontApp fapp, final int editMode, int actypeid, i
 			editMode == EM_ALL ? new boolean[] {false,false,true,true,true} : null,
 	//		new boolean[] {false, false, false, false},
 			fapp.swingerMap());
-		actransDb.setLogger(fapp.queryLogger());		
+
+// TODO: No logging for now, the query is too comlex.  The logging code should
+// be upgraded for complex queries, in which things might be saved back
+// to more than one table.  Look at QueryLogRec constructors,
+// model it after the multiple schemas taken by SchemaBufDbModel.
+//		actransDb.setLogger(fapp.queryLogger());		
 	}});
 
 	
