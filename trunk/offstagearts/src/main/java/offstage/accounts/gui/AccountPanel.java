@@ -25,10 +25,9 @@ package offstage.accounts.gui;
 
 import citibob.app.App;
 import citibob.jschema.IntKeyedDbModel;
-import citibob.jschema.SchemaBuf;
 import citibob.jschema.SchemaSet;
-import citibob.jschema.log.QueryLogger;
 import citibob.sql.SqlRun;
+import citibob.sql.UpdTasklet;
 import citibob.swing.typed.TypedWidgetBinder;
 import citibob.task.ActionJobBinder;
 import citibob.task.SqlTask;
@@ -73,8 +72,8 @@ public void initRuntime(FrontApp fapp)
 	
 	// Set up our models
 //	QueryLogger logger = fapp.getLogger();
-	SchemaSet osset = fapp.schemaSet();
-	onePerson = new EntityDbModel(osset.get("persons"), fapp);
+//	final SchemaSet osset = fapp.schemaSet();
+	onePerson = new EntityDbModel(fapp.schemaSet().get("persons"), fapp);
 //		onePerson.setLogger(logger);
 
 	TypedWidgetBinder.bindRecursive(entityPanel, onePerson.getSchemaBuf(), fapp.swingerMap());
@@ -95,7 +94,13 @@ public void initRuntime(FrontApp fapp)
 		Actypeid = (Integer)selActypeid.getValue();
 		refreshActypeid(app.sqlRun());
 	}});
-	selActypeid.setKeyedModel(osset, "actrans2", "cr_actypeid");
+	
+	fapp.sqlRun().execUpdate(new UpdTasklet() {
+	public void run() {
+		// This ends up affecting TransRegPanel, which needs to be
+		// fully initialized.
+		selActypeid.setKeyedModel(app.schemaSet(), "actrans2", "cr_actypeid");
+	}});
 }
 
 /** Called when Entityid changes */

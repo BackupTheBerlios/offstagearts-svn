@@ -24,13 +24,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.swing.typed;
 
 
-import java.awt.CardLayout;
 import java.sql.*;
 import citibob.app.*;
 import javax.swing.*;
 import citibob.sql.pgsql.*;
 import citibob.sql.*;
 import citibob.swing.typed.*;
+import java.util.HashMap;
+import java.util.Map;
 /**
  *
  * @author  citibob
@@ -87,37 +88,73 @@ public void saveNewCard(SqlRun str) throws SQLException
 {
 	ConsSqlQuery sql = new ConsSqlQuery("entities", ConsSqlQuery.UPDATE);
 	sql.addWhereClause("entityid = " + SqlInteger.sql(entityid));
-	getNewCard(sql);
+	Map<String,Object> map = new HashMap();
+	getNewCardFields(map);
+	for (Map.Entry<String,Object> e : map.entrySet()) {
+		sql.addColumn(e.getKey(), SqlString.sql((String)e.getValue()));
+	}
+//	getNewCardSql(sql);
 	str.execSql(sql.getSql());
 }
 
-public void getNewCard(ConsSqlQuery sql)
-{
-	sql.addColumn("py_name", SqlString.sql(newCard.getCCName()));
-	sql.addColumn("cc_type", SqlString.sql(newCard.getCCType()));
-	sql.addColumn("cc_last4", SqlString.sql(newCard.getLast4()));
-	sql.addColumn("cc_expdate", SqlString.sql(newCard.getExpDate()));
-	sql.addColumn("cc_info", SqlString.sql(newCard.getValue()));
-}
-public void getOldCard(ConsSqlQuery sql)
-{
-	sql.addColumn("py_name", SqlString.sql((String)oldCard.lccname.getValue()));
-	sql.addColumn("cc_type", SqlString.sql((String)oldCard.lcctype.getValue()));
-	sql.addColumn("cc_last4", SqlString.sql((String)oldCard.llast4.getValue()));
-	sql.addColumn("cc_expdate", SqlString.sql((String)oldCard.lexpdate.getValue()));
-	sql.addColumn("cc_info", SqlString.sql((String)oldCard.lccinfo.getValue()));
-}
-public void getCard(ConsSqlQuery sql)
+
+public void getCardFields(Map<String,Object> vars)
 {
 	switch (jTabbedPane1.getSelectedIndex()) {
 		case T_OLD :	// Old card
-			getOldCard(sql);
+			getOldCardFields(vars);
 			break;
 		case T_NEW :	// New card
-			getNewCard(sql);
+			getNewCardFields(vars);
 			break;
 	}
 }
+
+public void getNewCardFields(Map<String,Object> vars)
+{
+	vars.put("py_name", newCard.getCCName());
+	vars.put("cc_type", newCard.getCCType());
+	vars.put("cc_last4", newCard.getLast4());
+	vars.put("cc_expdate", newCard.getExpDate());
+	vars.put("cc_info", newCard.getValue());
+}
+public void getOldCardFields(Map<String,Object> vars)
+{
+	vars.put("py_name", oldCard.lccname.getValue());
+	vars.put("cc_type", oldCard.lcctype.getValue());
+	vars.put("cc_last4", oldCard.llast4.getValue());
+	vars.put("cc_expdate", oldCard.lexpdate.getValue());
+	vars.put("cc_info", oldCard.lccinfo.getValue());
+}
+
+//private void getNewCardSql(ConsSqlQuery sql)
+//{
+//	sql.addColumn("py_name", SqlString.sql(newCard.getCCName()));
+//	sql.addColumn("cc_type", SqlString.sql(newCard.getCCType()));
+//	sql.addColumn("cc_last4", SqlString.sql(newCard.getLast4()));
+//	sql.addColumn("cc_expdate", SqlString.sql(newCard.getExpDate()));
+//	sql.addColumn("cc_info", SqlString.sql(newCard.getValue()));
+//}
+//public void getOldCard(ConsSqlQuery sql)
+//{
+//	sql.addColumn("py_name", SqlString.sql((String)oldCard.lccname.getValue()));
+//	sql.addColumn("cc_type", SqlString.sql((String)oldCard.lcctype.getValue()));
+//	sql.addColumn("cc_last4", SqlString.sql((String)oldCard.llast4.getValue()));
+//	sql.addColumn("cc_expdate", SqlString.sql((String)oldCard.lexpdate.getValue()));
+//	sql.addColumn("cc_info", SqlString.sql((String)oldCard.lccinfo.getValue()));
+//}
+//public void getCard(ConsSqlQuery sql)
+//{
+//	switch (jTabbedPane1.getSelectedIndex()) {
+//		case T_OLD :	// Old card
+//			getOldCard(sql);
+//			break;
+//		case T_NEW :	// New card
+//			getNewCard(sql);
+//			break;
+//	}
+//}
+
 
 	/** This method is called from within the constructor to
 	 * initialize the form.

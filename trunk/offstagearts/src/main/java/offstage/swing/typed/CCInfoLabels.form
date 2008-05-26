@@ -5,7 +5,7 @@
     <Component class="citibob.swing.typed.JTypedTextField" name="lccinfo">
       <Properties>
         <Property name="text" type="java.lang.String" value="jTypedTextField1"/>
-        <Property name="colName" type="java.lang.String" value="ccinfo"/>
+        <Property name="colName" type="java.lang.String" value="cc_info"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>

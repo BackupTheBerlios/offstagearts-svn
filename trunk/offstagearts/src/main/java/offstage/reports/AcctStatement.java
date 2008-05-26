@@ -129,28 +129,28 @@ int termid, String payerIdSql, final java.util.Date today)
 	// Fetch main stuff
 	int actypeid = ((Actrans2Schema)app.getSchema("actrans2")).actypeKmodel.getIntKey("school");
 	String sql =
-		" select act.*,amt.amount,act.cr_entityid as entityid" +
-		" p.cc_last4,\n" +
+		" select act.*,-amt.amount as amount,act.cr_entityid as entityid," +		// amt.amount Sign reversed for this report
+		" p.cc_last4,p.lastname,p.firstname,\n" +		// lastname, firstname just for sorting.
 		" (case when p.firstname is null then '' else p.firstname || ' ' end ||" +
 		" case when p.lastname is null then '' else p.lastname end) as payername\n" +
 		" from actrans2 act, actrans2amt amt, persons p" +		// p is payer
 		(payerIdSql == null ? "" : ", (" + payerIdSql + ") xx") +
 		" where act.cr_entityid = p.entityid" +
 		" and act.actransid = amt.actransid and amt.assetid = 0" +
-		" and actypeid = " + SqlInteger.sql(actypeid) +
-		(payerIdSql == null ? "" : " and act.entityid = xx.id") +
+		" and cr_actypeid = " + SqlInteger.sql(actypeid) +
+		(payerIdSql == null ? "" : " and act.cr_entityid = xx.id") +
 		"        UNION\n" +
-		" select act.*,-amt.amount,act.db_entityid as entityid" +
-		" p.cc_last4,\n" +
+		" select act.*,amt.amount as amount,act.db_entityid as entityid," +
+		" p.cc_last4,p.lastname,p.firstname,\n" +
 		" (case when p.firstname is null then '' else p.firstname || ' ' end ||" +
 		" case when p.lastname is null then '' else p.lastname end) as payername\n" +
 		" from actrans2 act, actrans2amt amt, persons p" +		// p is payer
 		(payerIdSql == null ? "" : ", (" + payerIdSql + ") xx") +
 		" where act.db_entityid = p.entityid" +
 		" and act.actransid = amt.actransid and amt.assetid = 0" +
-		" and actypeid = " + SqlInteger.sql(actypeid) +
-		(payerIdSql == null ? "" : " and act.entityid = xx.id") +
-		" order by p.lastname, p.firstname, entityid, act.date, act.actransid";
+		" and db_actypeid = " + SqlInteger.sql(actypeid) +
+		(payerIdSql == null ? "" : " and act.db_entityid = xx.id") +
+		" order by lastname, firstname, entityid, date, actransid";		// p.lastname, p.firstname, act.date, act.actransid
 	final RSTableModel rsmod = new RSTableModel(app.sqlTypeSet());
 	rsmod.executeQuery(str, sql);
 	

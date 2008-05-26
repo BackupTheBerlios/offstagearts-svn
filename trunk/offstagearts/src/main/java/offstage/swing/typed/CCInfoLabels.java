@@ -93,7 +93,7 @@ public boolean isFullySet()
         lccname = new citibob.swing.typed.JTypedLabel();
 
         lccinfo.setText("jTypedTextField1");
-        lccinfo.setColName("ccinfo");
+        lccinfo.setColName("cc_info");
 
         setLayout(new java.awt.GridBagLayout());
 

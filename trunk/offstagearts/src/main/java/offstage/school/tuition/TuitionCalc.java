@@ -185,7 +185,7 @@ int duedateDN, double amount, String description)
 		optional.put("termid", termid);
 	sql.append(AccountsDB.w_actrans2_insert_sql(app, payerid, "billed",
 		schoolid, "tuition", duedate, optional,
-		new int[] {0}, new double[] {amount}));
+		new int[] {0}, new double[] {-amount}));
 //			
 //			app, termid, description, payerid, description, duedate, optional, assetids, amounts))
 //	sql.append(

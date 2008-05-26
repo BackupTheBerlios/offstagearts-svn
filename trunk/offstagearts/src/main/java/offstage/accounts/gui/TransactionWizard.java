@@ -17,11 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package offstage.accounts.gui;
 
+import citibob.sql.ConsSqlQuery;
 import citibob.swing.html.HtmlWiz;
 import citibob.wizard.AbstractWizState;
 import citibob.wizard.Wizard;
 import java.awt.Component;
 import java.util.Date;
+import offstage.swing.typed.CCChooser;
 import offstage.wizards.OffstageWizard;
 
 /*
@@ -76,7 +78,7 @@ addState(new AbstractWizState("cashpayment", null, null) {
 		{ return new CashpaymentWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		double amount = -((Number)v.get("amount")).doubleValue();
+		double amount = ((Number)v.get("amount")).doubleValue();
 		String sql = AccountsDB.w_actrans2_insert_sql(
 			fapp, entityid, "received", actypeid,
 			"cash", (Date)v.get("date"), con.v,
@@ -93,7 +95,7 @@ addState(new AbstractWizState("cashrefund", null, null) {
 		String sql = AccountsDB.w_actrans2_insert_sql(
 			fapp, entityid, "received", actypeid,
 			"cash", (Date)v.get("date"), con.v,
-			new int[] {0}, new double[] {amount});
+			new int[] {0}, new double[] {-amount});
 		con.str.execSql(sql);
 	}
 });
@@ -115,7 +117,7 @@ addState(new AbstractWizState("checkpayment", null, null) {
 		{ return new CheckpaymentWiz(frame, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		double amount = -((Number)v.get("amount")).doubleValue();
+		double amount = ((Number)v.get("amount")).doubleValue();
 		String sql = AccountsDB.w_actrans2_insert_sql(
 			fapp, entityid, "received", actypeid,
 			"check", (Date)v.get("date"), con.v,
@@ -132,7 +134,7 @@ addState(new AbstractWizState("checkrefund", null, null) {
 		String sql = AccountsDB.w_actrans2_insert_sql(
 			fapp, entityid, "received", actypeid,
 			"cash", (Date)v.get("date"), con.v,
-			new int[] {0}, new double[] {amount});
+			new int[] {0}, new double[] {-amount});
 		con.str.execSql(sql);
 	}
 });
@@ -141,7 +143,15 @@ addState(new AbstractWizState("ccpayment", null, null) {
 		{ return new CcpaymentWiz(frame, con.str, entityid, fapp); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		double amount = -((Number)v.get("amount")).doubleValue();
+		CcpaymentWiz cwiz = (CcpaymentWiz)wiz;
+		CCChooser cc = (CCChooser)cwiz.getComponent("ccchooser");
+		// TODO: Log change to credit card # on file (or should I?)
+		cc.saveNewCardIfNeeded(con.str);
+		
+		// Add credit card fields to the insert query below.
+		cc.getCardFields(con.v);
+		
+		double amount = ((Number)v.get("amount")).doubleValue();
 		String sql = AccountsDB.w_actrans2_insert_sql(
 			fapp, entityid, "received", actypeid,
 			"credit", (Date)v.get("date"), con.v,

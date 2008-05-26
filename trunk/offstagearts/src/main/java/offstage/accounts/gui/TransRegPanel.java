@@ -88,6 +88,7 @@ static class TransTableModel extends citibob.swing.table.WrapJTypeTableModel
 {
 int multiplierCol;
 int amountCol;
+int descriptionCol;
 int createdCol;
 int editMode;
 
@@ -97,6 +98,7 @@ int editMode;
 		
 		multiplierCol = sub.findColumn("multiplier");
 		amountCol = sub.findColumn("amount");
+		descriptionCol = sub.findColumn("description");
 		createdCol = sub.findColumn("datecreated");
 	}
 	public void setValueAt(Object val, int row, int col)
@@ -133,12 +135,14 @@ int editMode;
 			case EM_NONE : return false;
 			case EM_ALL : return super.isCellEditable(row, col);
 			case EM_RECENT : {
-				if (col >= getColumnCount()) return false;
-				if (row >= getRowCount()) return false;
-				java.util.Date created = (java.util.Date)getValueAt(row, createdCol);
-				if (created == null) return false;
-				java.util.Date now = new java.util.Date();
-				return (now.getTime() - created.getTime() < 86400 * 1000L);
+				if (col == amountCol || col == descriptionCol) {
+					if (col >= getColumnCount()) return false;
+					if (row >= getRowCount()) return false;
+					java.util.Date created = (java.util.Date)getValueAt(row, createdCol);
+					if (created == null) return false;
+					java.util.Date now = new java.util.Date();
+					return (now.getTime() - created.getTime() < 86400 * 1000L);
+				} else return false;
 			}
 		}
 		return false;

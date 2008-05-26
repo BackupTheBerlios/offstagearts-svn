@@ -199,23 +199,23 @@ java.util.Date xasOfDate, int lateDays)
 		" select ac.actranstypeid,actt.name as transtype," +
 		" ac.cr_entityid as entityid, e.lastname, e.firstname," +
 		" e.orgname, e.isorg," +
-		" ac.date,amt.amount,ac.description,ac.actransid,ac.termid" +
+		" ac.date,-amt.amount as amount,ac.description,ac.actransid,ac.termid" +		// reverse amount signs for this report
 		" from actrans2 ac, actrans2amt amt, actypes, entities e, actranstypes actt" +
 		" where actt.actranstypeid = ac.actranstypeid" +
 		" and ac.actransid = amt.actransid and amt.assetid = 0\n" +
 		" and e.entityid = ac.cr_entityid and not e.obsolete\n" +
-		" and ac.actypeid = actypes.actypeid and actypes.name = 'school'\n" +
+		" and ac.cr_actypeid = actypes.actypeid and actypes.name = 'school'\n" +
 		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
 		"           UNION" +
 		" select ac.actranstypeid,actt.name as transtype," +
 		" ac.db_entityid as entityid, e.lastname, e.firstname," +
 		" e.orgname, e.isorg," +
-		" ac.date,amt.amount,ac.description,ac.actransid,ac.termid" +
+		" ac.date,amt.amount as amount,ac.description,ac.actransid,ac.termid" +
 		" from actrans2 ac, actrans2amt amt, actypes, entities e, actranstypes actt" +
 		" where actt.actranstypeid = ac.actranstypeid" +
 		" and ac.actransid = amt.actransid and amt.assetid = 0\n" +
 		" and e.entityid = ac.db_entityid and not e.obsolete\n" +
-		" and ac.actypeid = actypes.actypeid and actypes.name = 'school'\n" +
+		" and ac.db_actypeid = actypes.actypeid and actypes.name = 'school'\n" +
 		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
 		" order by isorg desc,lastname,firstname,entityid,date,amount desc;\n" +
 		
@@ -239,7 +239,15 @@ java.util.Date xasOfDate, int lateDays)
 		int lastEntityid = -1;
 		Acct acct = null;
 		ResultSet rs = rss[0];
-		while (rs.next()) {
+		for (;;) {
+			if (!rs.next()) {
+				if (acct != null) {
+					acct.payPayment(0);		// Use up any overpay that we can.
+					accts.add(acct);
+				}
+				break;
+			}
+
 			// Change over entityid
 			int entityid = rs.getInt("entityid");
 			if (entityid != lastEntityid) {
@@ -327,7 +335,7 @@ public void applyLateFees(SqlRun str, double multiplier)
 			optional.put("description", description);
 		sql.append(AccountsDB.w_actrans2_insert_sql(app, entityid, "billed",
 			actypeid, "latefee", asOfDate, optional,
-			new int[] {0}, new double[] {lateFee}));
+			new int[] {0}, new double[] {-lateFee}));
 			
 		
 		

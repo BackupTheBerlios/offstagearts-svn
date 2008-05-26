@@ -103,6 +103,7 @@ public static String w_tmp_acct_balance_sql(String idSql, final int actypeid, fi
  * @param date Date of the transaction
  * @param datecreated Date we entered the transaction into the system
  * @param optional Values for optional columns in actrans2
+ * @param amounts amount to CREDIT to entityid; if debit, amount should be <0
  */
 public static String w_actrans2_insert_sql(App app, int entityid,
 String sinkName, int actypeid,
@@ -141,7 +142,7 @@ int[] assetids, double[] amounts)
 	csql.addColumn("actranstypeid",
 		"(select actranstypeid from actranstypes where name = " + SqlString.sql(acTransTypeName) + ")");
 	SqlDate sqlDate = new SqlDate(app.timeZone(), false);
-	csql.addColumn("date", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
+	csql.addColumn("date", sqlDate.toSql(date));		// Store day that it is in home timezone
 	csql.addColumn("datecreated", sqlDate.toSql(new java.util.Date()));		// Store day that it is in home timezone
 
 	// Add our optional columns. They won't overwrite existing columns.
