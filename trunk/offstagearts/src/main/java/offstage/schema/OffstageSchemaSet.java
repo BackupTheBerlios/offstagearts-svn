@@ -63,6 +63,7 @@ throws SQLException
 	map.put("courseids", new CourseidsSchema());
 	map.put("donations", new DonationsSchema(str, change, tz));
 	map.put("flags", new FlagsSchema(str, change));
+	map.put("openclasscomps", new OpenclasscompsSchema(str, change, tz));
 	map.put("entities", new EntitiesSchema(str, change));
 	map.put("events", new EventsSchema(str, change));
 	map.put("groupids", new GroupidsSchema());
