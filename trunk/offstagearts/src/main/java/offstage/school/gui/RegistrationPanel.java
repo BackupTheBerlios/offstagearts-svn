@@ -1,4 +1,4 @@
-/*enro
+/*
 OffstageArts: Enterprise Database for Arts Organizations
 This file Copyright (c) 2005-2008 by Robert Fischer
 

@@ -74,6 +74,9 @@ extends javax.swing.JPanel {
 
 		this.model = xmodel;
 		
+		vPayerID.initRuntime(app);
+		vParent1ID.initRuntime(app);
+		
 		TypedWidgetBinder.bindRecursive(this, model, app.swingerMap());
 		new TypedWidgetBinder().bind(genderButtonGroup, xmodel);
 		
@@ -142,7 +145,13 @@ extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        parentPayer1 = new offstage.frontdesk.ParentPayer();
+        jPanel2 = new javax.swing.JPanel();
+        vPayerID = new offstage.swing.typed.EntityIDDropdown();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        vParent1ID = new offstage.swing.typed.EntityIDDropdown();
+        jButton3 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         genderButtonGroup.setColName("gender");
 
@@ -328,7 +337,6 @@ extends javax.swing.JPanel {
 
         GenderX.add(Gender, new java.awt.GridBagConstraints());
 
-        obsolete.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         obsolete.setText("obsolete");
         obsolete.setColName("obsolete");
         obsolete.setEnabled(false);
@@ -459,11 +467,66 @@ extends javax.swing.JPanel {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 17, Short.MAX_VALUE)
+            .add(0, 23, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(0, 69, Short.MAX_VALUE)
+        );
+
+        vPayerID.setColName("payerid"); // NOI18N
+        vPayerID.setPreferredSize(new java.awt.Dimension(200, 19));
+
+        jLabel4.setText("Payer:"); // NOI18N
+
+        jLabel20.setText("Parent:"); // NOI18N
+
+        vParent1ID.setColName("parent1id"); // NOI18N
+        vParent1ID.setPreferredSize(new java.awt.Dimension(200, 19));
+
+        jButton3.setText("New");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("New");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel4)
+                    .add(jLabel20))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(vParent1ID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+                    .add(vPayerID, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 235, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(jButton2)
+                    .add(jButton3)))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jButton2)
+                    .add(jLabel4)
+                    .add(vPayerID, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jLabel20)
+                    .add(vParent1ID, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jButton3)))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -478,8 +541,8 @@ extends javax.swing.JPanel {
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(GenderX, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 155, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
             .add(lPhoneNumbers)
-            .add(AddrPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-            .add(phonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+            .add(AddrPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
+            .add(phonePanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -488,12 +551,12 @@ extends javax.swing.JPanel {
             .add(layout.createSequentialGroup()
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(parentPayer1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 262, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(117, Short.MAX_VALUE))
+                .addContainerGap(131, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -503,9 +566,9 @@ extends javax.swing.JPanel {
                     .add(jButton1)
                     .add(FirstMiddleLast, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(parentPayer1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(12, 12, 12)
                 .add(MiscInfo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -548,6 +611,25 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 			}
 		}});
 }//GEN-LAST:event_jButton1ActionPerformed
+
+private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+	// TODO add your handling code here:
+}//GEN-LAST:event_jButton3ActionPerformed
+
+private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+	//app.guiRun().run(FDPersonPanel.this, new SqlTask() {
+	//	public void run(SqlRun str) throws Exception {
+	//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(FDPersonPanel.this);
+	//		Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, root);
+	//		wizard.runWizard();
+	//		Integer eid = (Integer)wizard.getVal("entityid");
+	//		if (eid != null) {
+	//			smod.studentRm.set("vPayerID", eid);
+	////			doUpdateSelect(str);		// Causes problem if record is incomplete
+	////			allRec.doSelect(str);
+	//		}
+	//	}});
+}//GEN-LAST:event_jButton2ActionPerformed
 	
 
 	
@@ -570,14 +652,19 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.KeyedButtonGroup genderButtonGroup;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel lFirst;
@@ -590,12 +677,13 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JRadioButton maleButton;
     private citibob.swing.typed.JTypedTextField middlename;
     private citibob.swing.typed.JBoolCheckbox obsolete;
-    private offstage.frontdesk.ParentPayer parentPayer1;
     private offstage.gui.GroupPanel phonePanel;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField state;
     private javax.swing.JRadioButton unknownGenderButton;
     private citibob.swing.typed.JTypedTextField url;
+    private offstage.swing.typed.EntityIDDropdown vParent1ID;
+    private offstage.swing.typed.EntityIDDropdown vPayerID;
     private citibob.swing.typed.JTypedTextField zip;
     // End of variables declaration//GEN-END:variables
 	// --------------------------------------------------------------
