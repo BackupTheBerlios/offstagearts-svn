@@ -80,8 +80,9 @@ addStartState(new AbstractWizState("person", null, null) {
                             dollarAmount = -40; //what is correct dollar amount?
                             courseType = 2; //what is correct transType?
                         }
+                        stateName = v.getString("submit");
                 }
-          
+       
 });
 addState(new AbstractWizState("transtype", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
