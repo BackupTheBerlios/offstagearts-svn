@@ -69,8 +69,7 @@ SqlDate sqlDate;
 	{
 		this.app = xapp;
 		SwingerMap smap = xapp.swingerMap();
-
-		personPanel.initRuntime(str, xapp);
+                personPanel.initRuntime(str, xapp);
 		personDm = personPanel.dmod;
 //		searchPanel.initRuntime(xapp, personDm);
 		
@@ -85,7 +84,7 @@ SqlDate sqlDate;
 			SqlRun str = app.sqlRun();
 			str.pushFlush();
 				personDm.setKey(entityid);
-				transReg.setEntityID(str, entityid);	// comes with own update
+				transRegister.setEntityID(str, entityid);	// comes with own update
 				personDm.doSelect(str);
 			str.popFlush();
 		}});
@@ -106,7 +105,7 @@ SqlDate sqlDate;
 //		}};
 		int actypeid = actrans2Schema.actypeKmodel.getIntKey("openclass");
 		int assetid = ((Actrans2AmtSchema)app.getSchema("actrans2amt")).assetKmodel.getIntKey("openclass");
-		transReg.initRuntime(app, TransRegPanel.EM_NONE, actypeid, assetid);
+		transRegister.initRuntime(app, TransRegPanel.EM_NONE, actypeid, assetid);
 		// ========================================================
 		// ========================================================
 		// tMeetings...
@@ -159,6 +158,7 @@ SqlDate sqlDate;
 
 		// Refresh courses when date changes
 		chDate.addPropertyChangeListener("value", new PropertyChangeListener() {
+                    
 	    public void propertyChange(PropertyChangeEvent evt) {
 			xapp.sqlRun().pushFlush();
 			meetingsDm.doSelect(xapp.sqlRun());
@@ -269,6 +269,7 @@ SqlDate sqlDate;
         jSplitPane4 = new javax.swing.JSplitPane();
         transReg = new offstage.accounts.gui.TransRegPanel();
         selector = new offstage.swing.typed.EntitySelector();
+        transRegister = new offstage.frontdesk.TransRegPanel();
         jSplitPane2 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -330,6 +331,7 @@ SqlDate sqlDate;
         jSplitPane4.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         jSplitPane4.setTopComponent(transReg);
         jSplitPane4.setBottomComponent(selector);
+        jSplitPane4.setTopComponent(transRegister);
 
         jSplitPane3.setRightComponent(jSplitPane4);
 
@@ -410,7 +412,7 @@ SqlDate sqlDate;
 		app.guiRun().run(this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			personDm.doSelect(str);
-			transReg.refresh(str);
+			transRegister.refresh(str);
 		}});
 	}//GEN-LAST:event_bUndoPersonActionPerformed
 
@@ -429,7 +431,7 @@ SqlDate sqlDate;
 			
 			// Check the account for available funds...
 			Double price = (Double)tMeetings.getValue("price");
-			Double bal = transReg.getBalance();
+			Double bal = transRegister.getBalance();
 			if (-bal.doubleValue() < price.doubleValue()) {
 				JOptionPane.showMessageDialog(OpenClassPanel.this,
 					"Insufficient funds.  You must first buy classes.");
@@ -477,7 +479,7 @@ SqlDate sqlDate;
 				
 			// Refresh
 			enrollsDm.doSelect(str);
-			transReg.refresh(str);
+			transRegister.refresh(str);
 		}});
 	}//GEN-LAST:event_bRegisterActionPerformed
 
@@ -521,7 +523,7 @@ SqlDate sqlDate;
 			
 			// Refresh display
 			enrollsDm.doSelect(str);
-			transReg.refresh(str);
+			transRegister.refresh(str);
 		}});
 }//GEN-LAST:event_bRemoveActionPerformed
 
@@ -551,6 +553,7 @@ SqlDate sqlDate;
     private citibob.swing.typed.JTypedSelectTable tEnrolls;
     private citibob.swing.typed.JTypedSelectTable tMeetings;
     private offstage.accounts.gui.TransRegPanel transReg;
+    private offstage.frontdesk.TransRegPanel transRegister;
     // End of variables declaration//GEN-END:variables
 	
 };
