@@ -76,7 +76,9 @@ public static void writeJNLP(VersionMap vm, boolean demo) throws Exception
 	for (JarURL jurl : jurls) {
 		String str = jurl.getUrl().toString();
 		int pos = str.indexOf(exec);
+		if (pos < 0) continue;
 		String jarFile = str.substring(pos + exec.length());
+//System.out.println(str);
 //System.out.println(jurl.getUrl());
 		template.setAttribute("jars", vm.getJawsName(jarFile));
 	}

@@ -34,8 +34,9 @@ throws SQLException
 	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"noteids", "groupid", "name", "name");
 	cols = new SqlCol[] {
-		new SqlCol(new SqlEnum(kmodel, false), "groupid", true),
-		new SqlCol(new SqlInteger(false), "entityid", true),
+		new SqlCol(new SqlInteger(false), "serialid", true),
+		new SqlCol(new SqlEnum(kmodel, false), "groupid", false),
+		new SqlCol(new SqlInteger(false), "entityid", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "date", false),
 		new SqlCol(new SqlString(), "note", false)
 	};

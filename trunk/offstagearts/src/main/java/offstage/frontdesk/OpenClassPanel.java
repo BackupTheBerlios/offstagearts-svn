@@ -269,7 +269,7 @@ SqlDate sqlDate;
         jSplitPane4 = new javax.swing.JSplitPane();
         transReg = new offstage.accounts.gui.TransRegPanel();
         selector = new offstage.swing.typed.EntitySelector();
-        transRegister = new offstage.frontdesk.TransRegPanel();
+        transRegister = new offstage.accounts.gui.TransRegPanel();
         jSplitPane2 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -553,7 +553,7 @@ SqlDate sqlDate;
     private citibob.swing.typed.JTypedSelectTable tEnrolls;
     private citibob.swing.typed.JTypedSelectTable tMeetings;
     private offstage.accounts.gui.TransRegPanel transReg;
-    private offstage.frontdesk.TransRegPanel transRegister;
+    private offstage.accounts.gui.TransRegPanel transRegister;
     // End of variables declaration//GEN-END:variables
 	
 };

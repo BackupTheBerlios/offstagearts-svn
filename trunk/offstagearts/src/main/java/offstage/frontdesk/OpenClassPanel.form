@@ -127,7 +127,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="offstage.frontdesk.TransRegPanel" name="transRegister">
+                <Component class="offstage.accounts.gui.TransRegPanel" name="transRegister">
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
                       <JSplitPaneConstraints position="top"/>

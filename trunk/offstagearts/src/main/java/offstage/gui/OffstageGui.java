@@ -50,7 +50,8 @@ FrontApp fapp;
 	{
 		this.fapp = fapp;
 		actions.initRuntime(fapp);
-
+		welcome.initRuntime(fapp);
+		
 		this.oaDatabase.setText(fapp.configName());
 		
 		// Mess with preferences
@@ -67,6 +68,7 @@ FrontApp fapp;
     private void initComponents() {
 
         tabs = new javax.swing.JTabbedPane();
+        welcome = new offstage.gui.WelcomeActionPanel();
         actions = new offstage.gui.MaintenanceActionPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -83,6 +85,7 @@ FrontApp fapp;
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Maintenance");
 
+        tabs.addTab("Welcome", welcome);
         tabs.addTab("Actions", actions);
 
         getContentPane().add(tabs, java.awt.BorderLayout.CENTER);
@@ -210,6 +213,7 @@ private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JMenuItem miThrowException;
     private javax.swing.JLabel oaDatabase;
     private javax.swing.JTabbedPane tabs;
+    private offstage.gui.WelcomeActionPanel welcome;
     // End of variables declaration//GEN-END:variables
 
 /** @param frameTitle Text for frame's title bar

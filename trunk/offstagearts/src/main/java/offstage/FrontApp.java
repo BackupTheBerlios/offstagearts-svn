@@ -164,7 +164,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {
 	// Make sure we have the right version
-	version = new Version("1.2.1");
+	version = new Version("1.2.2");
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
 	sysVersion = svers.maxVersion;

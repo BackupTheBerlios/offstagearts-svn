@@ -43,8 +43,9 @@ throws SQLException
 	KeyedModel kPerfTypes = new DbKeyedModel(str, change,
 		"perftypeids", "perftypeid", "name", "name");
 	cols = new SqlCol[] {
-		new SqlCol(new SqlEnum(kmodel, false), "groupid", true),
-		new SqlCol(new SqlInteger(false), "entityid", true),
+		new SqlCol(new SqlInteger(false), "serialid", true),
+		new SqlCol(new SqlEnum(kmodel, false), "groupid", false),
+		new SqlCol(new SqlInteger(false), "entityid", false),
 		new SqlCol(new SqlInteger(true), "numberoftickets", false),
 		new SqlCol(new SqlNumeric(9,2,true), "payment", false),
 		new SqlCol(new SqlEnum(kTicketTypes, true), "tickettypeid", false),
