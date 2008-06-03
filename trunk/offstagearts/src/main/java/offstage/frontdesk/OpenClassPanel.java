@@ -502,6 +502,7 @@ SqlDate sqlDate;
                         Wizard wizard = new offstage.frontdesk.wizards.BuyClassesWizard(app, OpenClassPanel.this, entityid, actypeid);
                         wizard.setVal("entityid", entityid);
                         wizard.runWizard();
+						transRegister.refresh(str);
 		}});
 }//GEN-LAST:event_bBuyClassesActionPerformed
 
