@@ -134,6 +134,7 @@ SqlDate sqlDate;
 				" where m.dtstart >= " + sqlDate.toSql(dt0) +
 				" and m.dtstart < " + sqlDate.toSql(dt1) + "\n" +
 				" and dow.javaid >= 0\n" +
+                                " and t.termtypeid = 2\n" +
 				(proto ? " and false" : "") +
 				" order by m.dtstart, c.name";
 		}};
@@ -182,7 +183,7 @@ SqlDate sqlDate;
 				" from meetings m\n" +
 				" inner join courseids c on (c.courseid = m.courseid)\n" +
 				" inner join enrollments e on (c.courseid = e.courseid)\n" +
-				" where m.meetingid = " + SqlInteger.sql(meetingID) + "\n" +
+                                " where m.meetingid = " + SqlInteger.sql(meetingID) + "\n" +
 				(proto ? " and false\n" : "") +
 				" 	UNION\n" +
 				
