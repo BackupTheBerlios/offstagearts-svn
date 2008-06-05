@@ -97,7 +97,7 @@ addState(new AbstractWizState("transtype", null, null) {
 });
 addState(new AbstractWizState("cashpayment", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
-		{ return new CashpaymentWiz(frame, fapp); }
+		{ return new offstage.frontdesk.wizards.CashpaymentWiz(frame, fapp, dollarAmount); }
 	public void process(Wizard.Context con) throws Exception
 	{
                 SqlSchema actrans2 = fapp.getSchema("actrans2");
@@ -114,7 +114,7 @@ addState(new AbstractWizState("cashpayment", null, null) {
 });
 addState(new AbstractWizState("checkpayment", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
-		{ return new CheckpaymentWiz(frame, fapp); }
+		{ return new offstage.frontdesk.wizards.CheckpaymentWiz(frame, fapp, dollarAmount); }
 	public void process(Wizard.Context con) throws Exception
         {
                 SqlSchema actrans2 = fapp.getSchema("actrans2");
@@ -131,7 +131,7 @@ addState(new AbstractWizState("checkpayment", null, null) {
 });
 addState(new AbstractWizState("ccpayment", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
-		{ return new CcpaymentWiz(frame, con.str, entityid, fapp); }
+		{ return new offstage.frontdesk.wizards.CcpaymentWiz(frame, con.str, entityid, fapp, dollarAmount); }
 	public void process(Wizard.Context con) throws Exception
 	{
                 SqlSchema actrans2 = fapp.getSchema("actrans2");
@@ -142,7 +142,7 @@ addState(new AbstractWizState("ccpayment", null, null) {
                         AccountsDB.w_actrans2_insert_sql(
 			fapp, entityid, "billed", actypeid,
 			"openclass", actrans2.getCol("date").newDate(), con.v,
-			new int[] {0, courseType}, new double[] {-dollarAmount, courseAmount});
+			new int[] {0, courseType}, new double[] {-dollarAmount, -courseAmount});
 		con.str.execSql(sql);
 	}
 

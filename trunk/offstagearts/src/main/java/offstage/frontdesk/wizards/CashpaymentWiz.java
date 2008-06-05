@@ -27,16 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.frontdesk.wizards;
 
-import citibob.swing.html.*;
-import java.util.*;
 import citibob.swing.typed.*;
 import citibob.swing.html.*;
-import offstage.types.*;
-import javax.swing.*;
-import offstage.wizards.*;
-import citibob.wizard.*;
 import citibob.app.*;
-import offstage.schema.*;
 import citibob.jschema.*;
 
 /**
@@ -49,7 +42,7 @@ public class CashpaymentWiz extends HtmlWiz {
 /**
  * Creates a new instance of PersonWiz 
  */
-public CashpaymentWiz(java.awt.Frame owner, App app)
+public CashpaymentWiz(java.awt.Frame owner, App app, double dollarAmount)
 throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner, app.swingerMap());
@@ -58,8 +51,10 @@ throws org.xml.sax.SAXException, java.io.IOException
 	SqlSchema actrans2amt = app.getSchema("actrans2amt");
 	
 	setSize(600,460);
-	addWidget("amount", "amount", actrans2amt);		// Negative of amount...
-	addTextField("description", actrans2);
+        TypedWidget amt = addWidget("amount", "amount", actrans2amt);
+        amt.setValue(dollarAmount);
+        amt.stopEditing();
+        addTextField("description", actrans2);
 	addWidget("date", actrans2).setValue(actrans2.getCol("date").newDate());
 	loadHtml();
 }

@@ -49,7 +49,7 @@ public class CheckpaymentWiz extends HtmlWiz {
 /**
  * Creates a new instance of PersonWiz 
  */
-public CheckpaymentWiz(java.awt.Frame owner, App app)
+public CheckpaymentWiz(java.awt.Frame owner, App app, double dollarAmount)
 throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner, app.swingerMap());
@@ -59,7 +59,9 @@ throws org.xml.sax.SAXException, java.io.IOException
 	
 	setSize(600,460);
 //	TypedWidgetMap map = new TypedWidgetMap();
-	addWidget("amount", "amount", actrans2amt);
+	TypedWidget amt = addWidget("amount", "amount", actrans2amt);
+        amt.setValue(dollarAmount);
+        amt.stopEditing();
 	addTextField("description", actrans2);
 	addTextField("py_name", actrans2);
 	addTextField("ck_number", actrans2);
