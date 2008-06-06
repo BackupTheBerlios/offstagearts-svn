@@ -104,10 +104,10 @@ extends javax.swing.JPanel {
 
 	}
 	
-	public void initRuntime(SqlRun str, App xapp, DevelModel dm)
+	public void initRuntime(SqlRun str, FrontApp xfapp, DevelModel dm)
 	//throws java.sql.SQLException
 	{
-		this.app = xapp;
+		this.app = xfapp;
 		this.dmod = dm;
 		//SchemaBufRowModel model = dm.getPersonRm();
 		SchemaBufRowModel xmodel = new SchemaBufRowModel(dm.getPersonSb());
@@ -115,7 +115,7 @@ extends javax.swing.JPanel {
 
 		//this.phonesSb = phonesSb;
 		this.model = xmodel;
-		this.vHouseholdID.initRuntime(app);
+		this.vHouseholdID.initRuntime(xfapp);
 		
 		// Bind the Family Table thingy (it's special)
 		familyTable.initRuntime(app);

@@ -68,16 +68,12 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="# Selected:"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="# Selected:" noResource="true"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lQuerySize">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="0"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="0" noResource="true"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -93,9 +89,7 @@
               <SubComponents>
                 <Component class="javax.swing.JButton" name="bApply">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Apply"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Apply" noResource="true"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bApplyActionPerformed"/>
@@ -103,9 +97,7 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="bSave">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Save"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Save" noResource="true"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bSaveActionPerformed"/>
@@ -126,9 +118,7 @@
           <SubComponents>
             <Component class="offstage.equery.swing.EQueryEditor" name="eQueryEditor">
               <Properties>
-                <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <PlainString value="equery"/>
-                </Property>
+                <Property name="colName" type="java.lang.String" value="equery" noResource="true"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
@@ -147,9 +137,7 @@
               <SubComponents>
                 <Component class="javax.swing.JLabel" name="jLabel2">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Query Name: "/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Query Name: " noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -159,12 +147,8 @@
                 </Component>
                 <Component class="citibob.swing.typed.JTypedTextField" name="jTypedTextField1">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="jTypedTextField1"/>
-                    </Property>
-                    <Property name="colName" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="name"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="jTypedTextField1" noResource="true"/>
+                    <Property name="colName" type="java.lang.String" value="name" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -185,9 +169,8 @@
               <SubComponents>
                 <Component class="javax.swing.JButton" name="bDeleteQuery">
                   <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <PlainString value="Delete Query"/>
-                    </Property>
+                    <Property name="text" type="java.lang.String" value="Delete Query" noResource="true"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bDeleteQueryActionPerformed"/>

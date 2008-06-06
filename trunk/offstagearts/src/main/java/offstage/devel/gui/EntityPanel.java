@@ -62,7 +62,7 @@ public class EntityPanel extends javax.swing.JPanel {
 	//throws java.sql.SQLException
 	{
 		App app = fapp;
-		mainPanel.initRuntime(str, app, dm);
+		mainPanel.initRuntime(str, fapp, dm);
 		
 		// Init the credit card panel
 		TypedWidgetBinder.bindRecursive(this, mainPanel.model, app.swingerMap());

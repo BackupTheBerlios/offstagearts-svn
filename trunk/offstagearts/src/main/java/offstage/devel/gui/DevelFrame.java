@@ -47,6 +47,8 @@ FrontApp fapp;
 		initComponents();
 	}
 
+	public DevelPanel getDevelPanel() { return people; }
+	
 	public void initRuntime(SqlRun str, FrontApp xfapp) //, DevelModel xdmod)
 	throws org.xml.sax.SAXException, java.io.IOException
 	{

@@ -30,6 +30,7 @@ import citibob.swing.*;
 import citibob.swing.table.*;
 import citibob.app.*;
 import citibob.sql.*;
+import offstage.FrontApp;
 import offstage.devel.gui.DevelModel;
 
 /**
@@ -57,7 +58,7 @@ public IDListViewer() {
 public void initRuntime(SqlRun str,
 DevelModel xentityDb,
 String idSql, String orderBy,
-final App app)
+final FrontApp app)
 //final ActionRunner guiRunner, SwingerMap smap)
 throws SQLException
 {

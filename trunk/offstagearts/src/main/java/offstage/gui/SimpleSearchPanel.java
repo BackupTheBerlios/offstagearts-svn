@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package offstage.gui;
-import citibob.app.App;
 import java.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
@@ -33,7 +32,7 @@ import java.awt.event.*;
 import offstage.swing.typed.*;
 import citibob.swing.typed.*;
 import citibob.sql.*;
-import offstage.reports.SummaryReport;
+import offstage.FrontApp;
 
 /**import 
  *
@@ -51,7 +50,7 @@ implements java.beans.PropertyChangeListener
 
 		selector.addPropertyChangeListener("value", this);
 	}
-	public void initRuntime(App fapp, DbModel dmod) //SqlRun str, FullEntityDbModel dm)
+	public void initRuntime(FrontApp fapp, DbModel dmod) //SqlRun str, FullEntityDbModel dm)
 	{
 		this.app = fapp;
 		this.dmod = dmod;

@@ -23,8 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.swing.typed;
 
-import java.text.DateFormat;
-import java.util.Date;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
@@ -36,6 +34,7 @@ import citibob.swing.typed.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
 import citibob.types.*;
+import offstage.FrontApp;
 
 public class EntityIDDropdown extends JTypedDropdownDB
 {
@@ -64,9 +63,9 @@ public void setJType(JType jt, SqlRun str)
 //}
 // -----------------------------------------------
 
-public void initRuntime(App app) { initRuntime(app, -1); }
+public void initRuntime(FrontApp app) { initRuntime(app, -1); }
 
-public void initRuntime(App app, int termid)
+public void initRuntime(FrontApp app, int termid)
 {
 	this.app = app;
 //	super.setJType(new SqlInteger(), ));

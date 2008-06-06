@@ -39,6 +39,7 @@ import offstage.school.gui.*;
 import citibob.sql.*;
 import java.beans.PropertyChangeListener;
 import offstage.reports.SummaryReport;
+import offstage.swing.typed.EntitySelector;
 
 /**
  *
@@ -48,6 +49,8 @@ public class DevelPanel extends javax.swing.JPanel {
 
 DevelModel dmod;
 FrontApp app;
+
+public EntitySelector getEntitySelector() { return entitySelector; }
 
 	/** Creates new form EditorPanel */
 	public DevelPanel() {

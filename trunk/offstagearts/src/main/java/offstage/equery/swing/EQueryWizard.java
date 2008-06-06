@@ -39,11 +39,15 @@ import offstage.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
+import citibob.swing.table.TableRowCounter;
 import citibob.util.IntVal;
 import offstage.equery.*;
 import offstage.reports.*;
 import java.io.*;
+import offstage.devel.gui.DevelFrame;
 import offstage.gui.*;
+import offstage.school.gui.SchoolDB;
+import offstage.swing.typed.IdSqlPanel;
 
 /**
  *
@@ -213,6 +217,31 @@ System.out.println("Email =\n" + new String(buf));
 	}
 });
 
+addState(new AbstractWizState("checkschool") {
+	public Wiz newWiz(Wizard.Context con) throws Exception
+		{ return new CheckSchoolWiz(con.str, frame, fapp, (EQuery)con.v.get("equery")); }
+	public void process(Wizard.Context con) throws Exception
+	{
+		if ("updateaddr".equals(con.v.get("submit"))) {
+			// This could flush the SQL; make sure we have our frame ready.
+			DevelFrame devel = (DevelFrame)app.frameSet().getFrame("devel");
+			
+			EQuery equery = (EQuery)con.v.get("equery");
+			con.str.execSql(SchoolDB.checkSchoolEmailQuery(
+				equery.getSql((fapp.equerySchema()))));
+			devel.getDevelPanel().getEntitySelector().setSearchIdSql(con.str,
+				" select id from _mm" +
+				" where _mm.iscurrent and not _mm.hasemail;\n");
+			con.str.execSql(" drop table _mm;");
+
+			app.frameSet().openFrame("devel");
+			stateName = null;
+		}
+	}
+});
+
+
+//	EQuery equery = (EQuery)wizard.getVal("equery");
 
 
 
@@ -292,11 +321,22 @@ public boolean runEmails(SqlRun str) throws Exception
 {
 	setWizardName("Bulk Mail --- Email Only");
 	setNavigator(new HashNavigator(new String[] {
-		"editquery", "emailmsg",
+		"editquery", "checkschool",
+		"checkschool", "emailmsg",
 		"emailmsg", "<end>"
 	}));
 	return runWizard("listquery");	
 	
 }
+public boolean runAdvancedSearch(SqlRun str) throws Exception
+{
+	setWizardName("Advanced Search");
+	setNavigator(new HashNavigator(new String[] {
+		"editquery", "<end>"
+	}));
+	return runWizard("listquery");	
+	
+}
+
 
 }

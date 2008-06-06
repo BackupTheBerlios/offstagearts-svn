@@ -24,16 +24,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.school.gui;
 
 import citibob.app.App;
-import citibob.reports.TableModelGrouper;
 import java.sql.*;
 import citibob.sql.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
-import citibob.swing.table.JTypeTableModel;
+import java.net.URL;
 import java.util.Date;
 import java.util.prefs.*;
 import offstage.config.*;
-import offstage.reports.AcctStatement;
+import com.jangomail.api.*;
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because
@@ -192,6 +191,114 @@ public static Map<Integer,String> getStudentNames(SqlRun str, int termid, String
 		else map.put(lastPayerid, studentNames.toString());
 	}});
 	return map;
+}
+
+static String currentCustomersIdSql =
+	" select distinct te.entityid as id\n" +
+	" from termenrolls te, termids t\n" +
+	" where te.groupid = t.groupid\n" +
+	" and t.iscurrent\n" +
+	" 	union\n" +
+	" select distinct tr.payerid as id\n" +
+	" from termenrolls te, termids t, termregs tr\n" +
+	" where te.groupid = t.groupid\n" +
+	" and te.entityid = tr.entityid\n" +
+	" and t.iscurrent\n" +
+	" and tr.payerid is not null\n" +
+	" 	union\n" +
+	" select distinct e.parent1id as id\n" +
+	" from termenrolls te, termids t, entities e\n" +
+	" where te.groupid = t.groupid\n" +
+	" and te.entityid = e.entityid\n" +
+	" and t.iscurrent\n" +
+	" and e.parent1id is not null\n" +
+	" 	union\n" +
+	" select distinct e.parent2id as id\n" +
+	" from termenrolls te, termids t, entities e\n" +
+	" where te.groupid = t.groupid\n" +
+	" and te.entityid = e.entityid\n" +
+	" and t.iscurrent\n" +
+	" and e.parent2id is not null\n";
+
+public static String checkSchoolEmailQuery(String idSql)
+{
+	return
+		" create temporary table _mm\n" +
+		" (id int primary key,\n" +
+		" iscurrent bool not null default false,\n" +
+		" hasemail bool not null default false);\n" +
+		" \n" +
+		" insert into _mm (id, iscurrent, hasemail)\n" +
+		" select list.id,\n" +
+		" case when current.id is not null then true else false end as iscurrent,\n" +
+		" case when e.email is not null then true else false end as hasemail\n" +
+		" from (" + idSql + ") list\n" +
+		" inner join persons e on list.id = e.entityid\n" +
+		" left outer join (" + currentCustomersIdSql + ") current on list.id = current.id;\n";
+
+}
+
+/** @param idSql People to send email to (we need to weed out bad addresses) */
+public static void sendSchoolJangoMail(final App app, SqlRun str, final byte[] emailText, String idSql0)
+{
+	str.execSql(SchoolDB.checkSchoolEmailQuery(idSql0));
+	
+	String sql =
+		" select e.entityid, e.email, e.firstname, e.lastname" +
+		" from _mm, persons e" +
+		" where _mm.iscurrent and _mm.hasemail\n" +
+		" and _mm.id = e.entityid";
+
+	
+	
+//ToOther=
+//John,Smith,john@smith.com|David,Gary,david@gary.com|Sheila,
+//Panther,sheila@panther.com
+//
+//Options=
+//ToOtherRowDelimiter=|,ToOtherColDelimiter=c,
+//ToOtherFieldNames=FirstName|LastName|EmailAddress
+//
+//Subject=
+//Hello %%FirstName%%
+//
+//Message=
+//Hello %%FirstName%% %%LastName%% -- your email address is %%EmailAddress%%
+		
+
+	str.execSql(sql, new RsTasklet() {
+	public void run(ResultSet rs) throws Exception {
+		// Collect together names to send
+
+		// Send via JangoMail
+		JangoMail service = new JangoMailLocator();
+		JangoMailSoap soap = service.getJangoMailSoap(
+			new URL("https://api.jangomail.com/api.asmx"));
+
+		String usr = app.props().getProperty("custmail.jango.user");
+		String pwd = app.props().getProperty("custmail.jango.password");
+		
+		String boundary = "---";
+		String options =
+			"ToOtherColDelimiter=c," +
+			"ToOtherRowDelimiter=|," +
+			"ToOtherFieldNames=entityid,email,firstname,lastname";
+		String toOther = "12633,citibob@citibob.net,Bob,Fischer";
+
+System.out.println("emailText = " + new String(emailText));
+return;
+//		soap.sendMassEmailRaw(usr, pwd,
+//			"citibob@jangomail.com", "Bob Jango",
+//			null, null,
+//			toOther.toString(), null,
+//			"Test Email", new String(emailText),
+//			boundary, options);
+
+	}});
+	
+	
+	
+	str.execSql(" drop table _mm;");
 }
 }
 		

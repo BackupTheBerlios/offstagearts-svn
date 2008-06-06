@@ -15,21 +15,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*
- * PersonWiz.java
- *
- * Created on October 8, 2006, 6:08 PM
- *
- * To change this template, choose Tools | Options and locate the template under
- * the Source Creation and Management node. Right-click the template and choose
- * Open. You can then make changes to the template in the Source Editor.
- */
 
 package offstage.equery.swing;
 
 import citibob.swing.typed.*;
 import citibob.swing.html.*;
 import citibob.app.*;
+import java.util.Properties;
 import javax.mail.MessagingException;
 
 /**
@@ -47,8 +39,11 @@ throws org.xml.sax.SAXException, java.io.IOException, MessagingException
 	super(owner, app.swingerMap());
 	setSize(600,500);
 	
+	Properties props = app.props();
 	EmailChooserPanel tw = new EmailChooserPanel();
-		tw.initRuntime(app, "mail.citibob.net", "", "");
+	tw.initRuntime(app, "mail.citibob.net",
+		props.getProperty("imaptemplates.user"),
+		props.getProperty("imaptemplates.password"));
 	addWidget("emails", tw);
 
 //	app.setUserPrefs(this, );

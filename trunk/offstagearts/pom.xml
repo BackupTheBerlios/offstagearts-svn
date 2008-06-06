@@ -221,7 +221,14 @@ lib/xstream-1.2.2.jar
             <version>2.7.7</version>
             <scope>compile</scope>
         </dependency>
-	
+
+
+    <dependency>
+            <groupId>com.jangomail</groupId>
+            <artifactId>jangomail</artifactId>
+            <version>1.0-LATEST</version>
+            <scope>compile</scope>
+        </dependency>
 	
 	
 	

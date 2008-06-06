@@ -32,8 +32,8 @@ import citibob.swing.html.*;
 import citibob.wizard.*;
 import java.sql.*;
 import citibob.sql.*;
-import citibob.sql.pgsql.SqlInteger;
 import citibob.types.*;
+import offstage.FrontApp;
 import offstage.swing.typed.EntityIDDropdown;
 
 /**
@@ -45,7 +45,7 @@ public class AddEnrollByCourseWiz extends HtmlWiz {
 /**
  * Creates a new instance of OrgWiz 
  */
-public AddEnrollByCourseWiz(java.awt.Frame owner, SqlRun str, citibob.app.App app, TypedHashMap v)
+public AddEnrollByCourseWiz(java.awt.Frame owner, SqlRun str, FrontApp app, TypedHashMap v)
 throws org.xml.sax.SAXException, java.io.IOException, SQLException
 {
 	super(owner, app.swingerMap());

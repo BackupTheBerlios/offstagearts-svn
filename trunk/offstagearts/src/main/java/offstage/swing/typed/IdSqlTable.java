@@ -60,7 +60,7 @@ public void initRuntime(citibob.app.App app) //SqlRun str, FullEntityDbModel dm)
 }
 
 /** Re-query */
-protected void executeQuery(SqlRun str, final String idSql, String orderBy)// throws SQLException
+public void executeQuery(SqlRun str, final String idSql, String orderBy)// throws SQLException
 {
 	searchResults.executeQuery(str, idSql, orderBy);
 }
