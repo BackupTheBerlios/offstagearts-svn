@@ -33,6 +33,9 @@ import java.util.Date;
 import java.util.prefs.*;
 import offstage.config.*;
 import com.jangomail.api.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import offstage.equery.swing.MailMsg;
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because
@@ -238,13 +241,18 @@ public static String checkSchoolEmailQuery(String idSql)
 
 }
 
+static DateFormat groupNameFmt = new SimpleDateFormat("yyMMdd-HHmmss");
+static {
+	groupNameFmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+}
+
 /** @param idSql People to send email to (we need to weed out bad addresses) */
-public static void sendSchoolJangoMail(final App app, SqlRun str, final byte[] emailText, String idSql0)
+public static void sendSchoolJangoMail(final App app, SqlRun str, final MailMsg msg, String idSql0)
 {
 	str.execSql(SchoolDB.checkSchoolEmailQuery(idSql0));
 	
 	String sql =
-		" select e.entityid, e.email, e.firstname, e.lastname" +
+		" select e.entityid, e.email as EmailAddress, e.firstname, e.lastname" +
 		" from _mm, persons e" +
 		" where _mm.iscurrent and _mm.hasemail\n" +
 		" and _mm.id = e.entityid";
@@ -268,31 +276,75 @@ public static void sendSchoolJangoMail(final App app, SqlRun str, final byte[] e
 
 	str.execSql(sql, new RsTasklet() {
 	public void run(ResultSet rs) throws Exception {
-		// Collect together names to send
-
-		// Send via JangoMail
+		// Get JangoMail Handle
 		JangoMail service = new JangoMailLocator();
 		JangoMailSoap soap = service.getJangoMailSoap(
 			new URL("https://api.jangomail.com/api.asmx"));
 
 		String usr = app.props().getProperty("custmail.jango.user");
 		String pwd = app.props().getProperty("custmail.jango.password");
-		
-		String boundary = "---";
-		String options =
-			"ToOtherColDelimiter=c," +
-			"ToOtherRowDelimiter=|," +
-			"ToOtherFieldNames=entityid,email,firstname,lastname";
-		String toOther = "12633,citibob@citibob.net,Bob,Fischer";
 
-System.out.println("emailText = " + new String(emailText));
-return;
-//		soap.sendMassEmailRaw(usr, pwd,
-//			"citibob@jangomail.com", "Bob Jango",
-//			null, null,
-//			toOther.toString(), null,
-//			"Test Email", new String(emailText),
-//			boundary, options);
+		// GroupName
+		String groupName = "Group-" + groupNameFmt.format(new java.util.Date());
+
+		// FieldNames
+		ResultSetMetaData md = rs.getMetaData();
+		StringBuffer fieldNames = new StringBuffer();
+		for (int i=0; i<md.getColumnCount(); ++i) {
+			fieldNames.append(md.getColumnName(i));
+			if (i < md.getColumnCount() - 1) fieldNames.append(',');
+		}
+
+		// ImportData
+		StringBuffer importData = new StringBuffer();
+		while (rs.next()) {
+			for (int i=0; i<md.getColumnCount(); ++i) {
+				// Append the String from SQL.
+				// Change whitespace to ' '.  The assumption is that if anything
+				// is a large block of text, it will end up as part of an HTML
+				// email, and thus whitespace is all equivalent anyway.  This prevents
+				// whitespace from interfering with our tab and newline delimiters.
+				String s = rs.getString(i+1);
+				for (int j=0; j<s.length(); ++j) {
+					if (Character.isWhitespace(s.charAt(j))) importData.append(' ');
+					else importData.append(s.charAt(j));
+				}
+				
+				// Delimit the column with TAB
+				if (i < md.getColumnCount()-1) importData.append('\t');
+			}
+			
+			// Delimit the row with a newline.
+			importData.append('\n');
+		}
+
+		String columnDelimiter = "t";
+		String rowDelimiter = "|";
+		String textQualifier = "";
+				
+		// Create Group in JangoMail
+		soap.addGroup(usr, pwd, groupName);
+
+		// Set up data in the group
+		soap.importGroupMembersFromData(usr, pwd, groupName,
+				fieldNames.toString(), importData.toString(),
+				columnDelimiter, rowDelimiter, textQualifier);
+		
+		// Email to the group
+		String fromEmail = "citibob@jangomail.com";
+		String fromName = "Bob Fischer";
+		String toGroups = groupName;
+		String toGroupFilter = "";
+		String toOther = "";
+		String toWebDatabase = "";
+		String subject = msg.subject;
+		String rawMessage = new String(msg.body);
+		String boundary = msg.boundary;
+		String options = "";
+//		soap.sendMassEmailRaw(fromName, pwd, fromEmail, fromName,
+//			toGroups, toGroupFilter, toOther, toWebDatabase,
+//			subject, rawMessage, boundary, options);
+		
 
 	}});
 	

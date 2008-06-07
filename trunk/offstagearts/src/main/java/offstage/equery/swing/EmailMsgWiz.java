@@ -30,7 +30,8 @@ import javax.mail.MessagingException;
  */
 public class EmailMsgWiz extends HtmlWiz {
 	
-/**
+EmailChooserPanel chooserPanel;
+	/**
  * Creates a new instance of PersonWiz 
  */
 public EmailMsgWiz(java.awt.Frame owner, App app)
@@ -40,7 +41,7 @@ throws org.xml.sax.SAXException, java.io.IOException, MessagingException
 	setSize(600,500);
 	
 	Properties props = app.props();
-	EmailChooserPanel tw = new EmailChooserPanel();
+	EmailChooserPanel tw = chooserPanel = new EmailChooserPanel();
 	tw.initRuntime(app, "mail.citibob.net",
 		props.getProperty("imaptemplates.user"),
 		props.getProperty("imaptemplates.password"));
@@ -49,6 +50,11 @@ throws org.xml.sax.SAXException, java.io.IOException, MessagingException
 //	app.setUserPrefs(this, );
 
 	loadHtml();
+}
+
+public void close() throws MessagingException
+{
+	chooserPanel.close();
 }
 
 //

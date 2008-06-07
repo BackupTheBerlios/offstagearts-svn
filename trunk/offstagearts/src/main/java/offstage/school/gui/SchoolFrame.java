@@ -44,6 +44,7 @@ import offstage.reports.StudentConfirmationLetter;
 import offstage.*;
 import offstage.equery.EQuery;
 import offstage.equery.swing.EQueryWizard;
+import offstage.equery.swing.MailMsg;
 import offstage.reports.StudentSchedule;
 import offstage.schema.TermidsSchema;
 import offstage.school.tuition.TuitionCalc;
@@ -516,13 +517,13 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 			if (!wizard.runEmails(str)) return;
 			
 			// Text of the email we wish to send
-			byte[] buf = (byte[])wizard.getVal("emails");
-System.out.println("Email =\n" + new String(buf));
+			MailMsg msg = (MailMsg)wizard.getVal("emails");
+if (msg != null) System.out.println("Email = " + msg.subject);
 
 			// SQL of people we wish to send to
 			EQuery equery = (EQuery)wizard.getVal("equery");
 
-			SchoolDB.sendSchoolJangoMail(fapp, str, buf,
+			SchoolDB.sendSchoolJangoMail(fapp, str, msg,
 				equery.getSql((fapp.equerySchema())));
 			
 		}});

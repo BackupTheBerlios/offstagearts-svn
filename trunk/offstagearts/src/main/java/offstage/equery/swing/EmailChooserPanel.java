@@ -31,12 +31,14 @@ import citibob.types.JType;
 import citibob.types.JavaJType;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.Properties;
 import javax.mail.FetchProfile;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
+import offstage.equery.swing.MailMsg;
 
 /**
  *
@@ -54,6 +56,43 @@ public class EmailChooserPanel extends JTypedPanel
 		initComponents();
 	}
 
+static String getHeader(Message msg, String headerName) throws Exception
+{
+	String[] ct = msg.getHeader(headerName);
+	if (ct == null || ct.length == 0) return null;
+	
+	return ct[0];
+}
+
+static String getBoundary(Message msg) throws Exception
+{
+	String header = getHeader(msg, "Content-type");
+	if (header == null) return null;
+	
+	String lheader = header.toLowerCase();
+	
+	int c = lheader.indexOf("boundary");
+	if (c < 0) return null;
+	c += "boundary".length() + 1;
+	
+	for (; Character.isWhitespace(lheader.charAt(c)); ++c) ;	// Skip whitespace
+	if (lheader.charAt(c) != '=') throw new ParseException("Cannot parse header: " + header, c);
+	for (; Character.isWhitespace(lheader.charAt(c)); ++c) ;	// Skip whitespace
+
+	int start,next;
+	if (lheader.charAt(c) == '"') {
+		++c;
+		start = c;
+		for (; c < lheader.length() && lheader.charAt(c) != '"'; ++c);
+		next = c;
+	} else {
+		start = c;
+		for (; c < lheader.length() && lheader.charAt(c) != ';'; ++c);
+		next = c;
+	}
+	return header.substring(start, next);
+}
+	
 	public void setValue(Object obj) {}
 	public Object getValue()
 	{
@@ -61,14 +100,25 @@ public class EmailChooserPanel extends JTypedPanel
 			int row = table.getSelectedRow();
 			if (row < 0) return null;
 
+			Message msg = messages[row];
+			MailMsg omsg = new MailMsg();
+			
+			// Parse out the boundary
+			omsg.boundary = getBoundary(msg);
+			omsg.subject = getHeader(msg, "Subject");
+			
+//System.out.println("** Getting Content-type");
+//String[] ct = msg.getHeader("Content-type");
+//if (ct != null && ct.length > 0) System.out.println("** Content-type: " + ct[0]);
 			// Read the main body of the message
-			InputStream in = messages[row].getInputStream();
+			InputStream in = msg.getInputStream();
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			byte[] buf = new byte[8192];
 			int n;
 			while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
 			in.close();
-			return out.toByteArray();
+			omsg.body = out.toByteArray();
+			return omsg;
 		} catch(Exception e) {
 			app.expHandler().consume(e);
 			return null;
