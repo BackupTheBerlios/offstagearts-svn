@@ -49,7 +49,8 @@ public class CashpaymentWiz extends HtmlWiz {
 /**
  * Creates a new instance of PersonWiz 
  */
-public CashpaymentWiz(java.awt.Frame owner, App app)
+public CashpaymentWiz(java.awt.Frame owner, App app,
+String description, Double amount, boolean editable)
 throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner, app.swingerMap());
@@ -58,8 +59,8 @@ throws org.xml.sax.SAXException, java.io.IOException
 	SqlSchema actrans2amt = app.getSchema("actrans2amt");
 	
 	setSize(600,460);
-	addWidget("amount", "amount", actrans2amt);		// Negative of amount...
-	addTextField("description", actrans2);
+	addWidget("amount", "amount", actrans2amt, editable).setValue(amount);		// Negative of amount...
+	addTextField("description", actrans2).setValue(description);
 	addWidget("date", actrans2).setValue(actrans2.getCol("date").newDate());
 	loadHtml();
 }

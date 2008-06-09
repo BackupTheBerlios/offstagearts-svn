@@ -42,6 +42,7 @@ public class FrontDeskFrame extends javax.swing.JFrame
 	public void initRuntime(SqlRun str, FrontApp app)
 	{
 		this.openClassPanel1.initRuntime(str, app);
+		openRegPanel1.initRuntime(str, app);
 	}
 	
 	/** This method is called from within the constructor to
@@ -54,6 +55,7 @@ public class FrontDeskFrame extends javax.swing.JFrame
 
         jPanel1 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        openRegPanel1 = new offstage.frontdesk.OpenRegPanel();
         openClassPanel1 = new offstage.frontdesk.OpenClassPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -62,7 +64,8 @@ public class FrontDeskFrame extends javax.swing.JFrame
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jTabbedPane1.addTab("Open Class Registration", openClassPanel1);
+        jTabbedPane1.addTab("Registration", openRegPanel1);
+        jTabbedPane1.addTab("Sign-In", openClassPanel1);
 
         jPanel1.add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
@@ -96,6 +99,7 @@ public class FrontDeskFrame extends javax.swing.JFrame
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private offstage.frontdesk.OpenClassPanel openClassPanel1;
+    private offstage.frontdesk.OpenRegPanel openRegPanel1;
     // End of variables declaration//GEN-END:variables
 	
 }

@@ -31,8 +31,11 @@ import citibob.swing.typed.*;
 import citibob.swing.html.*;
 import citibob.wizard.*;
 import citibob.app.*;
-import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
+import citibob.text.DivDoubleSFormat;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import maestro.Maestro;
 
 /**
  *
@@ -50,17 +53,40 @@ throws org.xml.sax.SAXException, java.io.IOException
 	super(owner, app.swingerMap());
 
 	setSize(600,460);
-	String sql = "select" +
-		" (case when lastname is null then '' else lastname || ', ' end ||" +
-		" case when firstname is null then '' else firstname || ' ' end ||" +
-		" case when middlename is null then '' else middlename end) as name" +
-		" from entities where entityid = " + v.get("entityid");
-	str.execSql(sql, new RsTasklet2() {
-	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
-		rs.next();
-		addComponent("name", new JTypedLabel(rs.getString("name")));	
-		loadHtml();
-	}});	
+	
+	final JTypedTextField xdollars = new JTypedTextField();
+		xdollars.setJType(Double.class, new DivDoubleSFormat("#.00", 1.0));
+	final JTypedLabel xcredits = addLabel("credits");
+		xcredits.setJType(Double.class, new DivDoubleSFormat("#.00", 1.0));
+	// Auto-preview the credit amount!
+	xdollars.addPropertyChangeListener("value", new PropertyChangeListener() {
+	public void propertyChange(PropertyChangeEvent evt) {
+		Double Dollars = (Double)xdollars.getValue();
+		if (Dollars == null) {
+			xcredits.setValue(null);
+		} else {
+			double dollars = Dollars.doubleValue();
+			double credits = Maestro.dollarsToCredits(dollars);
+			xcredits.setValue(credits);
+		}
+	}});
+		
+	addComponent("dollars", xdollars);
+//	addComponent("credits", xcredits);
+		
+	loadHtml();
+//		
+//	String sql = "select" +
+//		" (case when lastname is null then '' else lastname || ', ' end ||" +
+//		" case when firstname is null then '' else firstname || ' ' end ||" +
+//		" case when middlename is null then '' else middlename end) as name" +
+//		" from entities where entityid = " + v.get("entityid");
+//	str.execSql(sql, new RsTasklet2() {
+//	public void run(citibob.sql.SqlRun str, java.sql.ResultSet rs) throws Exception {
+//		rs.next();
+//		addComponent("name", new JTypedLabel(rs.getString("name")));	
+//		loadHtml();
+//	}});	
 }
 
 }

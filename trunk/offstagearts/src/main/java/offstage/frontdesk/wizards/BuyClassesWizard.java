@@ -16,6 +16,29 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package offstage.frontdesk.wizards;
+
+import citibob.jschema.SqlSchema;
+import citibob.jschema.log.QueryLogRec;
+import citibob.sql.ConsSqlQuery;
+import citibob.sql.SqlRun;
+import citibob.sql.UpdTasklet2;
+import citibob.sql.pgsql.SqlBool;
+import citibob.sql.pgsql.SqlInteger;
+import citibob.sql.pgsql.SqlSerial;
+import citibob.sql.pgsql.SqlString;
+import citibob.swing.html.HtmlWiz;
+import citibob.util.IntVal;
+import citibob.wizard.AbstractWizState;
+import citibob.wizard.Wizard;
+import java.awt.Component;
+import java.sql.SQLException;
+import maestro.Maestro;
+import offstage.accounts.gui.AccountsDB;
+import offstage.accounts.gui.CashpaymentWiz;
+import offstage.accounts.gui.CcpaymentWiz;
+import offstage.accounts.gui.CheckpaymentWiz;
+import offstage.wizards.OffstageWizard;
+
 /*
  * NewRecordWizard.java
  *
@@ -26,19 +49,6 @@ package offstage.frontdesk.wizards;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import citibob.jschema.SqlSchema;
-import citibob.swing.html.*;
-import citibob.wizard.*;
-import java.sql.*;
-import offstage.wizards.*;
-import citibob.sql.*;
-import citibob.sql.pgsql.*;
-import citibob.jschema.log.*;
-import citibob.util.IntVal;
-import java.awt.Component;
-import offstage.accounts.gui.AccountsDB;
-import offstage.accounts.gui.CashpaymentWiz;
-
 
 /**
  *
@@ -46,47 +56,31 @@ import offstage.accounts.gui.CashpaymentWiz;
  */
 public class BuyClassesWizard extends OffstageWizard {
 
-int entityid, actypeid;
+int entityid, openclassActypeID;
+double dollars, credits;
 String selectedPackage;
-double courseAmount;
-double dollarAmount;
-int courseType;
+int openclassAssetID;
+static String descriptionInit = "Purchase Class Credit";
 
 public BuyClassesWizard(offstage.FrontApp xfapp, Component comp,
-Integer xentityid, int xactypeid)
+Integer xentityid)
 {
-        super("Buy Classes", xfapp, comp);
+    super("Buy Classes", xfapp, comp);
+	openclassAssetID = app.schemaSet().getEnumInt("actrans2amt", "assetid", "openclass");
+	openclassActypeID = app.schemaSet().getEnumInt("actrans2", "cr_actypeid", "openclass");
 	this.entityid = xentityid;
-	this.actypeid = xactypeid;
-        
-addStartState(new AbstractWizState("person", null, null) {
+
+addStartState(new AbstractWizState("credits", null, "transtype") {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
 		{ return new PackageSelectionWiz(frame, con.str, fapp, v); }
-	public void process(Wizard.Context con) throws Exception {   
-                        selectedPackage = v.getString("submit");
-                        if (selectedPackage.equals("onepack")) {
-                            courseAmount = 1; //what is correct courseAmount?
-                            dollarAmount = 17; //what is correct dollar amount?
-                            courseType = fapp.schemaSet().getEnumInt("actrans2amt", "assetid", "openclass");
-                        } else if (selectedPackage.equals("tenpack")) {
-                            courseAmount = 10; //what is correct courseAmount?
-                            dollarAmount = 150; //what is correct dollar amount?
-                            courseType = fapp.schemaSet().getEnumInt("actrans2amt", "assetid", "openclass");
-                        } else if (selectedPackage.equals("twentypack")) {
-                            courseAmount = 20; //what is correct courseAmount?
-                            dollarAmount = 300; //what is correct dollar amount?
-                            courseType = fapp.schemaSet().getEnumInt("actrans2amt", "assetid", "openclass");
-                        } else if (selectedPackage.equals("thirtypack")) {
-                            courseAmount = 30; //what is correct courseAmount?
-                            dollarAmount = 450; //what is correct dollar amount?
-                            courseType = fapp.schemaSet().getEnumInt("actrans2amt", "assetid", "openclass");
-                        } else { // circus pack
-                            courseAmount = 1; //what is correct courseAmount?
-                            dollarAmount = 500; //what is correct dollar amount?
-                            courseType = fapp.schemaSet().getEnumInt("actrans2amt", "assetid", "circusclass");
-                        }
-                        stateName = "transtype";
-                }
+	public void process(Wizard.Context con) throws Exception {
+		Double Dollars = (Double)getVal("dollars");
+		if (Dollars == null) stateName = "credits";
+		dollars = Dollars;
+		if (dollars < 0) stateName = "credits";
+		credits = (Double)getVal("credits");
+//		credits = Maestro.dollarsToCredits(dollars);
+	}
        
 });
 addState(new AbstractWizState("transtype", null, null) {
@@ -97,52 +91,53 @@ addState(new AbstractWizState("transtype", null, null) {
 });
 addState(new AbstractWizState("cashpayment", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
-		{ return new offstage.frontdesk.wizards.CashpaymentWiz(frame, fapp, dollarAmount); }
+		{ return new CashpaymentWiz(frame, fapp, descriptionInit, dollars, false); }
 	public void process(Wizard.Context con) throws Exception
 	{
-                SqlSchema actrans2 = fapp.getSchema("actrans2");
+        SqlSchema actrans2 = fapp.getSchema("actrans2");
 		String sql = AccountsDB.w_actrans2_insert_sql(
-			fapp, entityid, "received", actypeid,
+			fapp, entityid, "received", openclassActypeID,
 			"cash", actrans2.getCol("date").newDate(), con.v,
-			new int[] {0}, new double[] {dollarAmount}) +
-                        AccountsDB.w_actrans2_insert_sql(
-			fapp, entityid, "billed", actypeid,
-			"openclass", actrans2.getCol("date").newDate(), con.v,
-			new int[] {0, courseType}, new double[] {-dollarAmount, courseAmount});
+			new int[] {0}, new double[] {dollars}) +
+        AccountsDB.w_actrans2_insert_sql(
+			fapp, entityid, "billed", openclassActypeID,
+			"cash", actrans2.getCol("date").newDate(), con.v,
+			new int[] {0, openclassAssetID}, new double[] {-dollars, credits});
 		con.str.execSql(sql);
 	}
 });
+
 addState(new AbstractWizState("checkpayment", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
-		{ return new offstage.frontdesk.wizards.CheckpaymentWiz(frame, fapp, dollarAmount); }
+		{ return new CheckpaymentWiz(frame, fapp, descriptionInit, dollars, false); }
 	public void process(Wizard.Context con) throws Exception
         {
                 SqlSchema actrans2 = fapp.getSchema("actrans2");
 		String sql = AccountsDB.w_actrans2_insert_sql(
-			fapp, entityid, "received", actypeid,
+			fapp, entityid, "received", openclassActypeID,
 			"check", actrans2.getCol("date").newDate(), con.v,
-			new int[] {0}, new double[] {dollarAmount}) +
+			new int[] {0}, new double[] {dollars}) +
                         AccountsDB.w_actrans2_insert_sql(
-			fapp, entityid, "billed", actypeid,
-			"openclass", actrans2.getCol("date").newDate(), con.v,
-			new int[] {0, courseType}, new double[] {-dollarAmount, courseAmount});
+			fapp, entityid, "billed", openclassActypeID,
+			"check", actrans2.getCol("date").newDate(), con.v,
+			new int[] {0, openclassAssetID}, new double[] {-dollars, credits});
 		con.str.execSql(sql);
         }
 });
 addState(new AbstractWizState("ccpayment", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
-		{ return new offstage.frontdesk.wizards.CcpaymentWiz(frame, con.str, entityid, fapp, dollarAmount); }
+		{ return new CcpaymentWiz(frame, con.str, entityid, fapp, descriptionInit, dollars, false); }
 	public void process(Wizard.Context con) throws Exception
 	{
                 SqlSchema actrans2 = fapp.getSchema("actrans2");
 		String sql = AccountsDB.w_actrans2_insert_sql(
-			fapp, entityid, "received", actypeid,
+			fapp, entityid, "received", openclassActypeID,
 			"credit", actrans2.getCol("date").newDate(), con.v,
-			new int[] {0}, new double[] {dollarAmount}) +
+			new int[] {0}, new double[] {dollars}) +
                         AccountsDB.w_actrans2_insert_sql(
-			fapp, entityid, "billed", actypeid,
-			"openclass", actrans2.getCol("date").newDate(), con.v,
-			new int[] {0, courseType}, new double[] {-dollarAmount, -courseAmount});
+			fapp, entityid, "billed", openclassActypeID,
+			"credit", actrans2.getCol("date").newDate(), con.v,
+			new int[] {0, openclassAssetID}, new double[] {-dollars, credits});
 		con.str.execSql(sql);
 	}
 

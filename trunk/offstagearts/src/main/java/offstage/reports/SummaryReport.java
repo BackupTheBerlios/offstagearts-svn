@@ -27,6 +27,7 @@ import citibob.swing.table.StringTableModel;
 import citibob.text.SFormatMap;
 import java.io.IOException;
 import offstage.devel.gui.DevelModel;
+import offstage.frontdesk.FDPersonModel;
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateGroup;
 
@@ -76,6 +77,35 @@ throws IOException
 	
 	return st.toString();
 }
+
+public static String getHtml(FDPersonModel dmod, SFormatMap sfmap)
+throws IOException
+{
+
+	// Get the StringTemplate...
+	StringTemplateGroup stg = new StringTemplateGroup("summaryGroup");
+	StringTemplate st = stg.getInstanceOf("offstage/reports/fdSummary");
+
+	// Format the columns...
+	JTypeTableModel person = dmod.getPersonDm().getSchemaBuf();
+	StringTableModel sperson = new StringTableModel(person, sfmap);
+	setAttribute(st, "person", person, sperson);
+	
+	JTypeTableModel phones = dmod.getPhonesDm().getSchemaBuf();
+	StringTableModel sphones = new StringTableModel(phones, sfmap);
+	setAttribute(st, "phones", phones,sphones);
+	
+//	setAttribute(st, "donations", dmod.getDonationSb(), new StringTableModel(dmod.getDonationSb(), sfmap));
+//	setAttribute(st, "flags", dmod.getFlagSb(), new StringTableModel(dmod.getFlagSb(), sfmap));
+//	setAttribute(st, "notes", dmod.getNotesSb(), new StringTableModel(dmod.getNotesSb(), sfmap));
+//	setAttribute(st, "tickets", dmod.getTicketsSb(), new StringTableModel(dmod.getTicketsSb(), sfmap));
+//	setAttribute(st, "events", dmod.getEventsSb(), new StringTableModel(dmod.getEventsSb(), sfmap));
+//	setAttribute(st, "terms", dmod.getTermsSb(), new StringTableModel(dmod.getTermsSb(), sfmap));
+//	setAttribute(st, "interests", dmod.getInterestsSb(), new StringTableModel(dmod.getInterestsSb(), sfmap));
+	
+	return st.toString();
+}
+
 
 public static void setAttribute(StringTemplate st, String var, JTypeTableModel _val, StringTableModel val)
 {

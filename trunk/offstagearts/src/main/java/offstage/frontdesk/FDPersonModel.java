@@ -33,7 +33,7 @@ public class FDPersonModel extends MultiDbModel
 
 
 // Key field.
-private int entityID;
+//private int entityID;
 
 // -------------------------------------------------------
 
@@ -49,10 +49,10 @@ IntKeyedDbModel phones;
 //	onePerson.setKey(entityID);
 //	phones.setKey(entityID);
 //}
-public int getEntityId()
-{
-	return entityID;
-}
+//public int getEntityId()
+//{
+//	return entityID;
+//}
 // ---------------------------------------------------------
 // Return the various SchemaBufs that make up this super-record.
 
@@ -92,7 +92,7 @@ public void doDelete(SqlRun str)
 
 	// Reassign any other family members
 	str.execSql("update entities set primaryentityid=entityid" +
-		" where primaryentityid = " + SqlInteger.sql(this.getEntityId()));	
+		" where primaryentityid = " + SqlInteger.sql((Integer)this.getKey()));	
 }
 
 

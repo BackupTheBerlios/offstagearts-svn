@@ -51,11 +51,20 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
           <SubComponents>
+            <Component class="offstage.frontdesk.OpenRegPanel" name="openRegPanel1">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Registration">
+                    <Property name="tabTitle" type="java.lang.String" value="Registration"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+            </Component>
             <Component class="offstage.frontdesk.OpenClassPanel" name="openClassPanel1">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Open Class Registration">
-                    <Property name="tabTitle" type="java.lang.String" value="Open Class Registration"/>
+                  <JTabbedPaneConstraints tabName="Sign-In">
+                    <Property name="tabTitle" type="java.lang.String" value="Sign-In"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>

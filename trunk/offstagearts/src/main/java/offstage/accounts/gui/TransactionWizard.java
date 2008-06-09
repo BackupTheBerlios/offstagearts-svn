@@ -75,7 +75,7 @@ addStartState(new AbstractWizState("transtype", null, null) {
 });
 addState(new AbstractWizState("cashpayment", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
-		{ return new CashpaymentWiz(frame, fapp); }
+		{ return new CashpaymentWiz(frame, fapp, null, null, true); }
 	public void process(Wizard.Context con) throws Exception
 	{
 		double amount = ((Number)v.get("amount")).doubleValue();
@@ -114,7 +114,7 @@ addState(new AbstractWizState("adjpayment", null, null) {
 });
 addState(new AbstractWizState("checkpayment", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
-		{ return new CheckpaymentWiz(frame, fapp); }
+		{ return new CheckpaymentWiz(frame, fapp, null, null, true); }
 	public void process(Wizard.Context con) throws Exception
 	{
 		double amount = ((Number)v.get("amount")).doubleValue();
@@ -140,7 +140,7 @@ addState(new AbstractWizState("checkrefund", null, null) {
 });
 addState(new AbstractWizState("ccpayment", null, null) {
 	public HtmlWiz newWiz(Wizard.Context con) throws Exception
-		{ return new CcpaymentWiz(frame, con.str, entityid, fapp); }
+		{ return new CcpaymentWiz(frame, con.str, entityid, fapp, null, null, true); }
 	public void process(Wizard.Context con) throws Exception
 	{
 		CcpaymentWiz cwiz = (CcpaymentWiz)wiz;

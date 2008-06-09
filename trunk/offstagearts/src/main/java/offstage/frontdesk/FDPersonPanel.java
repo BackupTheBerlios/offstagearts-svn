@@ -42,7 +42,7 @@ extends javax.swing.JPanel {
     SchemaRowModel model;	// The RowModel (which uses the schema)
 	FDPersonModel dmod;
 	FrontApp app;
-        SchoolModel smod;
+//        SchoolModel smod;
         
     
 	/** Creates new form PersonPanel */

@@ -68,7 +68,7 @@ public static String w_tmp_acct_balance_sql(String idSql, final int actypeid, fi
 		" and actypeid = " + SqlInteger.sql(actypeid) + ";\n" +
 
 		" update _bal" +
-		" set bal=bal + cr.amount - db.amount\n" +
+		" set bal=bal + cr.amount\n" +
 		" from (\n" +
 		"     select actrans2.cr_entityid as entityid, sum(actrans2amt.amount) as amount" +
 		"     from actrans2, actrans2amt, _bal" +
@@ -77,7 +77,12 @@ public static String w_tmp_acct_balance_sql(String idSql, final int actypeid, fi
 		"     and actrans2.actransid = actrans2amt.actransid" +
 		"     and actrans2amt.assetid = " + assetid +
 		"     and (_bal.date is null or actrans2.date >= _bal.date)" +
-		"     group by actrans2.cr_entityid) cr,\n" +
+		"     group by actrans2.cr_entityid) cr\n" +
+		" where cr.entityid = _bal.entityid;\n" +
+	
+		" update _bal" +
+		" set bal=bal - db.amount\n" +
+		" from \n" +
 		" (select actrans2.db_entityid as entityid, sum(actrans2amt.amount) as amount" +
 		"     from actrans2, actrans2amt, _bal" +
 		"     where db_actypeid = " + SqlInteger.sql(actypeid) +
@@ -86,10 +91,11 @@ public static String w_tmp_acct_balance_sql(String idSql, final int actypeid, fi
 		"     and actrans2amt.assetid = " + assetid +
 		"     and (_bal.date is null or actrans2.date >= _bal.date)" +
 		"     group by actrans2.db_entityid" +
-		
 		" \n) db" +
-		" where cr.entityid = _bal.entityid and db.entityid = _bal.entityid;\n";
-		
+		" where db.entityid = _bal.entityid;\n";
+
+	
+	
 //		" drop table _bal0";
 	
 	return sql;
@@ -115,15 +121,8 @@ int[] assetids, double[] amounts)
 	
 	// Find which asset is the cash asset, and make sure it's positive in amounts
 	boolean reverse = false;
-	for (int i=0; i<assetids.length; ++i) {
-		if (assetids[i] == 0) {
-			if (amounts[i] > 0) break;		// Already positive, nothing to do
-			
-			// Convert it to positive
-			reverse = true;
-			for (int j=0; j<assetids.length; ++j) amounts[i] = -amounts[i];
-		}
-	}
+	if (assetids.length > 0) reverse = (amounts[0] < 0);
+	if (reverse) for (int j=0; j<assetids.length; ++j) amounts[j] = -amounts[j];
 
 	// Set up which account is "credited" and which is "debited"
 	if (!reverse) {
@@ -158,23 +157,23 @@ int[] assetids, double[] amounts)
 	return sql.toString();
 }
 
-public static String w_actrans2_deleteOpenClassByMeeting_sql(int entityid, int meetingid)
-{
-	String sql =
-// Not needed, deletes are cascaded.
-//		// Remove payment amount records
-//		" delete from actrans2amt where actransid in (" +
-//		" select actransid from actrans2" +
+//public static String w_actrans2_deleteOpenClassByMeeting_sql(int entityid, int meetingid)
+//{
+//	String sql =
+//// Not needed, deletes are cascaded.
+////		// Remove payment amount records
+////		" delete from actrans2amt where actransid in (" +
+////		" select actransid from actrans2" +
+////		" where entityid = " + SqlInteger.sql(entityid) + "\n" +
+////		" and actypeid = (select actypeid from actypes where name = 'openclass')\n " +
+////		" and termid = " + SqlInteger.sql(meetingid) + ");\n" +
+//	
+//		// Remove payment record
+//		" delete from actrans" +
 //		" where entityid = " + SqlInteger.sql(entityid) + "\n" +
 //		" and actypeid = (select actypeid from actypes where name = 'openclass')\n " +
-//		" and termid = " + SqlInteger.sql(meetingid) + ");\n" +
-	
-		// Remove payment record
-		" delete from actrans" +
-		" where entityid = " + SqlInteger.sql(entityid) + "\n" +
-		" and actypeid = (select actypeid from actypes where name = 'openclass')\n " +
-		" and termid = " + SqlInteger.sql(meetingid) + ";\n";
-
-	return sql;
-}
+//		" and termid = " + SqlInteger.sql(meetingid) + ";\n";
+//
+//	return sql;
+//}
 }

@@ -226,7 +226,7 @@ public void requestTextFocus()
 		app.guiRun().run(EntitySelector.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			EQueryWizard wizard = new EQueryWizard(app, EntitySelector.this);
-			wizard.runAdvancedSearch(str);
+			if (!wizard.runAdvancedSearch(str)) return;
 			EQuery equery = (EQuery)wizard.getVal("equery");
 			setSearchIdSql(str, equery.getSql(app.equerySchema()));
 		}});
