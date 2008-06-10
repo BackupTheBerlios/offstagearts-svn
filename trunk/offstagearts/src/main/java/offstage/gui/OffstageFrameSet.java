@@ -36,6 +36,7 @@ import offstage.cleanse.CleanseFrame;
 import offstage.config.ResourcesFrame;
 import offstage.devel.gui.DevelFrame;
 import offstage.frontdesk.FrontDeskFrame;
+import offstage.openclass.OpenClassFrame;
 import offstage.school.gui.SchoolFrame;
 
 /**
@@ -79,6 +80,14 @@ addMaker("frontdesk", new Maker() {
 public JFrame newFrame() throws Exception {
 	SqlRun str = fapp.sqlRun();
 	final FrontDeskFrame f = new FrontDeskFrame();
+	f.initRuntime(fapp.sqlRun(), fapp);
+	str.flush();
+	return f;
+}});
+addMaker("openclass", new Maker() {
+public JFrame newFrame() throws Exception {
+	SqlRun str = fapp.sqlRun();
+	final OpenClassFrame f = new OpenClassFrame();
 	f.initRuntime(fapp.sqlRun(), fapp);
 	str.flush();
 	return f;

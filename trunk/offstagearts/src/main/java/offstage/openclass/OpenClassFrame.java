@@ -21,8 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Created on April 13, 2008, 4:46 PM
  */
 
-package offstage.frontdesk;
+package offstage.openclass;
 
+import offstage.frontdesk.*;
 import citibob.sql.SqlRun;
 import offstage.FrontApp;
 
@@ -30,20 +31,21 @@ import offstage.FrontApp;
  
  @author  citibob
  */
-public class FrontDeskFrame extends javax.swing.JFrame
+public class OpenClassFrame extends javax.swing.JFrame
 {
 	
 	/** Creates new form FrontDeskFrame */
-	public FrontDeskFrame()
+	public OpenClassFrame()
 	{
 		initComponents();
-		setTitle("Front Desk");
+		setTitle("Open Class");
 	}
 	
 	public void initRuntime(SqlRun str, FrontApp app)
 	{
-		this.openClassPanel1.initRuntime(str, app);
-		openRegPanel1.initRuntime(str, app);
+		this.oCDiscPanel1.initRuntime(str, app, null);
+//		this.openClassPanel1.initRuntime(str, app);
+//		openRegPanel1.initRuntime(str, app);
 	}
 	
 	/** This method is called from within the constructor to
@@ -56,8 +58,7 @@ public class FrontDeskFrame extends javax.swing.JFrame
 
         jPanel1 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        openRegPanel1 = new offstage.frontdesk.OpenRegPanel();
-        openClassPanel1 = new offstage.frontdesk.OpenClassPanel();
+        oCDiscPanel1 = new offstage.openclass.OCDiscPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
 
@@ -65,8 +66,7 @@ public class FrontDeskFrame extends javax.swing.JFrame
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jTabbedPane1.addTab("Registration", openRegPanel1);
-        jTabbedPane1.addTab("Sign-In", openClassPanel1);
+        jTabbedPane1.addTab("Discounts", oCDiscPanel1);
 
         jPanel1.add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
@@ -89,7 +89,7 @@ public class FrontDeskFrame extends javax.swing.JFrame
 		{
 			public void run()
 			{
-				new FrontDeskFrame().setVisible(true);
+				new OpenClassFrame().setVisible(true);
 			}
 		});
 	}
@@ -99,8 +99,7 @@ public class FrontDeskFrame extends javax.swing.JFrame
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private offstage.frontdesk.OpenClassPanel openClassPanel1;
-    private offstage.frontdesk.OpenRegPanel openRegPanel1;
+    private offstage.openclass.OCDiscPanel oCDiscPanel1;
     // End of variables declaration//GEN-END:variables
 	
 }

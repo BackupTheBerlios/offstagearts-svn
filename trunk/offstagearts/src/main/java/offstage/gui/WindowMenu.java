@@ -66,6 +66,7 @@ void setWindowMenu(JFrame f)
 	addFrameMenuItem(menu, "School", "school");
 	addFrameMenuItem(menu, "Accounting", "accounting");
 	addFrameMenuItem(menu, "Front Desk", "frontdesk");
+	addFrameMenuItem(menu, "Open Class", "openclass");
 	menu.add(new JSeparator());
 	addFrameMenuItem(menu, "Duplicates", "dups");
 	addFrameMenuItem(menu, "Console", "console");

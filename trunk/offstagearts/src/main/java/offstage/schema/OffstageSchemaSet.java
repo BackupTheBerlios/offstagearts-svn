@@ -97,6 +97,8 @@ throws SQLException
 	map.put("duedates", new DuedatesSchema(str, change, tz));
 	map.put("duedateids", new DuedateidsSchema());
 	map.put("holidays", new HolidaysSchema(str, change, tz));
+	map.put("ocdiscids", new OcdiscidsSchema());
+	map.put("ocdiscidsamt", new OcdiscidsamtSchema(str, change, tz));
 }
 	
 }
