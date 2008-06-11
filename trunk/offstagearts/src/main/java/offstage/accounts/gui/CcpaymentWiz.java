@@ -28,17 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.accounts.gui;
 
 import citibob.swing.html.*;
-import java.util.*;
-import citibob.swing.typed.*;
-import citibob.swing.html.*;
-import offstage.types.*;
-import javax.swing.*;
-import offstage.wizards.*;
-import citibob.wizard.*;
-import citibob.app.*;
-import offstage.schema.*;
 import citibob.jschema.*;
-import citibob.util.*;
 import offstage.*;
 import offstage.swing.typed.*;
 import citibob.sql.*;
@@ -49,7 +39,7 @@ import citibob.sql.*;
  */
 public class CcpaymentWiz extends HtmlWiz {
 
-	
+
 /**
  * Creates a new instance of PersonWiz 
  */

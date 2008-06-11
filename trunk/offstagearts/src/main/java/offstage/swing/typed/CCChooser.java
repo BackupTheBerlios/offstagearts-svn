@@ -26,7 +26,6 @@ package offstage.swing.typed;
 
 import java.sql.*;
 import citibob.app.*;
-import javax.swing.*;
 import citibob.sql.pgsql.*;
 import citibob.sql.*;
 import citibob.swing.typed.*;
@@ -43,8 +42,7 @@ int entityid;
 static final int T_OLD = 0;		// Tab for old cc info
 static final int T_NEW = 1;		// Tab for new cc info
 
-	
-	/** Creates new form CChoice2 */
+ 	/** Creates new form CChoice2 */
 	public CCChooser()
 	{
 		initComponents();

@@ -24,6 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.frontdesk;
 
 import citibob.sql.SqlRun;
+import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import offstage.FrontApp;
 
 /**
@@ -32,7 +38,16 @@ import offstage.FrontApp;
  */
 public class FrontDeskFrame extends javax.swing.JFrame
 {
-	
+	class CatchCCAction extends AbstractAction {
+            public CatchCCAction(String text) {
+                super(text);
+            }
+
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Action [" + e.getActionCommand() + "] performed!");
+            }
+
+        }
 	/** Creates new form FrontDeskFrame */
 	public FrontDeskFrame()
 	{
@@ -44,8 +59,14 @@ public class FrontDeskFrame extends javax.swing.JFrame
 	{
 		this.openClassPanel1.initRuntime(str, app);
 		openRegPanel1.initRuntime(str, app);
-	}
-	
+                
+                CatchCCAction CatchCC = new CatchCCAction("stuff");                
+
+                jTabbedPane1.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("typed %"), "catchcc");
+                jTabbedPane1.getActionMap().put("catchcc", CatchCC);
+               
+        }
+    	
 	/** This method is called from within the constructor to
 	 initialize the form.
 	 WARNING: Do NOT modify this code. The content of this method is
