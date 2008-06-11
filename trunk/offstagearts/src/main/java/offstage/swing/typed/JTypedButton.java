@@ -38,7 +38,7 @@ import citibob.text.*;
  * @author  citibob
  */
 public class JTypedButton
-extends JToggleButton
+extends JButton
 implements TypedWidget, KeyListener {
 
 /** Our best guess of the class this takes. */
@@ -174,14 +174,16 @@ JFormattedTextField.AbstractFormatter afmt)
 }
 // -------------------------------------------------------------------
 // ===================== KeyListener =====================
-public void keyTyped(KeyEvent e) {
-        System.out.println("key typed");
+public void keyTyped(KeyEvent evt) {
+
 }
+        
 public void keyReleased(KeyEvent e) {
 //	if (e.getKeyCode() == KeyEvent.VK_ESCAPE) setValue(getValue());
-        System.out.println("released");
+//        System.out.println("released");
 }
-public void keyPressed(KeyEvent e) {
-        System.out.println("pressed");
-}
+public void keyPressed(KeyEvent evt) {
+    
+}    
+
 }

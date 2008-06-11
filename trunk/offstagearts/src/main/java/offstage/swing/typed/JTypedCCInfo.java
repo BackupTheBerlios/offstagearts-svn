@@ -71,7 +71,7 @@ public JTypedCCInfo()
 	};
 	ccname.addFocusListener(focus);
 //	cctype.addFocusListener(focus);
-	ccnumber.addFocusListener(focus);d
+	ccnumber.addFocusListener(focus);
 	expdate.addFocusListener(focus);
 	ccv.addFocusListener(focus);
 	zip.addFocusListener(focus);
@@ -291,16 +291,17 @@ public void setColName(String col) { this.colName = col; }
 
         ccname.setText("jTypedTextField4");
         ccname.setColName("ccname");
-        ccname.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                ccnameKeyTyped(evt);
-            }
-        });
 
         jTypedButton1.setText("Click to Swipe");
+        jTypedButton1.setNextFocusableComponent(ccname);
         jTypedButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTypedButton1ActionPerformed(evt);
+            }
+        });
+        jTypedButton1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTypedButton1KeyTyped(evt);
             }
         });
 
@@ -367,34 +368,38 @@ private void jTypedButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         if (swipeState.equals("normal")) {
                 swipeState = "ready";
                 jTypedButton1.setText("Swipe Now!");
-        } else {
-                swipeState = "normal";
-                jTypedButton1.setText("Click to Swipe");
+//        } else {
+//                swipeState = "normal";
+//                jTypedButton1.setText("Click to Swipe");
         }
-        jTypedButton1.requestFocus();
+//        jTypedButton1.requestFocus();
 }//GEN-LAST:event_jTypedButton1ActionPerformed
 
-private void exitSwipe() {
-        swipeState = "normal";
-}
-
-private void ccnameKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ccnameKeyTyped
+private void jTypedButton1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTypedButton1KeyTyped
         if(!swipeState.equals("normal")) {
                 if(swipeState.equals("ready")) {
                         swipeState = "reading";
-//                         setTimeout(exitSwipe(), 1);
+//                        setTimeout(exitSwipe(), 1);
                 }
                 char pressedKey = evt.getKeyChar();
                 swipeString = swipeString + pressedKey;
                 if(swipeString.indexOf("?") != swipeString.lastIndexOf("?")) {
-                    swipeState = "normal";
-                    jTypedButton1.setText("Click to Swipe");
-                    System.out.println(swipeString);
+                        swipeState = "normal";
+                        System.out.println(swipeString);
+                        jTypedButton1.setText("Click to Swipe");
+                        String[] swipeArr = swipeString.split("\\^");
+                        String ccnum = swipeArr[0].substring(2);
+                        String[] backName = swipeArr[1].split("/");
+                        String name = backName[1]+" "+backName[0];
+                        String date = swipeArr[2].substring(0, 6);
+                        ccnumber.setValue(ccnum);
+                        expdate.setValue(date);
+                        ccname.setValue(name);
+                        swipeString = "";
                 }
         }
-}//GEN-LAST:event_ccnameKeyTyped
-	
-	
+}//GEN-LAST:event_jTypedButton1KeyTyped
+      
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Button button1;
     private citibob.swing.typed.JTypedTextField ccname;
