@@ -83,6 +83,7 @@ throws SQLException
 	map.put("phoneids", new PhoneidsSchema());
 	map.put("meetings", new MeetingsSchema());
 	map.put("enrollments", new EnrollmentsSchema(str, change, tz));
+		map.put("uniqenrolls", map.get("enrollments"));
 	map.put("subs", new SubsSchema(str, change, tz));
 //	map.put("entities_school", new EntitiesSchoolSchema(str, change));
 	map.put("actrans2", new Actrans2Schema(str, change, tz));
@@ -99,6 +100,7 @@ throws SQLException
 	map.put("holidays", new HolidaysSchema(str, change, tz));
 	map.put("ocdiscids", new OcdiscidsSchema());
 	map.put("ocdiscidsamt", new OcdiscidsamtSchema(str, change, tz));
+	map.put("teachers", new TeachersSchema());
 }
 	
 }

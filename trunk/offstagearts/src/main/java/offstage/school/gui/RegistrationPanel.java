@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.school.gui;
 
+import citibob.app.App;
 import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.swing.typed.*;
@@ -87,25 +88,6 @@ public RegistrationPanel()
 }
 
 // =====================================================
-class EnrolledDbModel extends SqlBufDbModel
-{
-	int termID, studentID;
-	public EnrolledDbModel(SqlRun str) {
-		super(str, fapp,
-		new String[] {"courseids", "enrollments"},
-		null,
-		new String[] {"enrollments"});
-	}
-	public String getSelectSql(boolean proto) {
-		return
-			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
-			" from enrollments e, courseids c" +
-			" where e.courseid = c.courseid" +
-			" and c.termid = " + SqlInteger.sql(termID) + //smod.getTermID()) +
-			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(studentID)) + //smod.getStudentID())) +
-			" order by dayofweek, tstart, name";
-	}
-}
 // =====================================================
 class AllStudentDbModel extends MultiDbModel
 {
@@ -115,14 +97,14 @@ class AllStudentDbModel extends MultiDbModel
 	{
 		smod.studentDm.setKey(studentid);
 		smod.termregsDm.setKey("entityid", studentid);
-		enrolledDb.studentID = studentid;
+		enrolledDb.setEntityID(studentid);
 	}
 	public Integer getStudentID()
 		{ return (Integer)smod.studentDm.getKey(); }
 	public void setTermID(Integer termid)
 	{
 		smod.termregsDm.setKey("groupid", termid);	
-		enrolledDb.termID = termid;
+		enrolledDb.setTermID(termid);
 	}
 	public void resetStudentID(SqlRun str, Integer studentid)
 	{
@@ -345,7 +327,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 
 	// =====================================================================
 	// Enrollments
-	enrolledDb = new EnrolledDbModel(str);
+	enrolledDb = new EnrolledDbModel(str, fapp, "enrollments", "student");
 //	enrolledDb = new SqlBufDbModel(str, fapp,
 //		new String[] {"courseids", "enrollments"},
 //		null,

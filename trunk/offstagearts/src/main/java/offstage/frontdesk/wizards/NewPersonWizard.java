@@ -95,7 +95,7 @@ addState(new AbstractWizState("person", null, null) {
 //						int ndups = (Integer)str.get("count");
 						if (ndups.val == 0) {
 							createPerson(str, false);
-							stateName = null; //"finished";
+							stateName = "finished";
 						} else {
 							stateName = "checkdups";
 						}

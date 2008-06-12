@@ -51,9 +51,9 @@ throws SQLException
 		new SqlCol(new SqlEnum(kmodel, "<none>"), "courserole"),
 		new SqlCol(new SqlDate(tz, true), "dstart"),
 		new SqlCol(new SqlDate(tz, true), "dend"),
-		new SqlCol(new SqlInteger(true), "pplanid"),
-		new SqlCol(new SqlTimestamp("GMT"), "dtapproved"),
-		new SqlCol(new SqlTimestamp("GMT"), "dtenrolled")
+//		new SqlCol(new SqlInteger(true), "pplanid"),
+//		new SqlCol(new SqlTimestamp("GMT"), "dtapproved"),
+//		new SqlCol(new SqlTimestamp("GMT"), "dtenrolled")
 	};
 }
 

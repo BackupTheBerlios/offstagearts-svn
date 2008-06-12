@@ -25,6 +25,7 @@ package offstage.openclass;
 
 import offstage.frontdesk.*;
 import citibob.sql.SqlRun;
+import citibob.sql.UpdTasklet2;
 import offstage.FrontApp;
 
 /**
@@ -41,9 +42,17 @@ public class OpenClassFrame extends javax.swing.JFrame
 		setTitle("Open Class");
 	}
 	
-	public void initRuntime(SqlRun str, FrontApp app)
+	public void initRuntime(SqlRun str, final FrontApp app)
 	{
-		this.oCDiscPanel1.initRuntime(str, app, null);
+//		final OCDiscModels models = new OCDiscModels(str, app);
+		str.execUpdate(new UpdTasklet2() {
+		public void run(SqlRun str) {
+			discountPanel1.initRuntime(str, app);
+//			oCDiscPanel1.initRuntime(str, app, models);
+//			oCDiscPanel1.refresh(str, null);
+			
+			teacherPanel1.initRuntime(str, app);
+		}});
 //		this.openClassPanel1.initRuntime(str, app);
 //		openRegPanel1.initRuntime(str, app);
 	}
@@ -58,7 +67,8 @@ public class OpenClassFrame extends javax.swing.JFrame
 
         jPanel1 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        oCDiscPanel1 = new offstage.openclass.OCDiscPanel();
+        discountPanel1 = new offstage.openclass.DiscountPanel();
+        teacherPanel1 = new offstage.openclass.TeacherPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
 
@@ -66,7 +76,8 @@ public class OpenClassFrame extends javax.swing.JFrame
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jTabbedPane1.addTab("Discounts", oCDiscPanel1);
+        jTabbedPane1.addTab("Discounts", discountPanel1);
+        jTabbedPane1.addTab("Teachers", teacherPanel1);
 
         jPanel1.add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
@@ -95,11 +106,12 @@ public class OpenClassFrame extends javax.swing.JFrame
 	}
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private offstage.openclass.DiscountPanel discountPanel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private offstage.openclass.OCDiscPanel oCDiscPanel1;
+    private offstage.openclass.TeacherPanel teacherPanel1;
     // End of variables declaration//GEN-END:variables
 	
 }

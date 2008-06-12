@@ -15,59 +15,54 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package offstage.frontdesk;
+package offstage.openclass;
 
+import offstage.frontdesk.*;
 import citibob.jschema.*;
 import citibob.sql.*;
-import citibob.sql.pgsql.SqlInteger;
 import java.util.*;
 import java.sql.*;
 import offstage.db.*;
 import offstage.schema.*;
 import citibob.jschema.log.*;
+import offstage.FrontApp;
+import offstage.school.gui.EnrolledDbModel;
 
 /** Query one person record and all the stuff related to it. */
 
-public class FDPersonModel extends LoggedMultiDbModel
+public class TeacherDbModel extends LoggedMultiDbModel
 {
 
 EntityDbModel onePerson;
+IntKeyedDbModel oneTeacher;
 IntKeyedDbModel phones;
+//IntKeyedDbModel ocdiscs;		// Discounts
+EnrolledDbModel enrolled;
+OCDiscModels ocDiscModels;
 
-
-public EntityDbModel getPersonDm()
-	{ return onePerson; }
-public IntKeyedDbModel getPhonesDm()
-	{ return phones; }
-
-public FDPersonModel(citibob.app.App app)
+public TeacherDbModel(SqlRun str, final FrontApp app)
 {
 	super(app.queryLogger());
+	
 	SchemaSet osset = app.schemaSet();
 	logadd(onePerson = new EntityDbModel(osset.get("persons"), app));
+	logadd(oneTeacher = new IntKeyedDbModel(osset.get("teachers"), "entityid"));
 	logadd(phones = new IntKeyedDbModel(osset.get("phones"), "entityid"));
+//	logadd(ocdiscs = new IntKeyedDbModel(osset.get("ocdiscids"), "entityid"));
+	logadd(enrolled = new EnrolledDbModel(str, app, "uniqenrolls", "teacher"));
+	
+	ocDiscModels = new OCDiscModels(str, app);
+	str.execUpdate(new UpdTasklet() {
+	public void run() {	
+		add(ocDiscModels.getDm());
+	}});
 }
 
 public void insertPhone(int groupTypeID) throws KeyViolationException
-{
-	phones.getSchemaBuf().insertRow(-1, "groupid", new Integer(groupTypeID));
-}
+	{ phones.getSchemaBuf().insertRow(-1, "groupid", new Integer(groupTypeID)); }
 
-
-/** Override standard delete.  Don't actually delete record, just set obsolete bit. */
-public void doDelete(SqlRun str)
-//throws java.sql.SQLException
-{
-	// Delete the immediate record
-	SchemaBufDbModel dm = getPersonDm();
-	SchemaBuf sb = dm.getSchemaBuf();
-	sb.setValueAt(Boolean.TRUE, 0, sb.findColumn("obsolete"));
-	dm.doUpdate(str);
-
-	// Reassign any other family members
-	str.execSql("update entities set primaryentityid=entityid" +
-		" where primaryentityid = " + SqlInteger.sql((Integer)this.getKey()));	
-}
+public void insertDiscount(int ocdiscid) throws KeyViolationException
+	{ ocDiscModels.discDm.getSchemaBuf().insertRow(-1, "ocdiscid", new Integer(ocdiscid)); }
 
 
 }

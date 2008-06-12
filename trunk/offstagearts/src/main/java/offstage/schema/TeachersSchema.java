@@ -20,14 +20,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * and open the template in the editor.
  */
 
-package offstage.equery.swing;
+package offstage.schema;
+
+import citibob.jschema.ConstSqlSchema;
+import citibob.jschema.SqlCol;
+import citibob.sql.SqlNumeric;
+import citibob.sql.pgsql.SqlInteger;
+import citibob.sql.pgsql.SqlString;
 
 /**
  *
  * @author citibob
  */
-public class MailMsg {
-	public String subject;
-	public String boundary;
-	public byte[] body;
+public class TeachersSchema extends ConstSqlSchema
+{
+
+public TeachersSchema()
+{
+	table = "teachers";
+	cols = new SqlCol[] {
+		new SqlCol(new SqlInteger(false), "entityid", true),
+		new SqlCol(new SqlString(30), "displayname"),
+		new SqlCol(new SqlNumeric(9,2), "ocpct"),
+		new SqlCol(new SqlNumeric(9,2), "hourlyrate"),
+		new SqlCol(new SqlNumeric(9,2), "perclassrate")
+	};
+}
 }

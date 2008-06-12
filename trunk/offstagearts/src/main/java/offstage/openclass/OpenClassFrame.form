@@ -51,11 +51,20 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
           <SubComponents>
-            <Component class="offstage.openclass.OCDiscPanel" name="oCDiscPanel1">
+            <Component class="offstage.openclass.DiscountPanel" name="discountPanel1">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Discounts">
                     <Property name="tabTitle" type="java.lang.String" value="Discounts"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="offstage.openclass.TeacherPanel" name="teacherPanel1">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Teachers">
+                    <Property name="tabTitle" type="java.lang.String" value="Teachers"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>

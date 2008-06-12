@@ -21,77 +21,111 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Created on February 9, 2005, 8:18 PM
  */
 
-package offstage.frontdesk;
+package offstage.openclass;
 
+import java.beans.PropertyChangeEvent;
+import offstage.frontdesk.*;
 import javax.swing.*;
 import citibob.jschema.*;
 import citibob.swing.typed.*;
 import citibob.task.*;
 import citibob.sql.*;
-import citibob.swing.WidgetTree;
+import citibob.text.PercentSFormat;
 import citibob.wizard.Wizard;
+import java.beans.PropertyChangeListener;
 import offstage.FrontApp;
 
 /**
  *
  * @author  citibob
  */
-public class FDPersonPanel 
+public class TeacherPanel 
 extends javax.swing.JPanel {
-//    FrontApp fapp;
-    SchemaRowModel model;	// The RowModel (which uses the schema)
-	FDPersonModel dmod;
+	TeacherDbModel teacherDm;
 	FrontApp app;
 //        SchoolModel smod;
-        
     
 	/** Creates new form PersonPanel */
-	public FDPersonPanel() {
+	public TeacherPanel() {
 		initComponents();
 		genderButtonGroup.add("M", maleButton);
 		genderButtonGroup.add("F", femaleButton);
 		genderButtonGroup.add(null, unknownGenderButton);
-		
-//		familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
-//		public void propertyChange(PropertyChangeEvent evt) {
-//			app.guiRun().run(FDPersonPanel.this, new SqlTask() {
-//			public void run(SqlRun str) throws Exception {
-//				Integer EntityID = (Integer)familyTable.getValue();
-//				if (EntityID == null) return;
-//				dmod.setKey(EntityID);
-//				dmod.doSelect(str);
-//			}});
-//		}});
-
 	}
 	
-	public void initRuntime(SqlRun str, FrontApp xapp)
-	{
-		this.app = xapp;
-		
-		this.dmod = new FDPersonModel(app);
-		SchemaBufRowModel xmodel = new SchemaBufRowModel(dmod.getPersonDm().getSchemaBuf());
+public void refreshTeacherList(SqlRun str)
+{
+	teacherList.getTable().executeQuery(str, "select entityid from teachers", "lastname,firstname");
+}
+public void initRuntime(SqlRun str, FrontApp xapp)
+{
+	this.app = xapp;
+//	vNewTeacherID.initRuntime(app);
 
-		this.model = xmodel;
+	
+	
+	// =======================
+	// Discount codes --- makes its own model
+//	allDm.oc
+	
+	// ====================================
+	// Models
+	teacherDm = new TeacherDbModel(str, app);
+	SchemaBufRowModel personRm = new SchemaBufRowModel(teacherDm.onePerson.getSchemaBuf());
+	SchemaBufRowModel teacherRm = new SchemaBufRowModel(teacherDm.oneTeacher.getSchemaBuf());
+	
+	TypedWidgetBinder.bindRecursive(this, personRm, app.swingerMap());
+		new TypedWidgetBinder().bind(genderButtonGroup, personRm);
+	TypedWidgetBinder.bindRecursive(this, teacherRm, app.swingerMap());
+	tOpct.setJType(Double.class, new PercentSFormat());
+	
+//	teacherListDm = new SchemaBufDbModel(app.getSchema("teachers"), "teachers", null);
+
+	str.execUpdate(new UpdTasklet2() {		// Set up table AFTER enrolledDb has been initialized
+	public void run(SqlRun str) {
+		// ===========================================
+		// List of teachers
+		teacherList.initRuntime(app);
+		teacherList.addPropertyChangeListener("value", new PropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent evt) {
+			Integer entityid = (Integer)teacherList.getValue();
+			teacherDm.setKey(entityid);
+			app.sqlRun().pushFlush();
+//				teacherDm.doUpdate(app.sqlRun());
+				teacherDm.doSelect(app.sqlRun());
+			app.sqlRun().popFlush();
+		}});
 		
-		vPayerID.initRuntime(app);
-		vParent1ID.initRuntime(app);
-		
-		TypedWidgetBinder.bindRecursive(this, model, app.swingerMap());
-		new TypedWidgetBinder().bind(genderButtonGroup, xmodel);
-		
-		phonePanel.initRuntime(str, dmod.getPhonesDm().getSchemaBuf(),
+		// =====================
+		// Phone #s
+		phonePanel.initRuntime(str, teacherDm.phones.getSchemaBuf(),
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, true, app.swingerMap());
 
-//                ParentPayer.initRuntime(str, app);
-//                IntKeyedDbModel PeopleDm = new IntKeyedDbModel(app.getSchema("persons"), "entityid");
-//               PeopleDm.setKey(entityid);
-//		SchemaBufRowModel PeopleRm = new SchemaBufRowModel(PeopleDm.getSchemaBuf());
-//		TypedWidgetBinder.bindRecursive(parentPayer1.vParent1ID, PeopleRm, app.swingerMap());
-//              TypedWidgetBinder.bindRecursive(parentPayer1.vPayerID, PeopleRm, app.swingerMap());
-                
-	}
+
+		// =====================================================================
+		// Enrollments
+//	final EnrolledDbModel enrolledDb = new EnrolledDbModel(str, app, "uniqenrolls", "teacher");
+
+		enrollments.setModelU(teacherDm.enrolled.getTableModel(),
+			new String[] {"Course", "Day", "Start", "Finish",
+				"Custom Start", "Custom End (+1)"},
+			new String[] {"name", "dayofweek", "tstart", "tnext",
+				"dstart", "dend"},
+			new boolean[] {false, false, false, false,
+				true, true, true, false}, app.swingerMap());
+		enrollments.setFormatU("dayofweek", new DayOfWeekKeyedModel());
+
+		// ====================================================
+		// Discounts
+		oCDiscPane.initRuntime(app, teacherDm.ocDiscModels);
+		
+		// T
+	
+		refreshTeacherList(str);
+	}});
+	
+}
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
@@ -102,8 +136,19 @@ extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         genderButtonGroup = new citibob.swing.typed.KeyedButtonGroup();
-        phonePanel = new offstage.gui.GroupPanel();
-        lPhoneNumbers = new javax.swing.JLabel();
+        jToolBar1 = new javax.swing.JToolBar();
+        bSave = new javax.swing.JButton();
+        bUndo = new javax.swing.JButton();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        TeacherList = new javax.swing.JPanel();
+        teacherList = new offstage.swing.typed.IdSqlPanel();
+        jLabel9 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        bAddTeacher = new javax.swing.JButton();
+        bRemoveTeacher = new javax.swing.JButton();
+        jSplitPane3 = new javax.swing.JSplitPane();
+        TeacherDetails = new javax.swing.JPanel();
         AddrPanel = new javax.swing.JPanel();
         addressPanel = new javax.swing.JPanel();
         address1 = new citibob.swing.typed.JTypedTextField();
@@ -138,38 +183,92 @@ extends javax.swing.JPanel {
         firstname = new citibob.swing.typed.JTypedTextField();
         middlename = new citibob.swing.typed.JTypedTextField();
         lastname = new citibob.swing.typed.JTypedTextField();
-        jButton1 = new javax.swing.JButton();
-        PayerParent = new javax.swing.JPanel();
-        vPayerID = new offstage.swing.typed.EntityIDDropdown();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
-        vParent1ID = new offstage.swing.typed.EntityIDDropdown();
-        jButton3 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         Gender = new javax.swing.JPanel();
         maleButton = new javax.swing.JRadioButton();
         femaleButton = new javax.swing.JRadioButton();
         unknownGenderButton = new javax.swing.JRadioButton();
+        teacherTablePane = new javax.swing.JPanel();
+        tDisplayName = new citibob.swing.typed.JTypedTextField();
+        tOpct = new citibob.swing.typed.JTypedTextField();
+        tHourlyrate = new citibob.swing.typed.JTypedTextField();
+        tPerClassRate = new citibob.swing.typed.JTypedTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        DetailsPlusPhoneDiscount = new javax.swing.JPanel();
+        phonePanel = new offstage.gui.GroupPanel();
+        lPhoneNumbers = new javax.swing.JLabel();
+        oCDiscPane = new offstage.openclass.OCDiscPane();
+        lDiscountCodes = new javax.swing.JLabel();
+        EnrollmentsPane = new javax.swing.JPanel();
+        GroupScrollPanel = new javax.swing.JScrollPane();
+        enrollments = new citibob.jschema.swing.StatusTable();
+        jPanel15 = new javax.swing.JPanel();
+        bAddEnrollment = new javax.swing.JButton();
+        bRemoveEnrollment = new javax.swing.JButton();
 
         genderButtonGroup.setColName("gender");
 
-        setLayout(new java.awt.GridBagLayout());
+        setLayout(new java.awt.BorderLayout());
 
-        phonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        add(phonePanel, gridBagConstraints);
+        jToolBar1.setRollover(true);
 
-        lPhoneNumbers.setText("Phone Numbers");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        add(lPhoneNumbers, gridBagConstraints);
+        bSave.setText("Save");
+        bSave.setFocusable(false);
+        bSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bSaveActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(bSave);
+
+        bUndo.setText("Undo");
+        bUndo.setFocusable(false);
+        bUndo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bUndo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bUndo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bUndoActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(bUndo);
+
+        add(jToolBar1, java.awt.BorderLayout.SOUTH);
+
+        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        TeacherList.setLayout(new java.awt.BorderLayout());
+        TeacherList.add(teacherList, java.awt.BorderLayout.CENTER);
+
+        jLabel9.setFont(new java.awt.Font("Dialog", 1, 11));
+        jLabel9.setText("Teachers");
+        TeacherList.add(jLabel9, java.awt.BorderLayout.PAGE_START);
+
+        bAddTeacher.setText("Add");
+        bAddTeacher.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bAddTeacherActionPerformed(evt);
+            }
+        });
+        jPanel5.add(bAddTeacher);
+
+        bRemoveTeacher.setText("Remove");
+        bRemoveTeacher.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bRemoveTeacherActionPerformed(evt);
+            }
+        });
+        jPanel5.add(bRemoveTeacher);
+
+        TeacherList.add(jPanel5, java.awt.BorderLayout.PAGE_END);
+
+        jSplitPane1.setLeftComponent(TeacherList);
+
+        TeacherDetails.setMinimumSize(new java.awt.Dimension(355, 306));
+        TeacherDetails.setLayout(new java.awt.GridBagLayout());
 
         AddrPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -281,9 +380,9 @@ extends javax.swing.JPanel {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        add(AddrPanel, gridBagConstraints);
+        TeacherDetails.add(AddrPanel, gridBagConstraints);
 
         mainPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -453,87 +552,12 @@ extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.5;
         FirstMiddleLast.add(lastname, gridBagConstraints);
 
-        jButton1.setText("New");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 1;
-        FirstMiddleLast.add(jButton1, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         mainPanel.add(FirstMiddleLast, gridBagConstraints);
-
-        vPayerID.setColName("payerid"); // NOI18N
-        vPayerID.setPreferredSize(new java.awt.Dimension(200, 19));
-
-        jLabel4.setText("Payer:"); // NOI18N
-
-        jLabel20.setText("Parent:"); // NOI18N
-
-        vParent1ID.setColName("parent1id"); // NOI18N
-        vParent1ID.setPreferredSize(new java.awt.Dimension(200, 19));
-
-        jButton3.setText("New");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("New");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout PayerParentLayout = new org.jdesktop.layout.GroupLayout(PayerParent);
-        PayerParent.setLayout(PayerParentLayout);
-        PayerParentLayout.setHorizontalGroup(
-            PayerParentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PayerParentLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(PayerParentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jLabel4)
-                    .add(jLabel20))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(PayerParentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(vPayerID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
-                    .add(vParent1ID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(PayerParentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(jButton2)
-                    .add(jButton3)))
-        );
-        PayerParentLayout.setVerticalGroup(
-            PayerParentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(PayerParentLayout.createSequentialGroup()
-                .add(PayerParentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jButton2)
-                    .add(jLabel4)
-                    .add(vPayerID, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(PayerParentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jButton3)
-                    .add(PayerParentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                        .add(vParent1ID, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(jLabel20))))
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        mainPanel.add(PayerParent, gridBagConstraints);
 
         Gender.setPreferredSize(new java.awt.Dimension(85, 50));
         Gender.setLayout(new java.awt.GridBagLayout());
@@ -576,7 +600,163 @@ extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        add(mainPanel, gridBagConstraints);
+        gridBagConstraints.weightx = 1.0;
+        TeacherDetails.add(mainPanel, gridBagConstraints);
+
+        teacherTablePane.setLayout(new java.awt.GridBagLayout());
+
+        tDisplayName.setText("jTypedTextField1");
+        tDisplayName.setColName("displayname");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        teacherTablePane.add(tDisplayName, gridBagConstraints);
+
+        tOpct.setText("jTypedTextField1");
+        tOpct.setColName("ocpct");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        teacherTablePane.add(tOpct, gridBagConstraints);
+
+        tHourlyrate.setText("jTypedTextField1");
+        tHourlyrate.setColName("hourlyrate");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        teacherTablePane.add(tHourlyrate, gridBagConstraints);
+
+        tPerClassRate.setText("jTypedTextField1");
+        tPerClassRate.setColName("perclassrate");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        teacherTablePane.add(tPerClassRate, gridBagConstraints);
+
+        jLabel2.setText("Open Class Share ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        teacherTablePane.add(jLabel2, gridBagConstraints);
+
+        jLabel4.setText("Hourly Rate ($) ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        teacherTablePane.add(jLabel4, gridBagConstraints);
+
+        jLabel6.setText("Per-Class Rate ($) ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        teacherTablePane.add(jLabel6, gridBagConstraints);
+
+        jLabel8.setText("Display Name ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        teacherTablePane.add(jLabel8, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        TeacherDetails.add(teacherTablePane, gridBagConstraints);
+
+        jSplitPane3.setLeftComponent(TeacherDetails);
+
+        DetailsPlusPhoneDiscount.setLayout(new java.awt.GridBagLayout());
+
+        phonePanel.setMinimumSize(new java.awt.Dimension(153, 120));
+        phonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        DetailsPlusPhoneDiscount.add(phonePanel, gridBagConstraints);
+
+        lPhoneNumbers.setFont(new java.awt.Font("Dialog", 1, 11));
+        lPhoneNumbers.setText("Phone Numbers");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        DetailsPlusPhoneDiscount.add(lPhoneNumbers, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
+        DetailsPlusPhoneDiscount.add(oCDiscPane, gridBagConstraints);
+
+        lDiscountCodes.setFont(new java.awt.Font("Dialog", 1, 11));
+        lDiscountCodes.setText("Discount Codes");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        DetailsPlusPhoneDiscount.add(lDiscountCodes, gridBagConstraints);
+
+        jSplitPane3.setRightComponent(DetailsPlusPhoneDiscount);
+
+        jSplitPane1.setRightComponent(jSplitPane3);
+
+        jSplitPane2.setLeftComponent(jSplitPane1);
+
+        EnrollmentsPane.setLayout(new java.awt.BorderLayout());
+
+        enrollments.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        enrollments.setMinimumSize(new java.awt.Dimension(60, 264));
+        enrollments.setPreferredSize(new java.awt.Dimension(300, 264));
+        GroupScrollPanel.setViewportView(enrollments);
+
+        EnrollmentsPane.add(GroupScrollPanel, java.awt.BorderLayout.CENTER);
+
+        bAddEnrollment.setText("Add Enrollment"); // NOI18N
+        bAddEnrollment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bAddEnrollmentActionPerformed(evt);
+            }
+        });
+        jPanel15.add(bAddEnrollment);
+
+        bRemoveEnrollment.setText("Remove Enrollment"); // NOI18N
+        bRemoveEnrollment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bRemoveEnrollmentActionPerformed(evt);
+            }
+        });
+        jPanel15.add(bRemoveEnrollment);
+
+        EnrollmentsPane.add(jPanel15, java.awt.BorderLayout.SOUTH);
+
+        jSplitPane2.setRightComponent(EnrollmentsPane);
+
+        add(jSplitPane2, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 	private void bLaunchEmailActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bLaunchEmailActionPerformed
@@ -589,74 +769,165 @@ extends javax.swing.JPanel {
 		citibob.gui.BareBonesBrowserLaunch.openURL((String)url.getValue());
 	}//GEN-LAST:event_bLaunchBrowserActionPerformed
 
-private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-                
-                app.guiRun().run(FDPersonPanel.this, new SqlTask() {
-		public void run(SqlRun str) throws Exception {
-			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(FDPersonPanel.this);
-			Wizard wizard = new offstage.frontdesk.wizards.NewPersonWizard(app, root);
-			wizard.runWizard();
-			Integer eid = (Integer)wizard.getVal("entityid");
-			if (eid != null) {
-//				str.execSql(SchoolDB.createStudentSql(eid));
-//				changeStudent(str, eid);
-			}
-		}});
-}//GEN-LAST:event_jButton1ActionPerformed
-
-private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+private void bAddTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddTeacherActionPerformed
+	app.guiRun().run(TeacherPanel.this, new SqlTask() {
+	public void run(SqlRun str) throws Exception {
+		Wizard wizard = new NewTeacherWizard(app, TeacherPanel.this);
+		if (!wizard.runWizard()) {
+			return;
+		}
+		Integer entityid = (Integer)wizard.getVal("entityid");
+//		teacherDm.setKey(entityid);
+//		teacherDm.doSelect(str);
+		
+		refreshTeacherList(str);
+		teacherList.setValue(entityid);
+	}});
 	// TODO add your handling code here:
-}//GEN-LAST:event_jButton3ActionPerformed
+}//GEN-LAST:event_bAddTeacherActionPerformed
 
-private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-	//app.guiRun().run(FDPersonPanel.this, new SqlTask() {
-	//	public void run(SqlRun str) throws Exception {
-	//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(FDPersonPanel.this);
-	//		Wizard wizard = new offstage.wizards.newrecord.NewPersonWizard(app, root);
-	//		wizard.runWizard();
-	//		Integer eid = (Integer)wizard.getVal("entityid");
-	//		if (eid != null) {
-	//			smod.studentRm.set("vPayerID", eid);
-	////			doUpdateSelect(str);		// Causes problem if record is incomplete
-	////			allRec.doSelect(str);
-	//		}
-	//	}});
-}//GEN-LAST:event_jButton2ActionPerformed
+private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
+	app.guiRun().run(TeacherPanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
+			teacherDm.doUpdate(str);
+			teacherDm.doSelect(str);
+		}});
+		// TODO add your handling code here:
+}//GEN-LAST:event_bSaveActionPerformed
+
+private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
+	app.guiRun().run(TeacherPanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
+			teacherDm.doSelect(str);
+		}});
+		// TODO add your handling code here:
+}//GEN-LAST:event_bUndoActionPerformed
+
+private void bAddEnrollmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddEnrollmentActionPerformed
+//	fapp.guiRun().run(RegistrationPanel.this, new SqlTask() {
+//		public void run(SqlRun str) throws Exception {
+//			
+//			if (!recordValid()) {
+//				JOptionPane.showMessageDialog(RegistrationPanel.this,
+//						"You must have a payer\nand parent in order to enroll in courses.");
+//				return;
+//			}
+//			
+//			enrolledDb.doUpdate(str);
+//			Wizard wizard = new EnrollWizard(fapp, RegistrationPanel.this);
+//			//			TypedHashMap v = new TypedHashMap();
+//			//				wizard.setVal("sterm", vTermID.getKeyedModel().toString(vTermID.getValue()));
+//			wizard.setVal("sperson", vStudentID.getText());
+//			wizard.setVal("entityid", vStudentID.getValue());
+//			wizard.setVal("termid", smod.getTermID());
+//			//				wizard.setVal("courseroleModel",
+//			//					fapp.getSchema("courseroles"), )
+//			//						new citibob.sql.DbKeyedModel(st, null,
+//			//		"courseroles", "courseroleid", "name", "orderid")));
+//			
+//			wizard.runWizard("add");
+//			enrolledDb.doSelect(str);
+//		}});
+//		// TODO add your handling code here:
+}//GEN-LAST:event_bAddEnrollmentActionPerformed
+
+private void bRemoveEnrollmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRemoveEnrollmentActionPerformed
+//	if (JOptionPane.showConfirmDialog(RegistrationPanel.this,
+//			"Are you sure you wish to\n" +
+//			"remove the selected enrollment?",
+//			"Remove Enrollment", JOptionPane.YES_NO_OPTION)
+//			== JOptionPane.NO_OPTION) return;
+//	
+//	fapp.guiRun().run(RegistrationPanel.this, new SqlTask() {
+//		public void run(SqlRun str) throws Exception {
+//			
+//			int row = enrollments.getSelectedRow();
+//			if (row < 0) return;
+//			JTypeTableModel x;
+//			CitibobTableModel model = enrollments.getModelU();
+//			int courseid = (Integer)model.getValueAt(row, model.findColumn("courseid"));
+//			int entityid = (Integer)model.getValueAt(row, model.findColumn("entityid"));
+//			str.execSql("delete from enrollments" +
+//					" where courseid = " + SqlInteger.sql(courseid) +
+//					" and entityid = " + SqlInteger.sql(entityid));
+//			enrolledDb.doSelect(str);
+//		}});
+//		
+//		// TODO add your handling code here:
+}//GEN-LAST:event_bRemoveEnrollmentActionPerformed
+
+private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRemoveTeacherActionPerformed
+	app.guiRun().run(TeacherPanel.this, new SqlTask() {
+	public void run(SqlRun str) throws Exception {
+		Integer entityid = (Integer)teacherList.getValue();
+		if (entityid == null) return;
+		if (JOptionPane.showConfirmDialog(TeacherPanel.this,
+				"Are you sure you wish to\n" +
+				"remove this person as a teacher?",
+				"Remove Teacher", JOptionPane.YES_NO_OPTION)
+				!= JOptionPane.YES_OPTION) return;
+
+		String sql =
+			" delete from teachers where entityid = " + entityid;
+		str.execSql(sql);
+		refreshTeacherList(str);
+		teacherDm.setKey(null);
+		teacherDm.doSelect(str);
+	}});
+}//GEN-LAST:event_bRemoveTeacherActionPerformed
 	
 
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel AddrPanel;
+    private javax.swing.JPanel DetailsPlusPhoneDiscount;
+    private javax.swing.JPanel EnrollmentsPane;
     private javax.swing.JPanel FirstMiddleLast;
     private javax.swing.JPanel Gender;
+    private javax.swing.JScrollPane GroupScrollPanel;
     private javax.swing.JPanel MiscInfo;
-    private javax.swing.JPanel PayerParent;
+    private javax.swing.JPanel TeacherDetails;
+    private javax.swing.JPanel TeacherList;
     private citibob.swing.typed.JTypedTextField address1;
     private citibob.swing.typed.JTypedTextField address2;
     private javax.swing.JPanel addressPanel;
+    private javax.swing.JButton bAddEnrollment;
+    private javax.swing.JButton bAddTeacher;
     private javax.swing.JButton bLaunchBrowser;
     private javax.swing.JButton bLaunchEmail;
+    private javax.swing.JButton bRemoveEnrollment;
+    private javax.swing.JButton bRemoveTeacher;
+    private javax.swing.JButton bSave;
+    private javax.swing.JButton bUndo;
     private citibob.swing.typed.JTypedTextField city;
     private citibob.swing.typed.JTypedDateChooser dob;
     private citibob.swing.typed.JTypedTextField email1;
+    private citibob.jschema.swing.StatusTable enrollments;
     private citibob.swing.typed.JTypedTextField entityid;
     private javax.swing.JRadioButton femaleButton;
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.KeyedButtonGroup genderButtonGroup;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
+    private javax.swing.JSplitPane jSplitPane3;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JLabel lDiscountCodes;
     private javax.swing.JLabel lFirst;
     private javax.swing.JLabel lLast;
     private javax.swing.JLabel lMiddle;
@@ -667,13 +938,18 @@ private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JPanel mainPanel;
     private javax.swing.JRadioButton maleButton;
     private citibob.swing.typed.JTypedTextField middlename;
+    private offstage.openclass.OCDiscPane oCDiscPane;
     private offstage.gui.GroupPanel phonePanel;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField state;
+    private citibob.swing.typed.JTypedTextField tDisplayName;
+    private citibob.swing.typed.JTypedTextField tHourlyrate;
+    private citibob.swing.typed.JTypedTextField tOpct;
+    private citibob.swing.typed.JTypedTextField tPerClassRate;
+    private offstage.swing.typed.IdSqlPanel teacherList;
+    private javax.swing.JPanel teacherTablePane;
     private javax.swing.JRadioButton unknownGenderButton;
     private citibob.swing.typed.JTypedTextField url;
-    private offstage.swing.typed.EntityIDDropdown vParent1ID;
-    private offstage.swing.typed.EntityIDDropdown vPayerID;
     private citibob.swing.typed.JTypedTextField zip;
     // End of variables declaration//GEN-END:variables
 	// --------------------------------------------------------------
