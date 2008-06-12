@@ -141,6 +141,9 @@
         <Property name="text" type="java.lang.String" value="jTypedTextField4"/>
         <Property name="colName" type="java.lang.String" value="ccname"/>
       </Properties>
+      <Events>
+        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="ccnameKeyTyped"/>
+      </Events>
     </Component>
     <Component class="offstage.swing.typed.JTypedButton" name="jTypedButton1">
       <Properties>
