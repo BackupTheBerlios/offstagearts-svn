@@ -49,13 +49,26 @@ public TeacherDbModel(SqlRun str, final FrontApp app)
 	logadd(oneTeacher = new IntKeyedDbModel(osset.get("teachers"), "entityid"));
 	logadd(phones = new IntKeyedDbModel(osset.get("phones"), "entityid"));
 //	logadd(ocdiscs = new IntKeyedDbModel(osset.get("ocdiscids"), "entityid"));
-	logadd(enrolled = new EnrolledDbModel(str, app, "uniqenrolls", "teacher"));
+	logadd(enrolled = new EnrolledDbModel(str, app, "enrollments", "teacher"));
 	
 	ocDiscModels = new OCDiscModels(str, app);
 	str.execUpdate(new UpdTasklet() {
 	public void run() {	
 		add(ocDiscModels.getDm());
 	}});
+}
+
+public void setKey(Object entityid)
+{
+	Object oldKey = onePerson.getKey();
+	if (entityid == oldKey) return;
+	if (entityid != null && oldKey != null && entityid.equals(oldKey)) return;
+		
+	onePerson.setKey(entityid);
+	oneTeacher.setKey(entityid);
+	phones.setKey(entityid);
+	enrolled.setEntityID((Integer)entityid);
+	ocDiscModels.getDm().setKey(entityid);
 }
 
 public void insertPhone(int groupTypeID) throws KeyViolationException

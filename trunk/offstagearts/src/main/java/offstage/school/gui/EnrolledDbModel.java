@@ -33,15 +33,15 @@ import citibob.sql.pgsql.SqlInteger;
  */
 public class EnrolledDbModel extends SqlBufDbModel
 {
-	private int termid, entityid;
+	private Integer termid, entityid;
 	String enrollTable;					// enrollments or uniqenrolls
 	Integer role;						// Select only this role
 	
-	public void setEntityID(int entityid) {
+	public void setEntityID(Integer entityid) {
 		this.entityid = entityid;
 	}
 
-	public void setTermID(int termID) {
+	public void setTermID(Integer termID) {
 		this.termid = termID;
 	}
 

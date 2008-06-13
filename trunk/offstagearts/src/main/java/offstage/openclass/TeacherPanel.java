@@ -30,10 +30,13 @@ import citibob.jschema.*;
 import citibob.swing.typed.*;
 import citibob.task.*;
 import citibob.sql.*;
+import citibob.sql.pgsql.SqlInteger;
 import citibob.text.PercentSFormat;
+import citibob.util.ObjectUtil;
 import citibob.wizard.Wizard;
 import java.beans.PropertyChangeListener;
 import offstage.FrontApp;
+import offstage.schema.TermidsSchema;
 
 /**
  *
@@ -68,6 +71,7 @@ public void initRuntime(SqlRun str, FrontApp xapp)
 	// Discount codes --- makes its own model
 //	allDm.oc
 	
+	
 	// ====================================
 	// Models
 	teacherDm = new TeacherDbModel(str, app);
@@ -79,7 +83,25 @@ public void initRuntime(SqlRun str, FrontApp xapp)
 	TypedWidgetBinder.bindRecursive(this, teacherRm, app.swingerMap());
 	tOpct.setJType(Double.class, new PercentSFormat());
 	
+	
 //	teacherListDm = new SchemaBufDbModel(app.getSchema("teachers"), "teachers", null);
+
+	// ================================================
+	// Other Teachers
+	
+	// ================================================
+	// Update terms
+	vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
+	public void propertyChange(PropertyChangeEvent evt) {
+		SqlRun str = app.sqlRun();
+		app.sqlRun().pushFlush();
+//				teacherDm.set
+			teacherDm.enrolled.setTermID((Integer)vTermID.getValue());
+			teacherDm.enrolled.doSelect(str);
+		// ------------ TODO: refresh enrollments here
+//			schoolModel.setTermID((Integer)(vTermID.getValue()));
+		app.sqlRun().popFlush();		// Flush, conditional on no other items around us.
+	}});
 
 	str.execUpdate(new UpdTasklet2() {		// Set up table AFTER enrolledDb has been initialized
 	public void run(SqlRun str) {
@@ -107,22 +129,75 @@ public void initRuntime(SqlRun str, FrontApp xapp)
 		// Enrollments
 //	final EnrolledDbModel enrolledDb = new EnrolledDbModel(str, app, "uniqenrolls", "teacher");
 
+		enrollments.setHighlightMouseover(false);
 		enrollments.setModelU(teacherDm.enrolled.getTableModel(),
-			new String[] {"Course", "Day", "Start", "Finish",
-				"Custom Start", "Custom End (+1)"},
-			new String[] {"name", "dayofweek", "tstart", "tnext",
+			new String[] {"Status", "Course", "Day", "Start", "Finish",
+				"From", "To"},
+			new String[] {"__status__", "name", "dayofweek", "tstart", "tnext",
 				"dstart", "dend"},
-			new boolean[] {false, false, false, false,
-				true, true, true, false}, app.swingerMap());
+			new boolean[] {false, false, false, false, false,
+				true, true}, app.swingerMap());
 		enrollments.setFormatU("dayofweek", new DayOfWeekKeyedModel());
-
+		enrollments.setValueColU("courseid");
 		// ====================================================
 		// Discounts
 		oCDiscPane.initRuntime(app, teacherDm.ocDiscModels);
 		
-		// T
-	
+		// ====================================================
+		// Other Teachers
+		final SqlBufDbModel otherTeachersDm = new SqlBufDbModel(app, "enrollments") {
+		public String getSelectSql(boolean proto) {
+//			int row = enrollments.getSelectedRow();
+//			Integer courseid = null;
+//			if (row >= 0) courseid = (Integer)teacherDm.enrolled.getSchemaBuf().getValueAt(row, "courseid");
+			return
+				" select p.firstname || ' ' || p.lastname as teachername, e.*" +
+				" from enrollments e, entities p" +
+				" where e.entityid = p.entityid" +
+				" and e.entityid <> " + teacherList.getValue() +
+				" and courseid = " + enrollments.getValue() +
+				" and courserole = " + app.schemaSet().getEnumInt("enrollments", "courserole", "teacher");
+		}};
+		str.execUpdate(new UpdTasklet() {
+		public void run() {
+			otherTeachers.setModelU(otherTeachersDm.getSchemaBuf(),
+				new String[] {"Teacher", "From", "To"},
+				new String[] {"teachername", "dstart", "dend"},
+				new boolean[] {false,false, true, false},
+				app.swingerMap());
+			otherTeachers.setHighlightMouseover(false);
+			otherTeachers.setEnabled(false);
+			otherTeachers.setValueColU("entityid");
+			
+			// Listen for refreshes
+//			enrollments.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+//			public void valueChanged(ListSelectionEvent e) {
+			enrollments.addPropertyChangeListener("value", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (ObjectUtil.eq(evt.getOldValue(), evt.getNewValue())) return;
+				SqlRun str = app.sqlRun();
+				str.pushFlush();
+					otherTeachersDm.doSelect(str);
+				str.popFlush();
+			}});
+			
+		}});
+		
+//		// Change teacher when you click here...
+//		otherTeachers.addPropertyChangeListener("value", new PropertyChangeListener() {
+//		public void propertyChange(PropertyChangeEvent evt) {
+//			Integer entityid = (Integer)otherTeachers.getValue();
+//			teacherDm.setKey(entityid);
+//		}});
+		
 		refreshTeacherList(str);
+		
+		// ===================================================
+		// Terms Selector
+		// Set up terms selector
+		final DbKeyedModel tkmodel = ((TermidsSchema)app.getSchema("termids")).currentTermsKmodel;
+			vTermID.setKeyedModel(tkmodel, null);
+		
 	}});
 	
 }
@@ -201,12 +276,22 @@ public void initRuntime(SqlRun str, FrontApp xapp)
         lPhoneNumbers = new javax.swing.JLabel();
         oCDiscPane = new offstage.openclass.OCDiscPane();
         lDiscountCodes = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        vTermID = new citibob.swing.typed.JKeyedComboBox();
+        jLabel10 = new javax.swing.JLabel();
+        jSplitPane5 = new javax.swing.JSplitPane();
         EnrollmentsPane = new javax.swing.JPanel();
         GroupScrollPanel = new javax.swing.JScrollPane();
-        enrollments = new citibob.jschema.swing.StatusTable();
+        enrollments = new citibob.swing.typed.JTypedSelectTable();
         jPanel15 = new javax.swing.JPanel();
         bAddEnrollment = new javax.swing.JButton();
         bRemoveEnrollment = new javax.swing.JButton();
+        lDiscountCodes1 = new javax.swing.JLabel();
+        EnrollmentsPane1 = new javax.swing.JPanel();
+        GroupScrollPanel1 = new javax.swing.JScrollPane();
+        otherTeachers = new citibob.swing.typed.JTypedSelectTable();
+        lDiscountCodes2 = new javax.swing.JLabel();
 
         genderButtonGroup.setColName("gender");
 
@@ -717,6 +802,30 @@ public void initRuntime(SqlRun str, FrontApp xapp)
 
         jSplitPane2.setLeftComponent(jSplitPane1);
 
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        vTermID.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        vTermID.setPreferredSize(new java.awt.Dimension(68, 19));
+
+        jLabel10.setText("Term: ");
+
+        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jPanel2Layout.createSequentialGroup()
+                .add(jLabel10)
+                .add(3, 3, 3)
+                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(jLabel10)
+            .add(vTermID, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+        );
+
+        jPanel1.add(jPanel2, java.awt.BorderLayout.NORTH);
+
         EnrollmentsPane.setLayout(new java.awt.BorderLayout());
 
         enrollments.setModel(new javax.swing.table.DefaultTableModel(
@@ -730,13 +839,11 @@ public void initRuntime(SqlRun str, FrontApp xapp)
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        enrollments.setMinimumSize(new java.awt.Dimension(60, 264));
-        enrollments.setPreferredSize(new java.awt.Dimension(300, 264));
         GroupScrollPanel.setViewportView(enrollments);
 
         EnrollmentsPane.add(GroupScrollPanel, java.awt.BorderLayout.CENTER);
 
-        bAddEnrollment.setText("Add Enrollment"); // NOI18N
+        bAddEnrollment.setText("Add Class"); // NOI18N
         bAddEnrollment.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bAddEnrollmentActionPerformed(evt);
@@ -744,7 +851,7 @@ public void initRuntime(SqlRun str, FrontApp xapp)
         });
         jPanel15.add(bAddEnrollment);
 
-        bRemoveEnrollment.setText("Remove Enrollment"); // NOI18N
+        bRemoveEnrollment.setText("Remove Class"); // NOI18N
         bRemoveEnrollment.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bRemoveEnrollmentActionPerformed(evt);
@@ -754,7 +861,38 @@ public void initRuntime(SqlRun str, FrontApp xapp)
 
         EnrollmentsPane.add(jPanel15, java.awt.BorderLayout.SOUTH);
 
-        jSplitPane2.setRightComponent(EnrollmentsPane);
+        lDiscountCodes1.setFont(new java.awt.Font("Dialog", 1, 11));
+        lDiscountCodes1.setText("This Teacher's Classes");
+        EnrollmentsPane.add(lDiscountCodes1, java.awt.BorderLayout.PAGE_START);
+
+        jSplitPane5.setLeftComponent(EnrollmentsPane);
+
+        EnrollmentsPane1.setLayout(new java.awt.BorderLayout());
+
+        otherTeachers.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        GroupScrollPanel1.setViewportView(otherTeachers);
+
+        EnrollmentsPane1.add(GroupScrollPanel1, java.awt.BorderLayout.CENTER);
+
+        lDiscountCodes2.setFont(new java.awt.Font("Dialog", 1, 11));
+        lDiscountCodes2.setText("Other Teachers for Class");
+        EnrollmentsPane1.add(lDiscountCodes2, java.awt.BorderLayout.PAGE_START);
+
+        jSplitPane5.setRightComponent(EnrollmentsPane1);
+
+        jPanel1.add(jSplitPane5, java.awt.BorderLayout.CENTER);
+
+        jSplitPane2.setRightComponent(jPanel1);
 
         add(jSplitPane2, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -804,43 +942,39 @@ private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 }//GEN-LAST:event_bUndoActionPerformed
 
 private void bAddEnrollmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddEnrollmentActionPerformed
-//	fapp.guiRun().run(RegistrationPanel.this, new SqlTask() {
-//		public void run(SqlRun str) throws Exception {
-//			
-//			if (!recordValid()) {
-//				JOptionPane.showMessageDialog(RegistrationPanel.this,
-//						"You must have a payer\nand parent in order to enroll in courses.");
-//				return;
-//			}
-//			
-//			enrolledDb.doUpdate(str);
-//			Wizard wizard = new EnrollWizard(fapp, RegistrationPanel.this);
-//			//			TypedHashMap v = new TypedHashMap();
-//			//				wizard.setVal("sterm", vTermID.getKeyedModel().toString(vTermID.getValue()));
-//			wizard.setVal("sperson", vStudentID.getText());
-//			wizard.setVal("entityid", vStudentID.getValue());
-//			wizard.setVal("termid", smod.getTermID());
-//			//				wizard.setVal("courseroleModel",
-//			//					fapp.getSchema("courseroles"), )
-//			//						new citibob.sql.DbKeyedModel(st, null,
-//			//		"courseroles", "courseroleid", "name", "orderid")));
-//			
-//			wizard.runWizard("add");
-//			enrolledDb.doSelect(str);
-//		}});
-//		// TODO add your handling code here:
+	app.guiRun().run(TeacherPanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
+
+			//enrolledDb.doUpdate(str);
+			Wizard wizard = new EnrollWizard(app, TeacherPanel.this);
+			wizard.setVal("sperson", "<Person>");
+			wizard.setVal("entityid", teacherList.getValue());
+			wizard.setVal("termid", vTermID.getValue());
+			wizard.setVal("courserole", app.schemaSet().getEnumInt("enrollments", "courserole", "teacher"));
+			wizard.runWizard("add");
+			teacherDm.enrolled.doSelect(str);
+			//enrolledDb.doSelect(str);
+		}});
+		// TODO add your handling code here:
 }//GEN-LAST:event_bAddEnrollmentActionPerformed
 
 private void bRemoveEnrollmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRemoveEnrollmentActionPerformed
-//	if (JOptionPane.showConfirmDialog(RegistrationPanel.this,
-//			"Are you sure you wish to\n" +
-//			"remove the selected enrollment?",
-//			"Remove Enrollment", JOptionPane.YES_NO_OPTION)
-//			== JOptionPane.NO_OPTION) return;
-//	
-//	fapp.guiRun().run(RegistrationPanel.this, new SqlTask() {
-//		public void run(SqlRun str) throws Exception {
-//			
+	app.guiRun().run(TeacherPanel.this, new SqlTask() {
+	public void run(SqlRun str) throws Exception {
+		if (JOptionPane.showConfirmDialog(TeacherPanel.this,
+			"Are you sure you wish to\n" +
+			"remove the selected class?",
+			"Remove Class", JOptionPane.YES_NO_OPTION)
+			!= JOptionPane.YES_OPTION) return;
+
+		Integer courseid = (Integer)enrollments.getValue("courseid");
+		Integer entityid = (Integer)enrollments.getValue("entityid");
+//		Integer entityid = (Integer)teacherList.getValue();
+		str.execSql("delete from enrollments" +
+			" where courseid = " + SqlInteger.sql(courseid) +
+			" and entityid = " + SqlInteger.sql(entityid));
+		teacherDm.enrolled.doSelect(str);
+	}});
 //			int row = enrollments.getSelectedRow();
 //			if (row < 0) return;
 //			JTypeTableModel x;
@@ -882,9 +1016,11 @@ private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private javax.swing.JPanel AddrPanel;
     private javax.swing.JPanel DetailsPlusPhoneDiscount;
     private javax.swing.JPanel EnrollmentsPane;
+    private javax.swing.JPanel EnrollmentsPane1;
     private javax.swing.JPanel FirstMiddleLast;
     private javax.swing.JPanel Gender;
     private javax.swing.JScrollPane GroupScrollPanel;
+    private javax.swing.JScrollPane GroupScrollPanel1;
     private javax.swing.JPanel MiscInfo;
     private javax.swing.JPanel TeacherDetails;
     private javax.swing.JPanel TeacherList;
@@ -902,12 +1038,13 @@ private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private citibob.swing.typed.JTypedTextField city;
     private citibob.swing.typed.JTypedDateChooser dob;
     private citibob.swing.typed.JTypedTextField email1;
-    private citibob.jschema.swing.StatusTable enrollments;
+    private citibob.swing.typed.JTypedSelectTable enrollments;
     private citibob.swing.typed.JTypedTextField entityid;
     private javax.swing.JRadioButton femaleButton;
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.KeyedButtonGroup genderButtonGroup;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -919,15 +1056,20 @@ private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JSplitPane jSplitPane3;
+    private javax.swing.JSplitPane jSplitPane5;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JLabel lDiscountCodes;
+    private javax.swing.JLabel lDiscountCodes1;
+    private javax.swing.JLabel lDiscountCodes2;
     private javax.swing.JLabel lFirst;
     private javax.swing.JLabel lLast;
     private javax.swing.JLabel lMiddle;
@@ -939,6 +1081,7 @@ private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private javax.swing.JRadioButton maleButton;
     private citibob.swing.typed.JTypedTextField middlename;
     private offstage.openclass.OCDiscPane oCDiscPane;
+    private citibob.swing.typed.JTypedSelectTable otherTeachers;
     private offstage.gui.GroupPanel phonePanel;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField state;
@@ -950,6 +1093,7 @@ private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private javax.swing.JPanel teacherTablePane;
     private javax.swing.JRadioButton unknownGenderButton;
     private citibob.swing.typed.JTypedTextField url;
+    private citibob.swing.typed.JKeyedComboBox vTermID;
     private citibob.swing.typed.JTypedTextField zip;
     // End of variables declaration//GEN-END:variables
 	// --------------------------------------------------------------

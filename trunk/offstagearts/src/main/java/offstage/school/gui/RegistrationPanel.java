@@ -357,7 +357,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 //		allStudent.add(enrolledDb);
 		enrollments.setModelU(enrolledDb.getTableModel(),
 			new String[] {"Course", "Day", "Start", "Finish",
-				"Role", "Custom Start", "Custom End (+1)"},
+				"Role", "Custom Start", "Custom End"},
 			new String[] {"name", "dayofweek", "tstart", "tnext",
 				"courserole", "dstart", "dend"},
 			new boolean[] {false, false, false, false,

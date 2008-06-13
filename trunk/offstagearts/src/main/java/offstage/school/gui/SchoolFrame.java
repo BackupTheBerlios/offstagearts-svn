@@ -83,8 +83,8 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 	final DbKeyedModel tkmodel = ((TermidsSchema)fapp.getSchema("termids")).currentTermsKmodel;
 //			new DbKeyedModel(str, fapp.dbChange(), "termids",
 //		"select groupid, name, null from termids where iscurrent order by firstdate desc");
-	str.execUpdate(new UpdTasklet2() {
-	public void run(SqlRun str) throws Exception {
+//	str.execUpdate(new UpdTasklet2() {
+//	public void run(SqlRun str) throws Exception {
 		vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent evt) {
 			fapp.sqlRun().pushFlush();
@@ -93,7 +93,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 		}});
 		vTermID.setKeyedModel(tkmodel, null);
 //		if (tkmodel.size() > 0) vTermID.setSelectedIndex(0);
-	}});
+//	}});
 
 	regPanel.initRuntime(str, xfapp, schoolModel);
 	
