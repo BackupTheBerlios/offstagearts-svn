@@ -14,8 +14,18 @@ $endif$
 <tr><th align="right">Email</th><td>$person.email$</td></tr>
 <tr><th align="right">URL</th><td>$person.url$</td></tr>
 $phones:{<tr><th align="right">Phone ($it.groupid$)</td><td>$it.phone$</td></tr>}$
-<tr><th align="right">To</th><td>$person.addressto$</td></tr>
 <tr><th align="right">Mail Pref</th><td>$person.mailprefid$</td></tr>
 <tr><th align="right">Last Modified</th><td>$person.lastupdated$</td></tr>
 <tr><th align="right">ID</th><td>$person.entityid$</td></tr>
 </table>
+
+$if(_ocdiscs)$
+<hr>
+<h3>Discount Codes</h3>
+<table>
+<tr><th>Name</th><th>From</th><th>To</th></tr>
+$ocdiscs:{it |
+<tr><td><b>$it.ocdiscid$</b></td><td>$it.dstart$</td><td>$it.dend$</td></tr>
+}$
+</table>
+$endif$

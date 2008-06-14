@@ -47,7 +47,6 @@ String last4;
 KeyRing kr;
 String swipeState = "normal";
 String swipeString = "";
-boolean justSwiped = false;
 
 /** Creates new form JTypedCCInfo */
 public JTypedCCInfo()
@@ -292,11 +291,6 @@ public void setColName(String col) { this.colName = col; }
 
         ccname.setText("jTypedTextField4");
         ccname.setColName("ccname");
-        ccname.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                ccnameKeyTyped(evt);
-            }
-        });
 
         jTypedButton1.setText("Click to Swipe");
         jTypedButton1.setNextFocusableComponent(ccname);
@@ -374,22 +368,14 @@ private void jTypedButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN
         if (swipeState.equals("normal")) {
                 swipeState = "ready";
                 jTypedButton1.setText("Swipe Now!");
-        } else {
-                swipeState = "normal";
-                jTypedButton1.setText("Click to Swipe");
+//        } else {
+//                swipeState = "normal";
+//                jTypedButton1.setText("Click to Swipe");
         }
-        ccname.requestFocus();
+//        jTypedButton1.requestFocus();
 }//GEN-LAST:event_jTypedButton1ActionPerformed
 
-public boolean justSwiped() {
-        return justSwiped;
-}
-
-public void clearJustSwiped() {
-        justSwiped = false;
-}
-
-private void grabChar(java.awt.event.KeyEvent evt) {
+private void jTypedButton1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTypedButton1KeyTyped
         if(!swipeState.equals("normal")) {
                 if(swipeState.equals("ready")) {
                         swipeState = "reading";
@@ -397,7 +383,6 @@ private void grabChar(java.awt.event.KeyEvent evt) {
                 }
                 char pressedKey = evt.getKeyChar();
                 swipeString = swipeString + pressedKey;
-                evt.consume();
                 if(swipeString.indexOf("?") != swipeString.lastIndexOf("?")) {
                         swipeState = "normal";
                         System.out.println(swipeString);
@@ -411,18 +396,9 @@ private void grabChar(java.awt.event.KeyEvent evt) {
                         expdate.setValue(date);
                         ccname.setValue(name);
                         swipeString = "";
-                        justSwiped = true;
                 }
         }
-}
-
-private void jTypedButton1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTypedButton1KeyTyped
-        grabChar(evt);
 }//GEN-LAST:event_jTypedButton1KeyTyped
-
-private void ccnameKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ccnameKeyTyped
-        grabChar(evt);
-}//GEN-LAST:event_ccnameKeyTyped
       
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Button button1;

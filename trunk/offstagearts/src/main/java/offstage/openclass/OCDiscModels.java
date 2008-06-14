@@ -43,7 +43,7 @@ import offstage.FrontApp;
  *
  * @author  citibob
  */
-public class OCDiscModels extends javax.swing.JPanel {
+public class OCDiscModels {
 	
 //Integer TeacherID;		// Teacher for which this shows discounts (or null for studio discounts)
 	
@@ -52,6 +52,7 @@ SchemaBufDbModel discAmtDm;
 MultiDbModel pivotDm;
 ExtPivotTableModel pivotTm;
 
+//String ocdiscIdSql;			// Current "key" --- the ocdiscids we want to display
 
 	/** @returns Main DbModel used to control data in this widget.  It has one key,
 	 which is TeacherID. */

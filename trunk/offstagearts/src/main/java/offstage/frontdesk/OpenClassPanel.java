@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.frontdesk;
 
-import citibob.jschema.DbModel;
 import citibob.jschema.SqlBufDbModel;
 import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
@@ -41,10 +40,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.Date;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import offstage.FrontApp;
 import offstage.accounts.gui.AccountsDB;
 import offstage.accounts.gui.TransRegPanel;
+import offstage.openclass.OpenClassDB;
 import offstage.reports.SummaryReport;
 import offstage.schema.Actrans2Schema;
 
@@ -91,7 +92,7 @@ int openclassAssetID;
 	{
 		this.app = xapp;
 		SwingerMap smap = xapp.swingerMap();
-		personDm = new FDPersonModel(app);
+		personDm = new FDPersonModel(str, app);
 				
 //		searchPanel.initRuntime(xapp, personDm);
 		
@@ -143,20 +144,43 @@ int openclassAssetID;
 		public String getSelectSql(boolean proto) {
 			Date dt0 = (Date)chDate.getValue();
 			Date dt1 = new Date(dt0.getTime() + 86400*1000L);	// DST not a problem, it's middle of the night
+			
+			String meetingIdSql =
+				" select m.meetingid as id" +
+				" from meetings m\n" +
+				" inner join courseids c on (m.courseid = c.courseid)\n" +
+				" inner join daysofweek dow on (c.dayofweek = dow.javaid)\n" +
+				" inner join termids t on (c.termid = t.groupid)\n" +
+				" inner join termtypes tt on (t.termtypeid = tt.termtypeid)\n" +
+				" where m.dtstart >= " + sqlDate.toSql(dt0) +
+				" and m.dtstart < " + sqlDate.toSql(dt1) + "\n" +
+				" and dow.javaid >= 0\n" +
+                " and tt.name = 'openclass'\n" +
+				(proto ? " and false" : "");
+
 			return
-				" select m.meetingid,m.courseid,m.dtstart,m.dtnext,c.name as coursename,\n" +
+				OpenClassDB.classLeadersSql(meetingIdSql,
+					"select courseroleid as id from courseroles where name='teacher'") +
+	
+				" select m.meetingid,m.courseid,m.dtstart,m.dtnext," +
+				" c.name as coursename,\n" +
+				" _c.mainid as mainid, _c.subid as subid," +
+				" c.name || '(' || case when _c.subid is not null then" +
+				"	(sub.displayname || ' for ' || teacher.displayname)" +
+				"	(teacher.displayname) else" +
+				"	end || ')' as displayname," +
 				" c.enrolllimit,c.price,dow.shortname as dayofweek,\n" +
 				" t.name as termname, t.groupid as termid\n" +
 				" from meetings m\n" +
 				" inner join courseids c on (m.courseid = c.courseid)\n" +
 				" inner join daysofweek dow on (c.dayofweek = dow.javaid)\n" +
 				" inner join termids t on (c.termid = t.groupid)\n" +
-				" where m.dtstart >= " + sqlDate.toSql(dt0) +
-				" and m.dtstart < " + sqlDate.toSql(dt1) + "\n" +
-				" and dow.javaid >= 0\n" +
-                                " and t.termtypeid = 2\n" +
-				(proto ? " and false" : "") +
-				" order by m.dtstart, c.name";
+				" inner join _c on (_c.meetingid = m.meetingid)" +
+				" left outer join teachers teacher on (teacher.entityid = _c.mainid)" +
+				" left outer join teachers sub on (sub.entityid = _c.subid)" +
+				" order by m.dtstart, c.name;\n" +
+				
+				OpenClassDB.classLeadersDropSql();
 		}};
 //		meetingsDm.getSchemaBuf().
 		
@@ -449,10 +473,18 @@ int openclassAssetID;
 				return;
 			}
 			
+			// Figure out the price & discounts
+//			Double basePrice = (Double)tMeetings.getValue("price");
+			Map<Integer,Double> dollarDisc = OpenClassDB.getOCDiscounts(str, meetingid, entityid);
+			double price = 0;
+			for (Map.Entry<Integer,Double> ent : dollarDisc.entrySet()) {
+				price += (ent.getKey().intValue() == 0 ?
+					ent.getValue() : -ent.getValue());
+			}
+
 			// Check the account for available funds...
-			Double price = (Double)tMeetings.getValue("price");
 			Double bal = transRegister.getBalance();
-			if (bal.doubleValue() < price.doubleValue()) {
+			if (bal.doubleValue() < price) {
 				JOptionPane.showMessageDialog(OpenClassPanel.this,
 					"Insufficient funds.  You must first buy classes.");
 				return;

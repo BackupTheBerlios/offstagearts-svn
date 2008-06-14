@@ -354,88 +354,6 @@ public static void sendSchoolJangoMail(final App app, SqlRun str, final MailMsg 
 }
 
 // ================================================================
-public String classLeadersDropSql(String meetingsIdSql)
-{
-	return " drop table _c;";
-		
-}
-
-//" 	select m.meetingid as id\n" +
-//" 	from meetings m\n" +
-//" 	inner join courseids c on (m.courseid = c.courseid)\n" +
-//" 	inner join termids t on (c.termid = t.groupid)\n" +
-//" 	where m.dtstart >= '2008-06-09' and m.dtstart < '2008-06-10'\n" +
-//" 	and c.dayofweek >= 0\n" +
-//" 	and t.termtypeid = 2\n" +
-
-//		" (select courseroleid as courserole from courseroles\n" +
-//		" where courseroleid in (2,3)) cc\n"
-
-
-/** Figure out who is teacher and pianist for a class meeting.
- * SQL will create the table _c. */
-public String classLeadersSql(String meetingIdSql, String courseroleIdSql)
- {
-	String updateEntSql =
-		" update _c\n" +
-		" set mainid = _ent.entityid\n" +
-		" from _ent\n" +
-		" where _c.meetingid = _ent.meetingid\n" +
-		" and _c.courserole = _ent.courserole;\n" +
-		" \n" +
-		" update _c\n" +
-		" set nmain = xx.n\n" +
-		" from (\n" +
-		" 	select _ent.meetingid,_ent.courserole,count(*) as n\n" +
-		" 	from _ent\n" +
-		" 	group by meetingid,courserole\n" +
-		" ) xx where _c.meetingid = xx.meetingid and _c.courserole = xx.courserole;\n";
-
-	return
-		// Create temporary tables
-		" create temporary table _c (meetingid int, courserole int,\n" +
-		" mainid int, nmain int,\n" +
-		" subid int, nsub int,\n" +
-		" primary key(meetingid, courserole));\n\n" +
-		
-		" create temporary table _ent (meetingid int, courserole int, entityid int,\n" +
-		" primary key(meetingid, courserole, entityid));\n\n" +
-		
-		// Set up the rows (meetingids and courseroles product)
-		" insert into _c\n" +
-		" select mm.id as meetingid, cc.id as courserole\n" +
-		" from (\n" +
-			meetingIdSql +
-		" ) mm, (\n" +
-			courseroleIdSql +
-		" ) cc\n\n" +
-
-		// Look in enrollments
-		" insert into _ent\n" +
-		" 	select _c.meetingid,_c.courserole,e.entityid\n" +
-		" 	from _c\n" +
-		" 	inner join meetings m on (_c.meetingid = m.meetingid)\n" +
-		" 	inner join enrollments e on (e.courserole = _c.courserole and e.courseid = m.courseid\n" +
-		" 		and (e.dstart is null or e.dstart < m.dtnext)\n" +
-		" 		and (e.dend is null or (e.dend + cast('1 day' as interval)) > m.dtstart));\n" +
-
-		// Use data from _ent table to update our main table.
-		updateEntSql +
-		" delete from _ent;\n" +
-
-		// Look in subs
-		" insert into _ent\n" +
-		" 	select _c.meetingid,_c.courserole, s.entityid\n" +
-		" 	from _c\n" +
-		" 	inner join meetings m on (_c.meetingid = m.meetingid)\n" +
-		" 	inner join subs s on (s.courserole = _c.courserole" +
-		"	and s.meetingid = m.meetingid and s.subtype = '+');\n" +
-		
-		// Use data from _ent table to update our main table.
-		updateEntSql +
-		" drop table _ent;\n";
-}
-}
 
 //		System.out.println(sql);
 //	final RSTableModel mod = new RSTableModel(app.sqlTypeSet());
@@ -466,3 +384,4 @@ public String classLeadersSql(String meetingIdSql, String courseroleIdSql)
 //}
 //
 //}
+}

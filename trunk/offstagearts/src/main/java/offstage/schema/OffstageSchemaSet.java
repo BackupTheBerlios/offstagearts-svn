@@ -101,6 +101,7 @@ throws SQLException
 	map.put("ocdiscids", new OcdiscidsSchema());
 	map.put("ocdiscidsamt", new OcdiscidsamtSchema(str, change, tz));
 	map.put("teachers", new TeachersSchema());
+	map.put("ocdiscs", new OcdiscsSchema(str, change, tz));
 }
 	
 }

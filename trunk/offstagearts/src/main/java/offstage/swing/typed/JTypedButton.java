@@ -39,7 +39,7 @@ import citibob.text.*;
  */
 public class JTypedButton
 extends JButton
-implements TypedWidget {
+implements TypedWidget, KeyListener {
 
 /** Our best guess of the class this takes. */
 //Class objClass = null;
@@ -49,7 +49,7 @@ protected boolean selectOnSet = false;
 public JTypedButton()
 {
 	super();
-//	addKeyListener(this);
+	addKeyListener(this);
 }
 /** Once a formatter has figured out what the underlying value and display
  should be, set it.  This is for DBFormatter, when we need to make a DB

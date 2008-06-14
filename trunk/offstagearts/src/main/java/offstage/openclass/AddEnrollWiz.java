@@ -96,8 +96,8 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	
 	final OpenClassSelector courses = new OpenClassSelector();
 	courses.initRuntime(str, app, (Integer)v.getInteger("courserole"), v.getInteger("termid"));
-	
-	
+
+
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 		addComponent("courserole", (JComponent)crWidget);

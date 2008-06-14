@@ -68,6 +68,7 @@ public Res_Database(ResSet rset)
 	add(new DbbUpgrader(this, 88, 96, true));
 	add(new DbbUpgrader(this, 96, 97, true));
 	add(new DbbUpgrader(this, 97, 100, true));
+	add(new DbbUpgrader(this, 100, 104, true));
 	
 //	add(new DbbUpgrader(this, 2, 3, true));
 }

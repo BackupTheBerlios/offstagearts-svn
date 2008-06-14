@@ -69,7 +69,7 @@ extends javax.swing.JPanel {
 	{
 		this.app = xapp;
 		
-		this.dmod = new FDPersonModel(app);
+		this.dmod = new FDPersonModel(str, app);
 		SchemaBufRowModel xmodel = new SchemaBufRowModel(dmod.getPersonDm().getSchemaBuf());
 
 		this.model = xmodel;
@@ -84,6 +84,11 @@ extends javax.swing.JPanel {
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, true, app.swingerMap());
 
+		ocdiscPanel.initRuntime(str, dmod.ocdiscs.getSchemaBuf(), "ocdiscid",
+			new String[] {"Discount", "Start Date", "End Date"},
+			new String[] {"ocdiscid", "dstart", "dend"}, true, app.swingerMap());
+
+		
 //                ParentPayer.initRuntime(str, app);
 //                IntKeyedDbModel PeopleDm = new IntKeyedDbModel(app.getSchema("persons"), "entityid");
 //               PeopleDm.setKey(entityid);
@@ -150,24 +155,27 @@ extends javax.swing.JPanel {
         maleButton = new javax.swing.JRadioButton();
         femaleButton = new javax.swing.JRadioButton();
         unknownGenderButton = new javax.swing.JRadioButton();
+        lPhoneNumbers1 = new javax.swing.JLabel();
+        ocdiscPanel = new offstage.gui.GroupPanel();
 
         genderButtonGroup.setColName("gender");
 
         setLayout(new java.awt.GridBagLayout());
 
+        phonePanel.setMinimumSize(new java.awt.Dimension(153, 116));
         phonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        add(phonePanel, gridBagConstraints);
+
+        lPhoneNumbers.setText("Discount Codes");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        add(phonePanel, gridBagConstraints);
-
-        lPhoneNumbers.setText("Phone Numbers");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(lPhoneNumbers, gridBagConstraints);
 
@@ -282,9 +290,12 @@ extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         add(AddrPanel, gridBagConstraints);
 
+        mainPanel.setMinimumSize(new java.awt.Dimension(350, 200));
+        mainPanel.setPreferredSize(new java.awt.Dimension(355, 124));
         mainPanel.setLayout(new java.awt.GridBagLayout());
 
         MiscInfo.setLayout(new java.awt.GridBagLayout());
@@ -506,8 +517,8 @@ extends javax.swing.JPanel {
                     .add(jLabel20))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(PayerParentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(vPayerID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
-                    .add(vParent1ID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE))
+                    .add(vPayerID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
+                    .add(vParent1ID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(PayerParentLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(jButton2)
@@ -577,6 +588,23 @@ extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         add(mainPanel, gridBagConstraints);
+
+        lPhoneNumbers1.setText("Phone Numbers");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        add(lPhoneNumbers1, gridBagConstraints);
+
+        ocdiscPanel.setPreferredSize(new java.awt.Dimension(453, 180));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        add(ocdiscPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 	private void bLaunchEmailActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bLaunchEmailActionPerformed
@@ -661,12 +689,14 @@ private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private javax.swing.JLabel lLast;
     private javax.swing.JLabel lMiddle;
     private javax.swing.JLabel lPhoneNumbers;
+    private javax.swing.JLabel lPhoneNumbers1;
     private citibob.swing.typed.JTypedTextField lastname;
     private citibob.swing.typed.JTypedTextField lastupdated;
     private citibob.swing.typed.JKeyedComboBox mailprefid;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JRadioButton maleButton;
     private citibob.swing.typed.JTypedTextField middlename;
+    private offstage.gui.GroupPanel ocdiscPanel;
     private offstage.gui.GroupPanel phonePanel;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField state;

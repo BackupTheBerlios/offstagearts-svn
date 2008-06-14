@@ -40,17 +40,25 @@ import offstage.devel.gui.*;
 public class GroupPanel extends javax.swing.JPanel {
 	
 SchemaBuf groupSb;
+String sGroupCol;
 
 	/** Creates new form GroupPanel */
 	public GroupPanel() {
 		initComponents();
 	}
 	
-	// st good
 	public void initRuntime(SqlRun str, SchemaBuf groupSb,
+	String[] colNames, String[] sColMap, boolean editable, citibob.swing.typed.SwingerMap swingers)
+	{
+		initRuntime(str, groupSb, "groupid", colNames, sColMap, editable, swingers);
+	}
+	// st good
+	public void initRuntime(SqlRun str, SchemaBuf groupSb, String sGroupCol,
 	String[] colNames, String[] sColMap, boolean editable, citibob.swing.typed.SwingerMap swingers)
 	//throws java.sql.SQLException
 	{
+		this.sGroupCol = sGroupCol;
+		
 		// Set up array of which columns will be editable...
 		boolean[] xeditable = null;
 		if (!editable) {
@@ -59,7 +67,7 @@ SchemaBuf groupSb;
 			remove(controller);
 		}
 		
-		JEnum addJType = (JEnum)groupSb.getSchema().getCol("groupid").getType();
+		JEnum addJType = (JEnum)groupSb.getSchema().getCol(sGroupCol).getType();
 		groupTable.setModelU(groupSb, colNames, sColMap, xeditable, swingers);
 		initRuntime(str, groupSb, addJType, groupTable, swingers);
 	}
@@ -146,7 +154,7 @@ System.out.println("Deleting row: " + selected);
 
 	private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
 		try {
-			groupSb.insertRow(-1, "groupid", addType.getValue());
+			groupSb.insertRow(-1, sGroupCol, addType.getValue());
 		} catch(KeyViolationException e) {
 			System.out.println(e);
 			// We should put up a JOptionPane here.

@@ -33,20 +33,26 @@ public class FDPersonModel extends LoggedMultiDbModel
 
 EntityDbModel onePerson;
 IntKeyedDbModel phones;
-
+// TODO: Use OCDiscModels instead if we want description of discount amounts
+public IntKeyedDbModel ocdiscs;
 
 public EntityDbModel getPersonDm()
 	{ return onePerson; }
 public IntKeyedDbModel getPhonesDm()
 	{ return phones; }
 
-public FDPersonModel(citibob.app.App app)
+public FDPersonModel(SqlRun str, citibob.app.App app)
 {
 	super(app.queryLogger());
 	SchemaSet osset = app.schemaSet();
 	logadd(onePerson = new EntityDbModel(osset.get("persons"), app));
 	logadd(phones = new IntKeyedDbModel(osset.get("phones"), "entityid"));
+	
+	ocdiscs = new IntKeyedDbModel(osset.get("ocdiscs"), "entityid");
+	logadd(ocdiscs);// = new IntKeyedDbModel(osset.get("ocdiscs"), "entityid"));
 }
+
+
 
 public void insertPhone(int groupTypeID) throws KeyViolationException
 {

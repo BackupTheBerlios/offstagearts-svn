@@ -254,12 +254,8 @@ protected void showPopup()
 	private void bOKActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bOKActionPerformed
 	{//GEN-HEADEREND:event_bOKActionPerformed
 		if (!ccinfo.isFullySet()) {
-                        if(ccinfo.justSwiped()) {
-                                ccinfo.clearJustSwiped();
-                        } else {
-                                JOptionPane.showMessageDialog(popupDialog,
-                                        "Please fill in all credit card fields completely.");
-                        }
+			JOptionPane.showMessageDialog(popupDialog,
+				"Please fill in all credit card fields completely.");
 		} else {
 			popupDialog.setVisible(false);
 			ccinfo.makeVal();

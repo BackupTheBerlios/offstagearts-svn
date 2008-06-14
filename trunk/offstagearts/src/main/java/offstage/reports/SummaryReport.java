@@ -94,6 +94,11 @@ throws IOException
 	JTypeTableModel phones = dmod.getPhonesDm().getSchemaBuf();
 	StringTableModel sphones = new StringTableModel(phones, sfmap);
 	setAttribute(st, "phones", phones,sphones);
+
+	JTypeTableModel ocdiscs = dmod.ocdiscs.getSchemaBuf();
+	StringTableModel socdiscs = new StringTableModel(ocdiscs, sfmap);
+	setAttribute(st, "ocdiscs", ocdiscs, socdiscs);
+
 	
 //	setAttribute(st, "donations", dmod.getDonationSb(), new StringTableModel(dmod.getDonationSb(), sfmap));
 //	setAttribute(st, "flags", dmod.getFlagSb(), new StringTableModel(dmod.getFlagSb(), sfmap));
