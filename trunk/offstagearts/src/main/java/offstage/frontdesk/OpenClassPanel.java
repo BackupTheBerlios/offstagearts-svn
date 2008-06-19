@@ -165,10 +165,10 @@ int openclassAssetID;
 				" select m.meetingid,m.courseid,m.dtstart,m.dtnext," +
 				" c.name as coursename,\n" +
 				" _c.mainid as mainid, _c.subid as subid," +
-				" c.name || '(' || case when _c.subid is not null then" +
+				" case when _c.subid is not null then" +
 				"	(sub.displayname || ' for ' || teacher.displayname)" +
-				"	(teacher.displayname) else" +
-				"	end || ')' as displayname," +
+				"	else (teacher.displayname)" +
+				"	end as teachername," +
 				" c.enrolllimit,c.price,dow.shortname as dayofweek,\n" +
 				" t.name as termname, t.groupid as termid\n" +
 				" from meetings m\n" +
@@ -188,9 +188,9 @@ int openclassAssetID;
 		str.execUpdate(new UpdTasklet() {
 		public void run() {
 			tMeetings.setModelU(meetingsDm.getSchemaBuf(),
-				new String[] {"Course", "Start Time", "Price", "Term"},
-				new String[] {"coursename", "dtstart", "price", "termname"},
-				new boolean[] {false,false,false,false},
+				new String[] {"Course", "Teacher", "Start Time", "Price", "Term"},
+				new String[] {"coursename", "teachername", "dtstart", "price", "termname"},
+				new boolean[] {false,false,false,false,false},
 				xapp.swingerMap());
 //			tMeetings.setFormatU("dayofweek", new DayOfWeekKeyedModel());
 			//tMeetings.setFormatU("coursename", new StringSFormat());
