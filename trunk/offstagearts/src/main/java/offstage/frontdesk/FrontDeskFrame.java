@@ -83,6 +83,7 @@ public class FrontDeskFrame extends javax.swing.JFrame
         jMenu1 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Front Desk");
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 

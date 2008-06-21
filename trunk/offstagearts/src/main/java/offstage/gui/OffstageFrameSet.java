@@ -36,8 +36,8 @@ import offstage.cleanse.CleanseFrame;
 import offstage.config.ResourcesFrame;
 import offstage.devel.gui.DevelFrame;
 import offstage.frontdesk.FrontDeskFrame;
-import offstage.openclass.OpenClassFrame;
-import offstage.school.gui.SchoolFrame;
+import offstage.school.gui.SchoolRegFrame;
+import offstage.school.gui.SchoolSetupFrame;
 
 /**
  *
@@ -84,25 +84,29 @@ public JFrame newFrame() throws Exception {
 	str.flush();
 	return f;
 }});
-addMaker("openclass", new Maker() {
-public JFrame newFrame() throws Exception {
-	SqlRun str = fapp.sqlRun();
-	final OpenClassFrame f = new OpenClassFrame();
-	f.initRuntime(fapp.sqlRun(), fapp);
-	str.flush();
-	return f;
-}});
+//addMaker("openclass", new Maker() {
+//public JFrame newFrame() throws Exception {
+//	SqlRun str = fapp.sqlRun();
+//	final OpenClassFrame f = new OpenClassFrame();
+//	f.initRuntime(fapp.sqlRun(), fapp);
+//	str.flush();
+//	return f;
+//}});
 // ----------------------------------------
-addMaker("school", new Maker() {
+addMaker("schoolSetup", new Maker() {
 public JFrame newFrame() throws Exception {
-	final SchoolFrame f = new SchoolFrame();
+	final SchoolSetupFrame f = new SchoolSetupFrame();
 	SqlRun str = fapp.sqlRun();
 	f.initRuntime(str, fapp);
 	str.flush();
-//	str.execUpdate(new UpdTasklet2() {
-//	public void run(SqlRun str) throws Exception {
-//		f.pack();
-//	}});
+	return f;
+}});
+addMaker("schoolReg", new Maker() {
+public JFrame newFrame() throws Exception {
+	final SchoolRegFrame f = new SchoolRegFrame();
+	SqlRun str = fapp.sqlRun();
+	f.initRuntime(str, fapp);
+	str.flush();
 	return f;
 }});
 // ----------------------------------------

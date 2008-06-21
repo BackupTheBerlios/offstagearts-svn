@@ -53,17 +53,17 @@ import offstage.school.tuition.TuitionCalc;
  *
  * @author  citibob
  */
-public class SchoolFrame extends javax.swing.JFrame
+public class SchoolRegFrame extends javax.swing.JFrame
 {
 
 FrontApp fapp;
 SchoolModel schoolModel;
 
 /** Creates new form SchoolFrame */
-public SchoolFrame()
+public SchoolRegFrame()
 {
 	initComponents();
-	tabs.setSelectedComponent(regPanel);
+//	tabs.setSelectedComponent(regPanel);
 }
 
 public void initRuntime(SqlRun str, FrontApp xfapp)
@@ -73,10 +73,11 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 
 	this.schoolModel = new SchoolModel(fapp);
 	
-	coursesPanel.initRuntime(fapp, schoolModel, str);
-	schedulePanel.initRuntime(fapp, schoolModel, str);
-	termsAddPanel.initRuntime(fapp, schoolModel, str);
+//	coursesPanel.initRuntime(fapp, schoolModel, str);
+//	schedulePanel.initRuntime(fapp, schoolModel, str);
+//	termsAddPanel.initRuntime(fapp, schoolModel, str);
 	this.courseListPanel.initRuntime(fapp, schoolModel, str);
+	teacherPanel1.initRuntime(str, fapp, schoolModel);
 
 	// Set up terms selector
 //setKeyedModel selects the term --- but the KeyedModel is not getting filled in till afterwards
@@ -125,9 +126,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
         vTermID = new citibob.swing.typed.JKeyedComboBox();
         jLabel3 = new javax.swing.JLabel();
         tabs = new javax.swing.JTabbedPane();
-        termsAddPanel = new offstage.school.gui.TermsAddPanel();
-        schedulePanel = new offstage.school.gui.TermsPanel();
-        coursesPanel = new offstage.school.gui.CoursesPanel();
+        teacherPanel1 = new offstage.openclass.TeacherPanel();
         regPanel = new offstage.school.gui.RegistrationPanel();
         courseListPanel = new offstage.school.gui.CourseListPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -152,7 +151,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
         mHelp = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("School");
+        setTitle("School Registration");
 
         vTermID.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         vTermID.setPreferredSize(new java.awt.Dimension(68, 19));
@@ -166,7 +165,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
             .add(jPanel1Layout.createSequentialGroup()
                 .add(jLabel3)
                 .add(3, 3, 3)
-                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 994, Short.MAX_VALUE))
+                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -176,10 +175,8 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
-        tabs.addTab("Terms", termsAddPanel);
-        tabs.addTab("Calendar", schedulePanel);
-        tabs.addTab("Courses", coursesPanel);
-        tabs.addTab("Registration", regPanel);
+        tabs.addTab("Teachers", teacherPanel1);
+        tabs.addTab("Students", regPanel);
         tabs.addTab("Enrollments", courseListPanel);
 
         getContentPane().add(tabs, java.awt.BorderLayout.CENTER);
@@ -322,9 +319,9 @@ vTermID.setKeyedModel(vTermID.getKeyedModel(), null);
 
 	private void miApplyLateFeesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miApplyLateFeesActionPerformed
 	{//GEN-HEADEREND:event_miApplyLateFeesActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask() {
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			final LateFeesWizard wizard = new LateFeesWizard(fapp, SchoolFrame.this);
+			final LateFeesWizard wizard = new LateFeesWizard(fapp, SchoolRegFrame.this);
 			if (!wizard.runWizard("latefees")) return;
 			
 //			int termid = schoolModel.getTermID();
@@ -347,12 +344,12 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miConfirmationLetterActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miConfirmationLetterActionPerformed
 	{//GEN-HEADEREND:event_miConfirmationLetterActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask() {
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			Integer eid = (Integer)schoolModel.studentRm.get("entityid");
 			int termid = schoolModel.getTermID();
 			if (eid == null)
-				JOptionPane.showMessageDialog(SchoolFrame.this,
+				JOptionPane.showMessageDialog(SchoolRegFrame.this,
 					"You must have a student selected for this report!", "", JOptionPane.OK_OPTION);
 			else StudentConfirmationLetter.viewReport(str, fapp, termid, eid);
 		}});
@@ -362,11 +359,11 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miAccountStatementActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miAccountStatementActionPerformed
 	{//GEN-HEADEREND:event_miAccountStatementActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask() {
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			int termid = schoolModel.getTermID();
 			Integer payerid = (Integer)schoolModel.termregsRm.get("payerid");
-			if (payerid == null) JOptionPane.showMessageDialog(SchoolFrame.this,
+			if (payerid == null) JOptionPane.showMessageDialog(SchoolRegFrame.this,
 				"You must have a student selected for this report!", "", JOptionPane.OK_OPTION);
 			else AcctStatement.doAccountStatementsAndLabels(str, fapp, termid, payerid, new java.util.Date());
 		}});
@@ -375,10 +372,10 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miScheduleActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miScheduleActionPerformed
 	{//GEN-HEADEREND:event_miScheduleActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask() {
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			Integer eid = (Integer)schoolModel.studentRm.get("entityid");
-			if (eid == null) JOptionPane.showMessageDialog(SchoolFrame.this,
+			if (eid == null) JOptionPane.showMessageDialog(SchoolRegFrame.this,
 				"You must have a student selected for this report!", "", JOptionPane.OK_OPTION);
 			else StudentSchedule.viewStudentSchedules(fapp, str, schoolModel.getTermID(), eid);
 		}});
@@ -387,7 +384,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miStudentAccountsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miStudentAccountsActionPerformed
 	{//GEN-HEADEREND:event_miStudentAccountsActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask() {
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			int termid = schoolModel.getTermID();
 //			Calendar cal = Calendar.getInstance(fapp.getTimeZone());
@@ -409,7 +406,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miPayerLabelsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miPayerLabelsActionPerformed
 	{//GEN-HEADEREND:event_miPayerLabelsActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask()
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask()
 		{
 			public void run(SqlRun str) throws Exception
 			{
@@ -447,7 +444,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miConfirmationLettersActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miConfirmationLettersActionPerformed
 	{//GEN-HEADEREND:event_miConfirmationLettersActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask() {
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			int termid = schoolModel.getTermID();
 			StudentConfirmationLetter.viewReport(str, fapp, termid, -1);
@@ -457,7 +454,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miAccountStatementsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miAccountStatementsActionPerformed
 	{//GEN-HEADEREND:event_miAccountStatementsActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask()
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask()
 		{
 			public void run(SqlRun str) throws Exception
 			{
@@ -469,7 +466,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miStudentSchedulesActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miStudentSchedulesActionPerformed
 	{//GEN-HEADEREND:event_miStudentSchedulesActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask() {
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			StudentSchedule.viewStudentSchedules(fapp, str, schoolModel.getTermID(), -1);
 		}});
@@ -478,7 +475,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miRollBooksActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miRollBooksActionPerformed
 	{//GEN-HEADEREND:event_miRollBooksActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask()
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask()
 		{
 			public void run(SqlRun str) throws Exception
 			{
@@ -499,7 +496,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 
 	private void miRecalcAllTuitionActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_miRecalcAllTuitionActionPerformed
 	{//GEN-HEADEREND:event_miRecalcAllTuitionActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask()
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask()
 		{
 			public void run(SqlRun str) throws Exception
 			{
@@ -511,9 +508,9 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 	}//GEN-LAST:event_miRecalcAllTuitionActionPerformed
 
 	private void miSchoolEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSchoolEmailActionPerformed
-		fapp.guiRun().run(SchoolFrame.this, new SqlTask() {
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			EQueryWizard wizard = new EQueryWizard(fapp, SchoolFrame.this);
+			EQueryWizard wizard = new EQueryWizard(fapp, SchoolRegFrame.this);
 			if (!wizard.runEmails(str)) return;
 			
 			// Text of the email we wish to send
@@ -533,7 +530,6 @@ if (msg != null) System.out.println("Email = " + msg.subject);
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private offstage.school.gui.CourseListPanel courseListPanel;
-    private offstage.school.gui.CoursesPanel coursesPanel;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
@@ -557,15 +553,14 @@ if (msg != null) System.out.println("Email = " + msg.subject);
     private javax.swing.JMenuItem miStudentAccounts;
     private javax.swing.JMenuItem miStudentSchedules;
     private offstage.school.gui.RegistrationPanel regPanel;
-    private offstage.school.gui.TermsPanel schedulePanel;
     private javax.swing.JTabbedPane tabs;
-    private offstage.school.gui.TermsAddPanel termsAddPanel;
+    private offstage.openclass.TeacherPanel teacherPanel1;
     private citibob.swing.typed.JKeyedComboBox vTermID;
     // End of variables declaration//GEN-END:variables
 
 public static void showFrame(SqlRun str, final FrontApp fapp)
 {
-	final SchoolFrame frame = new SchoolFrame();
+	final SchoolRegFrame frame = new SchoolRegFrame();
 	frame.initRuntime(str, fapp);
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {

@@ -147,7 +147,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
-    <Property name="title" type="java.lang.String" value="School"/>
+    <Property name="title" type="java.lang.String" value="School Setup"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="jMenuBar1"/>
@@ -250,20 +250,11 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="offstage.school.gui.RegistrationPanel" name="regPanel">
+        <Component class="offstage.openclass.DiscountPanel" name="discountPanel1">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Registration">
-                <Property name="tabTitle" type="java.lang.String" value="Registration"/>
-              </JTabbedPaneConstraints>
-            </Constraint>
-          </Constraints>
-        </Component>
-        <Component class="offstage.school.gui.CourseListPanel" name="courseListPanel">
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Enrollments">
-                <Property name="tabTitle" type="java.lang.String" value="Enrollments"/>
+              <JTabbedPaneConstraints tabName="Studio Discounts">
+                <Property name="tabTitle" type="java.lang.String" value="Studio Discounts"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

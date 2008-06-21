@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.openclass;
 
-import java.beans.PropertyChangeEvent;
 import offstage.frontdesk.*;
 import javax.swing.*;
 import citibob.jschema.*;
@@ -34,9 +33,10 @@ import citibob.sql.pgsql.SqlInteger;
 import citibob.text.PercentSFormat;
 import citibob.util.ObjectUtil;
 import citibob.wizard.Wizard;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import offstage.FrontApp;
-import offstage.schema.TermidsSchema;
+import offstage.school.gui.SchoolModel;
 
 /**
  *
@@ -44,9 +44,12 @@ import offstage.schema.TermidsSchema;
  */
 public class TeacherPanel 
 extends javax.swing.JPanel {
-	TeacherDbModel teacherDm;
-	FrontApp app;
-//        SchoolModel smod;
+	
+SchoolModel smod;
+TeacherDbModel teacherDm;
+SqlBufDbModel otherTeachersDm;
+FrontApp app;
+MultiDbModel allDm;
     
 	/** Creates new form PersonPanel */
 	public TeacherPanel() {
@@ -60,9 +63,10 @@ public void refreshTeacherList(SqlRun str)
 {
 	teacherList.getTable().executeQuery(str, "select entityid from teachers", "lastname,firstname");
 }
-public void initRuntime(SqlRun str, FrontApp xapp)
+public void initRuntime(SqlRun str, FrontApp xapp, SchoolModel xsmod)
 {
 	this.app = xapp;
+	this.smod = xsmod;
 //	vNewTeacherID.initRuntime(app);
 
 	
@@ -88,21 +92,41 @@ public void initRuntime(SqlRun str, FrontApp xapp)
 
 	// ================================================
 	// Other Teachers
+	otherTeachersDm = new SqlBufDbModel(str, app,
+		new String[] {"enrollments"}, null, new String[] {"enrollments"}) {
+	public String getSelectSql(boolean proto) {
+//			int row = enrollments.getSelectedRow();
+//			Integer courseid = null;
+//			if (row >= 0) courseid = (Integer)teacherDm.enrolled.getSchemaBuf().getValueAt(row, "courseid");
+		return
+			" select p.firstname || ' ' || p.lastname as teachername, e.*" +
+			" from enrollments e, entities p" +
+			" where e.entityid = p.entityid" +
+			" and e.entityid <> " + teacherList.getValue() +
+			" and courseid = " + enrollments.getValue() +
+			" and courserole = " + app.schemaSet().getEnumInt("enrollments", "courserole", "teacher");
+	}};
 	
 	// ================================================
 	// Update terms
-	vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
-	public void propertyChange(PropertyChangeEvent evt) {
+//	vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
+//	public void propertyChange(PropertyChangeEvent evt) {
+	smod.addListener(new SchoolModel.Adapter() {
+    public void termIDChanged(int oldTermID, int termID) {
 		SqlRun str = app.sqlRun();
 		app.sqlRun().pushFlush();
 //				teacherDm.set
-			teacherDm.enrolled.setTermID((Integer)vTermID.getValue());
+			teacherDm.enrolled.setTermID(smod.getTermID());
+//			teacherDm.enrolled.setTermID((Integer)vTermID.getValue());
 			teacherDm.enrolled.doSelect(str);
 		// ------------ TODO: refresh enrollments here
 //			schoolModel.setTermID((Integer)(vTermID.getValue()));
 		app.sqlRun().popFlush();		// Flush, conditional on no other items around us.
 	}});
 
+
+
+	
 	str.execUpdate(new UpdTasklet2() {		// Set up table AFTER enrolledDb has been initialized
 	public void run(SqlRun str) {
 		// ===========================================
@@ -144,29 +168,15 @@ public void initRuntime(SqlRun str, FrontApp xapp)
 		oCDiscPane.initRuntime(app, teacherDm.ocDiscModels);
 		
 		// ====================================================
-		// Other Teachers
-		final SqlBufDbModel otherTeachersDm = new SqlBufDbModel(app, "enrollments") {
-		public String getSelectSql(boolean proto) {
-//			int row = enrollments.getSelectedRow();
-//			Integer courseid = null;
-//			if (row >= 0) courseid = (Integer)teacherDm.enrolled.getSchemaBuf().getValueAt(row, "courseid");
-			return
-				" select p.firstname || ' ' || p.lastname as teachername, e.*" +
-				" from enrollments e, entities p" +
-				" where e.entityid = p.entityid" +
-				" and e.entityid <> " + teacherList.getValue() +
-				" and courseid = " + enrollments.getValue() +
-				" and courserole = " + app.schemaSet().getEnumInt("enrollments", "courserole", "teacher");
-		}};
-		str.execUpdate(new UpdTasklet() {
-		public void run() {
+//		str.execUpdate(new UpdTasklet() {
+//		public void run() {
 			otherTeachers.setModelU(otherTeachersDm.getSchemaBuf(),
-				new String[] {"Teacher", "From", "To"},
-				new String[] {"teachername", "dstart", "dend"},
-				new boolean[] {false,false, true, false},
+				new String[] {"Status", "Teacher", "From", "To"},
+				new String[] {"__status__", "teachername", "dstart", "dend"},
+				new boolean[] {false,false, true, true},
 				app.swingerMap());
-			otherTeachers.setHighlightMouseover(false);
-			otherTeachers.setEnabled(false);
+//			otherTeachers.setHighlightMouseover(false);
+//			otherTeachers.setEnabled(false);
 			otherTeachers.setValueColU("entityid");
 			
 			// Listen for refreshes
@@ -181,7 +191,7 @@ public void initRuntime(SqlRun str, FrontApp xapp)
 				str.popFlush();
 			}});
 			
-		}});
+//		}});
 		
 //		// Change teacher when you click here...
 //		otherTeachers.addPropertyChangeListener("value", new PropertyChangeListener() {
@@ -195,12 +205,25 @@ public void initRuntime(SqlRun str, FrontApp xapp)
 		// ===================================================
 		// Terms Selector
 		// Set up terms selector
-		final DbKeyedModel tkmodel = ((TermidsSchema)app.getSchema("termids")).currentTermsKmodel;
-			vTermID.setKeyedModel(tkmodel, null);
+//		final DbKeyedModel tkmodel = ((TermidsSchema)app.getSchema("termids")).currentTermsKmodel;
+//			vTermID.setKeyedModel(tkmodel, null);
 		
+		allDm = new MultiDbModel(teacherDm, otherTeachersDm) {
+			public void doSelect(SqlRun str) {
+				super.doSelect(str);
+				
+				final Object val = enrollments.getValue();
+				str.execUpdate(new UpdTasklet() {
+				public void run() {
+					enrollments.setValue(val);
+				}});
+			}
+		};
+			
 	}});
 	
 }
+
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
@@ -277,9 +300,6 @@ public void initRuntime(SqlRun str, FrontApp xapp)
         oCDiscPane = new offstage.openclass.OCDiscPane();
         lDiscountCodes = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        vTermID = new citibob.swing.typed.JKeyedComboBox();
-        jLabel10 = new javax.swing.JLabel();
         jSplitPane5 = new javax.swing.JSplitPane();
         EnrollmentsPane = new javax.swing.JPanel();
         GroupScrollPanel = new javax.swing.JScrollPane();
@@ -292,6 +312,9 @@ public void initRuntime(SqlRun str, FrontApp xapp)
         GroupScrollPanel1 = new javax.swing.JScrollPane();
         otherTeachers = new citibob.swing.typed.JTypedSelectTable();
         lDiscountCodes2 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        bAddTeacher1 = new javax.swing.JButton();
+        bRemoveTeacher1 = new javax.swing.JButton();
 
         genderButtonGroup.setColName("gender");
 
@@ -804,28 +827,6 @@ public void initRuntime(SqlRun str, FrontApp xapp)
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        vTermID.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        vTermID.setPreferredSize(new java.awt.Dimension(68, 19));
-
-        jLabel10.setText("Term: ");
-
-        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel2Layout.createSequentialGroup()
-                .add(jLabel10)
-                .add(3, 3, 3)
-                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jLabel10)
-            .add(vTermID, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        );
-
-        jPanel1.add(jPanel2, java.awt.BorderLayout.NORTH);
-
         EnrollmentsPane.setLayout(new java.awt.BorderLayout());
 
         enrollments.setModel(new javax.swing.table.DefaultTableModel(
@@ -888,6 +889,25 @@ public void initRuntime(SqlRun str, FrontApp xapp)
         lDiscountCodes2.setText("Other Teachers for Class");
         EnrollmentsPane1.add(lDiscountCodes2, java.awt.BorderLayout.PAGE_START);
 
+        bAddTeacher1.setText("Add");
+        bAddTeacher1.setEnabled(false);
+        bAddTeacher1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bAddTeacher1ActionPerformed(evt);
+            }
+        });
+        jPanel6.add(bAddTeacher1);
+
+        bRemoveTeacher1.setText("Remove");
+        bRemoveTeacher1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bRemoveTeacher1ActionPerformed(evt);
+            }
+        });
+        jPanel6.add(bRemoveTeacher1);
+
+        EnrollmentsPane1.add(jPanel6, java.awt.BorderLayout.PAGE_END);
+
         jSplitPane5.setRightComponent(EnrollmentsPane1);
 
         jPanel1.add(jSplitPane5, java.awt.BorderLayout.CENTER);
@@ -927,8 +947,8 @@ private void bAddTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
 	app.guiRun().run(TeacherPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			teacherDm.doUpdate(str);
-			teacherDm.doSelect(str);
+			allDm.doUpdate(str);
+			allDm.doSelect(str);
 		}});
 		// TODO add your handling code here:
 }//GEN-LAST:event_bSaveActionPerformed
@@ -936,7 +956,7 @@ private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:e
 private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
 	app.guiRun().run(TeacherPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			teacherDm.doSelect(str);
+			allDm.doSelect(str);
 		}});
 		// TODO add your handling code here:
 }//GEN-LAST:event_bUndoActionPerformed
@@ -949,7 +969,8 @@ private void bAddEnrollmentActionPerformed(java.awt.event.ActionEvent evt) {//GE
 			Wizard wizard = new EnrollWizard(app, TeacherPanel.this);
 			wizard.setVal("sperson", "<Person>");
 			wizard.setVal("entityid", teacherList.getValue());
-			wizard.setVal("termid", vTermID.getValue());
+			wizard.setVal("termid", smod.getTermID());
+//			wizard.setVal("termid", vTermID.getValue());
 			wizard.setVal("courserole", app.schemaSet().getEnumInt("enrollments", "courserole", "teacher"));
 			wizard.runWizard("add");
 			teacherDm.enrolled.doSelect(str);
@@ -972,7 +993,8 @@ private void bRemoveEnrollmentActionPerformed(java.awt.event.ActionEvent evt) {/
 //		Integer entityid = (Integer)teacherList.getValue();
 		str.execSql("delete from enrollments" +
 			" where courseid = " + SqlInteger.sql(courseid) +
-			" and entityid = " + SqlInteger.sql(entityid));
+			" and entityid = " + SqlInteger.sql(entityid) +
+			" and courserole = " + app.schemaSet().getEnumInt("enrollments", "courserole", "teacher"));
 		teacherDm.enrolled.doSelect(str);
 	}});
 //			int row = enrollments.getSelectedRow();
@@ -1004,11 +1026,36 @@ private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GE
 		String sql =
 			" delete from teachers where entityid = " + entityid;
 		str.execSql(sql);
+		app.dbChange().fireTableWillChange(str, "teachers");
 		refreshTeacherList(str);
 		teacherDm.setKey(null);
 		teacherDm.doSelect(str);
 	}});
 }//GEN-LAST:event_bRemoveTeacherActionPerformed
+
+private void bAddTeacher1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddTeacher1ActionPerformed
+	// TODO add your handling code here:
+}//GEN-LAST:event_bAddTeacher1ActionPerformed
+
+private void bRemoveTeacher1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bRemoveTeacher1ActionPerformed
+	
+	app.guiRun().run(TeacherPanel.this, new SqlTask() {
+	public void run(SqlRun str) throws Exception {
+		if (JOptionPane.showConfirmDialog(TeacherPanel.this,
+			"Are you sure you wish to remove\n" +
+			"the selected teacher from the class?",
+			"Remove Teacher", JOptionPane.YES_NO_OPTION)
+			!= JOptionPane.YES_OPTION) return;
+
+		Integer courseid = (Integer)enrollments.getValue("courseid");
+		Integer entityid = (Integer)otherTeachers.getValue("entityid");
+		str.execSql("delete from enrollments" +
+			" where courseid = " + SqlInteger.sql(courseid) +
+			" and entityid = " + SqlInteger.sql(entityid) +
+			" and courserole = " + app.schemaSet().getEnumInt("enrollments", "courserole", "teacher"));
+		otherTeachersDm.doSelect(str);
+	}});
+}//GEN-LAST:event_bRemoveTeacher1ActionPerformed
 	
 
 	
@@ -1029,10 +1076,12 @@ private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private javax.swing.JPanel addressPanel;
     private javax.swing.JButton bAddEnrollment;
     private javax.swing.JButton bAddTeacher;
+    private javax.swing.JButton bAddTeacher1;
     private javax.swing.JButton bLaunchBrowser;
     private javax.swing.JButton bLaunchEmail;
     private javax.swing.JButton bRemoveEnrollment;
     private javax.swing.JButton bRemoveTeacher;
+    private javax.swing.JButton bRemoveTeacher1;
     private javax.swing.JButton bSave;
     private javax.swing.JButton bUndo;
     private citibob.swing.typed.JTypedTextField city;
@@ -1044,7 +1093,6 @@ private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.KeyedButtonGroup genderButtonGroup;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -1058,10 +1106,10 @@ private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel15;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JSplitPane jSplitPane3;
@@ -1093,7 +1141,6 @@ private void bRemoveTeacherActionPerformed(java.awt.event.ActionEvent evt) {//GE
     private javax.swing.JPanel teacherTablePane;
     private javax.swing.JRadioButton unknownGenderButton;
     private citibob.swing.typed.JTypedTextField url;
-    private citibob.swing.typed.JKeyedComboBox vTermID;
     private citibob.swing.typed.JTypedTextField zip;
     // End of variables declaration//GEN-END:variables
 	// --------------------------------------------------------------

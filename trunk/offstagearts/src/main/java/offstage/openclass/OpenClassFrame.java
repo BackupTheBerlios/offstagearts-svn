@@ -51,7 +51,7 @@ public class OpenClassFrame extends javax.swing.JFrame
 //			oCDiscPanel1.initRuntime(str, app, models);
 //			oCDiscPanel1.refresh(str, null);
 			
-			teacherPanel1.initRuntime(str, app);
+			teacherPanel1.initRuntime(str, app, null);
 		}});
 //		this.openClassPanel1.initRuntime(str, app);
 //		openRegPanel1.initRuntime(str, app);

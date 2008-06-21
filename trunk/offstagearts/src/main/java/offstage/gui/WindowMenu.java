@@ -63,10 +63,11 @@ void setWindowMenu(JFrame f)
 	JMenuItem mi;
 
 	addFrameMenuItem(menu, "Development", "devel");
-	addFrameMenuItem(menu, "School", "school");
-	addFrameMenuItem(menu, "Accounting", "accounting");
+	addFrameMenuItem(menu, "School Setup", "schoolSetup");
+	addFrameMenuItem(menu, "School Registration", "schoolReg");
 	addFrameMenuItem(menu, "Front Desk", "frontdesk");
-	addFrameMenuItem(menu, "Open Class", "openclass");
+	addFrameMenuItem(menu, "Accounting", "accounting");
+//	addFrameMenuItem(menu, "Open Class", "openclass");
 	menu.add(new JSeparator());
 	addFrameMenuItem(menu, "Duplicates", "dups");
 	addFrameMenuItem(menu, "Console", "console");

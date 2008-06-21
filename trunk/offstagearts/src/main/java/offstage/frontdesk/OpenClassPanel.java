@@ -26,7 +26,10 @@ package offstage.frontdesk;
 import citibob.jschema.SqlBufDbModel;
 import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
+import citibob.sql.SqlRun;
+import citibob.sql.SqlRun;
 import citibob.sql.UpdTasklet;
+import citibob.sql.UpdTasklet2;
 import citibob.sql.pgsql.SqlDate;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.typed.Swinger;
@@ -58,6 +61,7 @@ public class OpenClassPanel extends javax.swing.JPanel
 FrontApp app;
 SqlBufDbModel enrollsDm;
 FDPersonModel personDm;
+SqlBufDbModel meetingsDm;
 SqlDate sqlDate;
 int openclassAcTypeID;
 int openclassAssetID;
@@ -137,7 +141,7 @@ int openclassAssetID;
 		swinger.configureWidget(chDate);
 
 		// Set up model for list of course meetings
-		final SqlBufDbModel meetingsDm = new SqlBufDbModel(str, xapp,
+		meetingsDm = new SqlBufDbModel(str, xapp,
 			new String[] {"meetings", "courseids", "termids"},
 			null,
 			null) {
@@ -166,8 +170,8 @@ int openclassAssetID;
 				" c.name as coursename,\n" +
 				" _c.mainid as mainid, _c.subid as subid," +
 				" case when _c.subid is not null then" +
-				"	(sub.displayname || ' for ' || teacher.displayname)" +
-				"	else (teacher.displayname)" +
+				"	(_c.subname || ' for ' || _c.mainname)" +
+				"	else (_c.mainname)" +
 				"	end as teachername," +
 				" c.enrolllimit,c.price,dow.shortname as dayofweek,\n" +
 				" t.name as termname, t.groupid as termid\n" +
@@ -176,8 +180,10 @@ int openclassAssetID;
 				" inner join daysofweek dow on (c.dayofweek = dow.javaid)\n" +
 				" inner join termids t on (c.termid = t.groupid)\n" +
 				" inner join _c on (_c.meetingid = m.meetingid)" +
-				" left outer join teachers teacher on (teacher.entityid = _c.mainid)" +
-				" left outer join teachers sub on (sub.entityid = _c.subid)" +
+//				" left outer join teachers teacher on (teacher.entityid = _c.mainid)" +
+//				" left outer join entities eteacher on (teacher.entityid = eteacher.entityid)" +
+//				" left outer join teachers sub on (sub.entityid = _c.subid)" +
+//				" left outer join entities esub on (sub.entityid = esub.entityid)" +
 				" order by m.dtstart, c.name;\n" +
 				
 				OpenClassDB.classLeadersDropSql();
@@ -227,7 +233,8 @@ int openclassAssetID;
 				" from meetings m\n" +
 				" inner join courseids c on (c.courseid = m.courseid)\n" +
 				" inner join enrollments e on (c.courseid = e.courseid)\n" +
-                                " where m.meetingid = " + SqlInteger.sql(meetingID) + "\n" +
+				" inner join courseroles cr on (cr.courseroleid = e.courserole and cr.name = 'student')\n" +
+				" where m.meetingid = " + SqlInteger.sql(meetingID) + "\n" +
 				(proto ? " and false\n" : "") +
 				" 	UNION\n" +
 				
@@ -235,6 +242,7 @@ int openclassAssetID;
 				" select s.meetingid, m.courseid, s.entityid, s.courserole, false as enrolled\n" +
 				" from subs s\n" +
 				" inner join meetings m on (s.meetingid = m.meetingid)\n" +
+				" inner join courseroles cr on (cr.courseroleid = s.courserole and cr.name = 'student')\n" +
 				" where s.meetingid = " + SqlInteger.sql(meetingID) + "\n" +
 				" and subtype = '+'\n" +
 				(proto ? " and false\n" : "") +
@@ -246,6 +254,7 @@ int openclassAssetID;
 				" inner join meetings m on (s.meetingid = m.meetingid)\n" +
 				" inner join courseids c on (c.courseid = m.courseid)\n" +
 				" inner join enrollments e on (c.courseid = e.courseid and s.entityid = e.entityid)\n" +
+				" inner join courseroles cr on (cr.courseroleid = e.courserole and cr.name = 'student')\n" +
 				" where s.meetingid = " + SqlInteger.sql(meetingID) + "\n" +
 				" and subtype = '-'" +
 				(proto ? " and false\n" : "") +
@@ -465,52 +474,65 @@ int openclassAssetID;
 		app.guiRun().run(this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			// Check that user has provided right parameters
-			Integer entityid = (Integer)personDm.getKey();
-			Integer meetingid = (Integer)tMeetings.getValue();
+			final Integer entityid = (Integer)personDm.getKey();
+			final Integer meetingid = (Integer)tMeetings.getValue();
 			if (entityid == null || meetingid == null) {
 				JOptionPane.showMessageDialog(OpenClassPanel.this,
 					"You must select a person\nand course to register.");
 				return;
 			}
 			
-			// Figure out the price & discounts
-//			Double basePrice = (Double)tMeetings.getValue("price");
-			Map<Integer,Double> dollarDisc = OpenClassDB.getOCDiscounts(str, meetingid, entityid);
-			double price = 0;
-			for (Map.Entry<Integer,Double> ent : dollarDisc.entrySet()) {
-				price += (ent.getKey().intValue() == 0 ?
-					ent.getValue() : -ent.getValue());
-			}
+			// Get basic data out of previous query
+			final Double fullPrice = (Double)tMeetings.getValue("price");
+			Integer mainid = (Integer)tMeetings.getValue("mainid");	// main teacher
+			Integer subid = (Integer)tMeetings.getValue("subid");	// substitute teacher
+			
+			// Calculate discounts
+			final Map<Integer,Double> dollarDisc = OpenClassDB.getOCDiscounts(str,
+				meetingid, fullPrice, mainid, subid, entityid);
+			str.execUpdate(new UpdTasklet2() {
+			public void run(SqlRun str) {
+				// Use the discounts to calculate a final price (w/ sql for update)
+				StringBuffer subsamtSql = new StringBuffer();
+				double price = fullPrice;
+				for (Map.Entry<Integer,Double> ent : dollarDisc.entrySet()) {
+					price -= ent.getValue();
+					subsamtSql.append(
+						" insert into subsamt" +
+						" (meetingid, entityid, ocdisccatid, dollars) values (" +
+						meetingid + ", " + entityid + ", " +
+						ent.getKey() + ", " + ent.getValue() + ");\n");
+				}
 
-			// Check the account for available funds...
-			Double bal = transRegister.getBalance();
-			if (bal.doubleValue() < price) {
-				JOptionPane.showMessageDialog(OpenClassPanel.this,
-					"Insufficient funds.  You must first buy classes.");
-				return;
+				// Check the account for available funds...
+				Double bal = transRegister.getBalance();
+				if (bal.doubleValue() < price) {
+					JOptionPane.showMessageDialog(OpenClassPanel.this,
+						"Insufficient funds.  You must first buy classes.");
+					return;
+				}
+			
+				// Do the registration
+				String sql =
+					" insert into subs" +
+					" (meetingid, entityid, subtype, courserole) values\n(" +
+					SqlInteger.sql(meetingid) + ", " +
+					SqlInteger.sql(entityid) + ", " +
+					"'+', (select courseroleid from courseroles where name = 'student'));\n";
+//					"now(), now());\n";
+				str.execSql(sql + subsamtSql.toString());
 				
-			}
+				// Debit the account
+				Date today = sqlDate.truncate(new Date());
 			
-			// Do the registration
-			String sql =
-				" insert into subs" +
-				" (meetingid, entityid, subtype, courserole, dtapproved, enterdtime) values\n(" +
-				SqlInteger.sql(meetingid) + ", " +
-				SqlInteger.sql(entityid) + ", " +
-				"'+', (select courseroleid from courseroles where name = 'student'), " +
-				"now(), now())";
-			str.execSql(sql);
-			
-			// Debit the account
-			Date today = sqlDate.truncate(new Date());
-			
-			TypedHashMap optional = new TypedHashMap();
-				optional.put("description", "Open Class");
-				optional.put("studentid", entityid);
-				optional.put("termid", (Integer)tMeetings.getValue()); // Store the meetingid, so we can yank later on an undo
-			sql = AccountsDB.w_actrans2_insert_sql(app, entityid, "openclass", openclassAcTypeID,
-				"openclass", today, optional,
-				new int[] {openclassAssetID}, new double[] {-price});
+				TypedHashMap optional = new TypedHashMap();
+					optional.put("description", "Open Class");
+					optional.put("studentid", entityid);
+					optional.put("termid", (Integer)tMeetings.getValue()); // Store the meetingid, so we can yank later on an undo
+				sql = AccountsDB.w_actrans2_insert_sql(app, entityid, "openclass", openclassAcTypeID,
+					"openclass", today, optional,
+					new int[] {openclassAssetID}, new double[] {-price});
+				str.execSql(sql);
 
 //			sql =
 //				" insert into actrans " +
@@ -524,11 +546,11 @@ int openclassAssetID;
 //				SqlInteger.sql(entityid) + ", " +
 //				SqlInteger.sql((Integer)tMeetings.getValue()) +		// Store the meetingid, so we can yank later on an undo
 //				")";
-			str.execSql(sql);
 				
-			// Refresh
-			enrollsDm.doSelect(str);
-			transRegister.refresh(str);
+				// Refresh
+				enrollsDm.doSelect(str);
+				transRegister.refresh(str);
+			}});
 		}});
 	}//GEN-LAST:event_bRegisterActionPerformed
 

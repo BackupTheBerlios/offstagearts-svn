@@ -27,17 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.gui;
 
-import citibob.wizard.Wizard;
-import offstage.*;
-import citibob.swing.html.*;
-import java.util.*;
-import citibob.task.*;
-import offstage.wizards.newrecord.*;
-import citibob.swing.*;
-import javax.swing.*;
-import offstage.cleanse.*;
-import citibob.sql.*;
-import offstage.wizards.newgroupid.NewGroupidWizard;
+import citibob.swing.html.ActionPanel;
+import citibob.task.ETask;
+import offstage.FrontApp;
+
 
 /**
  *
@@ -61,9 +54,13 @@ throws org.xml.sax.SAXException, java.io.IOException
 	public void run() throws Exception {
 		app.frameSet().openFrame("frontdesk");
 	}});
-	addAction("school", "", new ETask() {
+	addAction("schoolReg", "", new ETask() {
 	public void run() throws Exception {
-		app.frameSet().openFrame("school");
+		app.frameSet().openFrame("schoolReg");
+	}});
+	addAction("schoolSetup", "", new ETask() {
+	public void run() throws Exception {
+		app.frameSet().openFrame("schoolSetup");
 	}});
 	addAction("accounting", "", new ETask() {
 	public void run() throws Exception {
