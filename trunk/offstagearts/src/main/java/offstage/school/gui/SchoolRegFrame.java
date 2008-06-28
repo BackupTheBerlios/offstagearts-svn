@@ -81,7 +81,9 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 
 	// Set up terms selector
 //setKeyedModel selects the term --- but the KeyedModel is not getting filled in till afterwards
+//TODO: Use segments for current term
 	final DbKeyedModel tkmodel = ((TermidsSchema)fapp.getSchema("termids")).currentTermsKmodel;
+//	KeyedModel tkmodel = fapp.schemaSet().getKeyedModel("termids", colName)
 //			new DbKeyedModel(str, fapp.dbChange(), "termids",
 //		"select groupid, name, null from termids where iscurrent order by firstdate desc");
 	str.execUpdate(new UpdTasklet2() {

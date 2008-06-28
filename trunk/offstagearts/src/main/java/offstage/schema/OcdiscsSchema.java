@@ -32,11 +32,11 @@ throws SQLException
 {
 	table = "ocdiscs";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"ocdiscids", "ocdiscid", "name", "name");
+		"ocdiscids", "ocdiscid", "name", "name", null);
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "serialid", true),
 		new SqlCol(new SqlInteger(false), "entityid", false),
-		new SqlCol(new SqlEnum(kmodel, false), "ocdiscid", false),
+		new SqlCol(new SqlEnum(kmodel), "ocdiscid", false),
 		new SqlCol(new SqlDate(tz, true), "dstart"),
 		new SqlCol(new SqlDate(tz, true), "dend")
 	};

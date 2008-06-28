@@ -32,8 +32,9 @@ throws SQLException
 {
 	super();
 	table = "termregs";
-	KeyedModel kmodel = new DbKeyedModel(str, change, "programids",
-		"select programid, name, termid from programids order by name");
+	DbKeyedModel kmodel = new DbKeyedModel(str, change, "programids",
+		"select programid, name, termid from programids order by name",
+		"<No Level Selected>");
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "groupid", true),	// links to termids; this should really be enum, except that's not needed...
 		new SqlCol(new SqlInteger(false), "entityid", true),
@@ -45,7 +46,7 @@ throws SQLException
 		new SqlCol(new SqlDate(tz, true), "dtsigned"),
 		new SqlCol(new SqlDate(tz, true), "dtregistered"),
 //		new SqlCol(new SqlString(true), "rbplan"),
-		new SqlCol(new SqlEnum(kmodel, "<No Level Selected>"), "programid")		
+		new SqlCol(new SqlEnum(kmodel), "programid")		
 	};
 }
 

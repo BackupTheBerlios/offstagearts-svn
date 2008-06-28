@@ -36,10 +36,10 @@ throws SQLException
 	
 	table = "actrans2amt";
 	assetKmodel = new DbKeyedModel(str, change,
-		"assetids", "assetid", "name", "name");
+		"assetids", "assetid", "name", "name", null);
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "actransid", true),		
-		new SqlCol(new SqlEnum(assetKmodel, false), "assetid", true),
+		new SqlCol(new SqlEnum(assetKmodel), "assetid", true),
 		new SqlCol(new SqlNumeric(9,2), "amount")
 	};
 }

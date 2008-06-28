@@ -53,8 +53,8 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	final EntityIDDropdown entityid = new EntityIDDropdown();
 		entityid.initRuntime(app, v.getInteger("termid"));
 	
-	final KeyedModel crModel = new citibob.sql.DbKeyedModel(str, null,
-		"courseroles", "courseroleid", "name", "orderid");
+	final KeyedModel crModel = new DbKeyedModel(str, null,
+		"courseroles", "courseroleid", "name", "orderid", null);
 //	String sql =
 //		" select name from termids where groupid = " + SqlInteger.sql(v.getInteger("termid"));
 //	str.execSql(sql, new RsTasklet2() {

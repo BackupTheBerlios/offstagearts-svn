@@ -40,7 +40,7 @@ public IdSqlPanel newIdSqlPanel(App app)
 	final IdSqlPanel noEmail = new IdSqlPanel();
 		noEmail.initRuntime(app);
 		noEmail.getTable().setHighlightMouseover(false);
-		noEmail.getTable().setHighlightSelected(false);
+//		noEmail.getTable().setHighlightSelected(false);
 	return noEmail;
 }
 

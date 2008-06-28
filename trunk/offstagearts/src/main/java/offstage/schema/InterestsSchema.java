@@ -27,18 +27,18 @@ import citibob.types.*;
 public class InterestsSchema extends ConstSqlSchema
 {
 
-KeyedModel kmodel;
-public KeyedModel getKeyedModel() { return kmodel; }
+//KeyedModel kmodel;
+//public KeyedModel getKeyedModel() { return kmodel; }
 
 public InterestsSchema(citibob.sql.SqlRun str, DbChangeModel change)
 throws SQLException
 {
 	super();
 	table = "interests";
-	kmodel = new DbKeyedModel(str, change,
-		"interestids", "groupid", "name", "name");
+	DbKeyedModel kmodel = new DbKeyedModel(str, change,
+		"interestids", "groupid", "name", "name", null);
 	cols = new SqlCol[] {
-		new SqlCol(new SqlEnum(kmodel, false), "groupid", true),
+		new SqlCol(new SqlEnum(kmodel), "groupid", true),
 		new SqlCol(new SqlInteger(false), "entityid", true),
 		new SqlCol(new SqlBool(true), "byperson", false),
 		new SqlCol(new SqlString(50,true), "referredby", false)

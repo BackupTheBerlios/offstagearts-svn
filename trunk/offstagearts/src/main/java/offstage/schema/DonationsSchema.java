@@ -32,10 +32,10 @@ throws SQLException
 {
 	table = "donations";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"donationids", "groupid", "name", "name");
+		"donationids", "groupid", "name", "name", null);
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "serialid", true),
-		new SqlCol(new SqlEnum(kmodel, false), "groupid", false),
+		new SqlCol(new SqlEnum(kmodel), "groupid", false),
 		new SqlCol(new SqlInteger(false), "entityid", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "date", false),
 		new SqlCol(new SqlNumeric(9, 2), "amount", false)

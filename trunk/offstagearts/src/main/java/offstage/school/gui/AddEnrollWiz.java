@@ -54,14 +54,14 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 	
 //	addWidget("courserole", new JKeyedComboBox((KeyedModel)v.get("courseroleModel"));
 	final KeyedModel crModel = new citibob.sql.DbKeyedModel(str, null,
-		"courseroles", "courseroleid", "name", "orderid");
+		"courseroles", "courseroleid", "name", "orderid", null);
 	String sql =
 		" select courseid, c.name || ' (' || dw.shortname || ')', c.termid" +
 		" from courseids c, daysofweek dw" +
 		" where c.dayofweek = dw.javaid" +
 		" and termid = " + v.get("termid") +
 		" order by c.dayofweek, c.name, c.tstart";
-	final KeyedModel cModel = new citibob.sql.DbKeyedModel(str, null, "courseids", sql);
+	final KeyedModel cModel = new citibob.sql.DbKeyedModel(str, null, "courseids", sql, null);
 	sql =
 		" select name from termids where groupid = " + SqlInteger.sql(v.getInteger("termid"));
 	str.execSql(sql, new RsTasklet2() {

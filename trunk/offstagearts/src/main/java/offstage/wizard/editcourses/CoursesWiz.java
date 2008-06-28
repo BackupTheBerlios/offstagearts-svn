@@ -129,7 +129,7 @@ void termChanged(SqlRun str) //throws SQLException
 	/** After the Wiz is done running, report its output into a Map. */
 	public void getAllValues(java.util.Map map)
 	{
-		Object courseid = courses.getOneSelectedValU("courseid");
+		Object courseid = courses.getValue("courseid");
 		map.put("courseid", courseid);
 	}
 

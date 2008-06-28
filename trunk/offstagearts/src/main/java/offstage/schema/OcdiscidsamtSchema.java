@@ -34,12 +34,12 @@ throws SQLException
 	
 	table = "ocdiscidsamt";
 	KeyedModel disccatKm = new DbKeyedModel(str, change,
-		"ocdisccatids", "ocdisccatid", "name", "name");
+		"ocdisccatids", "ocdisccatid", "name", "name", null);
 	cols = new SqlCol[] {
 //		new SqlCol(new SqlInteger(false), "serialid", true),		
 //		new SqlCol(new SqlInteger(false), "entityid"),
 		new SqlCol(new SqlInteger(false), "ocdiscid", true),
-		new SqlCol(new SqlEnum(disccatKm, false), "ocdisccatid", true),
+		new SqlCol(new SqlEnum(disccatKm), "ocdisccatid", true),
 		new SqlCol(new SqlNumeric(9,2), "dollars"),
 		new SqlCol(new SqlNumeric(9,2), "pct")
 //		new SqlCol(new SqlDate(tz, true), "dtstart"),

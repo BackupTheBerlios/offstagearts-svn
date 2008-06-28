@@ -33,9 +33,9 @@ throws SQLException
 	super();
 	table = "classes";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"classids", "groupid", "name", "name");
+		"classids", "groupid", "name", "name", null);
 	cols = new SqlCol[] {
-		new SqlCol(new SqlEnum(kmodel, false), "groupid", true),
+		new SqlCol(new SqlEnum(kmodel), "groupid", true),
 		new SqlCol(new SqlInteger(false), "entityid", true),
 		new SqlCol(new SqlString(300,true), "comments", false)
 	};

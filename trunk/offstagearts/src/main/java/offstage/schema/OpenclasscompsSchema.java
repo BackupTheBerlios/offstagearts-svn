@@ -33,9 +33,9 @@ throws SQLException
 {
 	table = "openclasscomps";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"openclasscompids", "groupid", "name", "name");
+		"openclasscompids", "groupid", "name", "name", null);
 	cols = new SqlCol[] {
-		new SqlCol(new SqlEnum(kmodel, false), "groupid", true),
+		new SqlCol(new SqlEnum(kmodel), "groupid", true),
 		new SqlCol(new SqlInteger(false), "entityid", true),
 		new ColumnDefaultNow(new SqlDate(tz, false), "startdate", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "enddate", false)

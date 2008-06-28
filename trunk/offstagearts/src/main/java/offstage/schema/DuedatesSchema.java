@@ -35,10 +35,10 @@ throws SQLException{
 	
 	table = "duedates";
 	kmodel = new DbKeyedModel(str, change,
-		"duedateids", "duedateid", "description", "description");
+		"duedateids", "duedateid", "description", "description", null);
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "termid", true),
-		new SqlCol(new SqlEnum(kmodel, false), "duedateid", true),
+		new SqlCol(new SqlEnum(kmodel), "duedateid", true),
 		new SqlCol(new SqlDate(tz, false), "duedate")
 	};
 }

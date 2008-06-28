@@ -32,9 +32,9 @@ throws SQLException
 {
 	table = "flags";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"flagids", "groupid", "name", "name");
+		"flagids", "groupid", "name", "name", null);
 	cols = new SqlCol[] {
-		new SqlCol(new SqlEnum(kmodel, false), "groupid", true),
+		new SqlCol(new SqlEnum(kmodel), "groupid", true),
 		new SqlCol(new SqlInteger(false), "entityid", true)
 //		new ColumnDefaultNow(new SqlDate(tz, false), "date", false)
 	};

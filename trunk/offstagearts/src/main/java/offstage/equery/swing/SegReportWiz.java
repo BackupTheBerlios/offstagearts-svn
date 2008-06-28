@@ -71,7 +71,7 @@ throws org.xml.sax.SAXException, java.io.IOException
 	JTypeColTable segtable = new JTypeColTable();
 	segtable.setModelU(segmod,
 		new String[] {"", "Segment"},
-		null, new boolean[] {true, false});
+		null, new boolean[] {true, false}, app.swingerMap());
     // Disable auto resizing
 //    segtable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     

@@ -40,8 +40,8 @@ throws SQLException
 {
 	table = "entities";
 
-	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"relprimarytypes", "relprimarytypeid", "name", "name");
+	DbKeyedModel kmodel = new DbKeyedModel(str, change,
+		"relprimarytypes", "relprimarytypeid", "name", "name", "");
 	cols = new SqlCol[] {
 			new SqlCol(new SqlInteger(false), "entityid", true),
 			new SqlCol(new SqlInteger(), "primaryentityid", false),
@@ -57,7 +57,7 @@ throws SQLException
 			new SqlCol(new SqlInteger(), "sourcekey", false),
 			//new Column(new SqlInteger(), "ipeopleid", false),
 			new SqlCol(new SqlTimestamp("GMT",true), "lastupdated", false),
-			new citibob.jschema.SqlCol(new SqlEnum(kmodel, true), "relprimarytypeid", false),
+			new citibob.jschema.SqlCol(new SqlEnum(kmodel), "relprimarytypeid", false),
 			//new citibob.jschema.Column(new SqlBool(), "isquery", false),
 			new SqlCol(new SqlBool(), "sendmail", false),
 			new SqlCol(new SqlBool(), "obsolete", false),
@@ -70,9 +70,9 @@ throws SQLException
 		new SqlCol(new SqlString(100), "customaddressto", false),
 		new SqlCol(new SqlString(100), "orgname", false),
 		new SqlCol(new SqlBool(false), "isorg", false),
-		new SqlCol(new SqlEnum(
-			new DbKeyedModel(str, change, "mailprefids", "mailprefid", "name", "mailprefid"),
-			"<No Preference>"), "mailprefid"),
+		new SqlCol(new SqlEnum(new DbKeyedModel(str, change, "mailprefids",
+			"mailprefid", "name", "mailprefid", "<No Preference>")),
+			"mailprefid"),
 		new SqlCol(new SqlString(50), "py_name"),
 		new SqlCol(new SqlString(1), "cc_type"),
 		new SqlCol(new SqlString(4), "cc_last4", false),

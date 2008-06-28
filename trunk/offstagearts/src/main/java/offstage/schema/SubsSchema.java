@@ -31,14 +31,14 @@ throws SQLException
 {
 	super();
 	table = "subs";
-	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"courseroles", "courseroleid", "name", "orderid,name");
+	DbKeyedModel kmodel = new DbKeyedModel(str, change,
+		"courseroles", "courseroleid", "name", "orderid,name", "<none>");
 
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "meetingid", true),
 		new SqlCol(new SqlInteger(false), "entityid", true),
 		new SqlCol(new SqlChar(false), "subtype"),
-		new SqlCol(new SqlEnum(kmodel, "<none>"), "courserole"),
+		new SqlCol(new SqlEnum(kmodel), "courserole"),
 		new SqlCol(new SqlTimestamp("GMT"), "dtapproved"),
 		new SqlCol(new SqlTimestamp("GMT"), "enterdate"),
 		new SqlCol(new SqlNumeric(9,2), "payed")

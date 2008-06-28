@@ -31,14 +31,14 @@ throws SQLException
 {
 	super();
 	table = "enrollments";
-	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"courseroles", "courseroleid", "name", "orderid,name");
+	DbKeyedModel kmodel = new DbKeyedModel(str, change,
+		"courseroles", "courseroleid", "name", "orderid,name", "<none>");
 	DbKeyedModel coursesKmodel = new DbKeyedModel(str, change, "courseids",
 		" select courseid, c.name || ' (' || dw.shortname || ')', c.termid" +
 		" from courseids c, daysofweek dw, termids t" +
 		" where c.dayofweek = dw.javaid" +
 		" and c.termid = t.groupid and t.iscurrent" +
-		" order by c.termid, c.dayofweek, c.name, c.tstart");
+		" order by c.termid, c.dayofweek, c.name, c.tstart", null);
 	if (change != null) change.addListener("termids", coursesKmodel);		// Need to register a second change listener.
 
 
@@ -46,9 +46,9 @@ throws SQLException
 //		" select coureseid, name, "
 //		"courseids", "courseid", "name", "orderid,name");
 	cols = new SqlCol[] {
-		new SqlCol(new SqlEnum(coursesKmodel, false), "courseid", true),
+		new SqlCol(new SqlEnum(coursesKmodel), "courseid", true),
 		new SqlCol(new SqlInteger(false), "entityid", true),
-		new SqlCol(new SqlEnum(kmodel, "<none>"), "courserole"),
+		new SqlCol(new SqlEnum(kmodel), "courserole"),
 		new SqlCol(new SqlDate(tz, true), "dstart"),
 		new SqlCol(new SqlDate(tz, true), "dend"),
 //		new SqlCol(new SqlInteger(true), "pplanid"),

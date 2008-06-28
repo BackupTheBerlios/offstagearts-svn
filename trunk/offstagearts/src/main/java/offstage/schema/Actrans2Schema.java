@@ -43,16 +43,16 @@ throws SQLException
 	
 	table = "actrans2";
 	actypeKmodel = new DbKeyedModel(str, change,
-		"actypes", "actypeid", "name", "name");
+		"actypes", "actypeid", "name", "name", null);
 	actranstypeKmodel = new DbKeyedModel(str, change,
-		"actranstypes", "actranstypeid", "name", "name");
+		"actranstypes", "actranstypeid", "name", "name", null);
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "actransid", true),
-		new SqlCol(new SqlEnum(actranstypeKmodel, false), "actranstypeid"),
+		new SqlCol(new SqlEnum(actranstypeKmodel), "actranstypeid"),
 		new SqlCol(new SqlInteger(false), "cr_entityid"),
 		new SqlCol(new SqlInteger(false), "db_entityid"),
-		new SqlCol(new SqlEnum(actypeKmodel, false), "cr_actypeid"),
-		new SqlCol(new SqlEnum(actypeKmodel, false), "db_actypeid"),
+		new SqlCol(new SqlEnum(actypeKmodel), "cr_actypeid"),
+		new SqlCol(new SqlEnum(actypeKmodel), "db_actypeid"),
 		new SqlCol(new SqlDate(tz, false), "date"),
 		new SqlCol(new SqlDate(tz, false), "datecreated"),
 //		new SqlCol(new SqlNumeric(9,2), "amount"),

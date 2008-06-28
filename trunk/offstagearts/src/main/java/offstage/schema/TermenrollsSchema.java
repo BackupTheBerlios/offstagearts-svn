@@ -34,13 +34,13 @@ throws SQLException
 	super();
 	table = "termenrolls";
 	KeyedModel termids_kmodel = new DbKeyedModel(str, change,
-		"termids", "groupid", "name", "firstdate desc,name");	
+		"termids", "groupid", "name", "firstdate desc,name", null);	
 	KeyedModel courseroles_kmodel = new DbKeyedModel(str, change,
-		"courseroles", "courseroleid", "name", "orderid,name");
+		"courseroles", "courseroleid", "name", "orderid,name", "<none>");
 	cols = new SqlCol[] {
-		new SqlCol(new SqlEnum(termids_kmodel, false), "groupid", true),
+		new SqlCol(new SqlEnum(termids_kmodel), "groupid", true),
 		new SqlCol(new SqlInteger(false), "entityid", true),
-		new SqlCol(new SqlEnum(courseroles_kmodel, "<none>"), "courserole", false)
+		new SqlCol(new SqlEnum(courseroles_kmodel), "courserole", false)
 	};
 }
 

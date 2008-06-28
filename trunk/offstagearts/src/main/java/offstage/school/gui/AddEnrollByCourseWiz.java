@@ -54,7 +54,7 @@ throws org.xml.sax.SAXException, java.io.IOException, SQLException
 		entityid.initRuntime(app, v.getInteger("termid"));
 	
 	final KeyedModel crModel = new citibob.sql.DbKeyedModel(str, null,
-		"courseroles", "courseroleid", "name", "orderid");
+		"courseroles", "courseroleid", "name", "orderid", null);
 //	String sql =
 //		" select name from termids where groupid = " + SqlInteger.sql(v.getInteger("termid"));
 //	str.execSql(sql, new RsTasklet2() {

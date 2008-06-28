@@ -36,11 +36,11 @@ public TermidsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.Tim
 throws SQLException{
 	table = "termids";
 	currentTermsKmodel = new DbKeyedModel(str, change, "termids",
-		"select groupid, name, null from termids where iscurrent order by firstdate desc");
+		"select groupid, name, null from termids where iscurrent order by firstdate desc", null);
 	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"termtypes", "termtypeid", "name", "orderid");
+		"termtypes", "termtypeid", "name", "orderid", null);
 	appendCols(new SqlCol[] {
-		new SqlCol(new SqlEnum(kmodel, false), "termtypeid", false),
+		new SqlCol(new SqlEnum(kmodel), "termtypeid", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "firstdate", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "nextdate", false),
 		new ColumnDefaultNow(new SqlTimestamp("GMT", true), "billdtime", false),

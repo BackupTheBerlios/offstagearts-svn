@@ -33,25 +33,25 @@ throws SQLException
 	super();
 	table = "ticketeventsales";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"ticketeventids", "groupid", "name", "name");
+		"ticketeventids", "groupid", "name", "name", null);
 	KeyedModel kTicketTypes = new DbKeyedModel(str, change,
-		"tickettypes", "tickettypeid", "name", "name");
+		"tickettypes", "tickettypeid", "name", "name", "<Not Known>");
 	KeyedModel kVenues = new DbKeyedModel(str, change,
-		"venueids", "venueid", "name", "name");
+		"venueids", "venueid", "name", "name", "<Not Known>");
 	KeyedModel kOfferCodes = new DbKeyedModel(str, change,
-		"offercodeids", "offercodeid", "name", "name");
+		"offercodeids", "offercodeid", "name", "name", "<None>");
 	KeyedModel kPerfTypes = new DbKeyedModel(str, change,
-		"perftypeids", "perftypeid", "name", "name");
+		"perftypeids", "perftypeid", "name", "name", "<Not Known>");
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "serialid", true),
-		new SqlCol(new SqlEnum(kmodel, false), "groupid", false),
+		new SqlCol(new SqlEnum(kmodel), "groupid", false),
 		new SqlCol(new SqlInteger(false), "entityid", false),
 		new SqlCol(new SqlInteger(true), "numberoftickets", false),
 		new SqlCol(new SqlNumeric(9,2,true), "payment", false),
-		new SqlCol(new SqlEnum(kTicketTypes, true), "tickettypeid", false),
-		new SqlCol(new SqlEnum(kVenues, true), "venueid", false),
-		new SqlCol(new SqlEnum(kOfferCodes, "<none>"), "offercodeid", false),
-		new SqlCol(new SqlEnum(kPerfTypes, "<unknown>"), "perftypeid", false),
+		new SqlCol(new SqlEnum(kTicketTypes), "tickettypeid", false),
+		new SqlCol(new SqlEnum(kVenues), "venueid", false),
+		new SqlCol(new SqlEnum(kOfferCodes), "offercodeid", false),
+		new SqlCol(new SqlEnum(kPerfTypes), "perftypeid", false),
 		new SqlCol(new SqlDate(tz, true), "date", false)
 	};
 }
