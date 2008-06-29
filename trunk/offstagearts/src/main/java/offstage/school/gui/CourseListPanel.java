@@ -135,13 +135,17 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 			"  case when st.lastname is null then '' else st.lastname end) as st_name,\n" +
 			" (case when p1.firstname is null then '' else p1.firstname || ' ' end ||\n" +
 			"  case when p1.lastname is null then '' else p1.lastname end) as p1_name,\n" +
-			" e.entityid, e.courseid, p1.entityid as p1_entityid, st.parent1id\n" +
-			" from courseids c, enrollments e, persons st\n" + //, entities_school st_s\n" +
-			" left outer join persons p1 on st.parent1id = p1.entityid\n" +
-			" where e.courseid = c.courseid\n" +
-			" and e.entityid = st.entityid\n" +
+			" e.entityid, e.courseid, st.parent1id, tr.payerid\n" +
+//			" from courseids c, enrollments e, persons st\n" + //, entities_school st_s\n" +
+			" from courseids c\n" + //, entities_school st_s\n" +
+			" left outer join enrollments e on (c.courseid = e.courseid)\n" +
+			" left outer join persons st on (e.entityid = st.entityid)\n" +
+			" left outer join persons p1 on (st.parent1id = p1.entityid)\n" +
+			" left outer join termregs tr on (tr.groupid = c.termid and tr.entityid = st.entityid)\n" +
+//			" where e.courseid = c.courseid\n" +
+//			" and e.entityid = st.entityid\n" +
 //			" and st_s.entityid = st.entityid\n" +
-			" and c.courseid = " + SqlInteger.sql(courseid) +
+			" where c.courseid = " + SqlInteger.sql(courseid) +
 			" order by e.courserole,st.lastname,st.firstname\n";
 	}};
 	str.execUpdate(new UpdTasklet2() {
@@ -394,9 +398,14 @@ void all_doSelect(SqlRun str)
 		fapp.guiRun().run(new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			// Re-calculate tuition for changed students
+			Integer studentid = fapp.schemaSet().getEnumInt("enrollments", "courserole", "student");
 			Set<Integer> payers = new TreeSet();
 			SchemaBuf sb = enrolledDb.getSchemaBuf();
-			for (int i=0; i<sb.getRowCount(); ++i) payers.add((Integer)sb.getValueAt(i, "adultid"));
+			for (int i=0; i<sb.getRowCount(); ++i) {
+				Integer courserole = (Integer)sb.getValueAt(i, "courserole");
+				if (courserole.equals(studentid))
+					payers.add((Integer)sb.getValueAt(i, "payerid"));
+			}
 			enrolledDb.doUpdate(str);
 			coursesDb.doUpdate(str);
 			TuitionCalc tc = new TuitionCalc(fapp, smod.getTermID());
