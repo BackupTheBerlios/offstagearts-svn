@@ -69,10 +69,12 @@ String dupType;
 		color = new java.awt.Color(51, 204, 0);
         entityPanel0.setAllBackground(color);
 		summaryPane0.setBackground(color);
+//		lNewRecord.setBackground(color);		// Didn't have any effect
 		
 		color = new java.awt.Color(255, 204, 204);
         entityPanel1.setAllBackground(color);
 		summaryPane1.setBackground(color);
+//		lOldRecord.setBackground(color);
 		
 		summaryPane0.setContentType("text/html");
 		summaryPane0.setEditable(false);
@@ -160,16 +162,28 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 				" insert into _ids " + idSql + ";\n") +
 			" select dups.*,e0.lastupdated as lastupdated0,e1.lastupdated as lastupdated1" +
 			" from dups, entities e0, entities e1" +
+// TODO: This line (below) is the problem.  Search only works if BOTH names
+// match the search.  It should work when only ONE name matches the search.
+			
+// Solution: use the basic SQL below...			
+//select entityid0,entityid1
+//from dups, _ids
+//where (dups.entityid0 = _ids.id or dups.entityid1 = _ids.id)
+//   EXCEPT
+//select entityid0,entityid1
+//from mergelog ml, _ids
+//where (ml.entityid0 = _ids.id or ml.entityid1 = _ids.id)
+
 			(idSql == null ? "" : ", _ids as ids0, _ids as ids1") +
 			" where dups.entityid0 = e0.entityid" +
 			" and dups.entityid1 = e1.entityid" +
 			" and dups.type=" + SqlString.sql(dupType) +
 			" and not e0.obsolete and not e1.obsolete" +
 			" and score <= 1.0" +
-			(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid") +
+			(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid\n") +
 // Eliminate children from different households.  Should really be done in original dup finding.
 " and ((e0.entityid = e0.primaryentityid or e1.entityid = e1.primaryentityid)" +
-" or e0.primaryentityid = e1.primaryentityid)" +
+" or e0.primaryentityid = e1.primaryentityid)\n" +
 			"    EXCEPT" +
 			" select dups.*,e0.lastupdated as lastupdated0,e1.lastupdated as lastupdated1" +
 			" from dups, mergelog ml, entities e0, entities e1" +
@@ -179,7 +193,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 			" and ml.dupok" +
 			" and dups.type=" + SqlString.sql(dupType) +
 			" and dups.entityid0 = ml.entityid0" +
-			" and dups.entityid1 = ml.entityid1" +
+			" and dups.entityid1 = ml.entityid1\n" +
 //			(idSql == null ? "" : " and (_ids.id = e0.entityid or _ids.id = e1.entityid)") +
 			"    EXCEPT" +
 			" select dups.*,e0.lastupdated as lastupdated0,e1.lastupdated as lastupdated1" +
@@ -245,10 +259,14 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
         entityPanel0 = new offstage.devel.gui.EntityPanel();
         entityPanel1 = new offstage.devel.gui.EntityPanel();
         jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         summaryPane0 = new javax.swing.JTextPane();
+        lNewRecord = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         summaryPane1 = new javax.swing.JTextPane();
+        lOldRecord = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -334,7 +352,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
         gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         leftButtonPanel.add(bDelete1, gridBagConstraints);
 
-        bDupOK.setText("Duplicate OK");
+        bDupOK.setText("Do Not Merge");
         bDupOK.setPreferredSize(new java.awt.Dimension(103, 40));
         bDupOK.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -377,6 +395,11 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
         jToolBar1.add(bSave);
 
         bUndo.setText("Undo");
+        bUndo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bUndoActionPerformed(evt);
+            }
+        });
         jToolBar1.add(bUndo);
 
         bRefreshList.setText("Refresh List");
@@ -464,13 +487,29 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
 
+        jPanel4.setLayout(new java.awt.BorderLayout());
+
         jScrollPane1.setViewportView(summaryPane0);
 
-        jPanel3.add(jScrollPane1);
+        jPanel4.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        lNewRecord.setFont(new java.awt.Font("Lucida Grande", 0, 24));
+        lNewRecord.setText("New Record");
+        jPanel4.add(lNewRecord, java.awt.BorderLayout.PAGE_START);
+
+        jPanel3.add(jPanel4);
+
+        jPanel5.setLayout(new java.awt.BorderLayout());
 
         jScrollPane2.setViewportView(summaryPane1);
 
-        jPanel3.add(jScrollPane2);
+        jPanel5.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        lOldRecord.setFont(new java.awt.Font("Lucida Grande", 0, 24));
+        lOldRecord.setText("Old Record");
+        jPanel5.add(lOldRecord, java.awt.BorderLayout.PAGE_START);
+
+        jPanel3.add(jPanel5);
 
         jTabbedPane1.addTab("Summary", jPanel3);
 
@@ -548,10 +587,17 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 //	dm.doUpdate(str);
 //}
 
-private void deleteAction(final int... eix)
+private void deleteAction(final String whichRecord, final int... eix)
 {
 	app.guiRun().run(CleansePanel.this, new SqlTask() {
 	public void run(SqlRun str) throws Exception {
+		if (JOptionPane.showConfirmDialog(CleansePanel.this,
+			"Do you really wish to delete\n" +
+			whichRecord + "?", "Delete Record",
+			JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
+		
+		
+		
 		allDm.doUpdate(str);
 		for (int i=0; i<eix.length; ++i) dm[eix[i]].doDelete(str);
 		refresh(str);
@@ -562,13 +608,13 @@ private void deleteAction(final int... eix)
 }
 	private void bDelete1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelete1ActionPerformed
 	{//GEN-HEADEREND:event_bDelete1ActionPerformed
-		deleteAction(1);
+		deleteAction("the old (red) record", 1);
 // TODO add your handling code here:
 	}//GEN-LAST:event_bDelete1ActionPerformed
 
 	private void bDelete0ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelete0ActionPerformed
 	{//GEN-HEADEREND:event_bDelete0ActionPerformed
-		deleteAction(0);
+		deleteAction("the new (green) record", 0);
 // TODO add your handling code here:
 	}//GEN-LAST:event_bDelete0ActionPerformed
 
@@ -644,9 +690,13 @@ private void mergeAction(final DevelModel dm0, final DevelModel dm1)
 
 	private void bDeleteBothActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDeleteBothActionPerformed
 	{//GEN-HEADEREND:event_bDeleteBothActionPerformed
-		deleteAction(0, 1);
+		deleteAction("both records", 0, 1);
 		// TODO add your handling code here:
 }//GEN-LAST:event_bDeleteBothActionPerformed
+
+	private void bUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bUndoActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_bUndoActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -670,11 +720,15 @@ private void mergeAction(final DevelModel dm0, final DevelModel dm1)
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JLabel lNewRecord;
+    private javax.swing.JLabel lOldRecord;
     private javax.swing.JPanel leftButtonPanel;
     private javax.swing.JPanel rightButtonPanel;
     private javax.swing.JTextPane summaryPane0;

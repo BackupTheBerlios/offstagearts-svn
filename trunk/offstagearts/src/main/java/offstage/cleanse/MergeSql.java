@@ -227,14 +227,22 @@ public void mergeOneRow(SqlSchema schema, String sEntityCol, Object entityid0, O
 
 	// Take care of lastupdated
 	if (schema.findCol("lastupdated") >= 0) {
-		sql.append(" update " + table);
-		sql.append(" set\n");
-		sql.append(" lastupdated = (case when " + table + ".lastupdated > t0.lastupdated or t0.lastupdated is null" +
-			" then " + table + ".lastupdated else t0.lastupdated end)");
-		sql.append(" from " + table + " as t0");
-		sql.append(" where " + table + "." + entityCol.getName() + " = " + entityCol.toSql(entityid1) +
-			" and t0." + entityCol.getName() + " = " + entityCol.toSql(entityid0));
-		sql.append(";\n");
+		// Set last updated to now!
+		sql.append(
+			" update " + table + " set lastupdated = now()" +
+			" where" + entityCol.getName() + " = " + entityCol.toSql(entityid1));
+
+		// Set last updated to the most recent of the two records.
+		if (false) {
+			sql.append(" update " + table);
+			sql.append(" set\n");
+			sql.append(" lastupdated = (case when " + table + ".lastupdated > t0.lastupdated or t0.lastupdated is null" +
+				" then " + table + ".lastupdated else t0.lastupdated end)");
+			sql.append(" from " + table + " as t0");
+			sql.append(" where " + table + "." + entityCol.getName() + " = " + entityCol.toSql(entityid1) +
+				" and t0." + entityCol.getName() + " = " + entityCol.toSql(entityid0));
+			sql.append(";\n");
+		}
 	}
 	
 //	System.out.println(sql);
@@ -367,13 +375,15 @@ public static void bufMerge(DevelModel dmod0, DevelModel dmod1)
 {
 	bufMergeMain(dmod0.getPersonSb(), dmod1.getPersonSb());
 	Integer entityid1 = (Integer)dmod1.getPersonSb().getValueAt(0, "entityid");
-	bufMoveRows("entityid", entityid1, dmod0.getDonationSb(), dmod1.getDonationSb());
+	bufMoveRows("entityid", entityid1, dmod0.getClassesSb(), dmod1.getClassesSb());
+	bufMoveRows("entityid", entityid1, dmod0.getDonationSb(), dmod1.getDonationSb());	
 	bufMoveRows("entityid", entityid1, dmod0.getEventsSb(), dmod1.getEventsSb());
-	bufMoveRows("entityid", entityid1, dmod0.getNotesSb(), dmod1.getNotesSb());
-	bufMoveRows("entityid", entityid1, dmod0.getTicketsSb(), dmod1.getTicketsSb());
-	bufMoveRows("entityid", entityid1, dmod0.getInterestsSb(), dmod1.getInterestsSb());
-	bufMoveRows("entityid", entityid1, dmod0.getTermsSb(), dmod1.getTermsSb());
 	bufMoveRows("entityid", entityid1, dmod0.getFlagSb(), dmod1.getFlagSb());
+	bufMoveRows("entityid", entityid1, dmod0.getInterestsSb(), dmod1.getInterestsSb());
+	bufMoveRows("entityid", entityid1, dmod0.getNotesSb(), dmod1.getNotesSb());
+	bufMoveRows("entityid", entityid1, dmod0.getPhonesSb(), dmod1.getPhonesSb());
+	bufMoveRows("entityid", entityid1, dmod0.getTicketsSb(), dmod1.getTicketsSb());
+	bufMoveRows("entityid", entityid1, dmod0.getTermsSb(), dmod1.getTermsSb());
 }
 /** Merge main part of the record.. */
 public static void bufMergeMain(SchemaBuf sb0, SchemaBuf sb1)
