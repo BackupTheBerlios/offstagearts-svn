@@ -1,5 +1,6 @@
 
 import citibob.gui.AppLauncher;
+import offstage.cleanse.MergePurge;
 import offstage.gui.OffstageLauncher;
 import offstage.licensor.Licensor;
 
@@ -14,7 +15,8 @@ public static void main(String[] args) throws Exception {
 
 	AppLauncher.launch("holyokefw", new Class[] {
 		OffstageLauncher.class,
-		Licensor.class
+		Licensor.class,
+		MergePurge.class
 	});
 }
 }

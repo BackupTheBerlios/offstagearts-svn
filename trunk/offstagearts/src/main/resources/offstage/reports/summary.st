@@ -1,7 +1,7 @@
 $if(person._isorg)$
 <h2>Org: $person.orgname$ ($person.firstname$ $person.middlename$ $person.lastname$)</h2>
 $else$
-<h2>$person.firstname$ $person.middlename$ $person.lastname$ $if(person._orgname)$($person.orgname$)$endif$</h2>
+<h2>Person: $person.firstname$ $person.middlename$ $person.lastname$ $if(person._orgname)$($person.orgname$)$endif$</h2>
 $endif$
 <table>
 <tr><th align="right">Name</th><td>$person.firstname$ $person.middlename$ $person.lastname$</td></tr>

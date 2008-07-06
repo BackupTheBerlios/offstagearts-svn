@@ -34,6 +34,7 @@ import com.wcohen.ss.*;
 import com.wcohen.ss.api.*;
 import com.wcohen.ss.tokens.*;
 import java.text.*;
+import offstage.FrontApp;
 import offstage.db.*;
 
 /**
@@ -170,6 +171,7 @@ public MergePurge(SqlRun str)
 		" address1,address2,city,state,zip,country," +
 		" firstname,lastname,orgname,isorg from persons p" +
 		" where not obsolete";
+ //" and entityid in (12633,21369)";
 //		" and city = 'Cambridge'";
 	str.execSql(sql, new RsTasklet2() {
 	public void run(SqlRun str, ResultSet rs) throws SQLException {
@@ -207,17 +209,17 @@ System.out.println("Done getting names (" + nameMap.size() + " records)");
 		// efficiency, you train on an iterator over StringWrapper
 		// objects, which are produced with the 'prepare' function.
 
-		str.execSql(process(nameMap, .9, "n"));	// Just merge by name
-//		process(addrMap, .8, "a");
-//		process(orgMap, .8, "o");
+		String sql = process(nameMap, .9, "n");
+		str.execSql(sql);	// Just merge by name
 	}});
 }
-//public static void main(String[] args) throws Exception
-//{
-//	citibob.sql.ConnPool pool = offstage.db.DB.newConnPool();
-//	SqlBatchSet str = new SqlBatchSet(pool);
-//	new MergePurge(str);
-//	str.runBatches();
-//}
+public static void main(String[] args) throws Exception
+{
+	final FrontApp app = new FrontApp(false); //new File("/export/home/citibob/svn/offstage/config"));
+	boolean resGood = app.checkResources();
+	app.initWithDatabase();
+	new MergePurge(app.sqlRun());
+	app.sqlRun().flush();
+}
 
 }
