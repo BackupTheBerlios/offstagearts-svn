@@ -39,12 +39,12 @@ public FamilyTable() {
 	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 }
 
-public void initRuntime(CitibobTableModel family)
+public void initRuntime(JTypeTableModel family)
 {
 	ColPermuteTableModel model = new ColPermuteTableModel(
 		family,
 		new String[] {"Name"},
-		new String[] {"name"}, new boolean[] {false});
+		new String[] {"name"}); //, new boolean[] {false});
 	setModel(model);
 }
 

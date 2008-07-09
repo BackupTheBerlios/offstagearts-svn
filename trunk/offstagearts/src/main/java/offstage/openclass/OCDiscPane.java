@@ -27,6 +27,10 @@ import citibob.app.App;
 import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
 import citibob.sql.pgsql.SqlInteger;
+import citibob.swing.table.DataCols;
+import citibob.swing.table.DelegateStyledTM;
+import citibob.swing.table.ExtPivotTableModel;
+import citibob.swing.table.RenderEditCols;
 import citibob.task.SqlTask;
 import citibob.text.PercentSFormat;
 import java.sql.ResultSet;
@@ -70,13 +74,27 @@ App app;
 //		public void run(SqlRun str) {
 
 			// Set the model in Swing
-			models.getTm().setModelU(discounts,
+			DelegateStyledTM stm = new DelegateStyledTM(models.getTm());
+			ExtPivotTableModel epivot = models.getTm();
+			stm.setModel(epivot.project(
 				new String[] {"Status", "Name"},
-				new String[] {"__status__", "name"},
-				null,
-				new boolean[] {false,true}, true,
-				app.swingerMap());
-			models.getTm().setPivotValFormat(discounts, new PercentSFormat());
+				new String[] {"__status__", "name"}));
+			RenderEditCols re = stm.setRenderEditCols(app.swingerMap());
+				epivot.setFormat(stm.getModel(), ExtPivotTableModel.PIVOT, re, new PercentSFormat());
+			DataCols<Boolean> editable = stm.setEditableCols();
+				editable.setColumn(0, Boolean.FALSE);
+				editable.setColumn(1, Boolean.TRUE);
+			discounts.setStyledModel(stm);
+			
+//			models.getTm().setModelU(discounts,
+//				new String[] {"Status", "Name"},
+//				new String[] {"__status__", "name"},
+//				null,
+//				new boolean[] {false,true}, true,
+//				app.swingerMap());
+//			models.getTm().setPivotValFormat(discounts, new PercentSFormat());
+			
+			
 //				new FormatSFormat(NumberFormat.getPercentInstance(), "", SFormat.RIGHT));
 //			discounts.setModelU(models.getTm(), app.swingerMap());
 //			models.getDm().setKey(TeacherID);

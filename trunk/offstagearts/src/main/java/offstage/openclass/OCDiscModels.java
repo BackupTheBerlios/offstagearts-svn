@@ -25,7 +25,6 @@ package offstage.openclass;
 
 import citibob.jschema.DbModel;
 import citibob.jschema.IntsKeyedDbModel;
-import citibob.jschema.KeyViolationException;
 import citibob.jschema.MultiDbModel;
 import citibob.jschema.PivotSchemaBuf;
 import citibob.jschema.SchemaBuf;

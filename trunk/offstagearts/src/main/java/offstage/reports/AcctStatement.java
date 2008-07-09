@@ -374,7 +374,7 @@ static class BalTableModel extends DefaultJTypeTableModel
 private static class StatementTableModel extends StringTableModel {
 public StatementTableModel(JTypeTableModel mod, SFormatMap sfmap) {
 	super(mod, sfmap);
-	setSFormat("balance", NumberFormat.getCurrencyInstance());
-	setSFormat("amount", NumberFormat.getCurrencyInstance());
+	setFormatU("balance", NumberFormat.getCurrencyInstance());
+	setFormatU("amount", NumberFormat.getCurrencyInstance());
 }}
 }

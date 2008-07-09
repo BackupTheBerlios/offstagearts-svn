@@ -2595,7 +2595,7 @@ void newPayerAction(final SchemaBufRowModel rm, final String colName)
 			int row = enrollments.getSelectedRow();
 			if (row < 0) return;
 			JTypeTableModel x;
-			CitibobTableModel model = enrollments.getModelU();
+			JTypeTableModel model = enrollments.getModelU();
 			int courseid = (Integer)model.getValueAt(row, model.findColumn("courseid"));
 			int entityid = (Integer)model.getValueAt(row, model.findColumn("entityid"));
 			str.execSql("delete from enrollments" +
