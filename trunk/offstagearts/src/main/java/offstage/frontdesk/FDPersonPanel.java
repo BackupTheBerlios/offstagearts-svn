@@ -31,6 +31,7 @@ import citibob.sql.*;
 import citibob.swing.WidgetTree;
 import citibob.wizard.Wizard;
 import offstage.FrontApp;
+import offstage.wizards.newrecord.NewPersonWizard;
 
 /**
  *
@@ -622,7 +623,7 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
                 app.guiRun().run(FDPersonPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(FDPersonPanel.this);
-			Wizard wizard = new offstage.frontdesk.wizards.NewPersonWizard(app, root);
+			Wizard wizard = new NewPersonWizard(app, root);
 			wizard.runWizard();
 			Integer eid = (Integer)wizard.getVal("entityid");
 			if (eid != null) {

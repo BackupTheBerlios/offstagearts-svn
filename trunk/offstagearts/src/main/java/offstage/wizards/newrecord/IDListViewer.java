@@ -30,6 +30,7 @@ import citibob.swing.*;
 import citibob.swing.table.*;
 import citibob.app.*;
 import citibob.sql.*;
+import citibob.swing.typed.SingleSelectStyledTable;
 import offstage.FrontApp;
 import offstage.devel.gui.DevelModel;
 
@@ -93,7 +94,7 @@ throws SQLException
 
 }
 
-int getSelectedEntityID(CitibobJTable searchResultsTable)
+int getSelectedEntityID(SingleSelectStyledTable searchResultsTable)
 {
 	int selected = searchResultsTable.getSelectedRow();
 	if (selected < 0) return -1;

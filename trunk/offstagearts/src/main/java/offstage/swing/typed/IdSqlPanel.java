@@ -58,7 +58,7 @@ public class IdSqlPanel extends JTypedPanel {
 	public TableRowCounter newRowCounter()
 	{
 		final TableRowCounter counter = new TableRowCounter();
-			counter.setModel(idSqlTable.getModelU());
+			counter.setModel(idSqlTable.getStyledTM().getModelU());
 		return counter;
 	}
 

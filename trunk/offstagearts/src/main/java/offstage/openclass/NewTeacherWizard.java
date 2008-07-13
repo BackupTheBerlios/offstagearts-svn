@@ -26,7 +26,6 @@ package offstage.openclass;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.html.*;
 import citibob.wizard.*;
 import javax.swing.*;
@@ -38,11 +37,8 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.jschema.log.*;
-import citibob.util.IntVal;
 import java.awt.Component;
-import offstage.frontdesk.wizards.FinishedWiz;
-import offstage.frontdesk.wizards.NewPersonWizard;
-import offstage.frontdesk.wizards.OrgWiz;
+import offstage.wizards.newrecord.NewPersonWizard;
 
 /**
  *

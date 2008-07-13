@@ -38,10 +38,10 @@ public class FamilySelectorTable extends IdSqlTable
 {
 
 	
-public void initRuntime(citibob.app.App app) //SqlRun str, FullEntityDbModel dm)
-{
-	super.initRuntime(app);
-}
+//public void initRuntime(citibob.app.App app) //SqlRun str, FullEntityDbModel dm)
+//{
+//	super.initRuntime(app);
+//}
 		
 /** Overrides setting the value.  NOTE: getValue() won't necessarily return
  the value that setValue() just set.  It will always return the head of household

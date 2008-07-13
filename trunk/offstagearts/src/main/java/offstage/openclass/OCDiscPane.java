@@ -84,7 +84,7 @@ App app;
 			DataCols<Boolean> editable = stm.setEditableCols();
 				editable.setColumn(0, Boolean.FALSE);
 				editable.setColumn(1, Boolean.TRUE);
-			discounts.setStyledModel(stm);
+			discounts.setStyledTM(stm);
 			
 //			models.getTm().setModelU(discounts,
 //				new String[] {"Status", "Name"},

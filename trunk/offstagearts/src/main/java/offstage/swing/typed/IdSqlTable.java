@@ -27,8 +27,6 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
-import offstage.FrontApp;
-import offstage.devel.gui.DevelModel;
 import offstage.db.*;
 import java.awt.event.*;
 import citibob.swing.typed.*;
@@ -39,30 +37,31 @@ import java.awt.*;
  *
  * @author  citibob
  */
-public class IdSqlTable extends JTypedSelectTable {
+public class IdSqlTable extends SingleSelectStyledTable {
 	
-protected IdSqlTableModel searchResults;
-citibob.app.App app;
+//protected IdSqlTableModel searchResults;
+//citibob.app.App app;
 
 public void initRuntime(citibob.app.App app) //SqlRun str, FullEntityDbModel dm)
 {
-	this.app = app;
-	searchResults = new IdSqlTableModel();
-		
-	// Add the model (with tooltips)
-	setModelU(searchResults,
-		new String[] {"Name"},
-		new String[] {"name"},
-		new String[] {"tooltip"},
-		new boolean[] {false},
-		app.swingerMap());
-	setValueColU("entityid");
+	super.setStyledTM(new IdSqlStyledTM(app.swingerMap()));
+//	this.app = app;
+//	searchResults = new IdSqlTableModel();
+//		
+//	// Add the model (with tooltips)
+//	setModelU(searchResults,
+//		new String[] {"Name"},
+//		new String[] {"name"},
+//		new String[] {"tooltip"},
+//		new boolean[] {false},
+//		app.swingerMap());
+//	setValueColU("entityid");
 }
 
 /** Re-query */
 public void executeQuery(SqlRun str, final String idSql, String orderBy)// throws SQLException
 {
-	searchResults.executeQuery(str, idSql, orderBy);
+	((IdSqlTableModel)getStyledTM().getModelU()).executeQuery(str, idSql, orderBy);
 }
 
 // ----------------------------------------------------------------------

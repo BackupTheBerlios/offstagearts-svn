@@ -23,29 +23,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.gui;
 
+import citibob.app.App;
 import javax.swing.*;
 import javax.swing.table.*;
 import citibob.swing.*;
 import citibob.swing.table.*;
+import citibob.swingers.JStringSwinger;
 
 /**
  *
  * @author citibob
  */
-public class FamilyTable extends CitibobJTable {
-
-/** Creates a new instance of FamilyTable */
-public FamilyTable() {
-	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-}
+public class FamilyTable extends citibob.swing.typed.SingleSelectStyledTable {
 
 public void initRuntime(JTypeTableModel family)
 {
-	ColPermuteTableModel model = new ColPermuteTableModel(
-		family,
-		new String[] {"Name"},
-		new String[] {"name"}); //, new boolean[] {false});
-	setModel(model);
+	DelegateStyledTM stm = new DelegateStyledTM(family);
+	stm.setColumns(null,
+		"name", "Name", false, new JStringSwinger());
+	super.setStyledTM(stm);
+//	
+//	super.set
+//	super.setModelU(family, )
+//	ColPermuteTableModel model = new ColPermuteTableModel(
+//		family,
+//		new String[] {"Name"},
+//		new String[] {"name"}); //, new boolean[] {false});
+//	setModel(model);
 }
 
 //public Component prepareRenderer(TableCellRenderer renderer,

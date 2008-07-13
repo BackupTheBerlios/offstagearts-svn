@@ -221,6 +221,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 				app.swingerMap());
 //			dupTable.setRenderEditU("score", new java.text.DecimalFormat("#.00"));
 			dupTable.setFormatU("score", "#.00");
+			dupTable.setValueColU("__rowno__");
 		}});		
 	}
 	

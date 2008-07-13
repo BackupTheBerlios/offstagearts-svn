@@ -293,10 +293,10 @@ public static void main(String[] args) throws Exception
 //		System.out.println("Usage: SignJars ");
 //	}
 	try {
-File x = new File(".");
-System.out.println(x.getAbsolutePath());
+//File x = new File(".");
+//System.out.println(x.getAbsolutePath());
 		File dir = ClassPathUtils.getMavenProjectRoot();
-System.out.println("Base dir = " + dir);
+//System.out.println("Base dir = " + dir);
 		SignJars sj = new SignJars();
 			sj.alias = "offstagearts";
 			sj.password = "keyst0re";
