@@ -1,0 +1,1 @@
+java -cp target/executable-netbeans.dir/offstagearts-*.jar offstage.licensor.Main
