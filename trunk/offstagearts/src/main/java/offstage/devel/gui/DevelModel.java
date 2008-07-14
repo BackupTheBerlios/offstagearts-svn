@@ -45,7 +45,7 @@ IntKeyedDbModel flags;
 IntKeyedDbModel notes;
 IntKeyedDbModel tickets;
 IntKeyedDbModel events;
-IntKeyedDbModel classes;
+//IntKeyedDbModel classes;
 IntKeyedDbModel terms;
 IntKeyedDbModel interests;
 
@@ -90,8 +90,8 @@ public SchemaBuf getFlagSb()
 	{ return flags.getSchemaBuf(); }
 public SchemaBuf getEventsSb()
 	{ return events.getSchemaBuf(); }
-public SchemaBuf getClassesSb()
-	{ return classes.getSchemaBuf(); }
+//public SchemaBuf getClassesSb()
+//	{ return classes.getSchemaBuf(); }
 public SchemaBuf getTermsSb()
 	{ return terms.getSchemaBuf(); }
 public SchemaBuf getInterestsSb()

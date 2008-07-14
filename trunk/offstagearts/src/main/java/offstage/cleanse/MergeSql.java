@@ -50,6 +50,8 @@ public MergeSql(SchemaSet sset)
 public String toSql()
 	{ return sql.toString(); }
 
+
+/** Merges data FROM dm0 TO dm1 */
 public static String mergeEntities(App app, Object entityid0, Object entityid1)
 {
 	MergeSql merge = new MergeSql(app.schemaSet());
@@ -230,7 +232,7 @@ public void mergeOneRow(SqlSchema schema, String sEntityCol, Object entityid0, O
 		// Set last updated to now!
 		sql.append(
 			" update " + table + " set lastupdated = now()" +
-			" where" + entityCol.getName() + " = " + entityCol.toSql(entityid1));
+			" where " + entityCol.getName() + " = " + entityCol.toSql(entityid1) + ";\n");
 
 		// Set last updated to the most recent of the two records.
 		if (false) {
@@ -375,7 +377,7 @@ public static void bufMerge(DevelModel dmod0, DevelModel dmod1)
 {
 	bufMergeMain(dmod0.getPersonSb(), dmod1.getPersonSb());
 	Integer entityid1 = (Integer)dmod1.getPersonSb().getValueAt(0, "entityid");
-	bufMoveRows("entityid", entityid1, dmod0.getClassesSb(), dmod1.getClassesSb());
+//	bufMoveRows("entityid", entityid1, dmod0.getClassesSb(), dmod1.getClassesSb());
 	bufMoveRows("entityid", entityid1, dmod0.getDonationSb(), dmod1.getDonationSb());	
 	bufMoveRows("entityid", entityid1, dmod0.getEventsSb(), dmod1.getEventsSb());
 	bufMoveRows("entityid", entityid1, dmod0.getFlagSb(), dmod1.getFlagSb());

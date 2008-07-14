@@ -70,6 +70,7 @@ void setWindowMenu(JFrame f)
 //	addFrameMenuItem(menu, "Open Class", "openclass");
 	menu.add(new JSeparator());
 	addFrameMenuItem(menu, "Duplicates", "dups");
+	addFrameMenuItem(menu, "Approve Duplicates", "dupsApprove");
 	addFrameMenuItem(menu, "Console", "console");
 	addFrameMenuItem(menu, "Resources", "resources");
 

@@ -33,6 +33,7 @@ import javax.swing.*;
 import offstage.FrontApp;
 import offstage.accounts.gui.AccountFrame;
 import offstage.cleanse.CleanseFrame;
+import offstage.cleanse.CleansePanel;
 import offstage.config.ResourcesFrame;
 import offstage.devel.gui.DevelFrame;
 import offstage.frontdesk.FrontDeskFrame;
@@ -114,7 +115,7 @@ addMaker("dups", new Maker() {
 public JFrame newFrame() throws Exception {
 	final CleanseFrame f = new CleanseFrame();
 	SqlRun str = fapp.sqlRun();
-	f.initRuntime(str, fapp, "n");
+	f.initRuntime(str, fapp, "n", CleansePanel.M_PROVISIONAL);
 	str.flush();
 	return f;
 //	SqlRun str = fapp.getBatchSet();
@@ -124,6 +125,14 @@ public JFrame newFrame() throws Exception {
 //	frame.getContentPane().add(panel);
 //	str.flush();
 //	return frame;
+}});
+addMaker("dupsApprove", new Maker() {
+public JFrame newFrame() throws Exception {
+	final CleanseFrame f = new CleanseFrame();
+	SqlRun str = fapp.sqlRun();
+	f.initRuntime(str, fapp, "n", CleansePanel.M_APPROVE);
+	str.flush();
+	return f;
 }});
 // ----------------------------------------
 addMaker("console", new Maker() {

@@ -93,14 +93,22 @@ throws org.xml.sax.SAXException, java.io.IOException
 		wizard.runWizard();
 	}});
 
-	addAction("processdupnames", "", "admin", new SqlTask() {
-	public void run(SqlRun str) throws Exception {
-		CleansePanel.showFrame(str, (FrontApp)app, "n", "Duplicate Names");
-	}});
-	addAction("processdupaddrs", "", "admin", new SqlTask() {
-	public void run(SqlRun str) throws Exception {
-		CleansePanel.showFrame(str, (FrontApp)app, "a", "Duplicate Addresses");
-	}});
+//	addAction("processdupnames", "", "admin", new SqlTask() {
+//	public void run(SqlRun str) throws Exception {
+//		CleansePanel.showFrame(str, (FrontApp)app, "n", M_, "Duplicate Names");
+//	}});
+//	addAction("processdupaddrs", "", "admin", new SqlTask() {
+//	public void run(SqlRun str) throws Exception {
+//		CleansePanel.showFrame(str, (FrontApp)app, "a", M_, "Duplicate Addresses");
+//	}});
+//	addAction("approvedupnames", "", "admin", new SqlTask() {
+//	public void run(SqlRun str) throws Exception {
+//		CleansePanel.showFrame(str, (FrontApp)app, "n", M_, "Duplicate Names");
+//	}});
+//	addAction("approvedupaddrs", "", "admin", new SqlTask() {
+//	public void run(SqlRun str) throws Exception {
+//		CleansePanel.showFrame(str, (FrontApp)app, "a", M_, "Duplicate Addresses");
+//	}});
 	
 
 	addListener(this);

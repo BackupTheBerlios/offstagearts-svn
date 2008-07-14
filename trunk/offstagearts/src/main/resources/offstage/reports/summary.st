@@ -1,8 +1,11 @@
+<h2>
 $if(person._isorg)$
-<h2>Org: $person.orgname$ ($person.firstname$ $person.middlename$ $person.lastname$)</h2>
+Org: $person.orgname$ ($person.firstname$ $person.middlename$ $person.lastname$)
 $else$
-<h2>Person: $person.firstname$ $person.middlename$ $person.lastname$ $if(person._orgname)$($person.orgname$)$endif$</h2>
+Person: $person.firstname$ $person.middlename$ $person.lastname$ $if(person._orgname)$($person.orgname$)$endif$
 $endif$
+$if(person._obsolete)$ (OBSOLETE)$endif$
+</h2>
 <table>
 <tr><th align="right">Name</th><td>$person.firstname$ $person.middlename$ $person.lastname$</td></tr>
 <tr><th align="right">Address</th><td>$person.address1$</td></tr>

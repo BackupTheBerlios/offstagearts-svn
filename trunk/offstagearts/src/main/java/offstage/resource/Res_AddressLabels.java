@@ -39,6 +39,7 @@ public Res_AddressLabels(ResSet rset)
 	super(rset, "development", "AddressLabels.jrxml");
 
 	add(new JarInstaller(this, 1));
+	add(new JarInstaller(this, 111));
 //	add(new JarInstaller(this, 3));
 //	add(new CopyUpgrader(this, 2,3));
 }
