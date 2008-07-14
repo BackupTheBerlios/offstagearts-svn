@@ -44,7 +44,6 @@ import citibob.resource.UpgradePlanSet;
 import citibob.swingers.JavaSwingerMap;
 import citibob.version.SvnVersion;
 import citibob.version.Version;
-import com.sun.java_cup.internal.version;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Policy;
