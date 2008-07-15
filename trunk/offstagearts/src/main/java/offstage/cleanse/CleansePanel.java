@@ -127,37 +127,41 @@ String dupType;
 			app.guiRun().run(CleansePanel.this, new SqlTask() {
 			public void run(SqlRun str) throws Exception {
 				if (evt.getNewValue() == null) return;		// We've become un-selected
-//				int row = e.getFirstIndex();
-//				dm[0].setKey((Integer)dupModel.getValueAt(row, "entityid0"));
-//				dm[1].setKey((Integer)dupModel.getValueAt(row, "entityid1"));
-				Integer Entityid0 = (Integer)dupTable.getValue("entityid0");
-				Integer Entityid1 = (Integer)dupTable.getValue("entityid1");
-//System.out.println("EntityID changed: " + entityid0 + " " + entityid1);
-
-				// Swapt so newest is first (if we're not approving past merges)
-				if (cleanseMode != M_APPROVE) {
-					Date dt0 = (Date)dupTable.getValue("lastupdated0");
-					long ms0 = (dt0 == null ? 0 : dt0.getTime());
-					Date dt1 = (Date)dupTable.getValue("lastupdated1");
-					long ms1 = (dt1 == null ? 0 : dt1.getTime());
-
-					// Swap so newer record is always on the left.
-					if (ms0 < ms1) {
-						Integer EID = Entityid0;
-						Entityid0 = Entityid1;
-						Entityid1 = EID;
-					}
-System.out.println("XYZZZ: " + dt0 + " " + dt1);
-				}
-				curAction = (Integer)dupTable.getValue("action");
-				bApproveAction.setText((String)actionKmodel.get(curAction).obj);
-				dm[0].setKey(Entityid0);
-				dm[1].setKey(Entityid1);
-				refresh(str);
+				reselect(str);
 			}});
 		}});
 	}
 	
+	void reselect(SqlRun str)
+	{
+	//				int row = e.getFirstIndex();
+	//				dm[0].setKey((Integer)dupModel.getValueAt(row, "entityid0"));
+	//				dm[1].setKey((Integer)dupModel.getValueAt(row, "entityid1"));
+		Integer Entityid0 = (Integer)dupTable.getValue("entityid0");
+		Integer Entityid1 = (Integer)dupTable.getValue("entityid1");
+	//System.out.println("EntityID changed: " + entityid0 + " " + entityid1);
+
+		// Swapt so newest is first (if we're not approving past merges)
+		if (cleanseMode != M_APPROVE) {
+			Date dt0 = (Date)dupTable.getValue("lastupdated0");
+			long ms0 = (dt0 == null ? 0 : dt0.getTime());
+			Date dt1 = (Date)dupTable.getValue("lastupdated1");
+			long ms1 = (dt1 == null ? 0 : dt1.getTime());
+
+			// Swap so newer record is always on the left.
+			if (ms0 < ms1) {
+				Integer EID = Entityid0;
+				Entityid0 = Entityid1;
+				Entityid1 = EID;
+			}
+	System.out.println("XYZZZ: " + dt0 + " " + dt1);
+		}
+		curAction = (Integer)dupTable.getValue("action");
+		bApproveAction.setText((String)actionKmodel.get(curAction).obj);
+		dm[0].setKey(Entityid0);
+		dm[1].setKey(Entityid1);
+		refresh(str);
+	}
 	void refresh(SqlRun str)
 	{
 		allDm.doSelect(str);
@@ -541,7 +545,7 @@ System.out.println("XYZZZ: " + dt0 + " " + dt1);
 	{//GEN-HEADEREND:event_bDupOKActionPerformed
 		app.guiRun().run(CleansePanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			dupOKAction(str);
+			doAction(str, MC_DUPOK);
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bDupOKActionPerformed
@@ -603,7 +607,14 @@ void doAction(SqlRun str, int action) throws IOException
 		case MC_DUPOK :
 			dupOKAction(str);
 			break;
+		default : return;
 	}
+	
+	int row = dupTable.getSelectedRow();
+	dupDm.getSchemaBuf().removeRow(row);
+//	dupTable.setSelectedRow(row);
+	reselect(str);
+
 }
 private void dupOKAction(SqlRun str)
 {
@@ -617,9 +628,9 @@ private void dupOKAction(SqlRun str)
 		" insert into mergelog (entityid0, entityid1, action, provisional, dtime) values (" +
 		entityid0 + "," + entityid1 + "," + MC_DUPOK + "," +
 		SqlBool.sql(cleanseMode == M_PROVISIONAL) + ", now());\n");
-	int row = dupTable.getSelectedRow();
-	dupDm.getSchemaBuf().removeRow(row);
-	dupTable.setSelectedRow(row);
+//	int row = dupTable.getSelectedRow();
+//	dupDm.getSchemaBuf().removeRow(row);
+//	dupTable.setSelectedRow(row);
 }
 
 private void deleteAction(SqlRun str, final int action)
@@ -667,15 +678,15 @@ private void deleteAction(SqlRun str, final int action)
 		entityid0 + "," + entityid1 + "," + action + ", " +
 		SqlBool.sql(cleanseMode == M_PROVISIONAL) + ", now());\n");
 
-	int row = dupTable.getSelectedRow();
-	dupDm.getSchemaBuf().removeRow(row);
-	dupTable.setSelectedRow(row);
+//	int row = dupTable.getSelectedRow();
+//	dupDm.getSchemaBuf().removeRow(row);
+//	dupTable.setSelectedRow(row);
 }
 	private void bDelete1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelete1ActionPerformed
 	{//GEN-HEADEREND:event_bDelete1ActionPerformed
 		app.guiRun().run(CleansePanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			deleteAction(str, MC_DEL_1);
+			doAction(str, MC_DEL_1);
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bDelete1ActionPerformed
@@ -684,7 +695,7 @@ private void deleteAction(SqlRun str, final int action)
 	{//GEN-HEADEREND:event_bDelete0ActionPerformed
 		app.guiRun().run(CleansePanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			deleteAction(str, MC_DEL_0);
+			doAction(str, MC_DEL_0);
 		}});
 
 // TODO add your handling code here:
@@ -747,7 +758,7 @@ private void mergeAction(SqlRun str, final int action) throws IOException
 			" insert into mergelog (entityid0, entityid1, action, provisional, dtime) values (" +
 			entityid0 + "," + entityid1 + "," + action + ", " +
 			SqlBool.sql(cleanseMode == M_PROVISIONAL) + ", now());\n");
-		dupDm.getSchemaBuf().removeRow(dupTable.getSelectedRow());
+//		dupDm.getSchemaBuf().removeRow(dupTable.getSelectedRow());
 	} else {
 		// Re-read what we had before we merged in the buffers
 		refresh(str);
@@ -757,14 +768,14 @@ private void mergeAction(SqlRun str, final int action) throws IOException
 private void bMergeTo0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bMergeTo0ActionPerformed
 	app.guiRun().run(CleansePanel.this, new SqlTask() {
 	public void run(SqlRun str) throws Exception {
-		mergeAction(str, MC_MERGE_TO_0);
+		doAction(str, MC_MERGE_TO_0);
 	}});
 }//GEN-LAST:event_bMergeTo0ActionPerformed
 
 private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bMergeTo1ActionPerformed
 	app.guiRun().run(CleansePanel.this, new SqlTask() {
 	public void run(SqlRun str) throws Exception {
-		mergeAction(str, MC_MERGE_TO_1);
+		doAction(str, MC_MERGE_TO_1);
 	}});
 }//GEN-LAST:event_bMergeTo1ActionPerformed
 
@@ -787,7 +798,7 @@ private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 	{//GEN-HEADEREND:event_bDeleteBothActionPerformed
 		app.guiRun().run(CleansePanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			deleteAction(str, MC_DEL_BOTH);
+			doAction(str, MC_DEL_BOTH);
 		}});
 
 		// TODO add your handling code here:
