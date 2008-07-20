@@ -52,7 +52,7 @@
               <Component id="zip" min="-2" pref="164" max="-2" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="162" max="32767" attributes="0"/>
+              <EmptySpace pref="170" max="32767" attributes="0"/>
               <Component id="jTypedButton1" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>

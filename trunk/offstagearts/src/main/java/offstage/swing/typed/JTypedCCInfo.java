@@ -111,6 +111,7 @@ public String getCCName() { return (String)ccname.getValue(); }
 //public String getCCType() { return (String)cctype.getValue(); }
 public String getCCType(String num)
 {
+	if (num == null || num.length() < 1) return null;
 	switch(num.charAt(0)) {
 		case '4' : return "v";
 		case '5' : return "m";

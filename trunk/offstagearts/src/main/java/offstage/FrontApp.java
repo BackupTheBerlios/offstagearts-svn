@@ -163,7 +163,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {
 	// Make sure we have the right version
-	version = new Version("1.4.0");
+	version = new Version("1.4.1");
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
 	sysVersion = svers.maxVersion;
@@ -358,7 +358,7 @@ public void initWithDatabase()
 				out.close();
 
 				// Create a classloader on that jar file
-				URL siteCodeURL = new URL("file:///" + outFile.getPath());
+				URL siteCodeURL = new URL("file:" + outFile.getPath());
 				siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader());
 				
 				// Set up security policy to prevent malicious code from sitecode.jar
