@@ -42,9 +42,8 @@ public TableRatePlan(double siblingDiscount, URL tableURL) throws IOException
 	
 	// Read the rest of the file
 	List<String[]> lines = new ArrayList();
-	String[] ll;
 	for (;;) {
-		ll = csv.getLine();
+		String[] ll = csv.getLine();
 		if (ll == null) break;
 		if (ll.length == 0) continue;
 		lines.add(ll);
@@ -55,21 +54,28 @@ public TableRatePlan(double siblingDiscount, URL tableURL) throws IOException
 	
 	// Make arrays out of it
 	int nrow = lines.size();
-	timeS = new int[nrow];
-	rateY = new double[nrow];
-	for (int i=0; i<nrow; ++i) {
-		ll = lines.get(i);
+	timeS = new int[nrow+2];
+	rateY = new double[nrow+2];
+	int i=0;
+	timeS[i] = 0;		// Sentinel
+	rateY[i] = 0;
+	++i;
+	for (String[] ll : lines) {
 		timeS[i] = (int)Math.round(Double.parseDouble(ll[hoursCol]) * 3600.0D);
 		rateY[i] = Double.parseDouble(ll[tuitionCol]);
+		++i;
 	}
+	timeS[i] = timeS[i-1] * 2;		// Sentinel
+	rateY[i] = rateY[i-1] * 2;
 }
 
 public double getPrice(int weeklyTimeS)
 {
 	int ix = java.util.Arrays.binarySearch(timeS, weeklyTimeS);
 	if (ix >= 0) return rateY[ix];
-	
+
 	ix = -ix-1;
+//System.out.println("weeklyTimeS = " + weeklyTimeS + "(" + ((double)weeklyTimeS / 3600.0D) + ") ix = " + ix);
 	return ((double)(weeklyTimeS - timeS[ix-1]) / (double)(timeS[ix] - timeS[ix-1]))
 		* (rateY[ix-1] + rateY[ix]);
 }
