@@ -27,11 +27,11 @@ import offstage.swing.typed.FamilySelectorTable;
 public class SchoolFamilySelectorTable extends FamilySelectorTable
 {
 Integer termid;
-int primaryEntityID;
+Integer primaryEntityID;
 
 public void setTermID(Integer termid) { this.termid = termid; }
 	
-public void setPrimaryEntityID(SqlRun str, int primaryEntityID)
+public void setPrimaryEntityID(SqlRun str, Integer primaryEntityID)
 {
 	this.primaryEntityID = primaryEntityID;
 	requery(str);

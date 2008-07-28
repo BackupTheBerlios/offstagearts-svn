@@ -106,6 +106,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 //		new citibob.swing.prefs.SwingPrefs().setPrefs(SchoolFrame.this, "", fapp.userRoot().node("SchoolFrame"));
 //	}});
 
+	pack();
 }
 
 //int getTermID()

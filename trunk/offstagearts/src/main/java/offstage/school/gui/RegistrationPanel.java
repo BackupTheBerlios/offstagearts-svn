@@ -300,13 +300,41 @@ public void calcTuition(SqlRun str)
 }
 
 // =====================================================
-
+StudentInfoPane studentInfoPane;
 public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 //throws SQLException
 {
 	this.fapp = xfapp;
 	this.smod = xschoolModel;
 
+	// Finish constructing GUI, maybe using subclasses from sitecode.jar
+	studentInfoPane = (StudentInfoPane)fapp.newSiteInstance(
+		"sc.offstage.school.gui.StudentInfoPane", DefaultStudentInfoPane.class);
+//	try {
+//		Class klass = fapp.siteCode().loadClass("sc.offstage.school.gui.StudentInfoPane");
+//		studentInfoPane = (StudentInfoPane)klass.newInstance();
+//	} catch(Exception e) {
+//		studentInfoPane = new DefaultStudentInfoPane();
+//	}
+	StudentTab.addTab("Student", studentInfoPane);
+	Dimension oldTabD = StudentTab.getMinimumSize();
+	Dimension newPaneD = studentInfoPane.getMinimumSize();
+	StudentTab.setMinimumSize(new Dimension(oldTabD.width, newPaneD.height));
+	
+	oldTabD = StudentTab.getPreferredSize();
+	newPaneD = studentInfoPane.getPreferredSize();
+	StudentTab.setPreferredSize(new Dimension(oldTabD.width, newPaneD.height));
+	
+	studentInfoPane.initRuntime(str, fapp, xschoolModel);
+
+
+	// Extra payer info
+	ExtensiblePane miscPane = (ExtensiblePane)fapp.newSiteInstance(
+		"sc.offstage.school.gui.PayerMiscPane", DefaultPayerMiscPane.class);
+	miscPane.initRuntime(str, fapp, smod);
+	PayerTabs.addTab("Misc", miscPane);
+	
+	
 	// ================================================================
 	// Account Transactions
 	int schoolid = ((Actrans2Schema)fapp.getSchema("actrans2")).actypeKmodel.getIntKey("school");
@@ -410,17 +438,17 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 	new TypedWidgetBinder().bind(lEntityID, smod.studentRm, smap);
 //	vHouseholdID.initRuntime(fapp);
 //		new TypedWidgetBinder().bind(vHouseholdID, smod.studentRm, smap);
-//	vStudentID.initRuntime(fapp);
+//	vStudentID.s(fapp);
 	vStudentID.setJType(fapp.sqlRun());
 		new TypedWidgetBinder().bind(vStudentID, smod.studentRm, smap);
-	KeyedModel gmodel = new KeyedModel();
-		gmodel.addItem(null, "<Unknown>");
-		gmodel.addItem("M", "Male");
-		gmodel.addItem("F", "Female");
-		gender.setKeyedModel(gmodel, null);
-		new TypedWidgetBinder().bind(gender, smod.studentRm, "gender", BT_READWRITE);
-//		new TypedWidgetBinder().bind(familyTable, smod.studentRm, "primaryentityid", BT_READ);
-	TypedWidgetBinder.bindRecursive(StudentTab, smod.studentRm, smap);
+//	KeyedModel gmodel = new KeyedModel();
+//		gmodel.addItem(null, "<Unknown>");
+//		gmodel.addItem("M", "Male");
+//		gmodel.addItem("F", "Female");
+//		gender.setKeyedModel(gmodel, null);
+//		new TypedWidgetBinder().bind(gender, smod.studentRm, "gender", BT_READWRITE);
+////		new TypedWidgetBinder().bind(familyTable, smod.studentRm, "primaryentityid", BT_READ);
+//	TypedWidgetBinder.bindRecursive(StudentTab, smod.studentRm, smap);
 
 	// Initialize dropdowns when student changes.
 	smod.studentRm.addColListener("entityid", new RowModel.ColAdapter() {
@@ -646,18 +674,12 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         firstname = new citibob.swing.typed.JTypedTextField();
         middlename = new citibob.swing.typed.JTypedTextField();
         lastname = new citibob.swing.typed.JTypedTextField();
-        jTabbedPane2 = new javax.swing.JTabbedPane();
+        PayerTabs = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
         payerPhonePanel = new offstage.gui.GroupPanel();
         jPanel5 = new javax.swing.JPanel();
         payerCCInfo = new offstage.swing.typed.CryptCCInfo();
         jLabel16 = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
-        jPanel7 = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        entityid = new citibob.swing.typed.JTypedTextField();
-        lastupdated = new citibob.swing.typed.JTypedTextField();
         addressPanel = new javax.swing.JPanel();
         address1 = new citibob.swing.typed.JTypedTextField();
         address2 = new citibob.swing.typed.JTypedTextField();
@@ -733,19 +755,6 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         bLaunchEmail3 = new javax.swing.JButton();
         StudentAccounts = new javax.swing.JPanel();
         StudentTab = new javax.swing.JTabbedPane();
-        StudentPane = new javax.swing.JPanel();
-        FirstMiddleLast2 = new javax.swing.JPanel();
-        lFirst2 = new javax.swing.JLabel();
-        lMiddle2 = new javax.swing.JLabel();
-        lLast2 = new javax.swing.JLabel();
-        salutation2 = new citibob.swing.typed.JTypedTextField();
-        firstname2 = new citibob.swing.typed.JTypedTextField();
-        middlename2 = new citibob.swing.typed.JTypedTextField();
-        lastname2 = new citibob.swing.typed.JTypedTextField();
-        dob = new citibob.swing.typed.JTypedDateChooser();
-        jLabel17 = new javax.swing.JLabel();
-        gender = new citibob.swing.typed.JKeyedComboBox();
-        lGender = new javax.swing.JLabel();
         AccountTab = new javax.swing.JTabbedPane();
         AccountPane = new javax.swing.JPanel();
         controller1 = new javax.swing.JPanel();
@@ -971,7 +980,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.weightx = 1.0;
         PayerPanel.add(FirstMiddleLast, gridBagConstraints);
 
-        jTabbedPane2.setFont(new java.awt.Font("Dialog", 1, 10));
+        PayerTabs.setFont(new java.awt.Font("Dialog", 1, 10));
 
         payerPhonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
 
@@ -986,7 +995,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
             .add(payerPhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane2.addTab("Phone", jPanel4);
+        PayerTabs.addTab("Phone", jPanel4);
 
         jPanel5.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1004,52 +1013,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         jPanel5.add(jLabel16, gridBagConstraints);
 
-        jTabbedPane2.addTab("Billing", jPanel5);
-
-        jPanel7.setLayout(new java.awt.GridBagLayout());
-
-        jLabel7.setText("ID"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel7.add(jLabel7, gridBagConstraints);
-
-        jLabel8.setText("Last Modified"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel7.add(jLabel8, gridBagConstraints);
-
-        entityid.setEditable(false);
-        entityid.setColName("entityid"); // NOI18N
-        entityid.setPreferredSize(new java.awt.Dimension(100, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel7.add(entityid, gridBagConstraints);
-
-        lastupdated.setEditable(false);
-        lastupdated.setColName("lastupdated"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel7.add(lastupdated, gridBagConstraints);
-
-        org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel6Layout.createSequentialGroup()
-                .add(jPanel7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(117, Short.MAX_VALUE))
-        );
-
-        jTabbedPane2.addTab("Misc.", jPanel6);
+        PayerTabs.addTab("Billing", jPanel5);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1058,7 +1022,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        PayerPanel.add(jTabbedPane2, gridBagConstraints);
+        PayerPanel.add(PayerTabs, gridBagConstraints);
 
         addressPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -1324,7 +1288,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
             jPanel21Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel21Layout.createSequentialGroup()
                 .add(jPanel22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(153, Short.MAX_VALUE))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         jTabbedPane4.addTab("Misc.", jPanel21);
@@ -1564,7 +1528,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
             jPanel25Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel25Layout.createSequentialGroup()
                 .add(jPanel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(153, Short.MAX_VALUE))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         jTabbedPane5.addTab("Misc.", jPanel25);
@@ -1689,112 +1653,6 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
 
         StudentTab.setMinimumSize(new java.awt.Dimension(300, 136));
         StudentTab.setPreferredSize(new java.awt.Dimension(300, 130));
-
-        StudentPane.setLayout(new java.awt.GridBagLayout());
-
-        FirstMiddleLast2.setLayout(new java.awt.GridBagLayout());
-
-        lFirst2.setText("First"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        FirstMiddleLast2.add(lFirst2, gridBagConstraints);
-
-        lMiddle2.setText("Mid"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        FirstMiddleLast2.add(lMiddle2, gridBagConstraints);
-
-        lLast2.setText("Last"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        FirstMiddleLast2.add(lLast2, gridBagConstraints);
-
-        salutation2.setColName("salutation"); // NOI18N
-        salutation2.setPreferredSize(new java.awt.Dimension(40, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        FirstMiddleLast2.add(salutation2, gridBagConstraints);
-
-        firstname2.setColName("firstname"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.5;
-        FirstMiddleLast2.add(firstname2, gridBagConstraints);
-
-        middlename2.setColName("middlename"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        FirstMiddleLast2.add(middlename2, gridBagConstraints);
-
-        lastname2.setColName("lastname"); // NOI18N
-        lastname2.setPreferredSize(new java.awt.Dimension(10, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.5;
-        FirstMiddleLast2.add(lastname2, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        StudentPane.add(FirstMiddleLast2, gridBagConstraints);
-
-        dob.setColName("dob"); // NOI18N
-        dob.setPreferredSize(new java.awt.Dimension(122, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
-        StudentPane.add(dob, gridBagConstraints);
-
-        jLabel17.setText("DOB: "); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 2);
-        StudentPane.add(jLabel17, gridBagConstraints);
-
-        gender.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        gender.setColName(""); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        StudentPane.add(gender, gridBagConstraints);
-
-        lGender.setText("Gender: "); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        StudentPane.add(lGender, gridBagConstraints);
-
-        StudentTab.addTab("Student", StudentPane);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -2004,7 +1862,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 2529, Short.MAX_VALUE)
+            .add(0, 2534, Short.MAX_VALUE)
         );
 
         jTabbedPane3.addTab("Family", jPanel9);
@@ -2704,7 +2562,6 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JScrollPane FamilyScrollPanel;
     private javax.swing.JPanel FirstMiddleLast;
     private javax.swing.JPanel FirstMiddleLast1;
-    private javax.swing.JPanel FirstMiddleLast2;
     private javax.swing.JPanel FirstMiddleLast3;
     private javax.swing.JPanel FirstMiddleLast4;
     private javax.swing.JScrollPane GroupScrollPanel;
@@ -2716,11 +2573,11 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JPanel ParentPanel;
     private offstage.gui.GroupPanel ParentPhonePanel;
     private javax.swing.JPanel PayerPanel;
+    private javax.swing.JTabbedPane PayerTabs;
     private javax.swing.JPanel PeopleHeader;
     private javax.swing.JPanel PeopleHeader1;
     private javax.swing.JPanel PeopleMain;
     private javax.swing.JPanel StudentAccounts;
-    private javax.swing.JPanel StudentPane;
     private javax.swing.JTabbedPane StudentTab;
     private javax.swing.JPanel TermRegPanel;
     private citibob.swing.typed.JTypedTextField address1;
@@ -2760,24 +2617,20 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JTypedTextField city2;
     private citibob.swing.typed.JTypedTextField city3;
     private javax.swing.JPanel controller1;
-    private citibob.swing.typed.JTypedDateChooser dob;
     private citibob.swing.typed.JTypedDateChooser dtSigned;
     private citibob.swing.typed.JTypedTextField email1;
     private citibob.swing.typed.JTypedTextField email2;
     private citibob.swing.typed.JTypedTextField email3;
     private citibob.swing.typed.JTypedTextField email4;
     private citibob.jschema.swing.StatusTable enrollments;
-    private citibob.swing.typed.JTypedTextField entityid;
     private citibob.swing.typed.JTypedTextField entityid1;
     private citibob.swing.typed.JTypedTextField entityid2;
     private citibob.swing.typed.JTypedTextField entityid3;
     private offstage.school.gui.SchoolFamilySelectorTable familyTable;
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.JTypedTextField firstname1;
-    private citibob.swing.typed.JTypedTextField firstname2;
     private citibob.swing.typed.JTypedTextField firstname3;
     private citibob.swing.typed.JTypedTextField firstname4;
-    private citibob.swing.typed.JKeyedComboBox gender;
     private offstage.gui.GroupPanel householdPhonePanel;
     private citibob.swing.typed.JBoolCheckbox isorg;
     private javax.swing.JLabel jLabel1;
@@ -2788,7 +2641,6 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
@@ -2810,8 +2662,6 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -2829,11 +2679,8 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JPanel jPanel26;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTabbedPane jTabbedPane5;
@@ -2843,34 +2690,27 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JTypedLabel lEntityID;
     private javax.swing.JLabel lFirst;
     private javax.swing.JLabel lFirst1;
-    private javax.swing.JLabel lFirst2;
     private javax.swing.JLabel lFirst3;
     private javax.swing.JLabel lFirst4;
     private javax.swing.JLabel lFirst5;
-    private javax.swing.JLabel lGender;
     private javax.swing.JLabel lLast;
     private javax.swing.JLabel lLast1;
-    private javax.swing.JLabel lLast2;
     private javax.swing.JLabel lLast3;
     private javax.swing.JLabel lLast4;
     private javax.swing.JLabel lMiddle;
     private javax.swing.JLabel lMiddle1;
-    private javax.swing.JLabel lMiddle2;
     private javax.swing.JLabel lMiddle3;
     private javax.swing.JLabel lMiddle4;
     private citibob.swing.typed.JTypedLabel lTuition1;
     private citibob.swing.typed.JTypedTextField lastname;
     private citibob.swing.typed.JTypedTextField lastname1;
-    private citibob.swing.typed.JTypedTextField lastname2;
     private citibob.swing.typed.JTypedTextField lastname3;
     private citibob.swing.typed.JTypedTextField lastname4;
-    private citibob.swing.typed.JTypedTextField lastupdated;
     private citibob.swing.typed.JTypedTextField lastupdated1;
     private citibob.swing.typed.JTypedTextField lastupdated2;
     private citibob.swing.typed.JTypedTextField lastupdated3;
     private citibob.swing.typed.JTypedTextField middlename;
     private citibob.swing.typed.JTypedTextField middlename1;
-    private citibob.swing.typed.JTypedTextField middlename2;
     private citibob.swing.typed.JTypedTextField middlename3;
     private citibob.swing.typed.JTypedTextField middlename4;
     private citibob.swing.typed.JTypedTextField orgname;
@@ -2880,7 +2720,6 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JKeyedComboBox rbPlans;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField salutation1;
-    private citibob.swing.typed.JTypedTextField salutation2;
     private citibob.swing.typed.JTypedTextField salutation3;
     private citibob.swing.typed.JTypedTextField salutation4;
     private citibob.swing.typed.JTypedTextField scholarship;

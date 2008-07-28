@@ -36,6 +36,7 @@ import citibob.swing.prefs.*;
 import java.io.*;
 import offstage.crypt.*;
 import citibob.gui.*;
+import citibob.reflect.ClassPathUtils;
 import citibob.reports.ReportsApp;
 import citibob.resource.ResData;
 import citibob.resource.ResResult;
@@ -67,6 +68,19 @@ public String configName() { return configName; }
 
 ClassLoader siteCode;
 public ClassLoader siteCode() { return siteCode; }
+public Object newSiteInstance(String className, Class defaultClass) {
+	Class klass = defaultClass;
+	try {
+		klass = siteCode().loadClass(className);
+	} catch(Exception e) {}
+	try {
+		System.out.println("FrontApp.newSiteInstance(" + klass.getName() + ")");
+		return klass.newInstance();
+	} catch(Exception e) {
+		return null;
+	}
+}
+
 
 int loginID;
 /** Who is logged in, based on ID gotten out of table from user's
@@ -358,7 +372,8 @@ public void initWithDatabase()
 				out.close();
 
 				// Create a classloader on that jar file
-				URL siteCodeURL = new URL("file:" + outFile.getPath());
+//				URL siteCodeURL = new URL("file:" + outFile.getPath());
+				URL siteCodeURL = outFile.toURL();
 				siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader());
 				
 				// Set up security policy to prevent malicious code from sitecode.jar
@@ -368,8 +383,13 @@ public void initWithDatabase()
 				// No site code available!
 				// Just use current classloader, hope for the best
 				siteCode = getClass().getClassLoader();
+File siteCodeFile = new File(ClassPathUtils.getMavenProjectRoot(),
+"../oamisc/sc_yfsc/target/sc_yfsc-1.0-SNAPSHOT.jar");
+URL siteCodeURL = siteCodeFile.toURL();
+siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader());
 			}
 		}});
+		str.flush();		// Our site code must be loaded before we go on.
 		
 		
 		// Figure out who we're logged in as
@@ -396,7 +416,14 @@ public void initWithDatabase()
 			rs.close();
 		}});
 
-		schemaSet = new OffstageSchemaSet(str, dbChange, timeZone());
+		
+//		schemaSet = new OffstageSchemaSet(str, dbChange, timeZone());
+		OffstageSchemaSet oschemaSet = (OffstageSchemaSet)newSiteInstance(
+			"sc.offstage.schema.OffstageSchemaSet",
+			OffstageSchemaSet.class);
+		oschemaSet.init(str, dbChange, timeZone());
+		schemaSet = oschemaSet;
+		
 		str.flush();		// Our SchemaSet must be set up before we go on.
 		// ================
 
