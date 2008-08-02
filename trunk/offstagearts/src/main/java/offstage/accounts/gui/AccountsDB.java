@@ -51,9 +51,9 @@ public class AccountsDB
 public static String w_tmp_acct_balance_sql(String idSql, final int actypeid, final int assetid)
 {
 	if (idSql == null) idSql =
-		" select distinct cr_entityid as id from actrans2 where actypeid = "+ SqlInteger.sql(actypeid) +
+		" select distinct cr_entityid as id from actrans2 where cr_actypeid = "+ SqlInteger.sql(actypeid) +
 		" UNION" +
-		" select distinct db_entityid as id from actrans2 where actypeid = "+ SqlInteger.sql(actypeid) +
+		" select distinct db_entityid as id from actrans2 where db_actypeid = "+ SqlInteger.sql(actypeid) +
 		" UNION" +
 		" select distinct entityid as id from acbal2 where actypeid = "+ SqlInteger.sql(actypeid);
 	String sql =

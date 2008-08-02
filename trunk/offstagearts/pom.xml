@@ -4,7 +4,7 @@
   <groupId>org.citibob</groupId>
   <artifactId>offstagearts</artifactId>
   <packaging>jar</packaging>
-  <version>1.4.1</version>
+  <version>1.4.2</version>
   <name>offstagearts</name>
   <url>http://maven.apache.org</url>
   <build>

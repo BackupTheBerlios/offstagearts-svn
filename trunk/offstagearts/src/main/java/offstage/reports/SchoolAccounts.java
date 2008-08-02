@@ -163,6 +163,9 @@ public Map<String,Object> model;
 DefaultTableModel table;
 int unpaidLateCol;
 int entityidCol;
+
+boolean isZero(double amt) { return Math.abs(amt) < .01; }
+
 // =================================================================
 /** @param tz TimeZone used to read from database.
  @param xasOfDate Calculate late fees as of this date.  Don't list transactions after this date.  Any hours,min or sec are cleared.
@@ -294,6 +297,11 @@ java.util.Date xasOfDate, int lateDays)
 			}
 			String lastname = ac.lastname;
 			String firstname = ac.firstname;
+			
+			// Eliminate rows with no data
+			if (isZero(ac.totalbilled_term) &&
+				isZero(unpaid_late) && isZero(unpaid_pastdue) && isZero(ac.overpay)) continue;
+			
 			table.addRow(new Object[] {
 				ac.entityid, lastname, firstname,
 				studentNames.get(ac.entityid),

@@ -491,14 +491,15 @@ protected static String simpleSearchSql(String text, String join, String whereCl
 		" where persons.entityid = " + text; // + " and not obsolete" + whereClause;
 	} else if (at >= 0) {
 		return "select persons.entityid from persons" + join +
-			" where email ilike '%" + text.trim() + "%'" + whereClause;
+			" where email ilike " + SqlString.sql('%' + text.trim() + '%')
+			+ " " + whereClause;
 	} else if (comma >= 0) {
 		// lastname, firstname
 		String lastname = text.substring(0,comma).trim();
 		String firstname = text.substring(comma+1).trim();
 		String idSql = "select persons.entityid from persons " + join + " where (" +
-			" firstname ilike '%" + firstname + "%'" +
-			" and lastname ilike '%" + lastname + "%'" +
+			" firstname ilike " + SqlString.sql('%' + firstname + '%') +
+			" and lastname ilike " + SqlString.sql('%' + lastname + '%') +
 			" ) and not obsolete" + whereClause;
 		return idSql;
 	} else if (space >= 0) {
@@ -506,18 +507,18 @@ protected static String simpleSearchSql(String text, String join, String whereCl
 		String firstname = text.substring(0,space).trim();
 		String lastname = text.substring(space+1).trim();
 		String idSql = "select persons.entityid from persons" + join + " where (" +
-			" firstname ilike '%" + firstname + "%'" +
-			" and lastname ilike '%" + lastname + "%'" +
+			" firstname ilike " + SqlString.sql('%' + firstname + '%') +
+			" and lastname ilike " + SqlString.sql('%' + lastname + '%') +
 			" ) and not obsolete" + whereClause;
 		return idSql;
 	} else {
 		String ssearch = SqlString.sql(text, false);
 		String idSql = "select persons.entityid from persons " + join + " where (" +
-			" firstname ilike '%" + ssearch + "%'" +
-			" or lastname ilike '%" + ssearch + "%'" +
-			" or orgname ilike '%" + ssearch + "%'" +
-			" or email ilike '%" + ssearch + "%'" +
-			" or url ilike '%" + ssearch + "%'" +
+			" firstname ilike " + SqlString.sql('%' + ssearch + '%') +
+			" or lastname ilike " + SqlString.sql('%' + ssearch + '%') +
+			" or orgname ilike " + SqlString.sql('%' + ssearch + '%') +
+			" or email ilike " + SqlString.sql('%' + ssearch + '%') +
+			" or url ilike " + SqlString.sql('%' + ssearch + '%') +
 			" ) and not obsolete" + whereClause;
 		return idSql;
 	}

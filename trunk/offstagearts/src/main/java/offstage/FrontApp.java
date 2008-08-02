@@ -177,7 +177,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {
 	// Make sure we have the right version
-	version = new Version("1.4.1");
+	version = new Version("1.4.2");
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
 	sysVersion = svers.maxVersion;
@@ -359,39 +359,46 @@ public void initWithDatabase()
 	try {
 		SqlRun str = sqlRun();
 
-		final ResResult siteCodeRes = resSet().load(str, "sitecode.jar", 0);
-		str.execUpdate(new UpdTasklet() {
-		public void run() throws IOException {
-			if (siteCodeRes.bytes != null) {
-				// Save our site code to a temporary jar file
-				File outFile = File.createTempFile("sitecode", ".jar");
-				System.out.println("Writing sitecode to: " + outFile);
-				outFile.deleteOnExit();
-				OutputStream out = new FileOutputStream(outFile);
-				out.write(siteCodeRes.bytes);
-				out.close();
+		// First look for sitecode.jar described in our configuration files
+		String siteCodeFileName = props().getProperty("sitecode.jar");
+		if (siteCodeFileName != null) {
+			// Create a classloader on that jar file
+			URL siteCodeURL = new File(siteCodeFileName).toURL();
+			siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader());
+		} else {
+			final ResResult siteCodeRes = resSet().load(str, "sitecode.jar", 0);
+			str.execUpdate(new UpdTasklet() {
+			public void run() throws IOException {
+				if (siteCodeRes.bytes != null) {
+					// Save our site code to a temporary jar file
+					File outFile = File.createTempFile("sitecode", ".jar");
+					System.out.println("Writing sitecode to: " + outFile);
+					outFile.deleteOnExit();
+					OutputStream out = new FileOutputStream(outFile);
+					out.write(siteCodeRes.bytes);
+					out.close();
 
-				// Create a classloader on that jar file
-//				URL siteCodeURL = new URL("file:" + outFile.getPath());
-				URL siteCodeURL = outFile.toURL();
-				siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader());
-				
-				// Set up security policy to prevent malicious code from sitecode.jar
-				Policy.setPolicy(new OffstagePolicy(siteCodeURL));
-				System.setSecurityManager(new SecurityManager());
-			} else {
-				// No site code available!
-				// Just use current classloader, hope for the best
-				siteCode = getClass().getClassLoader();
-File siteCodeFile = new File(ClassPathUtils.getMavenProjectRoot(),
-"../oamisc/sc_yfsc/target/sc_yfsc-1.0-SNAPSHOT.jar");
-URL siteCodeURL = siteCodeFile.toURL();
-siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader());
-			}
-		}});
-		str.flush();		// Our site code must be loaded before we go on.
-		
-		
+					// Create a classloader on that jar file
+	//				URL siteCodeURL = new URL("file:" + outFile.getPath());
+					URL siteCodeURL = outFile.toURL();
+					siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader());
+
+					// Set up security policy to prevent malicious code from sitecode.jar
+					Policy.setPolicy(new OffstagePolicy(siteCodeURL));
+					System.setSecurityManager(new SecurityManager());
+				} else {
+					// No site code available!
+					// Just use current classloader, hope for the best
+					siteCode = getClass().getClassLoader();
+	//File siteCodeFile = new File(ClassPathUtils.getMavenProjectRoot(),
+	//"../oamisc/sc_yfsc/target/sc_yfsc-1.0-SNAPSHOT.jar");
+	//URL siteCodeURL = siteCodeFile.toURL();
+	//siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader());
+				}
+			}});
+			str.flush();		// Our site code must be loaded before we go on.
+		}
+
 		// Figure out who we're logged in as
 		String sql = "select entityid from dblogins where username = " +
 			SqlString.sql(System.getProperty("user.name"));
@@ -416,14 +423,14 @@ siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader
 			rs.close();
 		}});
 
-		
+
 //		schemaSet = new OffstageSchemaSet(str, dbChange, timeZone());
 		OffstageSchemaSet oschemaSet = (OffstageSchemaSet)newSiteInstance(
 			"sc.offstage.schema.OffstageSchemaSet",
 			OffstageSchemaSet.class);
 		oschemaSet.init(str, dbChange, timeZone());
 		schemaSet = oschemaSet;
-		
+
 		str.flush();		// Our SchemaSet must be set up before we go on.
 		// ================
 

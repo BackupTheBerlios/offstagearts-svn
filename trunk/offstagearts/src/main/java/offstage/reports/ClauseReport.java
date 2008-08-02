@@ -73,7 +73,12 @@ throws IOException
 	// Add the per-clause queries, so we know which records came from which clauses
 	final List<EClause> clauses = equery.getClauses();
 	for (EClause clause : clauses) {
-		sql.append(equery.getSql(fapp.equerySchema(), clause));
+		String clauseSql = equery.getSql(fapp.equerySchema(), clause);
+		if (clauseSql == null) clauseSql =				// a dummy...
+			"select entityid as id from entities\n" +
+			"where entityid = 0 and entityid = 1\n";
+
+		sql.append(clauseSql);
 		sql.append(";\n");
 	}
 
