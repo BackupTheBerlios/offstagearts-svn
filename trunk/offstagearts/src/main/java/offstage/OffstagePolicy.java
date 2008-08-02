@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage;
 
+import java.awt.AWTPermission;
 import java.net.URL;
 import java.security.AllPermission;
 import java.security.CodeSource;
@@ -30,6 +31,7 @@ import java.security.PermissionCollection;
 import java.security.Permissions;
 import java.security.Policy;
 import java.security.ProtectionDomain;
+import java.sql.SQLPermission;
 
 /**
  * Policy to allow all Offstage code to run with full system access, but to
@@ -50,17 +52,22 @@ public OffstagePolicy(URL siteCodeURL)
 	this.siteCodeURL = siteCodeURL;
 	all = new Permissions();
 		all.add(new AllPermission());
-	none = new Permissions();
+//	none = new Permissions();
+//		none.add(new AWTPermission("*"));
+//		none.add(new SQLPermission("setLog"));
+none = all;		// A mystery permission is needed when running via Java WebStart.
 }
 	
 public PermissionCollection getPermissions(CodeSource src)
 {
 	URL url = src.getLocation();
 	
+//return all;		// Need to add the right AWTPermissions to "none" to get this working right...
+
 	// Either equal comparison works; this has been tested.
 	// I'm going with the more robust one out of paranoia.
 	return (siteCodeURL.equals(url) ? none : all);
-//	return (url == siteCodeURL ? none : all);
+//	return (url == siteCodeURL ? none : all);		// This is riskier...
 }
 
 public boolean implies(ProtectionDomain domain, Permission permission)
