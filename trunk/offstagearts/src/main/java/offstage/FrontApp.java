@@ -365,6 +365,10 @@ public void initWithDatabase()
 			// Create a classloader on that jar file
 			URL siteCodeURL = new File(siteCodeFileName).toURL();
 			siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader());
+			
+			// Set up security policy to prevent malicious code from sitecode.jar
+			Policy.setPolicy(new OffstagePolicy(siteCodeURL));
+			System.setSecurityManager(new SecurityManager());
 		} else {
 			final ResResult siteCodeRes = resSet().load(str, "sitecode.jar", 0);
 			str.execUpdate(new UpdTasklet() {
