@@ -212,8 +212,9 @@ addState(new AbstractWizState("emailmsg") {
 		{ return new EmailMsgWiz(frame, app); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		((EmailMsgWiz)wiz).close();
-//		byte[] buf = (byte[])v.get("emails");
+		MailMsg buf = (MailMsg)v.get("emails");
+		if (buf == null) stateName = "emailmsg";	// An exception happened
+		else ((EmailMsgWiz)wiz).close();
 //System.out.println("Email =\n" + new String(buf));
 	}
 });

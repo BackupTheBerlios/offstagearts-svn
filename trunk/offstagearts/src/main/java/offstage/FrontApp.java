@@ -36,7 +36,6 @@ import citibob.swing.prefs.*;
 import java.io.*;
 import offstage.crypt.*;
 import citibob.gui.*;
-import citibob.reflect.ClassPathUtils;
 import citibob.reports.ReportsApp;
 import citibob.resource.ResData;
 import citibob.resource.ResResult;
@@ -92,6 +91,10 @@ public TreeSet<String> loginGroups() { return loginGroups; }
 
 EQuerySchema equerySchema;
 public EQuerySchema equerySchema() { return equerySchema; }
+
+Jango jango;
+public Jango jango() { return jango; }
+
 // ==========================================================================
 	
 ///** Make sure preferences are initialized on first run. */
@@ -177,7 +180,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {
 	// Make sure we have the right version
-	version = new Version("1.4.2");
+	version = new Version("1.5.0");
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
 	sysVersion = svers.maxVersion;
@@ -210,6 +213,9 @@ throws Exception
 	
 	// Load up properties from the configuration
 	props = loadProps();
+	
+	// Set up connection to JangoMail
+	jango = new Jango(props);
 
 	// Time Zone should be stored in database!
 	timeZone = TimeZone.getDefault();
@@ -249,7 +255,7 @@ throws Exception
 	try {
 	
 		// Set up database connections, etc.
-		this.pool = DB.newConnPool(props);
+		this.pool = new RealConnPool(new OffstageConnFactory(props));
 		this.sqlRun = new BatchSqlRun(pool, expHandler);
 
 		// Load the crypto keys

@@ -39,32 +39,32 @@ import offstage.config.*;
 public class DB {
 
 // -------------------------------------------------------------------------------
-public static ConnPool newConnPool(Properties props)
-throws java.util.prefs.BackingStoreException, java.sql.SQLException, ClassNotFoundException
-{
-
-final Properties p2 = new Properties();
-final String url;
-
-	Class.forName(props.getProperty("db.driverclass", null));
-	p2.setProperty("user", props.getProperty("db.user", null));
-
-	// PostgreSQL interprets any setting of the "ssl" property
-	// as a request for SSL.
-	// See: http://archives.free.net.ph/message/20080128.165732.7c127d6b.en.html
-	String sssl = props.getProperty("db.ssl", "false");
-	boolean ssl = (sssl.toLowerCase().equals("true"));
-	if (ssl) p2.setProperty("ssl", "true");
-	
-	String pwd = props.getProperty("db.password", null);
-	if (pwd != null) p2.setProperty("password", pwd);
-
-	url = "jdbc:" + props.getProperty("db.drivertype", null) + "://" +
-		props.getProperty("db.host", null) +
-		":" + props.getProperty("db.port", null) +
-		"/" + props.getProperty("db.database", null);
-	return new RealConnPool(url, p2);
-}
+//public static ConnPool newConnPool(Properties props)
+//throws java.util.prefs.BackingStoreException, java.sql.SQLException, ClassNotFoundException
+//{
+//
+//final Properties p2 = new Properties();
+//final String url;
+//
+//	Class.forName(props.getProperty("db.driverclass", null));
+//	p2.setProperty("user", props.getProperty("db.user", null));
+//
+//	// PostgreSQL interprets any setting of the "ssl" property
+//	// as a request for SSL.
+//	// See: http://archives.free.net.ph/message/20080128.165732.7c127d6b.en.html
+//	String sssl = props.getProperty("db.ssl", "false");
+//	boolean ssl = (sssl.toLowerCase().equals("true"));
+//	if (ssl) p2.setProperty("ssl", "true");
+//	
+//	String pwd = props.getProperty("db.password", null);
+//	if (pwd != null) p2.setProperty("password", pwd);
+//
+//	url = "jdbc:" + props.getProperty("db.drivertype", null) + "://" +
+//		props.getProperty("db.host", null) +
+//		":" + props.getProperty("db.port", null) +
+//		"/" + props.getProperty("db.database", null);
+//	return new RealConnPool(url, p2);
+//}
 
 //		// Open the Database
 //		Preferences dbPref = OffstageVersion.prefs.node("db");

@@ -524,7 +524,9 @@ if (msg != null) System.out.println("Email = " + msg.subject);
 			EQuery equery = (EQuery)wizard.getVal("equery");
 
 			SchoolDB.sendSchoolJangoMail(fapp, str, msg,
-				equery.getSql((fapp.equerySchema())));
+				equery.getSql((fapp.equerySchema())),
+				equery.toXML(fapp.equerySchema()),
+				(Integer)wizard.getVal("equeryid"));
 			
 		}});
 		// TODO add your handling code here:

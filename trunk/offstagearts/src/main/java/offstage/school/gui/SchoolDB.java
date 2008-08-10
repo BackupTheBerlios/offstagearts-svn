@@ -23,18 +23,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.school.gui;
 
-import citibob.app.App;
 import java.sql.*;
 import citibob.sql.*;
 import java.util.*;
 import citibob.sql.pgsql.*;
-import java.net.URL;
 import java.util.Date;
 import java.util.prefs.*;
 import offstage.config.*;
 import com.jangomail.api.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import offstage.FrontApp;
+import offstage.Jango;
 import offstage.equery.swing.MailMsg;
 
 /**
@@ -241,13 +241,10 @@ public static String checkSchoolEmailQuery(String idSql)
 
 }
 
-static DateFormat groupNameFmt = new SimpleDateFormat("yyMMdd-HHmmss");
-static {
-	groupNameFmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-}
 
 /** @param idSql People to send email to (we need to weed out bad addresses) */
-public static void sendSchoolJangoMail(final App app, SqlRun str, final MailMsg msg, String idSql0)
+public static void sendSchoolJangoMail(final FrontApp app, SqlRun str,
+final MailMsg msg, String idSql0, final String equeryXML, final Integer equeryid)
 {
 	str.execSql(SchoolDB.checkSchoolEmailQuery(idSql0));
 	
@@ -274,24 +271,23 @@ public static void sendSchoolJangoMail(final App app, SqlRun str, final MailMsg 
 //Hello %%FirstName%% %%LastName%% -- your email address is %%EmailAddress%%
 		
 
-	str.execSql(sql, new RsTasklet() {
-	public void run(ResultSet rs) throws Exception {
-		// Get JangoMail Handle
-		JangoMail service = new JangoMailLocator();
-		JangoMailSoap soap = service.getJangoMailSoap(
-			new URL("https://api.jangomail.com/api.asmx"));
-
-		String usr = app.props().getProperty("custmail.jango.user");
-		String pwd = app.props().getProperty("custmail.jango.password");
+	str.execSql(sql, new RsTasklet2() {
+	public void run(SqlRun str, ResultSet rs) throws Exception {
+		Jango jango = app.jango();
+		JangoMailSoap soap = jango.soap;
+		String usr = jango.usr;
+		String pwd = jango.pwd;
 
 		// GroupName
-		String groupName = "Group-" + groupNameFmt.format(new java.util.Date());
+		String groupName = "Group-" + Jango.groupNameFmt.format(new java.util.Date());
 
 		// FieldNames
 		ResultSetMetaData md = rs.getMetaData();
 		StringBuffer fieldNames = new StringBuffer();
 		for (int i=0; i<md.getColumnCount(); ++i) {
-			fieldNames.append(md.getColumnName(i));
+			String fieldName = md.getColumnName(i+1);
+			if ("emailaddress".equals(fieldName.toLowerCase())) fieldName = "EmailAddress";
+			fieldNames.append(fieldName);
 			if (i < md.getColumnCount() - 1) fieldNames.append(',');
 		}
 
@@ -324,14 +320,23 @@ public static void sendSchoolJangoMail(final App app, SqlRun str, final MailMsg 
 				
 		// Create Group in JangoMail
 		soap.addGroup(usr, pwd, groupName);
+		
+		// Add fields to the group
+		for (int i=0; i<md.getColumnCount(); ++i) {
+			String fieldName = md.getColumnName(i+1);
+			if ("emailaddress".equals(fieldName.toLowerCase())) continue;		// Added by default in JangoMail
+			soap.addGroupField(usr, pwd, groupName, fieldName);
+		}
+		
 
 		// Set up data in the group
-		soap.importGroupMembersFromData(usr, pwd, groupName,
+		String ret = soap.importGroupMembersFromData(usr, pwd, groupName,
 				fieldNames.toString(), importData.toString(),
 				columnDelimiter, rowDelimiter, textQualifier);
-		
+System.out.println("importGroupMembersFromData return: " + ret);
+
 		// Email to the group
-		String fromEmail = "citibob@jangomail.com";
+		String fromEmail = usr + "@jangomail.com";
 		String fromName = "Bob Fischer";
 		String toGroups = groupName;
 		String toGroupFilter = "";
@@ -341,16 +346,34 @@ public static void sendSchoolJangoMail(final App app, SqlRun str, final MailMsg 
 		String rawMessage = new String(msg.body);
 		String boundary = msg.boundary;
 		String options = "";
-//		soap.sendMassEmailRaw(fromName, pwd, fromEmail, fromName,
-//			toGroups, toGroupFilter, toOther, toWebDatabase,
-//			subject, rawMessage, boundary, options);
-		
+		ret = soap.sendMassEmailRaw(usr, pwd, fromEmail, fromName,
+			toGroups, toGroupFilter, toOther, toWebDatabase,
+			subject, rawMessage, boundary, options);
+System.out.println("sendMassEmailRaw return: " + ret);
 
+		String campaignName = ret.substring(ret.lastIndexOf('\n') + 1).trim();
+		
+		// Record this campaign in our database...
+		String sql =
+			" insert into emailingids (emailproviderid, emailingtype,\n" +
+			" campaignname, groupname, equeryid, equery) values (\n" +
+			" (select emailproviderid from emailproviderids where name='JangoMail'),\n" +
+			" 'c', " + SqlString.sql(campaignName) + ", " +
+			SqlString.sql(groupName) + "," +
+			SqlInteger.sql(equeryid) + "," +
+			SqlString.sql(equeryXML) + ");\n" +
+			
+			" insert into emailings (emailingid, entityid)\n" +
+			" select currval('emailingids_emailingid_seq'), id\n" +
+			" from _mm;\n";
+		
+		str.execSql(sql);
+
+		str.execSql(" drop table _mm;");
 	}});
 	
 	
 	
-	str.execSql(" drop table _mm;");
 }
 
 // ================================================================
