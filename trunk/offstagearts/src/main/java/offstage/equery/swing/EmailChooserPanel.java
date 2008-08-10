@@ -73,24 +73,23 @@ static String getBoundary(Message msg) throws Exception
 	
 	int c = lheader.indexOf("boundary");
 	if (c < 0) return null;
-	c += "boundary".length() + 1;
+	c += "boundary".length();
 	
 	for (; Character.isWhitespace(lheader.charAt(c)); ++c) ;	// Skip whitespace
 	if (lheader.charAt(c) != '=') throw new ParseException("Cannot parse header: " + header, c);
+	++c;	// skip the '='
 	for (; Character.isWhitespace(lheader.charAt(c)); ++c) ;	// Skip whitespace
 
 	int start,next;
 	if (lheader.charAt(c) == '"') {
-		++c;
-		start = c;
-		for (; c < lheader.length() && lheader.charAt(c) != '"'; ++c);
-		next = c;
+		start = c+1;
+		next = lheader.indexOf('"', start);
 	} else {
 		start = c;
-		for (; c < lheader.length() && lheader.charAt(c) != ';'; ++c);
-		next = c;
+		next = lheader.indexOf(';', start);
+		if (next < 0) next = lheader.length();
 	}
-	return header.substring(start, next);
+	return header.substring(start, next).trim();
 }
 	
 	public void setValue(Object obj) {}
