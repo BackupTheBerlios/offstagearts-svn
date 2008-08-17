@@ -23,20 +23,20 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Component id="MiscInfo" min="-2" pref="262" max="-2" attributes="0"/>
-                      <EmptySpace pref="53" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Component id="MiscInfo" min="-2" pref="296" max="-2" attributes="0"/>
+                      <EmptySpace pref="27" max="32767" attributes="0"/>
                       <Component id="GenderX" min="-2" pref="155" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace min="12" pref="12" max="12" attributes="0"/>
                       <Component id="FirstMiddleLast" min="-2" pref="322" max="-2" attributes="0"/>
-                      <EmptySpace pref="41" max="32767" attributes="0"/>
+                      <EmptySpace pref="44" max="32767" attributes="0"/>
                       <Component id="bEmancipate" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="FamilyPane" pref="347" max="32767" attributes="1"/>
+              <Component id="FamilyPane" pref="350" max="32767" attributes="1"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
@@ -46,7 +46,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="customaddressto" pref="359" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="AddrPanel" pref="397" max="32767" attributes="0"/>
+                  <Component id="AddrPanel" pref="405" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -71,14 +71,12 @@
                           <Component id="FirstMiddleLast" min="-2" max="-2" attributes="0"/>
                           <Component id="bEmancipate" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                              <Component id="MiscInfo" min="-2" max="-2" attributes="1"/>
-                          </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="GenderX" pref="166" max="32767" attributes="1"/>
                           <Group type="102" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="GenderX" pref="166" max="32767" attributes="1"/>
+                              <EmptySpace min="9" pref="9" max="9" attributes="0"/>
+                              <Component id="MiscInfo" min="-2" max="-2" attributes="1"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -453,11 +451,6 @@
       <SubComponents>
         <Component class="citibob.swing.typed.JBoolCheckbox" name="isorg">
           <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-                <EmptyBorder bottom="0" left="0" right="0" top="0"/>
-              </Border>
-            </Property>
             <Property name="text" type="java.lang.String" value="is Org. Record?"/>
             <Property name="colName" type="java.lang.String" value="isorg"/>
             <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
@@ -571,11 +564,6 @@
         </Component>
         <Component class="citibob.swing.typed.JBoolCheckbox" name="obsolete">
           <Properties>
-            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-              <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-                <EmptyBorder bottom="0" left="0" right="0" top="0"/>
-              </Border>
-            </Property>
             <Property name="text" type="java.lang.String" value="obsolete"/>
             <Property name="colName" type="java.lang.String" value="obsolete"/>
             <Property name="enabled" type="boolean" value="false"/>

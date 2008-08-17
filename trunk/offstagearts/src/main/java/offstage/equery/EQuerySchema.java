@@ -91,6 +91,7 @@ private static final String[] alias = {
 	"persons.email", "email",
 	"persons.occupation", "occupation",
 	"persons.orgname", "orgname",
+	"persons.dob", "dob",
 	"entities.address1", "address1",
 	"entities.address2", "address2",
 	"entities.city", "city",
