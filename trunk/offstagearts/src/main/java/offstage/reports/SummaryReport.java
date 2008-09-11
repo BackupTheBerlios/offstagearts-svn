@@ -57,6 +57,7 @@ throws IOException
 //	StringTemplate st = stg.getInstanceOf("summary");
 
 	// Get the StringTemplate...
+We need to load this with the SiteCode classloader... (which is kinda impossible)...
 	StringTemplateGroup stg = new StringTemplateGroup("summaryGroup");
 	StringTemplate st = stg.getInstanceOf("offstage/reports/summary");
 

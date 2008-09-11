@@ -17,19 +17,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package offstage.equery;
 
-import java.util.*;
-import citibob.sql.*;
-import citibob.sql.pgsql.*;
-import citibob.jschema.*;
-import citibob.swing.typed.*;
-import java.sql.*;
-import citibob.types.*;
+import citibob.jschema.SchemaSet;
+import citibob.types.JEnum;
+import citibob.types.JEnumSegment;
+import citibob.types.JType;
+import java.sql.SQLException;
+import offstage.datatab.DataTab;
+import offstage.datatab.DataTabSet;
+
 
 public class EQuerySchema extends QuerySchema
 {
 
 // --------------------------------------------------
-public EQuerySchema(SchemaSet sset) throws SQLException
+public EQuerySchema(SchemaSet sset, DataTabSet tabs) throws SQLException
 {
 	super();
 	addSchema(sset.get("entities"),
@@ -38,18 +39,18 @@ public EQuerySchema(SchemaSet sset) throws SQLException
 		"organizations.entityid = main.entityid");
 	addSchema(sset.get("persons"),
 		"persons.entityid = main.entityid");
-	addSchema(sset.get("events"),
-		"events.entityid = main.entityid");
-	addSchema(sset.get("donations"),
-		"donations.entityid = main.entityid");
-	addSchema(sset.get("notes"),
-		"notes.entityid = main.entityid");
+//	addSchema(sset.get("events"),
+//		"events.entityid = main.entityid");
+//	addSchema(sset.get("donations"),
+//		"donations.entityid = main.entityid");
+//	addSchema(sset.get("notes"),
+//		"notes.entityid = main.entityid");
 	addSchema(sset.get("phones"),
 		"phones.entityid = main.entityid");
-	addSchema(sset.get("classes"),
-		"classes.entityid = main.entityid");
-	addSchema(sset.get("termenrolls"),
-		"termenrolls.entityid = main.entityid");
+//	addSchema(sset.get("classes"),
+//		"classes.entityid = main.entityid");
+//	addSchema(sset.get("termenrolls"),
+//		"termenrolls.entityid = main.entityid");
 	addSchema(sset.get("termregs"),
 		"termregs.entityid = termenrolls.entityid and termregs.groupid = termenrolls.groupid",
 		"termenrolls");
@@ -72,17 +73,25 @@ public EQuerySchema(SchemaSet sset) throws SQLException
 	}};
 	
 	
-// add termregs.tuition, etc.
-	addSchema(sset.get("interests"),
-		"interests.entityid = main.entityid");
-	addSchema(sset.get("tickets"),
-		"ticketeventsales.entityid = main.entityid");
+//// add termregs.tuition, etc.
+//	addSchema(sset.get("interests"),
+//		"interests.entityid = main.entityid");
+//	addSchema(sset.get("tickets"),
+//		"ticketeventsales.entityid = main.entityid");
+
+	for (DataTab tab : tabs.equeryTabs) {
+		tab.addToEQuerySchema(this);
+	}
 	
-	doAlias(alias);
+	
+	doAlias(aliases);
+	for (DataTab tab : tabs.equeryTabs) {
+		doAlias(tab.getAliases());
+	}
 }
 
 // --------------------------------------------------------------------
-private static final String[] alias = {
+private static final String[] aliases = {
 	"persons.isorg", "isorg",
 	"persons.firstname", "firstname",
 	"persons.middlename", "middlename",
@@ -101,19 +110,20 @@ private static final String[] alias = {
 	"entities.lastupdated", "lastupdated",
 	"entities.sendmail", "sendmail",
 //	"organizations.name", "org-name",
-	"events.groupid", "event-type",
-//	"events.role", "event-role",
-	"donations.groupid", "donation-type",
-	"donations.date", "donation-date",
-	"donations.amount", "donation-amount",
-	"notes.groupid", "note-type",
-	"notes.date", "note-date",
-	"notes.note", "note",
+	
+//	"events.groupid", "event-type",
+////	"events.role", "event-role",
+//	"donations.groupid", "donation-type",
+//	"donations.date", "donation-date",
+//	"donations.amount", "donation-amount",
+//	"notes.groupid", "note-type",
+//	"notes.date", "note-date",
+//	"notes.note", "note",
 	"phones.groupid", "phone-type",
 	"phones.phone", "phone",
 	"classes.groupid", "classes (deprecated)",
-	"termenrolls.groupid", "terms",
-	"termenrolls.courserole", "termrole",
+//	"termenrolls.groupid", "terms",
+//	"termenrolls.courserole", "termrole",
 	"enrollments.courseid", "courses",
 	"enrollments.courserole", "courserole",
 	"termregs.programid", "level",
@@ -122,15 +132,15 @@ private static final String[] alias = {
 	"termregs.dtsigned", "registration-signed",
 	"termregs.dtregistered", "date-registered",
 	"termregs.payerid", "payer",
-	"interests.groupid", "interests",
-	"ticketeventsales.groupid", "tickets",
-	"ticketeventsales.date", "tix-date",
-	"ticketeventsales.numberoftickets", "#-tix",
-	"ticketeventsales.payment", "tix-payment",
-	"ticketeventsales.tickettypeid", "tix-type",
-	"ticketeventsales.venueid", "venue",
-	"ticketeventsales.offercodeid", "offercode",
-	"ticketeventsales.perftypeid", "performance-type",
+//	"interests.groupid", "interests",
+//	"ticketeventsales.groupid", "tickets",
+//	"ticketeventsales.date", "tix-date",
+//	"ticketeventsales.numberoftickets", "#-tix",
+//	"ticketeventsales.payment", "tix-payment",
+//	"ticketeventsales.tickettypeid", "tix-type",
+//	"ticketeventsales.venueid", "venue",
+//	"ticketeventsales.offercodeid", "offercode",
+//	"ticketeventsales.perftypeid", "performance-type",
 	"entities.entityid", "entityid",
 	"entities.obsolete", "obsolete",
 };

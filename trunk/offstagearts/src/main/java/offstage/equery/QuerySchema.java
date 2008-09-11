@@ -130,7 +130,7 @@ private void addTypeComparator(Class klass, Comp... vals)
 }
 public Comp getComp(String saveName) { return compsBySaveName.get(saveName); }
 // --------------------------------------------------
-protected void addSchema(SqlSchema sc, String joinClause, String... requiredTables)
+public void addSchema(SqlSchema sc, String joinClause, String... requiredTables)
 {
 	String table = sc.getDefaultTable();
 	Tab tab = new Tab();

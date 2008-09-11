@@ -50,6 +50,7 @@ import java.security.Policy;
 import javax.swing.JOptionPane;
 import offstage.config.ConfigChooser;
 import offstage.config.UpgradesDialog;
+import offstage.datatab.DataTabSet;
 import offstage.resource.OffstageResSet;
 
 public class FrontApp extends ReportsApp
@@ -67,6 +68,10 @@ public String configName() { return configName; }
 
 ClassLoader siteCode;
 public ClassLoader siteCode() { return siteCode; }
+
+public Object newSiteInstance(Class defaultClass) {
+	return newSiteInstance("sc." + defaultClass.getName(), defaultClass);
+}
 public Object newSiteInstance(String className, Class defaultClass) {
 	Class klass = defaultClass;
 	try {
@@ -94,6 +99,9 @@ public EQuerySchema equerySchema() { return equerySchema; }
 
 Jango jango;
 public Jango jango() { return jango; }
+
+DataTabSet dataTabSet;
+public DataTabSet dataTabSet() { return dataTabSet; }
 
 // ==========================================================================
 	
@@ -435,12 +443,12 @@ public void initWithDatabase()
 
 
 //		schemaSet = new OffstageSchemaSet(str, dbChange, timeZone());
-		OffstageSchemaSet oschemaSet = (OffstageSchemaSet)newSiteInstance(
-			"sc.offstage.schema.OffstageSchemaSet",
-			OffstageSchemaSet.class);
+		OffstageSchemaSet oschemaSet = (OffstageSchemaSet)newSiteInstance(OffstageSchemaSet.class);
 		oschemaSet.init(str, dbChange, timeZone());
 		schemaSet = oschemaSet;
 
+		dataTabSet = (DataTabSet)newSiteInstance(DataTabSet.class);
+		
 		str.flush();		// Our SchemaSet must be set up before we go on.
 		// ================
 

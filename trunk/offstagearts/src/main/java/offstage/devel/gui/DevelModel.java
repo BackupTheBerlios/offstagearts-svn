@@ -25,6 +25,8 @@ import java.sql.*;
 import offstage.db.*;
 import offstage.schema.*;
 import citibob.jschema.log.*;
+import offstage.FrontApp;
+import offstage.datatab.DataTab;
 
 /** Query one person record and all the stuff related to it. */
 
@@ -40,15 +42,16 @@ private int entityID;
 QueryLogger logger;
 EntityDbModel onePerson;
 IntKeyedDbModel phones;
-IntKeyedDbModel donations;
-IntKeyedDbModel flags;
-IntKeyedDbModel notes;
-IntKeyedDbModel tickets;
-IntKeyedDbModel events;
-//IntKeyedDbModel classes;
-IntKeyedDbModel terms;
-IntKeyedDbModel interests;
+//IntKeyedDbModel donations;
+//IntKeyedDbModel flags;
+//IntKeyedDbModel notes;
+//IntKeyedDbModel tickets;
+//IntKeyedDbModel events;
+////IntKeyedDbModel classes;
+//IntKeyedDbModel terms;
+//IntKeyedDbModel interests;
 
+Map<String,IntKeyedDbModel> tabsDm = new TreeMap();
 
 //public void setKey(int entityID)
 //{
@@ -84,50 +87,65 @@ public EntityDbModel getEntity()
 	{ return onePerson; }
 public SchemaBuf getPhonesSb()
 	{ return phones.getSchemaBuf(); }
-public SchemaBuf getDonationSb()
-	{ return donations.getSchemaBuf(); }
-public SchemaBuf getFlagSb()
-	{ return flags.getSchemaBuf(); }
-public SchemaBuf getEventsSb()
-	{ return events.getSchemaBuf(); }
-//public SchemaBuf getClassesSb()
-//	{ return classes.getSchemaBuf(); }
-public SchemaBuf getTermsSb()
-	{ return terms.getSchemaBuf(); }
-public SchemaBuf getInterestsSb()
-	{ return interests.getSchemaBuf(); }
-public SchemaBuf getNotesSb()
-	{ return notes.getSchemaBuf(); }
-public SchemaBuf getTicketsSb()
-	{ return tickets.getSchemaBuf(); }
+
+public IntKeyedDbModel getTabDm(String name)
+	{ return tabsDm.get(name); }
+public SchemaBuf getTabSb(String name)
+	{ return getTabDm(name).getSchemaBuf(); }
+//public SchemaBuf getDonationSb()
+//	{ return donations.getSchemaBuf(); }
+//public SchemaBuf getFlagSb()
+//	{ return flags.getSchemaBuf(); }
+//public SchemaBuf getEventsSb()
+//	{ return events.getSchemaBuf(); }
+////public SchemaBuf getClassesSb()
+////	{ return classes.getSchemaBuf(); }
+//public SchemaBuf getTermsSb()
+//	{ return terms.getSchemaBuf(); }
+//public SchemaBuf getInterestsSb()
+//	{ return interests.getSchemaBuf(); }
+//public SchemaBuf getNotesSb()
+//	{ return notes.getSchemaBuf(); }
+//public SchemaBuf getTicketsSb()
+//	{ return tickets.getSchemaBuf(); }
 
 void logadd(SchemaBufDbModel m)
 {
 	add(m);
 	m.setLogger(logger);
 }
-public DevelModel(citibob.app.App app)
+public DevelModel(FrontApp app)
 {
 	logger = app.queryLogger();
 	SchemaSet osset = app.schemaSet();
 	logadd(onePerson = new EntityDbModel(osset.get("persons"), app));
 	logadd(phones = new IntKeyedDbModel(osset.get("phones"), "entityid"));
-	logadd(donations = new IntKeyedDbModel(osset.get("donations"), "entityid"));
-		donations.setOrderClause("date desc");
-	logadd(flags = new IntKeyedDbModel(osset.get("flags"), "entityid"));
-		flags.setOrderClause("groupid");
-	logadd(notes = new IntKeyedDbModel(osset.get("notes"), "entityid"));
-		notes.setOrderClause("date desc");
-	logadd(tickets = new IntKeyedDbModel(osset.get("tickets"), "entityid"));
-		tickets.setOrderClause("date desc");
-	logadd(events = new IntKeyedDbModel(osset.get("events"), "entityid"));
-		events.setOrderClause("groupid");
-//	logadd(classes = new IntKeyedDbModel(osset.classes, "entityid"));
-//		classes.setOrderClause("groupid");
-	logadd(terms = new IntKeyedDbModel(osset.get("termenrolls"), "entityid"));
-		terms.setOrderClause("firstdate desc,name");
-	logadd(interests = new IntKeyedDbModel(osset.get("interests"), "entityid"));
-		interests.setOrderClause("groupid");
+//	logadd(donations = new IntKeyedDbModel(osset.get("donations"), "entityid"));
+//		donations.setOrderClause("date desc");
+//	logadd(flags = new IntKeyedDbModel(osset.get("flags"), "entityid"));
+//		flags.setOrderClause("groupid");
+//	logadd(notes = new IntKeyedDbModel(osset.get("notes"), "entityid"));
+//		notes.setOrderClause("date desc");
+//	logadd(tickets = new IntKeyedDbModel(osset.get("tickets"), "entityid"));
+//		tickets.setOrderClause("date desc");
+//	logadd(events = new IntKeyedDbModel(osset.get("events"), "entityid"));
+//		events.setOrderClause("groupid");
+////	logadd(classes = new IntKeyedDbModel(osset.classes, "entityid"));
+////		classes.setOrderClause("groupid");
+//	logadd(terms = new IntKeyedDbModel(osset.get("termenrolls"), "entityid"));
+//		terms.setOrderClause("firstdate desc,name");
+//	logadd(interests = new IntKeyedDbModel(osset.get("interests"), "entityid"));
+//		interests.setOrderClause("groupid");
+		
+	for (DataTab tab : app.dataTabSet().allTabs()) {
+		IntKeyedDbModel dm = tab.newDbModel(logger);
+		dm.setOrderClause(tab.getOrderClause());
+		tabsDm.put(tab.getTableName(), dm);
+		logadd(dm);
+//		add(dm);
+//		dm.setLogger(logger);
+	}
+		
 }
 
 public void insertPhone(int groupTypeID) throws KeyViolationException

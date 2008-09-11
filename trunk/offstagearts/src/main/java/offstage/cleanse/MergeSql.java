@@ -36,25 +36,27 @@ import offstage.db.*;
 import offstage.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
+import offstage.datatab.DataTab;
+import offstage.datatab.DataTabSet;
 import offstage.devel.gui.DevelModel;
 
 public class MergeSql
 {
 
 StringBuffer sql = new StringBuffer();
-SchemaSet sset;
+FrontApp app;
 
-public MergeSql(SchemaSet sset)
-	{ this.sset = sset; }
+public MergeSql(FrontApp app) //SchemaSet sset)
+	{ this.app = app; }//sset = sset; }
 
 public String toSql()
 	{ return sql.toString(); }
 
 
 /** Merges data FROM dm0 TO dm1 */
-public static String mergeEntities(App app, Object entityid0, Object entityid1)
+public static String mergeEntities(FrontApp app, Object entityid0, Object entityid1)
 {
-	MergeSql merge = new MergeSql(app.schemaSet());
+	MergeSql merge = new MergeSql(app);//.schemaSet());
 	merge.mergeEntities(entityid0, entityid1);
 	String sql = merge.toSql();
 	return sql;
@@ -66,7 +68,7 @@ public void subordinateEntities(Object entityid0, Object entityid1)
 	sql.append("update entities set primaryentityid=" + entityid1 + " where entityid=" + entityid0 + ";\n");
 
 	// Move the rest of the household (if we were head of household)
-	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
+	searchAndReplace(app.schemaSet().get("persons"), "primaryentityid", entityid0, entityid1);
 }
 
 /** Merges data FROM dm0 TO dm1 */
@@ -76,7 +78,8 @@ public void mergeEntities(Object entityid0, Object entityid1)
 // This can be done in a special update statement after-the-fact.
 // Also need to do a simple search-and-replace of entityid0 -> entityid1 on primaryentityid, adultid, etc.
 // (This is all done)
-
+	DataTabSet tabs = app.dataTabSet();
+	SchemaSet sset = app.schemaSet();
 
 	// =================== Main Data
 	mergeOneRow(sset.get("persons"), "entityid", entityid0, entityid1);
@@ -84,14 +87,19 @@ public void mergeEntities(Object entityid0, Object entityid1)
 	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
 	searchAndReplace(sset.get("persons"), "parent1id", entityid0, entityid1);
 	searchAndReplace(sset.get("persons"), "parent2id", entityid0, entityid1);
-	moveRows(sset.get("classes"), "entityid", entityid0, entityid1);
-	moveRows(sset.get("donations"), "entityid", entityid0, entityid1);
-	moveRows(sset.get("events"), "entityid", entityid0, entityid1);
-	moveRows(sset.get("flags"), "entityid", entityid0, entityid1);
-	moveRows(sset.get("interests"), "entityid", entityid0, entityid1);
-	moveRows(sset.get("notes"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("phones"), "entityid", entityid0, entityid1);
-	moveRows(sset.get("tickets"), "entityid", entityid0, entityid1);
+	
+//	moveRows(sset.get("classes"), "entityid", entityid0, entityid1);
+//	moveRows(sset.get("donations"), "entityid", entityid0, entityid1);
+//	moveRows(sset.get("events"), "entityid", entityid0, entityid1);
+//	moveRows(sset.get("flags"), "entityid", entityid0, entityid1);
+//	moveRows(sset.get("interests"), "entityid", entityid0, entityid1);
+//	moveRows(sset.get("notes"), "entityid", entityid0, entityid1);
+//	moveRows(sset.get("tickets"), "entityid", entityid0, entityid1);
+
+	for (DataTab tab : tabs.allTabs()) {
+		moveRows(tab.getSchema(), "entityid", entityid0, entityid1);
+	}
 	
 	// Don't forget to delete old now-orphaned records!!
 	// (or at least set to obsolete!)
@@ -373,19 +381,26 @@ public void moveRows(SqlSchema schema, String sEntityCol, Object entityid0, Obje
 // =====================================================================
 // Schema-based merges --- for preview
 
-public static void bufMerge(DevelModel dmod0, DevelModel dmod1)
+public static void bufMerge(DataTabSet tabs, DevelModel dmod0, DevelModel dmod1)
 {
 	bufMergeMain(dmod0.getPersonSb(), dmod1.getPersonSb());
 	Integer entityid1 = (Integer)dmod1.getPersonSb().getValueAt(0, "entityid");
-//	bufMoveRows("entityid", entityid1, dmod0.getClassesSb(), dmod1.getClassesSb());
-	bufMoveRows("entityid", entityid1, dmod0.getDonationSb(), dmod1.getDonationSb());	
-	bufMoveRows("entityid", entityid1, dmod0.getEventsSb(), dmod1.getEventsSb());
-	bufMoveRows("entityid", entityid1, dmod0.getFlagSb(), dmod1.getFlagSb());
-	bufMoveRows("entityid", entityid1, dmod0.getInterestsSb(), dmod1.getInterestsSb());
-	bufMoveRows("entityid", entityid1, dmod0.getNotesSb(), dmod1.getNotesSb());
 	bufMoveRows("entityid", entityid1, dmod0.getPhonesSb(), dmod1.getPhonesSb());
-	bufMoveRows("entityid", entityid1, dmod0.getTicketsSb(), dmod1.getTicketsSb());
-	bufMoveRows("entityid", entityid1, dmod0.getTermsSb(), dmod1.getTermsSb());
+
+	for (DataTab tab : tabs.allTabs()) {
+		String name = tab.getTableName();
+		bufMoveRows("entityid", entityid1,
+			dmod0.getTabSb(name), dmod1.getTabSb(name));
+	}
+	
+//	//	bufMoveRows("entityid", entityid1, dmod0.getClassesSb(), dmod1.getClassesSb());
+//	bufMoveRows("entityid", entityid1, dmod0.getDonationSb(), dmod1.getDonationSb());
+//	bufMoveRows("entityid", entityid1, dmod0.getEventsSb(), dmod1.getEventsSb());
+//	bufMoveRows("entityid", entityid1, dmod0.getFlagSb(), dmod1.getFlagSb());
+//	bufMoveRows("entityid", entityid1, dmod0.getInterestsSb(), dmod1.getInterestsSb());
+//	bufMoveRows("entityid", entityid1, dmod0.getNotesSb(), dmod1.getNotesSb());
+//	bufMoveRows("entityid", entityid1, dmod0.getTicketsSb(), dmod1.getTicketsSb());
+//	bufMoveRows("entityid", entityid1, dmod0.getTermsSb(), dmod1.getTermsSb());
 }
 /** Merge main part of the record.. */
 public static void bufMergeMain(SchemaBuf sb0, SchemaBuf sb1)

@@ -47,9 +47,9 @@ public class ClauseReport
 
 public JTypeTableModel model;
 
-// Segment types available to report on
-public static final String[] availSegmentTypes =
-	{"classes", "events", "interests", "mailings", "notes", "status", "termenrolls", "ticketeventsales"};
+//// Segment types available to report on
+//public static final String[] availSegmentTypes =
+//	{"classes", "events", "interests", "mailings", "notes", "status", "termenrolls", "ticketeventsales"};
 
 // We'll select rows later; don't know whether to use ColPermuteTableModel, or some kind of
 // ColPermuteJTypeTableModel, or just set up the query to only select the cols we want.

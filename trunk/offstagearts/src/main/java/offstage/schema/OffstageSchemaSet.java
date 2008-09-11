@@ -61,25 +61,25 @@ public void init(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZon
 throws SQLException
 {
 	map.put("courseids", new CourseidsSchema());
-	map.put("donations", new DonationsSchema(str, change, tz));
-	map.put("flags", new FlagsSchema(str, change));
-	map.put("openclasscomps", new OpenclasscompsSchema(str, change, tz));
+////	map.put("donations", new DonationsSchema(str, change, tz));
+//	map.put("flags", new FlagsSchema(str, change));
+//	map.put("openclasscomps", new OpenclasscompsSchema(str, change, tz));
 	map.put("entities", new EntitiesSchema(str, change));
-	map.put("events", new EventsSchema(str, change));
+//	map.put("events", new EventsSchema(str, change));
 	map.put("groupids", new GroupidsSchema());
-	map.put("mailingids", new MailingidsSchema());
-	map.put("mailings", new MailingsSchema(str, change));
-	map.put("notes", new NotesSchema(str, change, tz));
-	map.put("tickets", new TicketeventsSchema(str, change, tz));
+//	map.put("mailingids", new MailingidsSchema());
+//	map.put("mailings", new MailingsSchema(str, change));
+//	map.put("notes", new NotesSchema(str, change, tz));
+//	map.put("tickets", new TicketeventsSchema(str, change, tz));
 	map.put("org", new OrgSchema(str, change));
 	map.put("persons", new PersonsSchema(str, change, tz));
 	map.put("phones", new PhonesSchema(str, change));
 	map.put("termids", new TermidsSchema(str, change, tz));
 	map.put("termtypes", new TermtypesSchema());
-	map.put("classes", new ClassesSchema(str, change));
-	map.put("interests", new InterestsSchema(str, change));
+//	map.put("classes", new ClassesSchema(str, change));
+//	map.put("interests", new InterestsSchema(str, change));
 	map.put("equeries", new EQueriesSchema());
-	map.put("donationids", new DonationidsSchema());
+//	map.put("donationids", new DonationidsSchema());
 	map.put("phoneids", new PhoneidsSchema());
 	map.put("meetings", new MeetingsSchema());
 	map.put("enrollments", new EnrollmentsSchema(str, change, tz));
@@ -94,7 +94,7 @@ throws SQLException
 //	map.put("adjpayments", new CcpaymentsSchema(str, change,tz));
 	map.put("termregs", new TermregsSchema(str, change,tz));
 	map.put("payertermregs", new PayertermregsSchema(str, change,tz));
-	map.put("termenrolls", new TermenrollsSchema(str, change));		// VIEW
+//	map.put("termenrolls", new TermenrollsSchema(str, change));		// VIEW
 	map.put("duedates", new DuedatesSchema(str, change, tz));
 	map.put("duedateids", new DuedateidsSchema());
 	map.put("holidays", new HolidaysSchema(str, change, tz));

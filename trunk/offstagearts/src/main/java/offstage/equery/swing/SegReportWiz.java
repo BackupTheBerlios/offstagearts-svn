@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.equery.swing;
 
-import citibob.app.App;
 import citibob.swing.JTypeColTable;
 import java.util.*;
 import citibob.swing.html.*;
@@ -38,7 +37,7 @@ import citibob.types.JavaJType;
 import java.awt.Dimension;
 import javax.swing.*;
 import offstage.FrontApp;
-import offstage.reports.SegmentationReport;
+import offstage.datatab.DataTab;
 
 /**
  *
@@ -47,26 +46,34 @@ import offstage.reports.SegmentationReport;
 public class SegReportWiz extends HtmlWiz {
 
 JTypeTableModel segmod;
-	
+//FrontApp app;
+
 /**
  * Creates a new instance of PersonWiz 
  */
-public SegReportWiz(java.awt.Frame owner, App app)
+public SegReportWiz(java.awt.Frame owner, FrontApp app)
 throws org.xml.sax.SAXException, java.io.IOException
 {
 	super(owner);
+//	this.app = app;
 	setSize(600,400);
 //	TypedWidgetMap map = new TypedWidgetMap();
 	
 	// Set up the Table to select segment types
-	String[] avail = SegmentationReport.availSegmentTypes;
+	
+//	String[] avail = SegmentationReport.availSegmentTypes;
+//	ArrayList<String> avail = SegmentationReport.getAvailSegmentTypes(app.dataTabSet()));
+	Collection<DataTab> availDT = app.dataTabSet().allTabs();
 	segmod = new DefaultJTypeTableModel(
 		new String[] {"selected", "segtype"},
 		new JType[] {new JavaJType(Boolean.class), new JavaJType(String.class)},
-		avail.length);
-	for (int i=0; i < avail.length; ++i) {
+		availDT.size());
+	int i=0;
+	for (DataTab tab : availDT) {
+//	for (int i=0; i < avail.length; ++i) {
 		segmod.setValueAt(Boolean.FALSE, i, 0);
-		segmod.setValueAt(avail[i],i,1);
+		segmod.setValueAt(tab.getTitle(),i,1);
+		++i;
 	}
 	JTypeColTable segtable = new JTypeColTable();
 	segtable.setModelU(segmod,
