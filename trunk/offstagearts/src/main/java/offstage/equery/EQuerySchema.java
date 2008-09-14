@@ -22,6 +22,8 @@ import citibob.types.JEnum;
 import citibob.types.JEnumSegment;
 import citibob.types.JType;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import offstage.datatab.DataTab;
 import offstage.datatab.DataTabSet;
 
@@ -84,10 +86,12 @@ public EQuerySchema(SchemaSet sset, DataTabSet tabs) throws SQLException
 	}
 	
 	
-	doAlias(aliases);
+	List<String[]> aliasLists = new ArrayList();
+	aliasLists.add(aliases);
 	for (DataTab tab : tabs.equeryTabs) {
-		doAlias(tab.getAliases());
+		aliasLists.add(tab.getAliases());
 	}
+	doAlias(aliasLists);
 }
 
 // --------------------------------------------------------------------
@@ -121,7 +125,7 @@ private static final String[] aliases = {
 //	"notes.note", "note",
 	"phones.groupid", "phone-type",
 	"phones.phone", "phone",
-	"classes.groupid", "classes (deprecated)",
+//	"classes.groupid", "classes (deprecated)",
 //	"termenrolls.groupid", "terms",
 //	"termenrolls.courserole", "termrole",
 	"enrollments.courseid", "courses",

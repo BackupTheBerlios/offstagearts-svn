@@ -22,11 +22,15 @@ throws SQLException
 {
 	title = "Interests";
 	schema = new InterestsSchema(str, change);
+	// orderClause = "groupid";
 	// idCol = "groupid";
 	displayColTitles =
 		new String[] {"Interest", "By Person", "Referred By"};
 	displayCols = 
 		new String[] {"groupid", "byperson", "referredby"};
-}
+	equeryAliases = new String[] {
+		"interests.groupid", "interests",
+	};
 	
+}
 }

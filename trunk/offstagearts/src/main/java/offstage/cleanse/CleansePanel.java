@@ -79,7 +79,7 @@ static {
 }
 
 
-App app;
+FrontApp app;
 
 // The two records we're comparing
 DevelModel[] dm = new DevelModel[2];
@@ -167,11 +167,11 @@ String dupType;
 		allDm.doSelect(str);
 		str.execUpdate(new UpdTasklet() {
 		public void run() throws Exception {
-			String html0 = SummaryReport.getHtml(dm[0], app.sFormatMap());
+			String html0 = SummaryReport.getHtml(app, dm[0]);
 			summaryPane0.setText(html0);
 			summaryPane0.setCaretPosition(0);
 			
-			String html1 = SummaryReport.getHtml(dm[1], app.sFormatMap());
+			String html1 = SummaryReport.getHtml(app, dm[1]);
 			summaryPane1.setText(html1);
 			summaryPane1.setCaretPosition(0);
 		}});
@@ -559,7 +559,7 @@ String dupType;
 			allDm.doUpdate(str);
 			
 			// Change around household...
-			MergeSql merge = new MergeSql(app.schemaSet());
+			MergeSql merge = new MergeSql(app);
 			Integer pid = (Integer)dm[1-eix].getEntitySb().getValueAt(0, "primaryentityid");
 			merge.subordinateEntities(dm[eix].getKey(), pid); //dm[1-eix].getIntKey());
 			String sql = merge.toSql();
@@ -731,9 +731,9 @@ private void mergeAction(SqlRun str, final int action) throws IOException
 	}
 
 	// First do a trial merge...
-	MergeSql.bufMerge(dmFrom, dmTo);
+	MergeSql.bufMerge(app.dataTabSet(), dmFrom, dmTo);
 	String html;
-	html = SummaryReport.getHtml(dmTo, app.sFormatMap());
+	html = SummaryReport.getHtml(app, dmTo); //, app.sFormatMap());
 
 	MergeConfirm confirm = new MergeConfirm(WidgetTree.getJFrame(CleansePanel.this), app, html);
 	confirm.setVisible(true);

@@ -77,7 +77,23 @@ throws SQLException
 		new SqlCol(new SqlString(1), "cc_type"),
 		new SqlCol(new SqlString(4), "cc_last4", false),
 		new SqlCol(new SqlString(4), "cc_expdate", false),
-		new SqlCol(new SqlString(255), "cc_info", false)
+		new SqlCol(new SqlString(255), "cc_info", false),
+			
+			
+		new SqlCol(new SqlString(30), "nickname"),
+		new SqlCol(new SqlString(20), "suffix"),
+		new SqlCol(new SqlNumeric(9,2), "askamount"),
+					
+		new SqlCol(new SqlEnum(new DbKeyedModel(str, change, "callprefids",
+			"callprefid", "name", "callprefid", "<No Preference>")),
+			"callprefid"),
+		new SqlCol(new SqlEnum(new DbKeyedModel(str, change, "mailstateids",
+			"mailstateid", "name", "mailstateid", "<None>")),
+			"mailstateid"),
+		new SqlCol(new SqlEnum(new DbKeyedModel(str, change, "sourceids",
+			"sourceid", "name", "sourceid", "<No Source>")),
+			"sourceid")
+					
 	};
 }	
 // ------------------------------------------

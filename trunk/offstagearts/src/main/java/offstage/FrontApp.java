@@ -85,6 +85,14 @@ public Object newSiteInstance(String className, Class defaultClass) {
 	}
 }
 
+public InputStream getSiteResourceAsStream(String name)
+{
+	InputStream in = siteCode().getResourceAsStream("sc/" + name);
+	if (in != null) return in;
+	return siteCode().getResourceAsStream(name);
+}
+		
+
 
 int loginID;
 /** Who is logged in, based on ID gotten out of table from user's
@@ -448,6 +456,8 @@ public void initWithDatabase()
 		schemaSet = oschemaSet;
 
 		dataTabSet = (DataTabSet)newSiteInstance(DataTabSet.class);
+		dataTabSet.init(str, this);
+		dataTabSet.addToSchemaSet(oschemaSet);
 		
 		str.flush();		// Our SchemaSet must be set up before we go on.
 		// ================
@@ -461,7 +471,7 @@ public void initWithDatabase()
 	//		equeries = new EQueryModel2(st, mailings, sset);
 	//	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
 
-		equerySchema = new EQuerySchema(schemaSet());
+		equerySchema = new EQuerySchema(schemaSet(), dataTabSet);
 		str.flush();
 		// ================
 

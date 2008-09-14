@@ -5,11 +5,13 @@
 
 package offstage.datatab;
 
+import citibob.jschema.BaseSchemaSet;
 import citibob.sql.SqlRun;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import offstage.FrontApp;
 
 /**
@@ -18,7 +20,7 @@ import offstage.FrontApp;
  */
 public class DataTabSet {
 
-Map<String,DataTab> tabMap;
+Map<String,DataTab> tabMap = new TreeMap();
 
 public Collection<DataTab> allTabs() { return tabMap.values(); }
 public List<DataTab> guiTabs = new ArrayList();
@@ -36,6 +38,13 @@ public DataTab get(String tableName)
 //	{ return equeryTabs.iterator(); }
 //public Iterator<DataTab> segmentationReportIterator()
 //	{ return segmentationReportTabs.iterator(); }
+
+public void addToSchemaSet(BaseSchemaSet sset)
+{
+	for (DataTab tab : allTabs()) {
+		sset.add(tab.getSchema());
+	}
+}
 
 protected void addTab(DataTab tab)
 { tabMap.put(tab.getTableName(), tab); }
@@ -67,10 +76,28 @@ public void init(SqlRun str, FrontApp app)
 throws Exception
 {
 	// First, set up all the tabs individually
+	addTab(new donations_DT(str, app));
+	addTab(new events_DT(str, app));
+	addTab(new flags_DT(str, app));
 	addTab(new interests_DT(str, app.dbChange()));
+	addTab(new notes_DT(str, app));
+	addTab(new termenrolls_DT(str, app));
+	addTab(new ticketeventsales_DT(str, app));
+	addTab(new memberships_DT(str,app));
+	addTab(new constitis_DT(str,app));
+	addTab(new activities_DT(str,app));
 	
 	// Now add them to lists
+	addAllLists("donations");
+	addAllLists("events");
+	addAllLists("notes");
+	addAllLists("ticketeventsales");
 	addAllLists("interests");
+	addAllLists("termenrolls");
+	addAllLists("flags");
+	addAllLists("memberships");
+	addAllLists("activities");
+	addAllLists("constits");
 }
 
 }

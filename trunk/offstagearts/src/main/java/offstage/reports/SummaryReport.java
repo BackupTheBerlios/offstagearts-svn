@@ -22,10 +22,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.reports;
 
+import citibob.io.IOUtils;
+import citibob.jschema.SchemaBuf;
 import citibob.swing.table.JTypeTableModel;
 import citibob.swing.table.StringTableModel;
 import citibob.text.SFormatMap;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import offstage.FrontApp;
+import offstage.datatab.DataTab;
 import offstage.devel.gui.DevelModel;
 import offstage.frontdesk.FDPersonModel;
 import org.antlr.stringtemplate.StringTemplate;
@@ -47,7 +53,7 @@ public class SummaryReport {
 //}
 	
 	
-public static String getHtml(DevelModel dmod, SFormatMap sfmap)
+public static String getHtml(FrontApp app, DevelModel dmod)
 throws IOException
 {
 //	// Get the StringTemplate...
@@ -57,24 +63,32 @@ throws IOException
 //	StringTemplate st = stg.getInstanceOf("summary");
 
 	// Get the StringTemplate...
-We need to load this with the SiteCode classloader... (which is kinda impossible)...
-	StringTemplateGroup stg = new StringTemplateGroup("summaryGroup");
+	StringTemplateGroup stg = new StringTemplateGroup("summaryGroup", app.siteCode());
+	InputStream in = app.getSiteResourceAsStream("offstage/reports/summary.st");
+	String template = IOUtils.readerToString(new InputStreamReader(in));
+	stg.defineTemplate("offstage/summary/summary", template);
 	StringTemplate st = stg.getInstanceOf("offstage/reports/summary");
 
 	// Format the columns...
+	SFormatMap sfmap = app.sFormatMap();
 	StringTableModel sperson = new StringTableModel(dmod.getPersonSb(), sfmap);
 	setAttribute(st, "person", dmod.getPersonSb(), sperson);
 	
 	StringTableModel sphones = new StringTableModel(dmod.getPhonesSb(), sfmap);
 	setAttribute(st, "phones", dmod.getPhonesSb(),sphones);
-	
-	setAttribute(st, "donations", dmod.getDonationSb(), new StringTableModel(dmod.getDonationSb(), sfmap));
-	setAttribute(st, "flags", dmod.getFlagSb(), new StringTableModel(dmod.getFlagSb(), sfmap));
-	setAttribute(st, "notes", dmod.getNotesSb(), new StringTableModel(dmod.getNotesSb(), sfmap));
-	setAttribute(st, "tickets", dmod.getTicketsSb(), new StringTableModel(dmod.getTicketsSb(), sfmap));
-	setAttribute(st, "events", dmod.getEventsSb(), new StringTableModel(dmod.getEventsSb(), sfmap));
-	setAttribute(st, "terms", dmod.getTermsSb(), new StringTableModel(dmod.getTermsSb(), sfmap));
-	setAttribute(st, "interests", dmod.getInterestsSb(), new StringTableModel(dmod.getInterestsSb(), sfmap));
+
+	for (DataTab tab : app.dataTabSet().guiTabs) {
+		SchemaBuf sbuf = dmod.getTabSb(tab.getTableName());
+		setAttribute(st, tab.getTableName(),
+			sbuf, new StringTableModel(sbuf, sfmap));
+	}
+//	setAttribute(st, "donations", dmod.getDonationSb(), new StringTableModel(dmod.getDonationSb(), sfmap));
+//	setAttribute(st, "flags", dmod.getFlagSb(), new StringTableModel(dmod.getFlagSb(), sfmap));
+//	setAttribute(st, "notes", dmod.getNotesSb(), new StringTableModel(dmod.getNotesSb(), sfmap));
+//	setAttribute(st, "tickets", dmod.getTicketsSb(), new StringTableModel(dmod.getTicketsSb(), sfmap));
+//	setAttribute(st, "events", dmod.getEventsSb(), new StringTableModel(dmod.getEventsSb(), sfmap));
+//	setAttribute(st, "terms", dmod.getTermsSb(), new StringTableModel(dmod.getTermsSb(), sfmap));
+//	setAttribute(st, "interests", dmod.getInterestsSb(), new StringTableModel(dmod.getInterestsSb(), sfmap));
 	
 	return st.toString();
 }
@@ -100,14 +114,6 @@ throws IOException
 	StringTableModel socdiscs = new StringTableModel(ocdiscs, sfmap);
 	setAttribute(st, "ocdiscs", ocdiscs, socdiscs);
 
-	
-//	setAttribute(st, "donations", dmod.getDonationSb(), new StringTableModel(dmod.getDonationSb(), sfmap));
-//	setAttribute(st, "flags", dmod.getFlagSb(), new StringTableModel(dmod.getFlagSb(), sfmap));
-//	setAttribute(st, "notes", dmod.getNotesSb(), new StringTableModel(dmod.getNotesSb(), sfmap));
-//	setAttribute(st, "tickets", dmod.getTicketsSb(), new StringTableModel(dmod.getTicketsSb(), sfmap));
-//	setAttribute(st, "events", dmod.getEventsSb(), new StringTableModel(dmod.getEventsSb(), sfmap));
-//	setAttribute(st, "terms", dmod.getTermsSb(), new StringTableModel(dmod.getTermsSb(), sfmap));
-//	setAttribute(st, "interests", dmod.getInterestsSb(), new StringTableModel(dmod.getInterestsSb(), sfmap));
 	
 	return st.toString();
 }

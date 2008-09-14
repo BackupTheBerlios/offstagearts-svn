@@ -33,18 +33,16 @@ throws SQLException
 	table = "donations";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
 		"donationids", "groupid", "name", "name", null);
+	KeyedModel dtKmodel = new DbKeyedModel(str, change,
+		"donationtypeids", "donationtypeid", "name", "name", null);
 	cols = new SqlCol[] {
 		new SqlCol(new SqlInteger(false), "serialid", true),
 		new SqlCol(new SqlEnum(kmodel), "groupid", false),
+		new SqlCol(new SqlEnum(dtKmodel), "donationtypeid", false),
 		new SqlCol(new SqlInteger(false), "entityid", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "date", false),
 		new SqlCol(new SqlNumeric(9, 2), "amount", false)
 	};
 }
-// ------------------------------------------
-// Singleton stuff
-//private static DonationsSchema instance = new DonationsSchema();
-//public static ConstSqlSchema getInstance()
-//	{ return instance; }
 
 }

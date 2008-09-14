@@ -196,7 +196,7 @@ addState(new AbstractWizState("choosetemplate") {
 
 addState(new AbstractWizState("segreport") {
 	public Wiz newWiz(Wizard.Context con) throws Exception
-		{ return new SegReportWiz(frame, app); }
+		{ return new SegReportWiz(frame, (FrontApp)app); }
 	public void process(Wizard.Context con) throws Exception
 	{}
 });

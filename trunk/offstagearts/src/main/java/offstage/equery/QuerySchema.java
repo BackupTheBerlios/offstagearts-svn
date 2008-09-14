@@ -24,6 +24,7 @@ import citibob.jschema.*;
 import citibob.swing.typed.*;
 import java.sql.*;
 import citibob.types.*;
+import citibob.types.KeyedModel.Item;
 import java.io.File;
 import java.io.IOException;
 import offstage.equery.*;
@@ -32,7 +33,6 @@ import offstage.equery.compare.Comp;
 import offstage.equery.compare.InFileComp;
 import offstage.equery.compare.JEnum_InComp;
 import offstage.equery.compare.String_InComp;
-import offstage.equery.ListAndRangeJType;
 
 public class QuerySchema
 {
@@ -147,7 +147,8 @@ public void addSchema(SqlSchema sc, String joinClause, String... requiredTables)
 		ColName cname = new ColName(table,  col.col.getName());
 		col.cname = cname;
 //		col.table = table;
-//if (cname.stable.equals("classes")) System.err.println("Adding to SqlSchema: " + cname);
+//if (cname.stable.equals("interests")) 
+	System.out.println("Adding to SqlSchema: " + cname + " (" + col + ")");
 		cols.addItem(cname, col);
 	}
 }
@@ -155,21 +156,24 @@ public void addSchema(SqlSchema sc, String joinClause, String... requiredTables)
 // --------------------------------------------------------------------
 
 /** Sets up column name aliases, and removes all non-aliased coumns. */
-protected void doAlias(String[] alias)
+protected void doAlias(List<String[]> aliasLists)
 {
 	// Set aliases
 	KeyedModel newCols = new KeyedModel();
-	for (int i=0; i<alias.length; i+=2) {
-		ColName cname = new ColName(alias[i]);
-		String vname = alias[i+1];
-//System.out.println((cols.get(cname).getClass()));
-System.out.println("Looking in schema: " + cname + "(size = " + cols.getItemMap().size());
-		Col col = (Col)cols.get(cname).obj;
-		if (col == null) continue;
-		col.setViewName(vname);
-		newCols.addItem(col.cname, col);
+	for (String[] alias : aliasLists) {
+		for (int i=0; i<alias.length; i+=2) {
+			ColName cname = new ColName(alias[i]);
+			String vname = alias[i+1];
+	//System.out.println((cols.get(cname).getClass()));
+	System.out.println("Looking in schema: " + cname + "(size = " + cols.getItemMap().size());
+			Item item = cols.get(cname);
+			Col col = (Col)item.obj;
+			if (col == null) continue;
+			col.setViewName(vname);
+			newCols.addItem(col.cname, col);
+		}
 	}
-
+	
 	// Add null column name
 	Col c = new Col();
 	c.cname = new ColName("", "");

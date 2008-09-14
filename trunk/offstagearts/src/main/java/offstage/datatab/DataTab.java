@@ -7,10 +7,13 @@ package offstage.datatab;
 
 import offstage.devel.gui.*;
 import citibob.jschema.IntKeyedDbModel;
-import citibob.jschema.Schema;
 import citibob.jschema.SqlSchema;
 import citibob.jschema.log.QueryLogger;
+import citibob.sql.SqlRun;
+import citibob.swing.typed.SwingerMap;
+import javax.swing.JTabbedPane;
 import offstage.equery.EQuerySchema;
+import offstage.gui.GroupPanel;
 
 /**
  *
@@ -25,8 +28,8 @@ protected String idCol = "groupid";
 String orderClause = "groupid";
 
 // EntityPanel...
-String[] displayColTitles;	// Titles to display to user
-String[] displayCols;	// Columns to show to user
+public String[] displayColTitles;	// Titles to display to user
+public String[] displayCols;	// Columns to show to user
 
 //boolean inGui = true;	// Do we display in the devel screen?
 //boolean inEQuerySchema = true;
@@ -35,9 +38,9 @@ String[] displayCols;	// Columns to show to user
 // EQuerySchema...
 String[] requiredTables = new String[0];
 // Column aliases we add to the user's drop-down; see EQuerySchema.alias
-String[] aliases = {};
+String[] equeryAliases = {};
 
-public String[] getAliases() { return aliases; }
+public String[] getAliases() { return equeryAliases; }
 public SqlSchema getSchema()
 	{ return schema; }
 public String getOrderClause()
@@ -51,6 +54,18 @@ public void addToEQuerySchema(EQuerySchema eschema)
 {
 	eschema.addSchema(schema,
 		getTableName() + ".entityid = main.entityid");
+}
+
+public GroupPanel addToGroupPanels(SqlRun str, DevelModel dm,
+JTabbedPane groupPanels, SwingerMap smap)
+{
+	GroupPanel panel = new GroupPanel();
+	panel.initRuntime(str, dm.getTabSb(getTableName()),
+		displayColTitles, displayCols,
+		true, smap);
+	groupPanels.insertTab(getTitle(), null, panel, null,
+		groupPanels.getTabCount());	
+	return panel;
 }
 
 public IntKeyedDbModel newDbModel(QueryLogger logger)
