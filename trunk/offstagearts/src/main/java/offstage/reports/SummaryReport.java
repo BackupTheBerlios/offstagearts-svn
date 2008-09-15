@@ -63,7 +63,7 @@ throws IOException
 //	StringTemplate st = stg.getInstanceOf("summary");
 
 	// Get the StringTemplate...
-	StringTemplateGroup stg = new StringTemplateGroup("summaryGroup", app.siteCode());
+	StringTemplateGroup stg = new StringTemplateGroup("summaryGroup");//, app.siteCode());
 	InputStream in = app.getSiteResourceAsStream("offstage/reports/summary.st");
 	String template = IOUtils.readerToString(new InputStreamReader(in));
 	stg.defineTemplate("offstage/summary/summary", template);

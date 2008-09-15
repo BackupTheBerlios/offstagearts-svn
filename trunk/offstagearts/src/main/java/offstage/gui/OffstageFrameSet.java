@@ -26,11 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.gui;
 
-import citibob.gui.ConsoleFrame;
-import citibob.gui.FrameSet.Maker;
-import citibob.sql.SqlRun;
-import javax.swing.*;
+import javax.swing.JFrame;
 import offstage.FrontApp;
+import citibob.gui.*;
+import citibob.sql.SqlRun;
 import offstage.accounts.gui.AccountFrame;
 import offstage.cleanse.CleanseFrame;
 import offstage.cleanse.CleansePanel;
@@ -69,7 +68,7 @@ public OffstageFrameSet(FrontApp xfapp) {
 	wmenu = new WindowMenu(xfapp);
 	this.fapp = xfapp;
 
-addMaker("devel", new Maker() {
+addMaker("devel", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	SqlRun str = fapp.sqlRun();
 	final DevelFrame f = new DevelFrame();
@@ -77,7 +76,7 @@ public JFrame newFrame() throws Exception {
 	str.flush();
 	return f;
 }});
-addMaker("frontdesk", new Maker() {
+addMaker("frontdesk", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	SqlRun str = fapp.sqlRun();
 	final FrontDeskFrame f = new FrontDeskFrame();
@@ -85,7 +84,7 @@ public JFrame newFrame() throws Exception {
 	str.flush();
 	return f;
 }});
-//addMaker("openclass", new Maker() {
+//addMaker("openclass", new FrameMaker() {
 //public JFrame newFrame() throws Exception {
 //	SqlRun str = fapp.sqlRun();
 //	final OpenClassFrame f = new OpenClassFrame();
@@ -94,7 +93,7 @@ public JFrame newFrame() throws Exception {
 //	return f;
 //}});
 // ----------------------------------------
-addMaker("schoolSetup", new Maker() {
+addMaker("schoolSetup", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	final SchoolSetupFrame f = new SchoolSetupFrame();
 	SqlRun str = fapp.sqlRun();
@@ -102,7 +101,7 @@ public JFrame newFrame() throws Exception {
 	str.flush();
 	return f;
 }});
-addMaker("schoolReg", new Maker() {
+addMaker("schoolReg", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	final SchoolRegFrame f = new SchoolRegFrame();
 	SqlRun str = fapp.sqlRun();
@@ -111,7 +110,7 @@ public JFrame newFrame() throws Exception {
 	return f;
 }});
 // ----------------------------------------
-addMaker("dups", new Maker() {
+addMaker("dups", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	final CleanseFrame f = new CleanseFrame();
 	SqlRun str = fapp.sqlRun();
@@ -126,7 +125,7 @@ public JFrame newFrame() throws Exception {
 //	str.flush();
 //	return frame;
 }});
-addMaker("dupsApprove", new Maker() {
+addMaker("dupsApprove", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	final CleanseFrame f = new CleanseFrame();
 	SqlRun str = fapp.sqlRun();
@@ -135,26 +134,26 @@ public JFrame newFrame() throws Exception {
 	return f;
 }});
 // ----------------------------------------
-addMaker("console", new Maker() {
+addMaker("console", new FrameMaker() {
 public JFrame newFrame() {
 	ConsoleFrame consoleFrame = new ConsoleFrame();
 	consoleFrame.initRuntime("Java Console",
 		fapp.swingPrefs(), fapp.userRoot().node("ConsoleFrame"));
 	return consoleFrame;
 }});
-addMaker("maintenance", new Maker() {
+addMaker("maintenance", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	OffstageGui offstageGui = new OffstageGui();
 	offstageGui.initRuntime(fapp);
 	return offstageGui;
 }});
-addMaker("accounting", new Maker() {
+addMaker("accounting", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	AccountFrame frame = new AccountFrame();
 	frame.initRuntime(fapp);
 	return frame;
 }});
-addMaker("resources", new Maker() {
+addMaker("resources", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	ResourcesFrame frame = new ResourcesFrame();
 	SqlRun str = fapp.sqlRun();
@@ -163,7 +162,7 @@ public JFrame newFrame() throws Exception {
 	return frame;
 }});
 // ----------------------------------------
-//addMaker("mailprefs", new Maker() {
+//addMaker("mailprefs", new FrameMaker() {
 //public JFrame newFrame() {
 //	return new citibob.mail.MailPrefsDialog(this);
 //}});
