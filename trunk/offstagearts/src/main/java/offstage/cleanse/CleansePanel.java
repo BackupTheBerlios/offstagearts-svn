@@ -40,6 +40,7 @@ import citibob.types.KeyedModel;
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.Date;
 import javax.swing.*;
@@ -53,7 +54,7 @@ import offstage.reports.SummaryReport;
 public class CleansePanel extends javax.swing.JPanel
 {
 
-
+	
 // Mode we're operating in.
 int cleanseMode;
 public static final int M_REGULAR = 0;
@@ -81,6 +82,9 @@ static {
 
 FrontApp app;
 
+//int dupid = 0;				// Duplicates run to look at
+int dbid0, dbid1;
+
 // The two records we're comparing
 DevelModel[] dm = new DevelModel[2];
 Integer curAction;		// Action of the currently-selected dup row
@@ -88,7 +92,7 @@ MultiDbModel allDm;		// = dm[0] and dm[1]
 //RSTableModel dupModel;
 DupDbModel dupDm;
 //Integer entityid0, entityid1;
-String dupType;
+//String dupType;
 
 	/** Creates new form CleansePanel */
 	public CleansePanel()
@@ -177,13 +181,46 @@ String dupType;
 		}});
 	}
 	
+	void setDbids(SqlRun str, Integer dbid0, Integer dbid1)
+	{
+		if (dbid0 == null || dbid1 == null) return;
+
+		this.dbid0 = dbid0;
+		this.dbid1 = dbid1;
+		dupDm.doSelect(str);
+//		refresh(str);
+	}
+//	void setDupid(SqlRun str, int dupid)
+//	{
+//		this.dupid = dupid;
+//		dupDm.doSelect(str);
+////		refresh(str);
+//	}
+	
 	/** @param dupType = 'a' (address), 'n' (names), 'o' (organization) */
-	public void initRuntime(SqlRun str, FrontApp fapp, String dupType, int cleanseMode)
+	public void initRuntime(SqlRun str, FrontApp fapp, final Integer Dbid0, final Integer Dbid1, int cleanseMode)
 	{
 		this.app = fapp;
-		this.dupType = dupType;
+//		this.dupType = dupType;
+//		this.dupid = dupid;
 		this.cleanseMode = cleanseMode;
 
+		cbDbid0.setKeyedModel(app.schemaSet().getKeyedModel("entities", "dbid"));
+		cbDbid1.setKeyedModel(app.schemaSet().getKeyedModel("entities", "dbid"));
+		
+		PropertyChangeListener propChange = new java.beans.PropertyChangeListener() {
+	    public void propertyChange(final java.beans.PropertyChangeEvent evt) {
+			
+			// User wants to switch to a new cell...
+			app.guiRun().run(CleansePanel.this, new SqlTask() {
+			public void run(SqlRun str) throws Exception {
+				setDbids(str, (Integer)cbDbid0.getValue(), (Integer)cbDbid1.getValue());
+			}});
+		}};
+		cbDbid0.addPropertyChangeListener("value", propChange);
+		cbDbid1.addPropertyChangeListener("value", propChange);
+
+		
 		bApproveAction.setText((String)actionKmodel.get(null).obj);
 		if (cleanseMode != M_APPROVE) bApproveAction.setEnabled(false);
 		
@@ -212,8 +249,10 @@ String dupType;
 			dupTable.setFormatU("action", actionKmodel);
 			dupTable.setFormatU("score", "#.00");
 			dupTable.setValueColU("__rowno__");
+			
+			setDbids(str, Dbid0, Dbid1);
 		}});
-		
+
 	}
 	
 	
@@ -261,6 +300,11 @@ String dupType;
         jScrollPane2 = new javax.swing.JScrollPane();
         summaryPane1 = new javax.swing.JTextPane();
         lOldRecord = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        cbDbid0 = new citibob.swing.typed.JKeyedComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        cbDbid1 = new citibob.swing.typed.JKeyedComboBox();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -529,6 +573,28 @@ String dupType;
         jSplitPane1.setTopComponent(jTabbedPane1);
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
+
+        jPanel6.setLayout(new java.awt.GridBagLayout());
+
+        jLabel3.setText("Duplicate Run: ");
+        jPanel6.add(jLabel3, new java.awt.GridBagConstraints());
+
+        cbDbid0.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanel6.add(cbDbid0, gridBagConstraints);
+
+        jLabel4.setText(" -- ");
+        jPanel6.add(jLabel4, new java.awt.GridBagConstraints());
+
+        cbDbid1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        jPanel6.add(cbDbid1, gridBagConstraints);
+
+        add(jPanel6, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
 	private void bRefreshListActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bRefreshListActionPerformed
@@ -826,17 +892,22 @@ private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JButton bSearch;
     private javax.swing.JButton bSubordinate0;
     private javax.swing.JButton bSubordinate1;
+    private citibob.swing.typed.JKeyedComboBox cbDbid0;
+    private citibob.swing.typed.JKeyedComboBox cbDbid1;
     private citibob.swing.typed.JTypedSelectTable dupTable;
     private javax.swing.JScrollPane dupTablePane;
     private offstage.devel.gui.EntityPanel entityPanel0;
     private offstage.devel.gui.EntityPanel entityPanel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
@@ -940,7 +1011,9 @@ public String getSelectSql(boolean proto) {
 			(idSql == null ? "" : ", _ids as ids0, _ids as ids1") +
 			" where dups.entityid0 = e0.entityid" +
 			" and dups.entityid1 = e1.entityid" +
-			" and dups.type=" + SqlString.sql(dupType) +
+			" and dups.dbid0 = " + SqlInteger.sql(dbid0) + " and dups.dbid1 = " + SqlInteger.sql(dbid1) +
+//			" and dups.dupid = " + SqlInteger.sql(dupid) +
+//			" and dups.type=" + SqlString.sql(dupType) +
 			" and not e0.obsolete and not e1.obsolete" +
 			" and score <= 1.0" +
 			(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid\n") +
@@ -954,7 +1027,9 @@ public String getSelectSql(boolean proto) {
 			" where dups.entityid0 = e0.entityid" +
 			" and dups.entityid1 = e1.entityid" +
 //			" and ml.action = " + MC_DUPOK +
-			" and dups.type=" + SqlString.sql(dupType) +
+			" and dups.dbid0 = " + SqlInteger.sql(dbid0) + " and dups.dbid1 = " + SqlInteger.sql(dbid1) +
+//			" and dups.dupid = " + SqlInteger.sql(dupid) +
+//			" and dups.type=" + SqlString.sql(dupType) +
 			" and ((dups.entityid0 = ml.entityid0 and dups.entityid1 = ml.entityid1)\n" +
 			"   or (dups.entityid0 = ml.entityid1 and dups.entityid1 = ml.entityid0))\n" +
 //			(idSql == null ? "" : " and (_ids.id = e0.entityid or _ids.id = e1.entityid)") +
@@ -965,7 +1040,9 @@ public String getSelectSql(boolean proto) {
 //			" where dups.entityid0 = e0.entityid" +
 //			" and dups.entityid1 = e1.entityid" +
 ////			" and ml.action = " + MC_DUPOK +
-//			" and dups.type=" + SqlString.sql(dupType) +
+//			" and dups.dbid0 = " + SqlInteger.sql(dbid0) + " and dups.dbid1 = " + SqlInteger.sql(dbid1) +
+////			" and dups.dupid = " + SqlInteger.sql(dupid) +
+////			" and dups.type=" + SqlString.sql(dupType) +
 //			" and dups.entityid0 = ml.entityid1" +
 //			" and dups.entityid1 = ml.entityid0" +
 ////			(idSql == null ? "" : " and (_ids.id = e0.entityid or _ids.id = e1.entityid)") +

@@ -20,7 +20,7 @@ $phones:{<tr><th align="right">Phone ($it.groupid$)</td><td>$it.phone$</td></tr>
 <tr><th align="right">To</th><td>$person.addressto$</td></tr>
 <tr><th align="right">Mail Pref</th><td>$person.mailprefid$</td></tr>
 <tr><th align="right">Last Modified</th><td>$person.lastupdated$</td></tr>
-<tr><th align="right">ID</th><td>$person.entityid$</td></tr>
+<tr><th align="right">ID</th><td>$person.entityid$ ($person.dbid$)</td></tr>
 </table>
 
 $if(_notes)$

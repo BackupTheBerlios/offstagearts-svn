@@ -114,7 +114,8 @@ addMaker("dups", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	final CleanseFrame f = new CleanseFrame();
 	SqlRun str = fapp.sqlRun();
-	f.initRuntime(str, fapp, "n", CleansePanel.M_PROVISIONAL);
+//	f.initRuntime(str, fapp, "n", CleansePanel.M_PROVISIONAL);
+	f.initRuntime(str, fapp, 0, 0, CleansePanel.M_PROVISIONAL);
 	str.flush();
 	return f;
 //	SqlRun str = fapp.getBatchSet();
@@ -129,7 +130,8 @@ addMaker("dupsApprove", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	final CleanseFrame f = new CleanseFrame();
 	SqlRun str = fapp.sqlRun();
-	f.initRuntime(str, fapp, "n", CleansePanel.M_APPROVE);
+//	f.initRuntime(str, fapp, "n", CleansePanel.M_APPROVE);
+	f.initRuntime(str, fapp, 0, 0, CleansePanel.M_APPROVE);
 	str.flush();
 	return f;
 }});

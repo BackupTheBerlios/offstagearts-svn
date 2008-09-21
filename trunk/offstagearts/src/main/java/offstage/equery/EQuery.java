@@ -191,7 +191,8 @@ throws IOException
 	sql.addTable("entities as main");
 	sql.addTable("(" + sql0 + ")", "yy", SqlQuery.JT_INNER,
 		"main.entityid = yy.id");
-	sql.addWhereClause("not main.obsolete");
+	sql.addWhereClause("main.dbid = 0");		// For now, only select out of main database!
+	sql.addWhereClause("not main.obsolete)");
 	sql.setDistinct(true);
 	
 	//	sql.setDistinct(true);			// Seems like a good idea whether or not we reduce by household/etc

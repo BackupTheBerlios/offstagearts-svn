@@ -37,7 +37,7 @@ public class CleanseFrame extends javax.swing.JFrame {
 		initComponents();
 	}
 	/** @param dupType = 'a' (address), 'n' (names), 'o' (organization) */
-	public void initRuntime(SqlRun str, FrontApp fapp, String dupType, int cleanseMode)
+	public void initRuntime(SqlRun str, FrontApp fapp, int dbid0, int dbid1, int cleanseMode)
 	{
 		switch(cleanseMode) {
 			case CleansePanel.M_PROVISIONAL :
@@ -50,7 +50,8 @@ public class CleanseFrame extends javax.swing.JFrame {
 				setTitle("Duplicates");
 			break;
 		}
-		cleansePanel1.initRuntime(str, fapp, dupType, cleanseMode);
+		cleansePanel1.initRuntime(str, fapp, dbid0, dbid1, cleanseMode);
+//		cleansePanel1.setDbids(str, dbid0, dbid1);
 	}
 	/** This method is called from within the constructor to
 	 * initialize the form.

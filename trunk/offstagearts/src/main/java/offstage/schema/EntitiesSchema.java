@@ -92,7 +92,10 @@ throws SQLException
 			"mailstateid"),
 		new SqlCol(new SqlEnum(new DbKeyedModel(str, change, "sourceids",
 			"sourceid", "name", "sourceid", "<No Source>")),
-			"sourceid")
+			"sourceid"),
+		new SqlCol(new SqlEnum(new DbKeyedModel(str, change, "dbids",
+			"dbid", "name", "dbid", "<No Database>")),
+			"dbid")
 					
 	};
 }	

@@ -35,6 +35,7 @@ throws SQLException{
 	cols = new SqlCol[] {
 		new SqlCol(new SqlSerial("holidays_holidayid_seq", false), "holidayid", true),
 		new SqlCol(new SqlInteger(false), "termid", false),
+		new SqlCol(new SqlInteger(true), "entityid", false),
 		new SqlCol(new SqlDate(tz, false), "firstday", false),
 		new SqlCol(new SqlDate(tz, true), "lastday", false),
 		new SqlCol(new SqlString(false), "description", false)
