@@ -488,18 +488,18 @@ protected static String simpleSearchSql(String text, String join, String whereCl
 	if (numeric) {
 		// entityid
 		return "select persons.entityid from persons" + join +
-		" where persons.dbid = 0" +
+		" where persons.dbid = 5" +
 		" and persons.entityid = " + text; // + " and not obsolete" + whereClause;
 	} else if (at >= 0) {
 		return "select persons.entityid from persons" + join +
-			" where persons.dbid = 0" +
+			" where persons.dbid = 5" +
 			" and email ilike " + SqlString.sql('%' + text.trim() + '%')
 			+ " " + whereClause;
 	} else if (comma >= 0) {
 		// lastname, firstname
 		String lastname = text.substring(0,comma).trim();
 		String firstname = text.substring(comma+1).trim();
-		String idSql = "select persons.entityid from persons " + join + " where dbid = 0 and (" +
+		String idSql = "select persons.entityid from persons " + join + " where dbid = 5 and (" +
 			" firstname ilike " + SqlString.sql('%' + firstname + '%') +
 			" and lastname ilike " + SqlString.sql('%' + lastname + '%') +
 			" ) and not obsolete" + whereClause;
@@ -508,14 +508,14 @@ protected static String simpleSearchSql(String text, String join, String whereCl
 		// firstname lastname
 		String firstname = text.substring(0,space).trim();
 		String lastname = text.substring(space+1).trim();
-		String idSql = "select persons.entityid from persons" + join + " where dbid = 0 and (" +
+		String idSql = "select persons.entityid from persons" + join + " where dbid = 5 and (" +
 			" firstname ilike " + SqlString.sql('%' + firstname + '%') +
 			" and lastname ilike " + SqlString.sql('%' + lastname + '%') +
 			" ) and not obsolete" + whereClause;
 		return idSql;
 	} else {
 		String ssearch = SqlString.sql(text, false);
-		String idSql = "select persons.entityid from persons " + join + " where dbid = 0 and (" +
+		String idSql = "select persons.entityid from persons " + join + " where dbid = 5 and (" +
 			" firstname ilike " + SqlString.sql('%' + ssearch + '%') +
 			" or lastname ilike " + SqlString.sql('%' + ssearch + '%') +
 			" or orgname ilike " + SqlString.sql('%' + ssearch + '%') +

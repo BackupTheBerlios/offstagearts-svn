@@ -192,9 +192,16 @@ Properties loadProps() throws IOException
 // -------------------------------------------------------
 public FrontApp(boolean demo)
 throws Exception
+{
+	this(null, demo);
+}
+public FrontApp(String xconfigName, boolean demo)
+throws Exception
 //SQLException, java.io.IOException, javax.mail.internet.AddressException,
 //java.security.GeneralSecurityException
 {
+	configName = xconfigName;
+	
 	// Make sure we have the right version
 	version = new Version("1.6.0");
 	String resourceName = "offstage/version.txt";
@@ -210,19 +217,24 @@ throws Exception
 	
 	// Choose the configuration directory, so we can get the rest of
 	// the configuration
-	if (!demo) {
-		Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
-		ConfigChooser dialog = new ConfigChooser(configPrefs,
-			new JavaSwingerMap(TimeZone.getDefault()), swingPrefs, userRoot(), version.toString());
-		dialog.setVisible(true);
-		demo = dialog.isDemo();
-		System.out.println(dialog.getConfigFile());
-		configDir = dialog.getConfigFile();
-		configName = dialog.getConfigName();
-	}
 	if (demo) {
 		configDir = null;
-		configName = "OffstageArts Demo";
+		configName = "OffstageArts Demo";		
+	} else {
+		Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
+		String sdir = null;       
+		if (configName != null) sdir = configPrefs.get(configName, null);
+		if (sdir != null) {
+			configDir = new File(sdir);
+		} else {
+			ConfigChooser dialog = new ConfigChooser(configPrefs,
+				new JavaSwingerMap(TimeZone.getDefault()), swingPrefs, userRoot(), version.toString());
+			dialog.setVisible(true);
+			demo = dialog.isDemo();
+			System.out.println(dialog.getConfigFile());
+			configDir = dialog.getConfigFile();
+			configName = dialog.getConfigName();
+		}
 	}
 
 //	if (configDir == null) System.exit(0);

@@ -15,4 +15,7 @@ alter table dups add column dbid0 int default 0;
 alter table dups add column dbid1 int default 0;
 
 alter table entities add column dobapprox bool default false;	-- true if we have just an approximate date of birth (eg, within a month or so)
-alter table holidays add column entityid int default null;
+
+alter table holidays add column entityid int default 0 not null;
+ALTER TABLE holidays DROP CONSTRAINT holidays_pkey;
+ALTER TABLE holidays ADD CONSTRAINT holidays_pkey PRIMARY KEY (termid, entityid, firstday);
