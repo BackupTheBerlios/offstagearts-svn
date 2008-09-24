@@ -44,6 +44,7 @@ import citibob.resource.UpgradePlanSet;
 import citibob.swingers.JavaSwingerMap;
 import citibob.version.SvnVersion;
 import citibob.version.Version;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Policy;
@@ -72,18 +73,55 @@ public ClassLoader siteCode() { return siteCode; }
 public Object newSiteInstance(Class defaultClass) {
 	return newSiteInstance("sc." + defaultClass.getName(), defaultClass);
 }
-public Object newSiteInstance(String className, Class defaultClass) {
+public Object newSiteInstance(Class defaultClass, Object... params) {
+	return newSiteInstance("sc." + defaultClass.getName(), defaultClass, params);
+}
+public Object newSiteInstance(String className, Class defaultClass, Object... params) {
 	Class klass = defaultClass;
 	try {
 		klass = siteCode().loadClass(className);
 	} catch(Exception e) {}
 	try {
 		System.out.println("FrontApp.newSiteInstance(" + klass.getName() + ")");
-		return klass.newInstance();
+		if (params.length == 0) {
+			return klass.newInstance();
+		} else {
+			Class[] types = new Class[params.length];
+			for (int i=0; i<params.length; ++i) types[i] = params[i].getClass();
+			
+			Constructor[] cons = klass.getConstructors();
+			Constructor con = null;
+			outer: for (int i=0; i<cons.length; ++i) {
+				Class[] paramTypes = cons[i].getParameterTypes();
+				if (paramTypes.length != types.length) continue;
+				for (int j=0; j<types.length; ++j) {
+					Class param = paramTypes[j];
+					Class actual = types[j];
+					if (!param.isAssignableFrom(actual)) continue outer;
+				}
+				con = cons[i];
+				break;
+			}
+//			Constructor con = klass.getConstructor(new Class[] {ResSet.class});
+//			Constructor con = klass.getConstructor(types);
+			return con.newInstance(params);
+		}
 	} catch(Exception e) {
 		return null;
 	}
 }
+//public Object newSiteInstance(String className, Class defaultClass) {
+//	Class klass = defaultClass;
+//	try {
+//		klass = siteCode().loadClass(className);
+//	} catch(Exception e) {}
+//	try {
+//		System.out.println("FrontApp.newSiteInstance(" + klass.getName() + ")");
+//		return klass.newInstance();
+//	} catch(Exception e) {
+//		return null;
+//	}
+//}
 
 public InputStream getSiteResourceAsStream(String name)
 {
