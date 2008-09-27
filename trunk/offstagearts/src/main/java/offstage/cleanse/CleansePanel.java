@@ -1011,7 +1011,7 @@ public String getSelectSql(boolean proto) {
 			(idSql == null ? "" : ", _ids as ids0, _ids as ids1") +
 			" where dups.entityid0 = e0.entityid" +
 			" and dups.entityid1 = e1.entityid" +
-			" and dups.dbid0 = " + SqlInteger.sql(dbid0) + " and dups.dbid1 = " + SqlInteger.sql(dbid1) +
+			" and e0.dbid = " + SqlInteger.sql(dbid0) + " and e1.dbid = " + SqlInteger.sql(dbid1) +
 //			" and dups.dupid = " + SqlInteger.sql(dupid) +
 //			" and dups.type=" + SqlString.sql(dupType) +
 			" and not e0.obsolete and not e1.obsolete" +

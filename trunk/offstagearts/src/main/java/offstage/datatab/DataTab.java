@@ -25,7 +25,7 @@ public class DataTab //implements Comparable<DataTab>
 protected String title;		// The name to give the tab in the GUI
 protected SqlSchema schema;
 protected String idCol = "groupid";
-String orderClause = "groupid";
+protected String orderClause = "groupid";
 
 // EntityPanel...
 public String[] displayColTitles;	// Titles to display to user
@@ -36,9 +36,9 @@ public String[] displayCols;	// Columns to show to user
 //boolean inSegmentationReport = true;	// True if user can order segmentation by this...
 
 // EQuerySchema...
-String[] requiredTables = new String[0];
+protected String[] requiredTables = new String[0];
 // Column aliases we add to the user's drop-down; see EQuerySchema.alias
-String[] equeryAliases = {};
+protected String[] equeryAliases = {};
 
 public String[] getAliases() { return equeryAliases; }
 public SqlSchema getSchema()

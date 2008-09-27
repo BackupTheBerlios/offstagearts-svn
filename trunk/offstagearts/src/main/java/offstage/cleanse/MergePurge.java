@@ -33,6 +33,8 @@ import citibob.sql.*;
 import com.wcohen.ss.*;
 import com.wcohen.ss.api.*;
 import com.wcohen.ss.tokens.*;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.*;
 import offstage.FrontApp;
 import offstage.db.*;
@@ -100,31 +102,42 @@ public static String getCanonical(ResultSet rs) throws SQLException
 }
 
 
-/** Process for printing to the screen
- @returns sql to update database with. */
-static String process(Map<Integer,String> xmap, double thresh, String type)
+static Map<Integer,StringWrapper> prepareMap(Map<Integer,String> imap, SoftTFIDF fullD)
 {
-	
-	// Prepare strings
-	SoftTFIDF fullD = new SoftTFIDF(new SimpleTokenizer(true,true),
-		new JaroWinkler(),0.8);
+		// Prepare strings
 	Map<Integer,StringWrapper> map = new TreeMap();
-	for (Map.Entry<Integer,String> aa : xmap.entrySet()) {
+	for (Map.Entry<Integer,String> aa : imap.entrySet()) {
 		map.put(aa.getKey(), fullD.prepare(aa.getValue()));
 	}
+	return map;
+}
+
+/** Process for printing to the screen
+ @param xmap0 One set of names to merge/purge on
+ @param xmap1 The other set of names...
+ @returns sql to update database with. */
+static String process(int dbid0, Map<Integer,String> xmap0,
+int dbid1, Map<Integer,String> xmap1, double thresh, String type)
+{
+	SoftTFIDF fullD = new SoftTFIDF(new SimpleTokenizer(true,true),
+		new JaroWinkler(),0.8);
+	Map<Integer,StringWrapper> map0 = prepareMap(xmap0, fullD);
+	Map<Integer,StringWrapper> map1 = (xmap0 == xmap1 ? map0 : prepareMap(xmap1, fullD));
 	
 	List<Duo> report = new ArrayList();
 	Hist fullHist = new Hist(0,1,10);
-	fullD.train( new BasicStringWrapperIterator(map.values().iterator()));
-System.out.println("Full Processing");
+	fullD.train( new BasicStringWrapperIterator(map0.values().iterator()));
+	if (map1 != map0) fullD.train( new BasicStringWrapperIterator(map1.values().iterator()));
+System.out.println("Full Processing: sizes = " + map0.size() + " and " + map1.size());
 	int i,j;
 	i=0; j=0;
-	for (Map.Entry<Integer,StringWrapper> aa : map.entrySet()) {
-		if (i % 1000 == 0) System.out.println("  " + i);
+	for (Map.Entry<Integer,StringWrapper> aa : map0.entrySet()) {
+		if (i % 10 == 0) System.out.println("  " + i);
 		j=0;
-		for (Map.Entry<Integer,StringWrapper> bb : map.entrySet()) {
-			if (j >= i) continue;
+		for (Map.Entry<Integer,StringWrapper> bb : map1.entrySet()) {
+			if (map1 == map0 && j >= i) continue;
 			double e = fullD.score(aa.getValue(), bb.getValue());
+//System.out.println(aa.getValue() + " : " + bb.getValue() + " = " + e);
 			fullHist.add(e);
 			if (e >= thresh) report.add(new Duo(aa,bb,e));
 			++j;
@@ -141,7 +154,13 @@ System.out.println("Full Processing");
 	
 	// Report to dups table of database
 	StringBuffer sb = new StringBuffer();
-	sb.append("delete from dups where type=" + SqlString.sql(type) + ";\n");
+	sb.append(
+		" delete from dups" +
+		" using entities e0, entities e1" +
+		" where type=" + SqlString.sql(type) + "\n" +
+		" and dups.entityid0 = e0 and dups.entityid1 = e1" +
+		" and e0.dbid = " + SqlInteger.sql(dbid0) +
+		" and e1.dbid = " + SqlInteger.sql(dbid1));
 	Collections.sort(report);
 	for (Duo d : report) {
 		Map.Entry<Integer,StringWrapper> e0,e1;
@@ -162,55 +181,47 @@ System.out.println("Full Processing");
 	return sb.toString();
 }
 
-
-/** Creates a new instance of MergePurge */
-public MergePurge(SqlRun str)
+Map<Integer,String> loadNameMap(SqlRun str, int dbid)
 {
 	String sql =
-		" SELECT entityid,primaryentityid," +
-		" address1,address2,city,state,zip,country," +
-		" firstname,lastname,orgname,isorg from persons p" +
-		" where not obsolete";
- //" and entityid in (12633,21369)";
-//		" and city = 'Cambridge'";
+		" SELECT entityid,firstname,lastname" +
+		" from persons p" +
+		" where dbid = " + dbid +
+		" and not obsolete";
+
+	final Map<Integer,String> nameMap = new TreeMap();
 	str.execSql(sql, new RsTasklet2() {
 	public void run(SqlRun str, ResultSet rs) throws SQLException {
-        // create a SoftTFIDF distance learner
-        SoftTFIDF nameD = new SoftTFIDF(new SimpleTokenizer(true,true),
-			new JaroWinkler(),0.8);
-		
-		Map<Integer,String> nameMap = new TreeMap();
-		Map<Integer,String> addrMap = new TreeMap();
-		Map<Integer,String> orgMap = new TreeMap();
-//		int n = 0;
 		while (rs.next()) {
 			// Check for multiple entries at same address
 			int eid = rs.getInt("entityid");
-			int pid = rs.getInt("primaryentityid");
-			
-//			if (eid == pid) {
-//				String canon = getCanonical(rs);
-//				addrMap.put(eid, canon);				
-//			}
 
-			// Check for duplicate entries (by name; can catch change of address too)
 			String name = upper(rs.getString("firstname")) + " " + upper(rs.getString("lastname"));
 			name = name.trim();
 			if (!empty(name)) nameMap.put(eid, name);
-			
-//			String orgname = upper(rs.getString("orgname")).trim();
-//			if (rs.getBoolean("isorg") && !empty(orgname)) orgMap.put(eid, orgname);
-//			++n;
 		}
 System.out.println("Done getting names (" + nameMap.size() + " records)");
-		// train the distance on some strings - in general, this would
-		// be a large corpus of existing strings, so that some
-		// meaningful frequency estimates can be accumulated.  for
-		// efficiency, you train on an iterator over StringWrapper
-		// objects, which are produced with the 'prepare' function.
+	}});
 
-		String sql = process(nameMap, .9, "n");
-		str.execSql(sql);	// Just merge by name
+	return nameMap;
+}
+
+
+/** Creates a new instance of MergePurge */
+public MergePurge(SqlRun str, final int dbid0, final int dbid1)
+{
+	final Map<Integer,String> nameMap0 = loadNameMap(str, dbid0);
+	final Map<Integer,String> nameMap1 = loadNameMap(str, dbid1);
+	
+	str.execUpdate(new UpdTasklet() {
+	public void run() throws SQLException, IOException {
+
+		String sql = process(dbid0, nameMap0, dbid1, nameMap1, .95, "n");
+		
+		FileWriter out = new FileWriter("dups.sql");
+		out.write(sql);
+		out.write("\n");
+		out.close();
 	}});
 }
 public static void main(String[] args) throws Exception
@@ -218,7 +229,7 @@ public static void main(String[] args) throws Exception
 	final FrontApp app = new FrontApp(false); //new File("/export/home/citibob/svn/offstage/config"));
 	boolean resGood = app.checkResources();
 	app.initWithDatabase();
-	new MergePurge(app.sqlRun());
+	new MergePurge(app.sqlRun(), 1, 0);
 	app.sqlRun().flush();
 }
 

@@ -46,6 +46,8 @@ String sGroupCol;
 	public GroupPanel() {
 		initComponents();
 	}
+
+	public GroupsTable getTable() { return groupTable; }
 	
 	public void initRuntime(SqlRun str, SchemaBuf groupSb,
 	String[] colNames, String[] sColMap, boolean editable, citibob.swing.typed.SwingerMap swingers)
