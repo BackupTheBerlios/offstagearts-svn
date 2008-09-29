@@ -67,13 +67,15 @@ static class Bill
 // =================================================================
 static class Acct
 {
-	int entityid;
+	int entityid;			// payerid
 	String lastname, firstname;
 	double overpay;		// Anything overpaid at this point
 	double totalbilled_term;	// Total for the "chosen term"
 	double regfees_term;	// Total of just registration fees for the "chosen term"
 	double rebates_term;	// Rebates over the term
 	double scholarship_term;	// Scholarships over the term
+	double tuition_fullterm;
+	double scholarship_fullterm;
 	List<Bill> unpaid = new LinkedList();	// Unpaid bills
 	
 	public Acct(int entityid, String lastname, String firstname,
@@ -221,15 +223,26 @@ java.util.Date xasOfDate, int lateDays)
 		" and ac.db_actypeid = actypes.actypeid and actypes.name = 'school'\n" +
 		(asOfDate == null ? "" : " and ac.date <= " + sqlDate.toSql(asOfDate) + "\n") +
 		" order by isorg desc,lastname,firstname,entityid,date,amount desc;\n" +
+
+		// rss[1] = Basic tuition and scholarship info for the term
+		" select payerid,sum(tuition) as tuition, sum(scholarship) as scholarship\n" +
+		" from termregs where groupid = " + termid + "\n" +
+		" and tuition is not null and tuition > 0" +
+		" group by payerid;\n" +
+
 		
-		// rss[1] = Name of term
+		// rss[2] = Name of term
 		" select name from termids where groupid=" + termid + ";\n";
+		
+
 	
 	str.execSql(sql, new RssTasklet() {
 	public void run(ResultSet[] rss) throws Exception {
 		model = new TreeMap();
 		table = new DefaultTableModel(
-			new String[] {"entityid", "lastname", "firstname", "students", "totalbilled_term",
+			new String[] {"entityid", "lastname", "firstname", "students",
+				"tuition_fullterm", "scholarship_fullterm",
+				"totalbilled_term",
 				"(regfees_term)","(paid+adj)_term","scholarships_term","unpaid_term",
 				"unpaid_all","unpaid_pastdue", "unpaid_late","overpay"},
 //			new JType[] {integer, string, string, money, money, money, money, money, money, money},
@@ -239,6 +252,7 @@ java.util.Date xasOfDate, int lateDays)
 		model.put("rs", table);
 
 		List<Acct> accts = new ArrayList();
+		Map<Integer,Acct> acctMap = new TreeMap();
 		int lastEntityid = -1;
 		Acct acct = null;
 		ResultSet rs = rss[0];
@@ -247,6 +261,7 @@ java.util.Date xasOfDate, int lateDays)
 				if (acct != null) {
 					acct.payPayment(0);		// Use up any overpay that we can.
 					accts.add(acct);
+					acctMap.put(acct.entityid, acct);
 				}
 				break;
 			}
@@ -257,6 +272,7 @@ java.util.Date xasOfDate, int lateDays)
 				if (acct != null) {
 					acct.payPayment(0);		// Use up any overpay that we can.
 					accts.add(acct);
+					acctMap.put(acct.entityid, acct);
 				}
 				acct = new Acct(entityid, rs.getString("lastname"),
 					rs.getString("firstname"), rs.getString("orgname"), rs.getBoolean("isorg"));
@@ -281,7 +297,16 @@ java.util.Date xasOfDate, int lateDays)
 				}
 			}
 		}
-		
+
+		// rss[1] = tuition and scholarship info from registrations
+		rs = rss[1];
+		while (rs.next()) {
+			acct = acctMap.get(rs.getInt("payerid"));
+			acct.tuition_fullterm = rs.getDouble("tuition");
+			acct.scholarship_fullterm = rs.getDouble("scholarship");
+		}
+
+		// Now set up the report!
 //		System.out.println("entityid,lastname,firstname,totalbilled_term,(regfees_term)," +
 //			"(paid+adj)_term,scholarships_term,unpaid_term,unpaid_all,overpay");
 		for (Acct ac : accts) {
@@ -305,6 +330,7 @@ java.util.Date xasOfDate, int lateDays)
 			table.addRow(new Object[] {
 				ac.entityid, lastname, firstname,
 				studentNames.get(ac.entityid),
+				ac.tuition_fullterm, ac.scholarship_fullterm,
 				ac.totalbilled_term,
 				ac.regfees_term,
 				(ac.totalbilled_term - unpaid_term - ac.rebates_term),
@@ -314,8 +340,8 @@ java.util.Date xasOfDate, int lateDays)
 		}
 		
 		// Add miscellaneous stuff
-		if (rss[1].next()) {
-			model.put("sterm", rss[1].getString("name"));
+		if (rss[2].next()) {
+			model.put("sterm", rss[2].getString("name"));
 			model.put("date", new java.util.Date());
 			model.put("lateasofdate", new java.util.Date());
 			model.put("regfee", new Double(25));

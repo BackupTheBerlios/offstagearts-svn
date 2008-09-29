@@ -98,8 +98,11 @@ DupDbModel dupDm;
 	public CleansePanel()
 	{
 		initComponents();
-		Color color;
+// Format for smaller screen!
+displayTabs.remove(editTab);
 		
+		
+		Color color;
 		color = new java.awt.Color(51, 204, 0);
         entityPanel0.setAllBackground(color);
 		summaryPane0.setBackground(color);
@@ -171,11 +174,13 @@ DupDbModel dupDm;
 		allDm.doSelect(str);
 		str.execUpdate(new UpdTasklet() {
 		public void run() throws Exception {
-			String html0 = SummaryReport.getHtml(app, dm[0]);
+			SummaryReport sr = new SummaryReport(app);
+			
+			String html0 = sr.getHtml(dm[0]);
 			summaryPane0.setText(html0);
 			summaryPane0.setCaretPosition(0);
 			
-			String html1 = SummaryReport.getHtml(app, dm[1]);
+			String html1 = sr.getHtml(dm[1]);
 			summaryPane1.setText(html1);
 			summaryPane1.setCaretPosition(0);
 		}});
@@ -287,8 +292,8 @@ DupDbModel dupDm;
         rightButtonPanel = new javax.swing.JPanel();
         bSubordinate1 = new javax.swing.JButton();
         bSubordinate0 = new javax.swing.JButton();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
+        displayTabs = new javax.swing.JTabbedPane();
+        editTab = new javax.swing.JPanel();
         entityPanel0 = new offstage.devel.gui.EntityPanel();
         entityPanel1 = new offstage.devel.gui.EntityPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -532,15 +537,15 @@ DupDbModel dupDm;
 
         jSplitPane1.setRightComponent(jPanel2);
 
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
+        editTab.setLayout(new javax.swing.BoxLayout(editTab, javax.swing.BoxLayout.LINE_AXIS));
 
         entityPanel0.setBackground(new java.awt.Color(51, 204, 0));
-        jPanel1.add(entityPanel0);
+        editTab.add(entityPanel0);
 
         entityPanel1.setBackground(new java.awt.Color(255, 204, 204));
-        jPanel1.add(entityPanel1);
+        editTab.add(entityPanel1);
 
-        jTabbedPane1.addTab("Edit", jPanel1);
+        displayTabs.addTab("Edit", editTab);
 
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -568,9 +573,9 @@ DupDbModel dupDm;
 
         jPanel3.add(jPanel5);
 
-        jTabbedPane1.addTab("Summary", jPanel3);
+        displayTabs.addTab("Summary", jPanel3);
 
-        jSplitPane1.setTopComponent(jTabbedPane1);
+        jSplitPane1.setTopComponent(displayTabs);
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
@@ -799,7 +804,8 @@ private void mergeAction(SqlRun str, final int action) throws IOException
 	// First do a trial merge...
 	MergeSql.bufMerge(app.dataTabSet(), dmFrom, dmTo);
 	String html;
-	html = SummaryReport.getHtml(app, dmTo); //, app.sFormatMap());
+	SummaryReport sr = new SummaryReport(app);
+	html = sr.getHtml(dmTo); //, app.sFormatMap());
 
 	MergeConfirm confirm = new MergeConfirm(WidgetTree.getJFrame(CleansePanel.this), app, html);
 	confirm.setVisible(true);
@@ -894,15 +900,16 @@ private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JButton bSubordinate1;
     private citibob.swing.typed.JKeyedComboBox cbDbid0;
     private citibob.swing.typed.JKeyedComboBox cbDbid1;
+    private javax.swing.JTabbedPane displayTabs;
     private citibob.swing.typed.JTypedSelectTable dupTable;
     private javax.swing.JScrollPane dupTablePane;
+    private javax.swing.JPanel editTab;
     private offstage.devel.gui.EntityPanel entityPanel0;
     private offstage.devel.gui.EntityPanel entityPanel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -911,7 +918,6 @@ private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JLabel lNewRecord;
     private javax.swing.JLabel lOldRecord;

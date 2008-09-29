@@ -85,7 +85,7 @@ int openclassAssetID;
 		
 		str.execUpdate(new UpdTasklet() {
 		public void run() throws Exception {
-			String html = SummaryReport.getHtml(personDm, app.sFormatMap());
+			String html = new SummaryReport(app).getHtml(personDm, app.sFormatMap());
 			summaryPane.setText(html);
 			summaryPane.setCaretPosition(0);
 		}});

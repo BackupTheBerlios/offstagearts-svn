@@ -40,6 +40,7 @@ public Res_StudentAccounts(ResSet rset)
 
 	add(new JarInstaller(this, 1));
 	add(new JarInstaller(this, 48));
+	add(new JarInstaller(this, 132));
 //	add(new JarInstaller(this, 3));
 //	add(new CopyUpgrader(this, 2,3));
 }

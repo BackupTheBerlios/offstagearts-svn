@@ -80,7 +80,8 @@ public EntitySelector getEntitySelector() { return entitySelector; }
 		dmod.doSelect(str);
 		str.execUpdate(new UpdTasklet() {
 		public void run() throws Exception {
-			String html = SummaryReport.getHtml(app, (DevelModel)dmod);
+			SummaryReport sr = new SummaryReport(app);
+			String html = sr.getHtml((DevelModel)dmod);
 			summaryPane.setText(html);
 			summaryPane.setCaretPosition(0);
 		}});

@@ -51,9 +51,31 @@ public class SummaryReport {
 //	this.dmod = dmod;
 //	this.sfmap = sfmap;
 //}
+FrontApp app;
+public SummaryReport(FrontApp app)
+{
+	this.app = app;
+}
+
+/** @param templateName The name of the template without .st at the end. */
+StringTemplate getTemplate(StringTemplateGroup stg, String templateName)
+throws IOException
+{
+	StringTemplate st;
+//	// Try using a cached version!
+//	StringTemplate st = stg.getInstanceOf(templateName);
+//	if (st != null) return st;
+//	StringTemplateGroup stg = new StringTemplateGroup("summaryGroup");//, app.siteCode());
+	
+	InputStream in = app.getSiteResourceAsStream(templateName + ".st");
+	String template = IOUtils.readerToString(new InputStreamReader(in));
+	stg.defineTemplate(templateName, template);
+	st = stg.getInstanceOf(templateName);
+	return st;
+}
 	
 	
-public static String getHtml(FrontApp app, DevelModel dmod)
+public String getHtml(DevelModel dmod)
 throws IOException
 {
 //	// Get the StringTemplate...
@@ -62,13 +84,15 @@ throws IOException
 //	in.close();
 //	StringTemplate st = stg.getInstanceOf("summary");
 
-	// Get the StringTemplate...
+//	// Get the StringTemplate...
 	StringTemplateGroup stg = new StringTemplateGroup("summaryGroup");//, app.siteCode());
-	InputStream in = app.getSiteResourceAsStream("offstage/reports/summary.st");
-	String template = IOUtils.readerToString(new InputStreamReader(in));
-	stg.defineTemplate("offstage/summary/summary", template);
-	StringTemplate st = stg.getInstanceOf("offstage/reports/summary");
-
+//	InputStream in = app.getSiteResourceAsStream("offstage/reports/summary.st");
+//	String template = IOUtils.readerToString(new InputStreamReader(in));
+//	stg.defineTemplate("offstage/summary/summary", template);
+//	StringTemplate st = stg.getInstanceOf("offstage/reports/summary");
+//
+	StringTemplate st = getTemplate(stg, "offstage/reports/summary");
+	
 	// Format the columns...
 	SFormatMap sfmap = app.sFormatMap();
 	StringTableModel sperson = new StringTableModel(dmod.getPersonSb(), sfmap);
@@ -93,7 +117,7 @@ throws IOException
 	return st.toString();
 }
 
-public static String getHtml(FDPersonModel dmod, SFormatMap sfmap)
+public String getHtml(FDPersonModel dmod, SFormatMap sfmap)
 throws IOException
 {
 
