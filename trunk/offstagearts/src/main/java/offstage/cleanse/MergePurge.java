@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.cleanse;
 
+import citibob.app.App;
 import citibob.sql.pgsql.*;
 import java.sql.*;
 import java.util.*;
@@ -35,7 +36,9 @@ import com.wcohen.ss.api.*;
 import com.wcohen.ss.tokens.*;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.*;
+import java.util.Date;
 import offstage.FrontApp;
 import offstage.db.*;
 
@@ -47,28 +50,40 @@ public class MergePurge
 {
 
 static NumberFormat nfmt = new DecimalFormat("#0.00");
+App app;
 
-
-static class Duo implements Comparable
+// ======================================
+static class Entity implements Comparable<Entity>
 {
-	public Map.Entry<Integer,StringWrapper> aa,bb;
-	public double score;
-	public Duo(Map.Entry<Integer,StringWrapper> a, Map.Entry<Integer,StringWrapper> b, double score) {
-		this.aa = a;
-		this.bb = b;
-		this.score = score;
-	}
-	public int compareTo(Object o) {
-		Duo d = (Duo)o;
-		double x = (score - d.score);
-		if (x > 0) return 1;
-		if (x < 0) return -1;
-		return 0;
-	}
-	public String toString() {
-		return nfmt.format(score) + " " + aa.getKey() + " " + bb.getKey() + " <" + aa.getValue() + "> <" + bb.getValue() + ">";
+	int entityid;
+	String name;
+	StringWrapper preparedName;		// Used in approx. matching
+	long lastmodifiedMS;
+
+	/** For putting in a TreeSet */
+	public int compareTo(Entity e1)
+	{
+		return entityid - e1.entityid;
 	}
 }
+
+/** For ordering as entity0 or entity1 */
+static class LastModifiedComparator implements Comparator<Entity>
+{
+	public int compare(Entity e0, Entity e1) {
+		long diff = e0.lastmodifiedMS - e1.lastmodifiedMS;
+		if (diff < 0) return -1;
+		if (diff > 0) return 1;
+		return e0.entityid - e1.entityid;
+	}
+}
+static class PositionComparator implements Comparator<Entity>
+{
+	public int compare(Entity e0, Entity e1) {
+		return -1;
+	}
+}
+
 
 
 static boolean empty(String s) { return (s == null || "".equals(s)); }
@@ -102,103 +117,47 @@ public static String getCanonical(ResultSet rs) throws SQLException
 }
 
 
-static Map<Integer,StringWrapper> prepareMap(Map<Integer,String> imap, SoftTFIDF fullD)
+static List<StringWrapper> prepareMap(Map<Integer,Entity> imap, SoftTFIDF fullD)
 {
 		// Prepare strings
-	Map<Integer,StringWrapper> map = new TreeMap();
-	for (Map.Entry<Integer,String> aa : imap.entrySet()) {
-		map.put(aa.getKey(), fullD.prepare(aa.getValue()));
+	List<StringWrapper> list0 = new ArrayList(imap.size());
+	for (Entity en : imap.values()) {
+//System.out.println(en.name);
+		en.preparedName = fullD.prepare(en.name);
+		list0.add(en.preparedName);
 	}
-	return map;
+	return list0;
 }
 
-/** Process for printing to the screen
- @param xmap0 One set of names to merge/purge on
- @param xmap1 The other set of names...
- @returns sql to update database with. */
-static String process(int dbid0, Map<Integer,String> xmap0,
-int dbid1, Map<Integer,String> xmap1, double thresh, String type)
-{
-	SoftTFIDF fullD = new SoftTFIDF(new SimpleTokenizer(true,true),
-		new JaroWinkler(),0.8);
-	Map<Integer,StringWrapper> map0 = prepareMap(xmap0, fullD);
-	Map<Integer,StringWrapper> map1 = (xmap0 == xmap1 ? map0 : prepareMap(xmap1, fullD));
-	
-	List<Duo> report = new ArrayList();
-	Hist fullHist = new Hist(0,1,10);
-	fullD.train( new BasicStringWrapperIterator(map0.values().iterator()));
-	if (map1 != map0) fullD.train( new BasicStringWrapperIterator(map1.values().iterator()));
-System.out.println("Full Processing: sizes = " + map0.size() + " and " + map1.size());
-	int i,j;
-	i=0; j=0;
-	for (Map.Entry<Integer,StringWrapper> aa : map0.entrySet()) {
-		if (i % 10 == 0) System.out.println("  " + i);
-		j=0;
-		for (Map.Entry<Integer,StringWrapper> bb : map1.entrySet()) {
-			if (map1 == map0 && j >= i) continue;
-			double e = fullD.score(aa.getValue(), bb.getValue());
-//System.out.println(aa.getValue() + " : " + bb.getValue() + " = " + e);
-			fullHist.add(e);
-			if (e >= thresh) report.add(new Duo(aa,bb,e));
-			++j;
-		}
-		++i;
-	}
-	
-	// Report to screen
-	Collections.sort(report);
-	for (Duo d : report) {
-		System.out.println(d.toString());
-	}
-	System.out.println(fullHist.toString());
-	
-	// Report to dups table of database
-	StringBuffer sb = new StringBuffer();
-	sb.append(
-		" delete from dups" +
-		" using entities e0, entities e1" +
-		" where type=" + SqlString.sql(type) + "\n" +
-		" and dups.entityid0 = e0 and dups.entityid1 = e1" +
-		" and e0.dbid = " + SqlInteger.sql(dbid0) +
-		" and e1.dbid = " + SqlInteger.sql(dbid1));
-	Collections.sort(report);
-	for (Duo d : report) {
-		Map.Entry<Integer,StringWrapper> e0,e1;
-		if (d.aa.getKey().intValue() < d.bb.getKey().intValue()) {
-			e0 = d.aa;
-			e1 = d.bb;
-		} else {
-			e1 = d.aa;
-			e0 = d.bb;				
-		}
-		sb.append("insert into dups (type, entityid0, string0, entityid1, string1, score) values (\n" +
-			SqlString.sql(type) + ", " +
-			SqlInteger.sql(e0.getKey()) + ", " + SqlString.sql(e0.getValue().unwrap()) + ", " +
-			SqlInteger.sql(e1.getKey()) + ", " + SqlString.sql(e1.getValue().unwrap()) + ", " +
-			SqlDouble.sql(d.score) + ");\n");
-		System.out.println(d.toString());
-	}
-	return sb.toString();
-}
-
-Map<Integer,String> loadNameMap(SqlRun str, int dbid)
+Map<Integer,Entity> loadNameMap(SqlRun str, int dbid)
 {
 	String sql =
-		" SELECT entityid,firstname,lastname" +
+		" SELECT entityid,firstname,lastname,lastupdated" +
 		" from persons p" +
 		" where dbid = " + dbid +
+" and firstname like 'M%'" +
+//" and firstname = 'Margot' and lastname = 'Richardson'" +
 		" and not obsolete";
 
-	final Map<Integer,String> nameMap = new TreeMap();
+	final Map<Integer,Entity> nameMap = new TreeMap();
 	str.execSql(sql, new RsTasklet2() {
 	public void run(SqlRun str, ResultSet rs) throws SQLException {
+		SqlDateType timestamp = app.sqlTypeSet().timestamp();
 		while (rs.next()) {
 			// Check for multiple entries at same address
 			int eid = rs.getInt("entityid");
 
-			String name = upper(rs.getString("firstname")) + " " + upper(rs.getString("lastname"));
-			name = name.trim();
-			if (!empty(name)) nameMap.put(eid, name);
+			String name = upper(rs.getString("lastname")).trim() +
+				" " + upper(rs.getString("firstname")).trim();
+			//name = name.trim();
+			if (!empty(name)) {
+				Entity en = new Entity();
+					en.name = name;
+					en.entityid = eid;
+					Date dt = ((Date)timestamp.get(rs, "lastupdated"));
+					en.lastmodifiedMS = (dt == null ? 0 : dt.getTime());
+				nameMap.put(eid, en);
+			}
 		}
 System.out.println("Done getting names (" + nameMap.size() + " records)");
 	}});
@@ -207,21 +166,81 @@ System.out.println("Done getting names (" + nameMap.size() + " records)");
 }
 
 
-/** Creates a new instance of MergePurge */
-public MergePurge(SqlRun str, final int dbid0, final int dbid1)
+public MergePurge(App app)
 {
-	final Map<Integer,String> nameMap0 = loadNameMap(str, dbid0);
-	final Map<Integer,String> nameMap1 = loadNameMap(str, dbid1);
+	this.app = app;
+}
+
+
+/** Creates a new instance of MergePurge
+ @param out Write SQL inserts to here. */
+public void findDups(SqlRun str,
+final int dbid0, final int dbid1, final double thresh,
+final Writer out)
+{
+	final Map<Integer,Entity> map0 = loadNameMap(str, dbid0);
+	final Map<Integer,Entity> map1 = loadNameMap(str, dbid1);
+	
+	final String type = "n";
 	
 	str.execUpdate(new UpdTasklet() {
 	public void run() throws SQLException, IOException {
+		final Comparator<Entity> swapOrder = (dbid0 == dbid1 ?
+			new LastModifiedComparator() :
+			new PositionComparator());
+		out.write(
+			" delete from dups" +
+			" using entities e0, entities e1" +
+			" where type=" + SqlString.sql(type) + "\n" +
+			" and dups.entityid0 = e0 and dups.entityid1 = e1" +
+			" and e0.dbid = " + SqlInteger.sql(dbid0) +
+			" and e1.dbid = " + SqlInteger.sql(dbid1) + ";\n");
+		Hist fullHist = new Hist(0,1,10);
 
-		String sql = process(dbid0, nameMap0, dbid1, nameMap1, .95, "n");
+		//process(dbid0, nameMap0, dbid1, nameMap1, .95, "n");
+
+		SoftTFIDF fullD = new SoftTFIDF(new SimpleTokenizer(true,true),
+			new JaroWinkler(),0.8);
 		
-		FileWriter out = new FileWriter("dups.sql");
-		out.write(sql);
-		out.write("\n");
-		out.close();
+		// Train the matcher...
+		List<StringWrapper> list0 = prepareMap(map0, fullD);
+		fullD.train(new BasicStringWrapperIterator(list0.iterator()));
+		if (map1 != map0) {
+			List<StringWrapper> list1 = prepareMap(map1, fullD);
+			fullD.train(new BasicStringWrapperIterator(list1.iterator()));			
+		}
+
+	System.out.println("Full Processing: sizes = " + map0.size() + " and " + map1.size());
+		int i,j;
+		i=0; j=0;
+		for (Entity e0 : map0.values()) {
+			if (i % 10 == 0) System.out.println("  " + i);
+			j=0;
+			for (Entity e1 : map1.values()) {
+				if (map1 == map0 && j >= i) continue;
+				double score = fullD.score(e0.name, e1.name);
+				fullHist.add(score);		// histograms
+				if (score >= thresh) {
+					Entity aa,bb;
+					if (swapOrder.compare(e0, e1) > 1) {
+						aa = e1;
+						bb = e0;
+					} else {
+						aa = e0;
+						bb = e1;
+					}
+					out.write(
+						"insert into dups (type, entityid0, string0, entityid1, string1, score) values (\n" +
+						SqlString.sql(type) + ", " +
+						SqlInteger.sql(aa.entityid) + ", " + SqlString.sql(aa.name) + ", " +
+						SqlInteger.sql(bb.entityid) + ", " + SqlString.sql(bb.name) + ", " +
+						SqlDouble.sql(score) + ");\n");
+				}
+				++j;
+			}
+			++i;
+		}
+		out.flush();
 	}});
 }
 public static void main(String[] args) throws Exception
@@ -229,8 +248,10 @@ public static void main(String[] args) throws Exception
 	final FrontApp app = new FrontApp(false); //new File("/export/home/citibob/svn/offstage/config"));
 	boolean resGood = app.checkResources();
 	app.initWithDatabase();
-	new MergePurge(app.sqlRun(), 1, 0);
+	Writer out = new FileWriter("dups.sql");
+	new MergePurge(app).findDups(app.sqlRun(), 1, 0, .95, out);
 	app.sqlRun().flush();
+	out.close();
 }
 
 }

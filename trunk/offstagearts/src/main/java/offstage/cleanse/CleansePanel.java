@@ -36,6 +36,7 @@ import offstage.*;
 import citibob.app.*;
 import citibob.sql.pgsql.*;
 import citibob.swing.WidgetTree;
+import citibob.swing.table.SortedTableModel;
 import citibob.types.KeyedModel;
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
@@ -148,21 +149,21 @@ displayTabs.remove(editTab);
 		Integer Entityid1 = (Integer)dupTable.getValue("entityid1");
 	//System.out.println("EntityID changed: " + entityid0 + " " + entityid1);
 
-		// Swapt so newest is first (if we're not approving past merges)
-		if (cleanseMode != M_APPROVE) {
-			Date dt0 = (Date)dupTable.getValue("lastupdated0");
-			long ms0 = (dt0 == null ? 0 : dt0.getTime());
-			Date dt1 = (Date)dupTable.getValue("lastupdated1");
-			long ms1 = (dt1 == null ? 0 : dt1.getTime());
-
-			// Swap so newer record is always on the left.
-			if (ms0 < ms1) {
-				Integer EID = Entityid0;
-				Entityid0 = Entityid1;
-				Entityid1 = EID;
-			}
-	System.out.println("XYZZZ: " + dt0 + " " + dt1);
-		}
+//		// Swapt so newest is first (if we're not approving past merges)
+//		if (cleanseMode != M_APPROVE) {
+//			Date dt0 = (Date)dupTable.getValue("lastupdated0");
+//			long ms0 = (dt0 == null ? 0 : dt0.getTime());
+//			Date dt1 = (Date)dupTable.getValue("lastupdated1");
+//			long ms1 = (dt1 == null ? 0 : dt1.getTime());
+//
+//			// Swap so newer record is always on the left.
+//			if (ms0 < ms1) {
+//				Integer EID = Entityid0;
+//				Entityid0 = Entityid1;
+//				Entityid1 = EID;
+//			}
+////	System.out.println("XYZZZ: " + dt0 + " " + dt1);
+//		}
 		curAction = (Integer)dupTable.getValue("action");
 		bApproveAction.setText((String)actionKmodel.get(curAction).obj);
 		dm[0].setKey(Entityid0);
@@ -243,7 +244,7 @@ displayTabs.remove(editTab);
 			dupDm.setIdSql(null);
 			dupDm.doSelect(str);
 			
-			dupTable.setModelU(dupDm.getSchemaBuf(),
+			dupTable.setModelU(new SortedTableModel(dupDm.getSchemaBuf()),
 				new String[] {"#", "Score", "Action", "ID-0", "Name-0", "ID-1", "Name-1"},
 	//				new String[] {"score", "score", "entityid0", "string0", "entityid1", "string1"},
 				new String[] {"__rowno__", "score", "action", "entityid0", "string0", "entityid1", "string1"},
@@ -289,6 +290,8 @@ displayTabs.remove(editTab);
         jLabel1 = new javax.swing.JLabel();
         tfSearch = new javax.swing.JTextField();
         bSearch = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        bApproveAll = new javax.swing.JButton();
         rightButtonPanel = new javax.swing.JPanel();
         bSubordinate1 = new javax.swing.JButton();
         bSubordinate0 = new javax.swing.JButton();
@@ -494,6 +497,20 @@ displayTabs.remove(editTab);
         });
         jToolBar1.add(bSearch);
 
+        jLabel5.setText("       ");
+        jToolBar1.add(jLabel5);
+
+        bApproveAll.setText("Approve All");
+        bApproveAll.setFocusable(false);
+        bApproveAll.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bApproveAll.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bApproveAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bApproveAllActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(bApproveAll);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -669,11 +686,11 @@ void doAction(SqlRun str, int action) throws IOException
 		case MC_DEL_0 :
 		case MC_DEL_1 :
 		case MC_DEL_BOTH :
-			deleteAction(str, action);
+			if (!deleteAction(str, action)) return;
 			break;
 		case MC_MERGE_TO_0 :
 		case MC_MERGE_TO_1 :
-			mergeAction(str, action);
+			if (!mergeAction(str, action)) return;
 			break;
 		case MC_DUPOK :
 			dupOKAction(str);
@@ -687,43 +704,49 @@ void doAction(SqlRun str, int action) throws IOException
 	reselect(str);
 
 }
-private void dupOKAction(SqlRun str)
+void doDbAction(SqlRun str, int action, int entityid0, int entityid1) throws IOException
 {
-	Integer entityid0 = (Integer)dm[0].getKey();
-	Integer entityid1 = (Integer)dm[1].getKey();
-	allDm.doUpdate(str);
-	refresh(str);
+	switch(action) {
+		case MC_DEL_0 :
+		case MC_DEL_1 :
+		case MC_DEL_BOTH :
+			deleteDbAction(str, action, entityid0, entityid1);
+			break;
+		case MC_MERGE_TO_0 :
+		case MC_MERGE_TO_1 :
+			mergeDbAction(str, action, entityid0, entityid1);
+			break;
+		case MC_DUPOK :
+			dupOKDbAction(str, entityid0, entityid1);
+			break;
+		default : return;
+	}
+}
+
+private void dupOKDbAction(SqlRun str, int entityid0, int entityid1)
+{
 	str.execSql(
 		" delete from mergelog where entityid0 = " + entityid0 + " and entityid1 = " + entityid1 + ";\n" +
 		" delete from mergelog where entityid0 = " + entityid1 + " and entityid1 = " + entityid0 + ";\n" +
 		" insert into mergelog (entityid0, entityid1, action, provisional, dtime) values (" +
 		entityid0 + "," + entityid1 + "," + MC_DUPOK + "," +
 		SqlBool.sql(cleanseMode == M_PROVISIONAL) + ", now());\n");
+}
+
+private void dupOKAction(SqlRun str)
+{
+	Integer entityid0 = (Integer)dm[0].getKey();
+	Integer entityid1 = (Integer)dm[1].getKey();
+	allDm.doUpdate(str);
+	refresh(str);
+	dupOKDbAction(str, entityid0, entityid1);
 //	int row = dupTable.getSelectedRow();
 //	dupDm.getSchemaBuf().removeRow(row);
 //	dupTable.setSelectedRow(row);
 }
 
-private void deleteAction(SqlRun str, final int action)
+private void deleteDbAction(SqlRun str, final int action, int entityid0, int entityid1)
 {
-	String whichRecord;
-	switch(action) {
-		case MC_DEL_1 : whichRecord = "the old (red) record"; break;
-		case MC_DEL_0 : whichRecord = "the new (green) record"; break;
-		case MC_DEL_BOTH : whichRecord = "both records"; break;
-		default : throw new IllegalArgumentException("deleteAction() cannot do action = " + action);
-	}
-
-	if (JOptionPane.showConfirmDialog(CleansePanel.this,
-		"Do you really wish to delete\n" +
-		whichRecord + "?", "Delete Record",
-		JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
-
-	final Integer entityid0 = (Integer)dm[0].getKey();
-	final Integer entityid1 = (Integer)dm[1].getKey();
-
-
-	allDm.doUpdate(str);
 	if (cleanseMode != M_PROVISIONAL) {
 		// Really delete them
 		switch(action) {
@@ -739,7 +762,6 @@ private void deleteAction(SqlRun str, final int action)
 			break;
 		}
 	}
-	refresh(str);
 
 	// Insert into mergelog
 	str.execSql(
@@ -748,7 +770,32 @@ private void deleteAction(SqlRun str, final int action)
 		" insert into mergelog (entityid0, entityid1, action, provisional, dtime) values (" +
 		entityid0 + "," + entityid1 + "," + action + ", " +
 		SqlBool.sql(cleanseMode == M_PROVISIONAL) + ", now());\n");
+	
+}
+private boolean deleteAction(SqlRun str, final int action)
+{
+	String whichRecord;
+	switch(action) {
+		case MC_DEL_1 : whichRecord = "the old (red) record"; break;
+		case MC_DEL_0 : whichRecord = "the new (green) record"; break;
+		case MC_DEL_BOTH : whichRecord = "both records"; break;
+		default : throw new IllegalArgumentException("deleteAction() cannot do action = " + action);
+	}
 
+	if (JOptionPane.showConfirmDialog(CleansePanel.this,
+		"Do you really wish to delete\n" +
+		whichRecord + "?", "Delete Record",
+		JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return false;
+
+	final Integer entityid0 = (Integer)dm[0].getKey();
+	final Integer entityid1 = (Integer)dm[1].getKey();
+
+	allDm.doUpdate(str);
+	deleteDbAction(str, action, entityid0, entityid1);
+	
+
+	refresh(str);
+	return true;
 //	int row = dupTable.getSelectedRow();
 //	dupDm.getSchemaBuf().removeRow(row);
 //	dupTable.setSelectedRow(row);
@@ -782,9 +829,37 @@ private void deleteAction(SqlRun str, final int action)
 // TODO add your handling code here:
 	}//GEN-LAST:event_bSaveActionPerformed
 
+void mergeDbAction(SqlRun str, final int action, int entityid0, int entityid1)
+{
+	int entityidFrom, entityidTo;
+	if (action == MC_MERGE_TO_0) {
+		entityidFrom = entityid1;
+		entityidTo = entityid0;
+	} else {
+		entityidFrom = entityid0;
+		entityidTo = entityid1;
+	}
+	if (cleanseMode != M_PROVISIONAL) {
+		String sql = MergeSql.mergeEntities(app, entityidFrom, entityidTo);
+		str.execSql(sql);
+		
+		// Mark it as coming from the correct database
+		str.execSql(
+			" update entities set dbid = \n" +
+			" (select dbid from entities where entityid = " + entityid1 + ")\n" +
+			" where entityid = " + entityidTo);
+	}
+	str.execSql(
+		" delete from mergelog where entityid0 = " + entityid0 + " and entityid1 = " + entityid1 + ";\n" +
+		" delete from mergelog where entityid0 = " + entityid1 + " and entityid1 = " + entityid0 + ";\n" +
+		" insert into mergelog (entityid0, entityid1, action, provisional, dtime) values (" +
+		entityid0 + "," + entityid1 + "," + action + ", " +
+		SqlBool.sql(cleanseMode == M_PROVISIONAL) + ", now());\n");	
+}
+	
 /**@param dm0 The left-hand item displayed to the user (generally the newer one). 
  * @param action MERGE_TO_0 or MERGE_TO_1 */
-private void mergeAction(SqlRun str, final int action) throws IOException
+private boolean mergeAction(SqlRun str, final int action) throws IOException
 {
 	allDm.doUpdate(str);
 
@@ -817,23 +892,14 @@ private void mergeAction(SqlRun str, final int action) throws IOException
 		final Integer entityidFrom = (Integer)dmFrom.getKey();
 		final Integer entityidTo = (Integer)dmTo.getKey();
 
-		if (cleanseMode != M_PROVISIONAL) {
-			String sql = MergeSql.mergeEntities(app, entityidFrom, entityidTo);
-//System.out.println("================= CleansePanel");
-//System.out.println(sql);
-			str.execSql(sql);
-			refresh(str);
-		}
-		str.execSql(
-			" delete from mergelog where entityid0 = " + entityid0 + " and entityid1 = " + entityid1 + ";\n" +
-			" delete from mergelog where entityid0 = " + entityid1 + " and entityid1 = " + entityid0 + ";\n" +
-			" insert into mergelog (entityid0, entityid1, action, provisional, dtime) values (" +
-			entityid0 + "," + entityid1 + "," + action + ", " +
-			SqlBool.sql(cleanseMode == M_PROVISIONAL) + ", now());\n");
+		mergeDbAction(str, action, entityid0, entityid1);
 //		dupDm.getSchemaBuf().removeRow(dupTable.getSelectedRow());
+			refresh(str);
+		return true;
 	} else {
 		// Re-read what we had before we merged in the buffers
 		refresh(str);
+		return false;
 	}
 }
 	
@@ -852,13 +918,14 @@ private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 }//GEN-LAST:event_bMergeTo1ActionPerformed
 
 	private void bSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSearchActionPerformed
-		app.guiRun().run(CleansePanel.this, new SqlTask() {
-		public void run(SqlRun str) throws Exception {
-			String text = tfSearch.getText();
-			String idSql = DB.simpleSearchSql(text);
-			dupDm.setIdSql(idSql);
-			dupDm.doSelect(str);
-		}});
+// Comment out for now
+//		app.guiRun().run(CleansePanel.this, new SqlTask() {
+//		public void run(SqlRun str) throws Exception {
+//			String text = tfSearch.getText();
+//			String idSql = DB.simpleSearchSql(text);
+//			dupDm.setIdSql(idSql);
+//			dupDm.doSelect(str);
+//		}});
 		 // TODO add your handling code here:
 }//GEN-LAST:event_bSearchActionPerformed
 
@@ -883,10 +950,31 @@ private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 		}});
 		// TODO add your handling code here:
 }//GEN-LAST:event_bApproveActionActionPerformed
+
+	private void bApproveAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bApproveAllActionPerformed
+		app.guiRun().run(CleansePanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
+			SchemaBuf sb = dupDm.getSchemaBuf();
+			int e0_col = sb.findColumn("entityid0");
+			int e1_col = sb.findColumn("entityid1");
+			int action_col = sb.findColumn("action");
+			for (int row = 0; row < sb.getRowCount(); ++row) {
+				Integer entityid0 = (Integer)sb.getValueAt(row, e0_col);
+				Integer entityid1 = (Integer)sb.getValueAt(row, e1_col);
+				Integer action = (Integer)sb.getValueAt(row, action_col);
+				doDbAction(str, action, entityid0, entityid1);
+			}
+			
+			dupDm.setIdSql(null);
+			dupDm.doSelect(str);
+		}});
+		// TODO add your handling code here:
+}//GEN-LAST:event_bApproveAllActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bApproveAction;
+    private javax.swing.JButton bApproveAll;
     private javax.swing.JButton bDelete0;
     private javax.swing.JButton bDelete1;
     private javax.swing.JButton bDeleteBoth;
@@ -910,6 +998,7 @@ private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -993,6 +1082,7 @@ public String getSelectSql(boolean proto) {
 				(idSql == null ? "" : ", _ids as ids0, _ids as ids1\n") +
 				" where dups.entityid0 = e0.entityid\n" +
 				" and dups.entityid1 = e1.entityid\n" +
+				" and e0.dbid = " + SqlInteger.sql(dbid0) + " and e1.dbid = " + SqlInteger.sql(dbid1) +
 				" and ((dups.entityid0 = ml.entityid0 and dups.entityid1 = ml.entityid1)\n" +
 				"    or (dups.entityid0 = ml.entityid1 and dups.entityid1 = ml.entityid0))\n" +
 				" and ml.provisional\n" +
@@ -1032,8 +1122,8 @@ public String getSelectSql(boolean proto) {
 //			(idSql == null ? "" : ", _ids") +
 			" where dups.entityid0 = e0.entityid" +
 			" and dups.entityid1 = e1.entityid" +
+			" and e0.dbid = " + SqlInteger.sql(dbid0) + " and e1.dbid = " + SqlInteger.sql(dbid1) +
 //			" and ml.action = " + MC_DUPOK +
-			" and dups.dbid0 = " + SqlInteger.sql(dbid0) + " and dups.dbid1 = " + SqlInteger.sql(dbid1) +
 //			" and dups.dupid = " + SqlInteger.sql(dupid) +
 //			" and dups.type=" + SqlString.sql(dupType) +
 			" and ((dups.entityid0 = ml.entityid0 and dups.entityid1 = ml.entityid1)\n" +

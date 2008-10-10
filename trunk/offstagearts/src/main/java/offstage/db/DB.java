@@ -457,17 +457,17 @@ public static void rekeyEncryptedData(SqlRun str, offstage.crypt.KeyRing kr)
 }
 // --------------------------------------------------
 /** Given something the user typed into a simple search box, generate a SQL search query. */
-public static String simpleSearchSql(String text)
+public static String simpleSearchSql(String text, int dbid)
 {
-	return simpleSearchSql(text, "", "");
+	return simpleSearchSql(text, dbid, "", "");
 }
 /** Only gives names registered in a particular term */
-public static String registeredSearchSql(String text, int termid)
+public static String registeredSearchSql(String text, int dbid, int termid)
 {
-	return simpleSearchSql(text, ", termregs",
+	return simpleSearchSql(text, dbid, ", termregs",
 		" and persons.entityid = termregs.entityid and termregs.groupid = " + SqlInteger.sql(termid));
 }
-protected static String simpleSearchSql(String text, String join, String whereClause)
+protected static String simpleSearchSql(String text, int dbid, String join, String whereClause)
 {
 	if (text == null) return null;
 	text = text.trim();
@@ -485,7 +485,7 @@ protected static String simpleSearchSql(String text, String join, String whereCl
 		}
 	}
 	
-	int prefDbid = 0;
+	int prefDbid = dbid;
 	if (numeric) {
 		// entityid
 		return "select persons.entityid from persons" + join +

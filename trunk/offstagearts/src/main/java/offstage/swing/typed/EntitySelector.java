@@ -31,6 +31,7 @@ import citibob.task.*;
 import offstage.db.*;
 import java.awt.event.*;
 import citibob.swing.typed.*;
+import citibob.types.KeyedModel;
 import javax.swing.table.*;
 import java.awt.*;
 import offstage.FrontApp;
@@ -92,6 +93,10 @@ public void initRuntime(FrontApp xapp, int termid) //Statement st, FullEntityDbM
 	this.app = xapp;
 	searchResultsTable.initRuntime(app);
 	super.setSubWidget(searchResultsTable);
+
+	// Set up DBID dropdown
+	KeyedModel km = app.schemaSet().getKeyedModel("entities", "dbid");
+	cbDbid.setKeyedModel(km);
 	
 	// Pressing ENTER will initiate search.
 	searchWord.addKeyListener(new KeyAdapter() {
@@ -117,10 +122,11 @@ public void setSearchIdSql(SqlRun str, String idSql)
 	}});	
 }
 
-public void setSearch(SqlRun str, String text)
+public void setSearch(SqlRun str, String text)//, int dbid)
 //throws SQLException
 {
-	String idSql = (termid >= 0 ? DB.registeredSearchSql(text, termid) : DB.simpleSearchSql(text));
+	int dbid = (Integer)cbDbid.getValue();
+	String idSql = (termid >= 0 ? DB.registeredSearchSql(text, dbid, termid) : DB.simpleSearchSql(text, dbid));
 	setSearchIdSql(str, idSql);
 }
 
@@ -159,6 +165,7 @@ public void requestTextFocus()
         searchWord = new javax.swing.JTextField();
         bSearch = new javax.swing.JButton();
         bAdvanced = new javax.swing.JButton();
+        cbDbid = new citibob.swing.typed.JKeyedComboBox();
         FamilyScrollPanel = new javax.swing.JScrollPane();
         searchResultsTable = new offstage.swing.typed.IdSqlTable();
 
@@ -166,6 +173,8 @@ public void requestTextFocus()
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(searchWord, gridBagConstraints);
@@ -177,7 +186,10 @@ public void requestTextFocus()
                 bSearchActionPerformed(evt);
             }
         });
-        jPanel1.add(bSearch, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        jPanel1.add(bSearch, gridBagConstraints);
 
         bAdvanced.setText("Advanced");
         bAdvanced.setPreferredSize(new java.awt.Dimension(100, 25));
@@ -188,10 +200,18 @@ public void requestTextFocus()
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel1.add(bAdvanced, gridBagConstraints);
+
+        cbDbid.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel1.add(cbDbid, gridBagConstraints);
 
         add(jPanel1, java.awt.BorderLayout.SOUTH);
 
@@ -238,6 +258,7 @@ public void requestTextFocus()
     private javax.swing.JScrollPane FamilyScrollPanel;
     private javax.swing.JButton bAdvanced;
     private javax.swing.JButton bSearch;
+    private citibob.swing.typed.JKeyedComboBox cbDbid;
     private javax.swing.JPanel jPanel1;
     private offstage.swing.typed.IdSqlTable searchResultsTable;
     private javax.swing.JTextField searchWord;

@@ -26,6 +26,7 @@ public Collection<DataTab> allTabs() { return tabMap.values(); }
 public List<DataTab> guiTabs = new ArrayList();
 public List<DataTab> equeryTabs = new ArrayList();
 public List<DataTab> segmentationReportTabs = new ArrayList();
+public List<DataTab> mergeTabs = new ArrayList();
 
 public DataTab get(String tableName)
 	{ return tabMap.get(tableName); }
@@ -70,6 +71,7 @@ protected void addAllLists(String... tableNames)
 	addList(guiTabs, tableNames);
 	addList(equeryTabs, tableNames);
 	addList(segmentationReportTabs, tableNames);
+	addList(mergeTabs, tableNames);
 }
 
 public void init(SqlRun str, FrontApp app)

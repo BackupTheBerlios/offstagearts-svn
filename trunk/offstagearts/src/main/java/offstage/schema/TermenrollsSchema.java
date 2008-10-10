@@ -32,6 +32,7 @@ public TermenrollsSchema(citibob.sql.SqlRun str, DbChangeModel change)
 throws SQLException
 {
 	super();
+	schemaType = ST_VIEW;
 	table = "termenrolls";
 	KeyedModel termids_kmodel = new DbKeyedModel(str, change,
 		"termids", "groupid", "name", "firstdate desc,name", null);	

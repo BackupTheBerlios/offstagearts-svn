@@ -98,6 +98,7 @@ public void mergeEntities(Object entityid0, Object entityid1)
 //	moveRows(sset.get("tickets"), "entityid", entityid0, entityid1);
 
 	for (DataTab tab : tabs.allTabs()) {
+		if (tab.getSchema().getType() == SqlSchema.ST_VIEW) continue;
 		moveRows(tab.getSchema(), "entityid", entityid0, entityid1);
 	}
 	
@@ -388,6 +389,7 @@ public static void bufMerge(DataTabSet tabs, DevelModel dmod0, DevelModel dmod1)
 	bufMoveRows("entityid", entityid1, dmod0.getPhonesSb(), dmod1.getPhonesSb());
 
 	for (DataTab tab : tabs.allTabs()) {
+		if (tab.getSchema().getType() == SqlSchema.ST_VIEW) continue;
 		String name = tab.getTableName();
 		bufMoveRows("entityid", entityid1,
 			dmod0.getTabSb(name), dmod1.getTabSb(name));

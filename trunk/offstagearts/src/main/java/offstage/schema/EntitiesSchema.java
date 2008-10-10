@@ -94,7 +94,7 @@ throws SQLException
 			"sourceid", "name", "sourceid", "<No Source>")),
 			"sourceid"),
 		new SqlCol(new SqlEnum(new DbKeyedModel(str, change, "dbids",
-			"dbid", "name", "dbid", "<No Database>")),
+			"dbid", "name", "dbid", null)),
 			"dbid")
 					
 	};
