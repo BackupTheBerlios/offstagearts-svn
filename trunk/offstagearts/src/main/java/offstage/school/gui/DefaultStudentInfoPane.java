@@ -50,6 +50,7 @@ public class DefaultStudentInfoPane extends StudentInfoPane {
         jLabel17 = new javax.swing.JLabel();
         gender = new citibob.swing.typed.JKeyedComboBox();
         lGender = new javax.swing.JLabel();
+        jBoolCheckbox1 = new citibob.swing.typed.JBoolCheckbox();
 
         setMinimumSize(new java.awt.Dimension(135, 120));
         setPreferredSize(new java.awt.Dimension(174, 120));
@@ -121,7 +122,7 @@ public class DefaultStudentInfoPane extends StudentInfoPane {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
@@ -150,6 +151,7 @@ public class DefaultStudentInfoPane extends StudentInfoPane {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         StudentPane.add(gender, gridBagConstraints);
 
@@ -159,6 +161,13 @@ public class DefaultStudentInfoPane extends StudentInfoPane {
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         StudentPane.add(lGender, gridBagConstraints);
+
+        jBoolCheckbox1.setText("(approx.)");
+        jBoolCheckbox1.setColName("dobapprox");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        StudentPane.add(jBoolCheckbox1, gridBagConstraints);
 
         add(StudentPane, java.awt.BorderLayout.NORTH);
     }// </editor-fold>//GEN-END:initComponents
@@ -170,6 +179,7 @@ public class DefaultStudentInfoPane extends StudentInfoPane {
     private citibob.swing.typed.JTypedDateChooser dob;
     private citibob.swing.typed.JTypedTextField firstname2;
     private citibob.swing.typed.JKeyedComboBox gender;
+    private citibob.swing.typed.JBoolCheckbox jBoolCheckbox1;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel lFirst2;
     private javax.swing.JLabel lGender;

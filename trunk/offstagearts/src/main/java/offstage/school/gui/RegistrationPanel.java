@@ -432,6 +432,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 	smod.termregsRm = new SchemaBufRowModel(smod.termregsDm.getSchemaBuf());
 	smod.payertermregsRm = new SchemaBufRowModel(smod.payertermregsDm.getSchemaBuf());
 	TypedWidgetBinder.bindRecursive(this.TermRegPanel, smod.termregsRm, smap);
+	TypedWidgetBinder.bindRecursive(this.MedPanel, smod.termregsRm, smap);
 	TypedWidgetBinder.bindRecursive(this.TermRegPanel, smod.payertermregsRm, smap);
 
 	smod.studentRm = new SchemaBufRowModel(smod.studentDm.personDb.getSchemaBuf());
@@ -753,6 +754,45 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         jLabel29 = new javax.swing.JLabel();
         email4 = new citibob.swing.typed.JTypedTextField();
         bLaunchEmail3 = new javax.swing.JButton();
+        MedPanel = new javax.swing.JPanel();
+        FirstMiddleLast5 = new javax.swing.JPanel();
+        jBoolCheckbox1 = new citibob.swing.typed.JBoolCheckbox();
+        jBoolCheckbox2 = new citibob.swing.typed.JBoolCheckbox();
+        addressPanel4 = new javax.swing.JPanel();
+        address9 = new citibob.swing.typed.JTypedTextField();
+        city4 = new citibob.swing.typed.JTypedTextField();
+        state4 = new citibob.swing.typed.JTypedTextField();
+        zip4 = new citibob.swing.typed.JTypedTextField();
+        jLabel36 = new javax.swing.JLabel();
+        address10 = new citibob.swing.typed.JTypedTextField();
+        lFirst7 = new javax.swing.JLabel();
+        address11 = new citibob.swing.typed.JTypedTextField();
+        lFirst9 = new javax.swing.JLabel();
+        address12 = new citibob.swing.typed.JTypedTextField();
+        lFirst10 = new javax.swing.JLabel();
+        address13 = new citibob.swing.typed.JTypedTextField();
+        lFirst11 = new javax.swing.JLabel();
+        address14 = new citibob.swing.typed.JTypedTextField();
+        lFirst12 = new javax.swing.JLabel();
+        address15 = new citibob.swing.typed.JTypedTextField();
+        lFirst13 = new javax.swing.JLabel();
+        address16 = new citibob.swing.typed.JTypedTextField();
+        lFirst14 = new javax.swing.JLabel();
+        address17 = new citibob.swing.typed.JTypedTextField();
+        lFirst15 = new javax.swing.JLabel();
+        address18 = new citibob.swing.typed.JTypedTextField();
+        lFirst16 = new javax.swing.JLabel();
+        address19 = new citibob.swing.typed.JTypedTextField();
+        lFirst17 = new javax.swing.JLabel();
+        address20 = new citibob.swing.typed.JTypedTextField();
+        lFirst18 = new javax.swing.JLabel();
+        lFirst19 = new javax.swing.JLabel();
+        address21 = new citibob.swing.typed.JTypedTextField();
+        FirstMiddleLast6 = new javax.swing.JPanel();
+        lFirst20 = new javax.swing.JLabel();
+        firstname7 = new citibob.swing.typed.JTypedTextField();
+        firstname8 = new citibob.swing.typed.JTypedTextField();
+        lFirst21 = new javax.swing.JLabel();
         StudentAccounts = new javax.swing.JPanel();
         StudentTab = new javax.swing.JTabbedPane();
         AccountTab = new javax.swing.JTabbedPane();
@@ -1288,7 +1328,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
             jPanel21Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel21Layout.createSequentialGroup()
                 .add(jPanel22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap(153, Short.MAX_VALUE))
         );
 
         jTabbedPane4.addTab("Misc.", jPanel21);
@@ -1528,7 +1568,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
             jPanel25Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel25Layout.createSequentialGroup()
                 .add(jPanel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addContainerGap(153, Short.MAX_VALUE))
         );
 
         jTabbedPane5.addTab("Misc.", jPanel25);
@@ -1641,6 +1681,340 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         Parent2Panel.add(EmailPanel3, gridBagConstraints);
 
         AdultTabs.addTab("Parent 2", Parent2Panel);
+
+        MedPanel.setLayout(new java.awt.GridBagLayout());
+
+        FirstMiddleLast5.setLayout(new java.awt.GridBagLayout());
+
+        jBoolCheckbox1.setText("Filled Out");
+        jBoolCheckbox1.setColName("emer_filledout");
+        jBoolCheckbox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBoolCheckbox1ActionPerformed(evt);
+            }
+        });
+        FirstMiddleLast5.add(jBoolCheckbox1, new java.awt.GridBagConstraints());
+
+        jBoolCheckbox2.setText("Signed");
+        jBoolCheckbox2.setColName("emer_signed");
+        jBoolCheckbox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBoolCheckbox2ActionPerformed(evt);
+            }
+        });
+        FirstMiddleLast5.add(jBoolCheckbox2, new java.awt.GridBagConstraints());
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(FirstMiddleLast5, gridBagConstraints);
+
+        addressPanel4.setLayout(new java.awt.GridBagLayout());
+
+        address9.setColName("emer_addr"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        addressPanel4.add(address9, gridBagConstraints);
+
+        city4.setColName("emer_city"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        addressPanel4.add(city4, gridBagConstraints);
+
+        state4.setColName("emer_state"); // NOI18N
+        state4.setPreferredSize(new java.awt.Dimension(30, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        addressPanel4.add(state4, gridBagConstraints);
+
+        zip4.setEditable(false);
+        zip4.setColName("zip"); // NOI18N
+        zip4.setPreferredSize(new java.awt.Dimension(80, 19));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        addressPanel4.add(zip4, gridBagConstraints);
+
+        jLabel36.setText("Address / City,State"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        addressPanel4.add(jLabel36, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(addressPanel4, gridBagConstraints);
+
+        address10.setColName("emer_work"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address10, gridBagConstraints);
+
+        lFirst7.setText("Phone (work)"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst7, gridBagConstraints);
+
+        address11.setColName("emer_cell"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address11, gridBagConstraints);
+
+        lFirst9.setText("Phone (cell)"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst9, gridBagConstraints);
+
+        address12.setColName("emer_doctorname"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address12, gridBagConstraints);
+
+        lFirst10.setText("Doc. Name"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst10, gridBagConstraints);
+
+        address13.setColName("emer_healthins"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address13, gridBagConstraints);
+
+        lFirst11.setText("Health Ins. Co"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst11, gridBagConstraints);
+
+        address14.setColName("emer_healthinsno"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address14, gridBagConstraints);
+
+        lFirst12.setText("Health Ins. No"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst12, gridBagConstraints);
+
+        address15.setColName("med_pasttreatment"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address15, gridBagConstraints);
+
+        lFirst13.setText("Past Treatments"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst13, gridBagConstraints);
+
+        address16.setColName("med_curcondition"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address16, gridBagConstraints);
+
+        lFirst14.setText("Cur. Conditions"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst14, gridBagConstraints);
+
+        address17.setColName("med_allergies"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address17, gridBagConstraints);
+
+        lFirst15.setText("Allergies"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst15, gridBagConstraints);
+
+        address18.setColName("med_allergymeds"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address18, gridBagConstraints);
+
+        lFirst16.setText("Allergy Meds"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst16, gridBagConstraints);
+
+        address19.setColName("med_tetboosterdate"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address19, gridBagConstraints);
+
+        lFirst17.setText("Tetanus Date"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst17, gridBagConstraints);
+
+        address20.setColName("emer_home"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address20, gridBagConstraints);
+
+        lFirst18.setText("Phone (home)"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst18, gridBagConstraints);
+
+        lFirst19.setText("Meds"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        MedPanel.add(lFirst19, gridBagConstraints);
+
+        address21.setColName("med_curmeds"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(address21, gridBagConstraints);
+
+        FirstMiddleLast6.setLayout(new java.awt.GridBagLayout());
+
+        lFirst20.setText("Emergency Contact"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        FirstMiddleLast6.add(lFirst20, gridBagConstraints);
+
+        firstname7.setColName("emer_name"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.5;
+        FirstMiddleLast6.add(firstname7, gridBagConstraints);
+
+        firstname8.setColName("emer_rel"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.5;
+        FirstMiddleLast6.add(firstname8, gridBagConstraints);
+
+        lFirst21.setText("(relation)"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        FirstMiddleLast6.add(lFirst21, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        MedPanel.add(FirstMiddleLast6, gridBagConstraints);
+
+        AdultTabs.addTab("Medical", MedPanel);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -1907,7 +2281,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
             jPanel10Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel10Layout.createSequentialGroup()
                 .add(jPanel11, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(2496, Short.MAX_VALUE))
+                .addContainerGap(2501, Short.MAX_VALUE))
         );
 
         jTabbedPane3.addTab("Misc.", jPanel10);
@@ -2548,6 +2922,14 @@ private void doUpdateSelect(SqlRun str) throws Exception
 		}});
 		// TODO add your handling code here:
 }//GEN-LAST:event_bRecalcTuitionActionPerformed
+
+	private void jBoolCheckbox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBoolCheckbox1ActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_jBoolCheckbox1ActionPerformed
+
+	private void jBoolCheckbox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBoolCheckbox2ActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_jBoolCheckbox2ActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2564,8 +2946,11 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JPanel FirstMiddleLast1;
     private javax.swing.JPanel FirstMiddleLast3;
     private javax.swing.JPanel FirstMiddleLast4;
+    private javax.swing.JPanel FirstMiddleLast5;
+    private javax.swing.JPanel FirstMiddleLast6;
     private javax.swing.JScrollPane GroupScrollPanel;
     private javax.swing.JPanel HouseholdPanel;
+    private javax.swing.JPanel MedPanel;
     private javax.swing.JPanel ObsoleteStuff;
     private javax.swing.JPanel Org;
     private javax.swing.JPanel Parent2Panel;
@@ -2581,17 +2966,31 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JTabbedPane StudentTab;
     private javax.swing.JPanel TermRegPanel;
     private citibob.swing.typed.JTypedTextField address1;
+    private citibob.swing.typed.JTypedTextField address10;
+    private citibob.swing.typed.JTypedTextField address11;
+    private citibob.swing.typed.JTypedTextField address12;
+    private citibob.swing.typed.JTypedTextField address13;
+    private citibob.swing.typed.JTypedTextField address14;
+    private citibob.swing.typed.JTypedTextField address15;
+    private citibob.swing.typed.JTypedTextField address16;
+    private citibob.swing.typed.JTypedTextField address17;
+    private citibob.swing.typed.JTypedTextField address18;
+    private citibob.swing.typed.JTypedTextField address19;
     private citibob.swing.typed.JTypedTextField address2;
+    private citibob.swing.typed.JTypedTextField address20;
+    private citibob.swing.typed.JTypedTextField address21;
     private citibob.swing.typed.JTypedTextField address3;
     private citibob.swing.typed.JTypedTextField address4;
     private citibob.swing.typed.JTypedTextField address5;
     private citibob.swing.typed.JTypedTextField address6;
     private citibob.swing.typed.JTypedTextField address7;
     private citibob.swing.typed.JTypedTextField address8;
+    private citibob.swing.typed.JTypedTextField address9;
     private javax.swing.JPanel addressPanel;
     private javax.swing.JPanel addressPanel1;
     private javax.swing.JPanel addressPanel2;
     private javax.swing.JPanel addressPanel3;
+    private javax.swing.JPanel addressPanel4;
     private javax.swing.JButton bAddEnrollment;
     private javax.swing.JButton bCash;
     private javax.swing.JButton bCc;
@@ -2616,6 +3015,7 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JTypedTextField city1;
     private citibob.swing.typed.JTypedTextField city2;
     private citibob.swing.typed.JTypedTextField city3;
+    private citibob.swing.typed.JTypedTextField city4;
     private javax.swing.JPanel controller1;
     private citibob.swing.typed.JTypedDateChooser dtSigned;
     private citibob.swing.typed.JTypedTextField email1;
@@ -2631,8 +3031,12 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JTypedTextField firstname1;
     private citibob.swing.typed.JTypedTextField firstname3;
     private citibob.swing.typed.JTypedTextField firstname4;
+    private citibob.swing.typed.JTypedTextField firstname7;
+    private citibob.swing.typed.JTypedTextField firstname8;
     private offstage.gui.GroupPanel householdPhonePanel;
     private citibob.swing.typed.JBoolCheckbox isorg;
+    private citibob.swing.typed.JBoolCheckbox jBoolCheckbox1;
+    private citibob.swing.typed.JBoolCheckbox jBoolCheckbox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2659,6 +3063,7 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -2690,9 +3095,23 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JTypedLabel lEntityID;
     private javax.swing.JLabel lFirst;
     private javax.swing.JLabel lFirst1;
+    private javax.swing.JLabel lFirst10;
+    private javax.swing.JLabel lFirst11;
+    private javax.swing.JLabel lFirst12;
+    private javax.swing.JLabel lFirst13;
+    private javax.swing.JLabel lFirst14;
+    private javax.swing.JLabel lFirst15;
+    private javax.swing.JLabel lFirst16;
+    private javax.swing.JLabel lFirst17;
+    private javax.swing.JLabel lFirst18;
+    private javax.swing.JLabel lFirst19;
+    private javax.swing.JLabel lFirst20;
+    private javax.swing.JLabel lFirst21;
     private javax.swing.JLabel lFirst3;
     private javax.swing.JLabel lFirst4;
     private javax.swing.JLabel lFirst5;
+    private javax.swing.JLabel lFirst7;
+    private javax.swing.JLabel lFirst9;
     private javax.swing.JLabel lLast;
     private javax.swing.JLabel lLast1;
     private javax.swing.JLabel lLast3;
@@ -2729,6 +3148,7 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JTypedTextField state1;
     private citibob.swing.typed.JTypedTextField state2;
     private citibob.swing.typed.JTypedTextField state3;
+    private citibob.swing.typed.JTypedTextField state4;
     private offstage.accounts.gui.TransRegPanel transRegister;
     private citibob.swing.typed.JTypedTextField tuitionOverride;
     private offstage.swing.typed.EntityIDDropdown vParent1ID;
@@ -2739,6 +3159,7 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JTypedTextField zip1;
     private citibob.swing.typed.JTypedTextField zip2;
     private citibob.swing.typed.JTypedTextField zip3;
+    private citibob.swing.typed.JTypedTextField zip4;
     // End of variables declaration//GEN-END:variables
 
 //public static void showFrame(SqlRun str, final FrontApp fapp, String dupType, final String title)

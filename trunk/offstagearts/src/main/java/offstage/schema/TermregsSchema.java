@@ -23,6 +23,7 @@ import citibob.sql.*;
 import java.sql.*;
 import citibob.util.*;
 import citibob.types.*;
+import offstage.types.SqlPhone;
 
 public class TermregsSchema extends ConstSqlSchema
 {
@@ -46,7 +47,26 @@ throws SQLException
 		new SqlCol(new SqlDate(tz, true), "dtsigned"),
 		new SqlCol(new SqlDate(tz, true), "dtregistered"),
 //		new SqlCol(new SqlString(true), "rbplan"),
-		new SqlCol(new SqlEnum(kmodel), "programid")		
+		new SqlCol(new SqlEnum(kmodel), "programid"),
+		new SqlCol(new SqlString(true), "emer_rel"),
+		new SqlCol(new SqlString(true), "emer_name"),
+		new SqlCol(new SqlString(true), "emer_addr"),
+		new SqlCol(new SqlString(true), "emer_city"),
+		new SqlCol(new SqlString(true), "emer_state"),
+		new SqlCol(new SqlPhone(), "emer_home"),
+		new SqlCol(new SqlPhone(), "emer_work"),
+		new SqlCol(new SqlPhone(), "emer_cell"),
+		new SqlCol(new SqlString(true), "emer_doctorname"),
+		new SqlCol(new SqlString(true), "emer_healthins"),
+		new SqlCol(new SqlString(true), "emer_healthinsno"),
+		new SqlCol(new SqlString(true), "med_pasttreatment"),
+		new SqlCol(new SqlString(true), "med_curcondition"),
+		new SqlCol(new SqlString(true), "med_allergies"),
+		new SqlCol(new SqlString(true), "med_allergymeds"),
+		new SqlCol(new SqlString(true), "med_curmeds"),
+		new SqlCol(new SqlString(true), "med_tetboosterdate"),
+		new SqlCol(new SqlBool(false), "emer_filledout"),
+		new SqlCol(new SqlBool(false), "emer_signed")
 	};
 }
 

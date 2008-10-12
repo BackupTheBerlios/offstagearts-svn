@@ -301,6 +301,8 @@ java.util.Date xasOfDate, int lateDays)
 		// rss[1] = tuition and scholarship info from registrations
 		rs = rss[1];
 		while (rs.next()) {
+//System.out.println("payerid = " + rs.getInt("payerid"));
+//System.out.println("tuition = " + rs.getDouble("tuition"));
 			acct = acctMap.get(rs.getInt("payerid"));
 			acct.tuition_fullterm = rs.getDouble("tuition");
 			acct.scholarship_fullterm = rs.getDouble("scholarship");

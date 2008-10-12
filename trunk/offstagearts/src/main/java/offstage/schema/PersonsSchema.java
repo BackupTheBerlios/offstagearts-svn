@@ -36,6 +36,7 @@ throws SQLException
 //		new Column(new SqlString(1), "gender", false),
 		new SqlCol(new SqlChar(), "gender", false),
 		new SqlCol(new SqlDate(tz, true), "dob", false),
+		new SqlCol(new SqlBool(false), "dobapprox", false),
 		new SqlCol(new SqlString(100), "email", false),
 		new SqlCol(new SqlString(200), "url", false)
 	});
