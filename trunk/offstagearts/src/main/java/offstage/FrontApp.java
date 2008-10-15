@@ -241,7 +241,7 @@ throws Exception
 	configName = xconfigName;
 	
 	// Make sure we have the right version
-	version = new Version("1.6.1");
+	version = new Version("1.6.2");
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
 	sysVersion = svers.maxVersion;

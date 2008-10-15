@@ -315,7 +315,7 @@ final MailMsg msg, String idSql0, final String equeryXML, final Integer equeryid
 		}
 
 		String columnDelimiter = "t";
-		String rowDelimiter = "|";
+		String rowDelimiter = "l";
 		String textQualifier = "";
 				
 		// Create Group in JangoMail
@@ -334,6 +334,8 @@ final MailMsg msg, String idSql0, final String equeryXML, final Integer equeryid
 				fieldNames.toString(), importData.toString(),
 				columnDelimiter, rowDelimiter, textQualifier);
 System.out.println("importGroupMembersFromData return: " + ret);
+//System.out.println("===== fieldNames:\n" + fieldNames.toString() + "\n================");
+//System.out.println("===== importData:\n" + importData.toString() + "\n================");
 
 		// Email to the group
 		String fromEmail = usr + "@jangomail.com";
