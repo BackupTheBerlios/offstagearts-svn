@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.cleanse;
 
 import citibob.app.App;
+import citibob.reflect.ClassPathUtils;
 import citibob.sql.pgsql.*;
 import java.sql.*;
 import java.util.*;
@@ -34,6 +35,7 @@ import citibob.sql.*;
 import com.wcohen.ss.*;
 import com.wcohen.ss.api.*;
 import com.wcohen.ss.tokens.*;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -135,7 +137,7 @@ Map<Integer,Entity> loadNameMap(SqlRun str, int dbid)
 		" SELECT entityid,firstname,lastname,lastupdated" +
 		" from persons p" +
 		" where dbid = " + dbid +
-" and firstname like 'M%'" +
+//" and firstname like 'M%'" +
 //" and firstname = 'Margot' and lastname = 'Richardson'" +
 		" and not obsolete";
 
@@ -188,13 +190,13 @@ final Writer out)
 		final Comparator<Entity> swapOrder = (dbid0 == dbid1 ?
 			new LastModifiedComparator() :
 			new PositionComparator());
-		out.write(
-			" delete from dups" +
-			" using entities e0, entities e1" +
-			" where type=" + SqlString.sql(type) + "\n" +
-			" and dups.entityid0 = e0 and dups.entityid1 = e1" +
-			" and e0.dbid = " + SqlInteger.sql(dbid0) +
-			" and e1.dbid = " + SqlInteger.sql(dbid1) + ";\n");
+//		out.write(
+//			" delete from dups" +
+//			" using entities e0, entities e1" +
+//			" where type=" + SqlString.sql(type) + "\n" +
+//			" and dups.entityid0 = e0 and dups.entityid1 = e1" +
+//			" and e0.dbid = " + SqlInteger.sql(dbid0) +
+//			" and e1.dbid = " + SqlInteger.sql(dbid1) + ";\n");
 		Hist fullHist = new Hist(0,1,10);
 
 		//process(dbid0, nameMap0, dbid1, nameMap1, .95, "n");
@@ -248,7 +250,8 @@ public static void main(String[] args) throws Exception
 	final FrontApp app = new FrontApp(FrontApp.CT_CONFIGCHOOSE, null); //new File("/export/home/citibob/svn/offstage/config"));
 	boolean resGood = app.checkResources();
 	app.initWithDatabase();
-	Writer out = new FileWriter("dups.sql");
+	File dir = ClassPathUtils.getMavenProjectRoot();
+	Writer out = new FileWriter(new File(dir, "dups.sql"));
 	new MergePurge(app).findDups(app.sqlRun(), 1, 0, .95, out);
 	app.sqlRun().flush();
 	out.close();

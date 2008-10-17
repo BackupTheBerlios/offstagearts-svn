@@ -161,7 +161,7 @@ FrontApp fapp;
     }// </editor-fold>//GEN-END:initComponents
 
 private void miThrowExceptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miThrowExceptionActionPerformed
-	fapp.guiRun().run(this, new citibob.task.StRunnable() {
+	fapp.guiRun().run(this, new citibob.task.StTask() {
 	public void run(Statement st) throws Exception {
 		throw new Exception("Hello");
 	}});
@@ -173,7 +173,7 @@ private void miQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:
 }//GEN-LAST:event_miQuitActionPerformed
 
 private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-	fapp.guiRun().run(this, new citibob.task.StRunnable() {
+	fapp.guiRun().run(this, new citibob.task.StTask() {
 	public void run(Statement st) throws Exception {
 		AboutOffstageArts dialog = new AboutOffstageArts(OffstageGui.this, true);
 		dialog.initRuntime(fapp);

@@ -143,14 +143,14 @@ loop:   while (true) {
         return ret;
     }
 	
-/** Encrypt a full directory */
-public static void main(String[] args)
-{
-	ConfigFilesCrypt crypt = new ConfigFilesCrypt() {
-	public char[] getPassword() {
-		return readPassword(System.in);
-	}};
-	new ConfigFilesCrypt().encryptDir(new File(args[0]));
-}
+///** Encrypt a full directory */
+//public static void main(String[] args)
+//{
+//	ConfigFilesCrypt crypt = new ConfigFilesCrypt() {
+//	public char[] getPassword() {
+//		return readPassword(System.in);
+//	}};
+//	new ConfigFilesCrypt().encryptDir(new File(args[0]));
+//}
 
 }

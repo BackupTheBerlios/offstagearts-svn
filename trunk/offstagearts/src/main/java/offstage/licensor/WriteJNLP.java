@@ -62,6 +62,13 @@ public static String getReleaseVersion2()
 //	System.out.println(version);
 }
 
+
+static class JarAndType {
+	public String jar;
+	public String downloadType;
+	public String getJar() { return jar; }
+	public String getDownloadType() { return downloadType; }
+}
 public static void writeJNLP(VersionMap vm, boolean demo) throws Exception
 {
 	// Figure out which version number to use for file
@@ -89,7 +96,14 @@ public static void writeJNLP(VersionMap vm, boolean demo) throws Exception
 		String jarFile = str.substring(pos + exec.length());
 //System.out.println(str);
 //System.out.println(jurl.getUrl());
-		template.setAttribute("jars", vm.getJawsName(jarFile));
+		JarAndType jat = new JarAndType();
+			jat.jar = vm.getJawsName(jarFile);
+			jat.downloadType = "eager";		// Lazy didn't save us any loading in test
+//			jat.downloadType = (
+//				jat.jar.startsWith("offstage")
+////				jat.jar.startsWith("holyoke") || jat.jar.startsWith("offstage")
+//				? "eager" : "lazy");
+		template.setAttribute("jars", jat);
 	}
 
 	// Write out JNLP file

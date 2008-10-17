@@ -201,13 +201,18 @@ void loadPropFile(Properties props, String name) throws IOException
 	InputStream in;
 	
 	// First: load JAR-based properties
-	in = getClass().getClassLoader().getResourceAsStream("offstage/config/" + name);
+	URL url = getClass().getClassLoader().getResource("offstage/config/" + name);
+System.out.println("loadPropFile: " + url);
+//	in = getClass().getClassLoader().getResourceAsStream("offstage/config/" + name);
+	in = url.openStream();
 	props.load(in);
 	in.close();
 
 	// Next: Override with anything in user-created overrides
+//System.out.println("loadPropFile: configURL = " + configURL);
 	if (configURL != null) {
-		URL url = new URL(configURL, name);
+		url = new URL(configURL, name);
+//System.out.println("configURL = " + configURL + "\nURL = " + url);
 		in = url.openStream();
 		props.load(in);
 		in.close();
@@ -224,6 +229,10 @@ Properties loadProps() throws IOException
 	loadPropFile(props, os + ".properties");
 	//if (inn != null) props.load(inn);
 
+//try {
+//	Thread.currentThread().sleep(100000);
+//} catch(InterruptedException e) {}
+	
 	return props;
 }
 // -------------------------------------------------------
@@ -279,12 +288,13 @@ throws Exception
 			configName = "Demo";
 		} break;
 		case CT_OALAUNCH : {
-			configURL = getClass().getClassLoader().getResource("offstage/config/oalaunch");
+			configURL = getClass().getClassLoader().getResource("oalaunch/config/");
 			configName = xconfigName;		// change later
 		} break;
 	}
 
 //	if (configDir == null) System.exit(0);
+//configURL = getClass().getClassLoader().getResource("offstage/config/");
 	
 	// Load up properties from the configuration
 	props = loadProps();

@@ -16,20 +16,23 @@ mkdir -p $TMP/jar
 
 pushd $TMP/jar
 jar xvf $OALAUNCH/target/oalaunch*.jar
-\rm -rf offstage/config/*
+\rm -rf oalaunch/config/*
+
+echo >oalaunch/oalaunch.properties
 
 # Copy the configuration directory
-(cd $CONFIGDIR; tar cf - .) | (cd offstage/config; tar xvf -)
+(cd $CONFIGDIR; tar cf - .) | (cd oalaunch/config; tar xvf -)
 
 # Remove spurious SVN stuff
-\rm -rf `find offstage/config -name .svn`
+\rm -rf `find oalaunch/config -name .svn`
 
 # Set up the name
-#echo $CONFIGNAME >offstage/configname.txt
+#echo $CONFIGNAME >oalaunch/configname.txt
 
 # Set up the JNLP File
-rm offstage/*.jnlp*
-cp $OFFSTAGEARTS/jaws/jnlp/offstagearts_oalaunch-$VERSION.jnlp.template offstage/offstagearts.jnlp.template
+rm oalaunch/*.jnlp*
+#cp $OFFSTAGEARTS/jaws/jnlp/offstagearts_oalaunch-$VERSION.jnlp.template oalaunch/offstagearts.jnlp.template
+echo 'jnlp.template.url = http://offstagearts.org/releases/offstagearts/offstagearts_oalaunch-'$VERSION'.jnlp.template' >>oalaunch/oalaunch.properties
 
 # Jar it back up
 jar cvfm ../tmp.jar META-INF/MANIFEST.MF .
@@ -38,5 +41,5 @@ jar cvfm ../tmp.jar META-INF/MANIFEST.MF .
 jarsigner -storepass keyst0re ../tmp.jar offstagearts
 
 popd
-rm -f $OUTJAR
-mv $TMP/tmp.jar $OUTJAR
+rm -f "$OUTJAR"
+mv $TMP/tmp.jar "$OUTJAR"

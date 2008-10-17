@@ -27,6 +27,7 @@ throws ClassNotFoundException
 	final Properties p2 = new Properties();
 	final String url;
 
+System.out.println("db.driverclass = " + props.getProperty("db.driverclass", null));
 	Class.forName(props.getProperty("db.driverclass", null));
 	p2.setProperty("user", props.getProperty("db.user", null));
 

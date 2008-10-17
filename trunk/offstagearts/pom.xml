@@ -141,7 +141,7 @@ lib/xstream-1.2.2.jar
     <dependency>
             <groupId>org.citibob</groupId>
             <artifactId>holyokefw</artifactId>
-            <version>1.1.5</version>
+            <version>1.1.6</version>
             <scope>compile</scope>
     </dependency>
     <dependency>
