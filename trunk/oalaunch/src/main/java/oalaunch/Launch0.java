@@ -3,19 +3,15 @@ package oalaunch;
 import citibob.gui.BareBonesOpen;
 import citibob.reflect.ClassPathUtils;
 import citibob.reflect.JarURL;
-import citibob.template.ResourceTemplate;
 import citibob.template.Template;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Hello world!
@@ -39,14 +35,14 @@ public class Launch0
 //		URL thisJarURL = thisJarFile.toURL();
 		System.out.println("thisJarURL = " + thisJarURL);
 		
-		// Get the configuration name from a resource file
+		// Get the configuration name from the name of our JAR file
 		String surl = thisJarURL.getFile();
-System.out.println(surl);
+//System.out.println(surl);
 		int slash = surl.lastIndexOf('/');
 		int dot = surl.indexOf('.', slash+1);
-System.out.println(slash);
-System.out.println(dot);
-		String configName = surl.substring(slash+1,dot);
+//System.out.println(slash);
+//System.out.println(dot);
+		String configName = URLDecoder.decode(surl.substring(slash+1,dot), "UTF-8");
 		
 //		// Get the configuration name from a resource file
 //		InputStream in = Launch0.class.getClassLoader().getResourceAsStream("offstage/configname.txt");
@@ -55,11 +51,29 @@ System.out.println(dot);
 //System.out.println("configName = " + configName);
 //		bin.close();
 		
-		// Create temporary .JNLP file
-		// Copy the JNLP file, filling in template
+		// Load up our configuration properties
+		Properties oalaunch = new Properties();
+		ClassLoader clr = Launch0.class.getClassLoader();
+		URL url = clr.getResource("oalaunch/oalaunch.properties");
+		InputStream in = url.openStream();
+		oalaunch.load(in);
+		in.close();
+
+		configName = oalaunch.getProperty("config.name", configName);
+		
+		// Get URL to load our JNLP template
+		URL templateURL = clr.getResource("oalaunch/offstagearts.jnlp.template");
+		String sTemplateURL = oalaunch.getProperty("jnlp.template.url", null);
+		if (sTemplateURL != null) templateURL = new URL(sTemplateURL);
+		
+System.out.println("sTemplateURL = " + sTemplateURL);
+System.out.println("templateURL = " + templateURL);
+		
+		// Create temporary .JNLP file based on the template
 		// This will insert our launcher jar as the first in the classpath,
-		// so it will override the correct .property files
-		Template jnlp = new ResourceTemplate("offstage/offstagearts.jnlp.template");
+		// so it will override the correct app.property, etc. files
+		Template jnlp = new Template(templateURL);
+		
 		jnlp.put("oalaunch.jar", thisJarURL.toString());
 		jnlp.put("oalaunch", "true");
 		jnlp.put("configName", configName);
@@ -107,25 +121,25 @@ System.out.println("jnlpFile = " + jnlpFile);
 //    }
 
 
-static File copyResourceToFile(String name) throws IOException
-{
-	int dot = name.indexOf('.');
-	String prefix = name.substring(0,dot);
-	String suffix = name.substring(dot+1);
-	
-	InputStream in = Launch0.class.getClassLoader().getResourceAsStream(
-		"offstage/config/" + prefix + suffix);
-	File outFile = File.createTempFile(prefix, suffix);
-	outFile.deleteOnExit();
-	OutputStream out = new FileOutputStream(outFile);
-	byte[] buf = new byte[8192];
-	int n;
-	while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
-	
-	
-	in.close();
-	out.close();
-	
-	return outFile;
-}
+//static File copyResourceToFile(String name) throws IOException
+//{
+//	int dot = name.indexOf('.');
+//	String prefix = name.substring(0,dot);
+//	String suffix = name.substring(dot+1);
+//	
+//	InputStream in = Launch0.class.getClassLoader().getResourceAsStream(
+//		"oalaunch/config/" + prefix + suffix);
+//	File outFile = File.createTempFile(prefix, suffix);
+//	outFile.deleteOnExit();
+//	OutputStream out = new FileOutputStream(outFile);
+//	byte[] buf = new byte[8192];
+//	int n;
+//	while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+//	
+//	
+//	in.close();
+//	out.close();
+//	
+//	return outFile;
+//}
 }
