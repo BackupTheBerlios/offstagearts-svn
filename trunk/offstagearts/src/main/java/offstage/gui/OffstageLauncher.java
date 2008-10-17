@@ -56,9 +56,10 @@ public class OffstageLauncher {
 
 
 
-    /** Creates a new instance of FrameSetX */
-    public static void launch(boolean demo) throws Exception {
-		final FrontApp app = new FrontApp(demo); //new File("/export/home/citibob/svn/offstage/config"));
+    /** Creates a new instance of FrameSetX
+	 @param ctType How to find the configuration files (see FrontApp.CT_*  */
+    public static void launch(int ctType, String configName) throws Exception {
+		final FrontApp app = new FrontApp(ctType, configName); //new File("/export/home/citibob/svn/offstage/config"));
 		boolean resGood = app.checkResources();
 		app.initWithDatabase();
 		
@@ -83,9 +84,27 @@ public class OffstageLauncher {
 		System.setProperty("swing.metalTheme", "ocean");
 		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 		
+
+		int ctType;
+		String configName;
+		if (args.length == 0) {
+			ctType = FrontApp.CT_CONFIGCHOOSE;
+			configName = null;
+		} else {
+			if ("--demo".equals(args[0])) {
+				ctType = FrontApp.CT_DEMO;
+				configName = null;		// Means use default
+			} else if ("--oalaunch".equals(args[0])) {
+				ctType = FrontApp.CT_OALAUNCH;
+				configName = args[1];
+			} else {
+				ctType = FrontApp.CT_CONFIGSET;
+				configName = args[0];
+			}
+		}
+		
 		try {
-			boolean demo = (args != null && args.length > 0 && args[0] != null && args[0].toLowerCase().equals("demo"));
-			launch(demo);
+			launch(ctType, configName);
 //OffstageResSet.main(args);
 		} catch(Exception e) {
 			e.printStackTrace();

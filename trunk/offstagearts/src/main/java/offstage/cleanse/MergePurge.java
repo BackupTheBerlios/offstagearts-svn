@@ -245,7 +245,7 @@ final Writer out)
 }
 public static void main(String[] args) throws Exception
 {
-	final FrontApp app = new FrontApp(false); //new File("/export/home/citibob/svn/offstage/config"));
+	final FrontApp app = new FrontApp(FrontApp.CT_CONFIGCHOOSE, null); //new File("/export/home/citibob/svn/offstage/config"));
 	boolean resGood = app.checkResources();
 	app.initWithDatabase();
 	Writer out = new FileWriter("dups.sql");

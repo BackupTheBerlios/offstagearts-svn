@@ -60,7 +60,7 @@ public String getJawsName(String mavenName)
 	String destName = mavenName;
 	
 	// Chop off third part of version number
-	if (mavenName.contains("offstagearts") || mavenName.contains("holyoke")) {
+	if (mavenName.contains("offstagearts")) {// || mavenName.contains("holyoke")) {
 System.out.println(mavenName);
 		int dot = mavenName.indexOf('.');
 		dot = mavenName.indexOf('.', dot+1);

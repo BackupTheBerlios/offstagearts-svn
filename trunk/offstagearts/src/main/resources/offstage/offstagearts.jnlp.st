@@ -18,12 +18,20 @@
    <resources>     
 	<j2se version="1.5"
 	      href="http://java.sun.com/products/autodl/j2se"/>
-
+$if(oalaunch)$<jar href="%oalaunch.jar%" />
+$endif$
 $jars:{<jar href="$jarBase$$it$"/>
 }$
 
    </resources>
+$if(oalaunch)$
+   <application-desc main-class="oalaunch.Launch1">
+$else$
    <application-desc main-class="offstage.gui.OffstageLauncher">
+$endif
+$if(oalaunch)$<argument>--oalaunch</argument>
+<argument>%configName%</argument>
+$endif$
 $args:{		<argument>$it$</argument>
 }$
 	</application-desc>

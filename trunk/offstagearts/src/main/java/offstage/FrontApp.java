@@ -52,6 +52,7 @@ import javax.swing.JOptionPane;
 import offstage.config.ConfigChooser;
 import offstage.config.UpgradesDialog;
 import offstage.datatab.DataTabSet;
+import offstage.licensor.WriteJNLP;
 import offstage.resource.OffstageResSet;
 
 public class FrontApp extends ReportsApp
@@ -205,13 +206,11 @@ void loadPropFile(Properties props, String name) throws IOException
 	in.close();
 
 	// Next: Override with anything in user-created overrides
-	if (configDir != null) {
-		File f = new File(configDir, name);
-		if (f.exists()) {
-			in = new FileInputStream(f);
-			props.load(in);
-			in.close();
-		}
+	if (configURL != null) {
+		URL url = new URL(configURL, name);
+		in = url.openStream();
+		props.load(in);
+		in.close();
 	}
 }	
 Properties loadProps() throws IOException
@@ -228,20 +227,20 @@ Properties loadProps() throws IOException
 	return props;
 }
 // -------------------------------------------------------
-public FrontApp(boolean demo)
-throws Exception
-{
-	this(null, demo);
-}
-public FrontApp(String xconfigName, boolean demo)
+public static final int CT_CONFIGCHOOSE = 0;	// Connect via configuration directory
+public static final int CT_CONFIGSET = 1;		// Connect to pre-specified configuration directory
+public static final int CT_DEMO = 2;	// Use internal demo configuration
+public static final int CT_OALAUNCH = 3;	// Use "internal" oalaunch configuration
+
+public FrontApp(int ctType, String xconfigName)
+//public FrontApp(String xconfigName, int ctType)
 throws Exception
 //SQLException, java.io.IOException, javax.mail.internet.AddressException,
 //java.security.GeneralSecurityException
-{
-	configName = xconfigName;
-	
+{	
 	// Make sure we have the right version
-	version = new Version("1.6.2");
+	version = new Version("1.7.0");
+//	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
 	sysVersion = svers.maxVersion;
@@ -255,24 +254,34 @@ throws Exception
 	
 	// Choose the configuration directory, so we can get the rest of
 	// the configuration
-	if (demo) {
-		configDir = null;
-		configName = "OffstageArts Demo";		
-	} else {
-		Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
-		String sdir = null;       
-		if (configName != null) sdir = configPrefs.get(configName, null);
-		if (sdir != null) {
-			configDir = new File(sdir);
-		} else {
+	switch(ctType) {
+		case CT_CONFIGSET : {
+			Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
+			String sdir = configPrefs.get(xconfigName, null);
+			configURL = new File(sdir).toURL();
+			configName = xconfigName;
+		} break;
+		case CT_CONFIGCHOOSE : {
+			Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
 			ConfigChooser dialog = new ConfigChooser(configPrefs,
 				new JavaSwingerMap(TimeZone.getDefault()), swingPrefs, userRoot(), version.toString());
 			dialog.setVisible(true);
-			demo = dialog.isDemo();
-			System.out.println(dialog.getConfigFile());
-			configDir = dialog.getConfigFile();
-			configName = dialog.getConfigName();
-		}
+			if (dialog.isDemo()) {
+				configURL = null;
+				configName = "Demo";
+			} else {
+				configURL = dialog.getConfigFile().toURL();
+				configName = dialog.getConfigName();
+			}
+		} break;
+		case CT_DEMO : {
+			configURL = null;
+			configName = "Demo";
+		} break;
+		case CT_OALAUNCH : {
+			configURL = getClass().getClassLoader().getResource("offstage/config/oalaunch");
+			configName = xconfigName;		// change later
+		} break;
 	}
 
 //	if (configDir == null) System.exit(0);
@@ -324,15 +333,14 @@ throws Exception
 		this.pool = new RealConnPool(new OffstageConnFactory(props));
 		this.sqlRun = new BatchSqlRun(pool, expHandler);
 
-		// Load the crypto keys
-		if (configDir != null) {
-			String pubLeaf = props.getProperty("crypt.pubdir");
-			File pubDir = (pubLeaf.charAt(0) == File.separatorChar ?
-				new File(pubLeaf) : new File(configDir, pubLeaf)); 
-
-			String privLeaf = props.getProperty("crypt.privdir");
-			File privDir = (privLeaf.charAt(0) == File.separatorChar ?
-				new File(privLeaf) : new File(configDir, privLeaf)); 
+//		// Load the crypto keys
+//		// These must be loaded from a directory on disk, since they
+//		// can be saved as well.  Unlike the stuff packaged in the jar
+//		// file, they are NOT read-only.
+		// We need a way to specify where the crypto keys
+		if (configURL != null) {
+			File pubDir = new File(props.getProperty("crypt.pubdir"));
+			File privDir = new File(props.getProperty("crypt.privdir"));
 			keyRing = new KeyRing(pubDir, privDir);
 			if (!keyRing.pubKeyLoaded()) {
 				// Alert user...?

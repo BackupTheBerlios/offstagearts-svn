@@ -31,7 +31,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 /**
- *
+ * Updates OA's internal list of JAR files --- used to set up licensing screen.
  * @author citibob
  */
 public class WriteJarList {

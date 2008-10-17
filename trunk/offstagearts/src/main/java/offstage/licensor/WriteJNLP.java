@@ -40,7 +40,7 @@ public class WriteJNLP {
 
 static String exec = "executable-netbeans.dir/";
 
-public static String getReleaseVersion()
+public static String getReleaseVersion3()
 {
 	URLClassLoader cl = (URLClassLoader)WriteJNLP.class.getClassLoader();
 	URL[] urls = cl.getURLs();
@@ -48,8 +48,16 @@ public static String getReleaseVersion()
 //System.out.println(surl);
 	int slash = surl.lastIndexOf('/');
 	int dash = surl.indexOf('-', slash+1);
-	int dot = surl.lastIndexOf('.');
-	String version = surl.substring(dash+1,dot);
+	String version = surl.substring(dash+1);
+	return version;
+//	System.out.println(version);
+}
+/** Two-level version number obtained from CLASSPATH */
+public static String getReleaseVersion2()
+{
+	String ver = getReleaseVersion3();
+	int dot = ver.lastIndexOf('.');
+	String version = ver.substring(0,dot);
 	return version;
 //	System.out.println(version);
 }
@@ -57,19 +65,20 @@ public static String getReleaseVersion()
 public static void writeJNLP(VersionMap vm, boolean demo) throws Exception
 {
 	// Figure out which version number to use for file
-	String releaseVersion = getReleaseVersion();
+	String releaseVersion = getReleaseVersion2();
 	
 	String fileVersion = vm.getFileVersion(releaseVersion);
 	
 	// ===========================
 	// Write the .jnlp file
+// TODO: should really use the resource mechanism here, no need to muck around in the Maven project.
 	File projDir = ClassPathUtils.getMavenProjectRoot();
 	File prefsFile = new File(projDir, "src/main/resources/offstage/offstagearts.jnlp.st");
 	StringTemplate template = new StringTemplate(FileUtils.readFileToString(prefsFile));
 		template.setAttribute("releaseVersion", fileVersion);
 		template.setAttribute("jarBase", "/jars/");
 //		for (String arg : args) template.setAttribute("args", arg);
-		if (demo) template.setAttribute("args", "demo");
+		if (demo) template.setAttribute("args", "--demo");
 		
 	// Add jars to the file
 	List<JarURL> jurls = ClassPathUtils.getClassPath();
@@ -87,8 +96,14 @@ public static void writeJNLP(VersionMap vm, boolean demo) throws Exception
 	File jnlpDir = new File(projDir, "jaws/jnlp");
 	jnlpDir.mkdirs();
 	File outFile = new File(jnlpDir, (demo ? "offstagearts_demo-" : "offstagearts-") + fileVersion + ".jnlp");
-
 	FileUtils.writeStringToFile(outFile, template.toString());
+
+	// Write out second JNLP file template, to be used by the oalaunch launcher.
+	if (!demo) {
+		template.setAttribute("oalaunch", true);
+		outFile = new File(jnlpDir, "offstagearts_oalaunch-" + fileVersion + ".jnlp.template");
+		FileUtils.writeStringToFile(outFile, template.toString());
+	}
 }
 
 public static VersionMap newVersionMap(String arg)
