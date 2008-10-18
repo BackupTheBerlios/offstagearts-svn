@@ -3,9 +3,12 @@
 
 <jnlp spec="1.0+"
       codebase="http://offstagearts.org/releases/offstagearts"
-      href="offstagearts-$releaseVersion$.jnlp">
+$if(oalaunch)$>$else$
+      href="offstagearts_$launchType$-$releaseVersion$.jnlp">
+$endif$
+
    <information>
-      <title>OffstageArts $releaseVersion$</title>
+      <title>OffstageArts $launchType$ $releaseVersion$</title>
       <vendor>OffstageArts.org</vendor>
       <description>Arts Management Database Client</description>
       <homepage href="http://offstagearts.org"/>
@@ -24,15 +27,5 @@ $jars:{<jar href="$jarBase$$it.jar$" download="$it.downloadType$"/>
 }$
 
    </resources>
-$if(oalaunch)$
-   <application-desc main-class="oalaunch.Launch1">
-$else$
-   <application-desc main-class="offstage.gui.OffstageLauncher">
-$endif$
-$if(oalaunch)$<argument>--oalaunch</argument>
-<argument>%configName%</argument>
-$endif$
-$args:{		<argument>$it$</argument>
-}$
-	</application-desc>
+   <application-desc main-class="$mainClass$" />
 </jnlp>

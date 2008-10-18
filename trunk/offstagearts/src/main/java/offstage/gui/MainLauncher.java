@@ -48,7 +48,7 @@ import offstage.config.*;
  *
  * @author citibob
  */
-public class OffstageLauncher {
+public class MainLauncher {
 
 //protected OffstageGui offstageGui;
 //protected ConsoleFrame consoleFrame;
@@ -56,35 +56,43 @@ public class OffstageLauncher {
 
 
 
-    /** Creates a new instance of FrameSetX
-	 @param ctType How to find the configuration files (see FrontApp.CT_*  */
-    public static void launch(int ctType, String configName) throws Exception {
+/** Creates a new instance of FrameSetX
+ @param ctType How to find the configuration files (see FrontApp.CT_* 
+ @configName Dependingon the ctType, the name of the configuration. */
+public static void launch(int ctType, String configName) throws Exception {
+	/* see:
+	http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6604109
+	http://www.jasperforge.org/sf/go/artf2423
+	*/
+	System.setProperty("sun.java2d.print.polling", "false");
+
+	System.setProperty("swing.metalTheme", "ocean");
+	UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+
+
+	try {
 		final FrontApp app = new FrontApp(ctType, configName); //new File("/export/home/citibob/svn/offstage/config"));
 		boolean resGood = app.checkResources();
 		app.initWithDatabase();
-		
+
 		if (resGood) {
 			app.frameSet().openFrame("maintenance");
 		} else {
 			app.frameSet().openFrame("config");
 		}
 		app.sqlRun().flush();
-    }
+	} catch(Exception e) {
+		e.printStackTrace();
+		MailExpDialog dialog = new MailExpDialog(null, "OffstageArts", e);
+		dialog.setVisible(true);
+		System.exit(-1);
+	}
+}
 
 
 	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
-		/* see:
-		http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6604109
-		http://www.jasperforge.org/sf/go/artf2423
-		*/
-		System.setProperty("sun.java2d.print.polling", "false");
-		
-		System.setProperty("swing.metalTheme", "ocean");
-		UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-		
-
 		int ctType;
 		String configName;
 		if (args.length == 0) {
@@ -103,15 +111,7 @@ public class OffstageLauncher {
 			}
 		}
 		
-		try {
-			launch(ctType, configName);
-//OffstageResSet.main(args);
-		} catch(Exception e) {
-			e.printStackTrace();
-			MailExpDialog dialog = new MailExpDialog(null, "OffstageArts", e);
-			dialog.setVisible(true);
-			System.exit(-1);
-		}
+		launch(ctType, configName);
     }
 
 }

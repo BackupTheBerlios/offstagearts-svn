@@ -200,7 +200,7 @@ void loadPropFile(Properties props, String name) throws IOException
 {
 	InputStream in;
 	
-	// First: load JAR-based properties
+	// First: load JAR-based (default) properties
 	URL url = getClass().getClassLoader().getResource("offstage/config/" + name);
 System.out.println("loadPropFile: " + url);
 //	in = getClass().getClassLoader().getResourceAsStream("offstage/config/" + name);
@@ -210,12 +210,14 @@ System.out.println("loadPropFile: " + url);
 
 	// Next: Override with anything in user-created overrides
 //System.out.println("loadPropFile: configURL = " + configURL);
-	if (configURL != null) {
+//	if (configURL != null) {
+	try {
 		url = new URL(configURL, name);
-//System.out.println("configURL = " + configURL + "\nURL = " + url);
 		in = url.openStream();
 		props.load(in);
 		in.close();
+	} catch(Exception e) {
+		// It didn't exit!
 	}
 }	
 Properties loadProps() throws IOException
@@ -284,12 +286,33 @@ throws Exception
 			}
 		} break;
 		case CT_DEMO : {
-			configURL = null;
+			configURL = getClass().getClassLoader().getResource("offstage/demo/");
 			configName = "Demo";
 		} break;
 		case CT_OALAUNCH : {
 			configURL = getClass().getClassLoader().getResource("oalaunch/config/");
-			configName = xconfigName;		// change later
+			
+			// Load up our OALaunch configuration properties
+			Properties oalaunch = new Properties();
+			ClassLoader clr = getClass().getClassLoader();
+			URL url = clr.getResource("oalaunch/oalaunch.properties");
+			InputStream in = url.openStream();
+			oalaunch.load(in);
+			in.close();
+
+			configName = oalaunch.getProperty("config.name", "OALaunch");
+if (configName == null) configName = "<null>";
+if ("".equals(configName)) configName = "<blank>";
+			
+			// Strip off slashes and stuff
+			int slash = configName.lastIndexOf('/');
+			if (slash >= 0) configName = configName.substring(slash+1);
+			slash = configName.lastIndexOf('\\');
+			if (slash >= 0) configName = configName.substring(slash+1);
+			slash = configName.lastIndexOf(".jar");
+			if (slash >= 0) configName = configName.substring(0, slash);
+			
+			
 		} break;
 	}
 

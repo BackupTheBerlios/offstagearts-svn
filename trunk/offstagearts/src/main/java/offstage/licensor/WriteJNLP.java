@@ -63,13 +63,18 @@ public static String getReleaseVersion2()
 }
 
 
+// The three JNLP files we write
+static final int JNLP_MAIN = 0;
+static final int JNLP_OALAUNCH = 1;
+static final int JNLP_DEMO = 2;
+
 static class JarAndType {
 	public String jar;
 	public String downloadType;
 	public String getJar() { return jar; }
 	public String getDownloadType() { return downloadType; }
 }
-public static void writeJNLP(VersionMap vm, boolean demo) throws Exception
+public static void writeJNLP(VersionMap vm, int jnlpType) throws Exception
 {
 	// Figure out which version number to use for file
 	String releaseVersion = getReleaseVersion2();
@@ -84,8 +89,28 @@ public static void writeJNLP(VersionMap vm, boolean demo) throws Exception
 	StringTemplate template = new StringTemplate(FileUtils.readFileToString(prefsFile));
 		template.setAttribute("releaseVersion", fileVersion);
 		template.setAttribute("jarBase", "/jars/");
+		
+	String outFileName = null;
+	switch(jnlpType) {
+		case JNLP_MAIN :
+			outFileName = "offstagearts_main-" + fileVersion + ".jnlp";
+			template.setAttribute("mainClass", "offstage.gui.MainLauncher");
+			template.setAttribute("launchType", "main");
+		break;
+		case JNLP_OALAUNCH :
+			outFileName = "offstagearts_oalaunch-" + fileVersion + ".jnlp.template";
+			template.setAttribute("mainClass", "oalaunch.Launch1");// "offstage.gui.OALaunchLauncher");
+			template.setAttribute("launchType", "oalaunch");
+			template.setAttribute("oalaunch", true);
+		break;
+		case JNLP_DEMO :
+			outFileName = "offstagearts_demo-" + fileVersion + ".jnlp";
+			template.setAttribute("launchType", "demo");
+			template.setAttribute("mainClass", "offstage.gui.DemoLauncher");
+		break;
+	}
 //		for (String arg : args) template.setAttribute("args", arg);
-		if (demo) template.setAttribute("args", "--demo");
+//		if (demo) template.setAttribute("args", "--demo");
 		
 	// Add jars to the file
 	List<JarURL> jurls = ClassPathUtils.getClassPath();
@@ -109,15 +134,8 @@ public static void writeJNLP(VersionMap vm, boolean demo) throws Exception
 	// Write out JNLP file
 	File jnlpDir = new File(projDir, "jaws/jnlp");
 	jnlpDir.mkdirs();
-	File outFile = new File(jnlpDir, (demo ? "offstagearts_demo-" : "offstagearts-") + fileVersion + ".jnlp");
+	File outFile = new File(jnlpDir, outFileName);
 	FileUtils.writeStringToFile(outFile, template.toString());
-
-	// Write out second JNLP file template, to be used by the oalaunch launcher.
-	if (!demo) {
-		template.setAttribute("oalaunch", true);
-		outFile = new File(jnlpDir, "offstagearts_oalaunch-" + fileVersion + ".jnlp.template");
-		FileUtils.writeStringToFile(outFile, template.toString());
-	}
 }
 
 public static VersionMap newVersionMap(String arg)
@@ -133,8 +151,9 @@ public static VersionMap newVersionMap(String arg)
 public static void main(String[] args) throws Exception
 {
 	VersionMap vm = newVersionMap(args[0]);
-	writeJNLP(vm, false);
-	writeJNLP(vm, true);
+	writeJNLP(vm, JNLP_MAIN);
+	writeJNLP(vm, JNLP_OALAUNCH);
+	writeJNLP(vm, JNLP_DEMO);
 }
 
 }
