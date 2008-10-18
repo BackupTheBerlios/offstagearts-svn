@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * and open the template in the editor.
  */
 
-package citibob.gui;
+package oalaunch.citibob.gui;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,9 +1,9 @@
 package oalaunch;
 
-import citibob.gui.BareBonesOpen;
-import citibob.reflect.ClassPathUtils;
-import citibob.reflect.JarURL;
-import citibob.template.Template;
+import oalaunch.citibob.gui.BareBonesOpen;
+import oalaunch.citibob.reflect.ClassPathUtils;
+import oalaunch.citibob.reflect.JarURL;
+import oalaunch.citibob.template.Template;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
@@ -59,7 +59,7 @@ public class Launch0
 		oalaunch.load(in);
 		in.close();
 
-		configName = oalaunch.getProperty("config.name", configName);
+//		configName = oalaunch.getProperty("config.name", configName);
 		
 		// Get URL to load our JNLP template
 		URL templateURL = clr.getResource("oalaunch/offstagearts.jnlp.template");
@@ -76,7 +76,7 @@ System.out.println("templateURL = " + templateURL);
 		
 		jnlp.put("oalaunch.jar", thisJarURL.toString());
 		jnlp.put("oalaunch", "true");
-		jnlp.put("configName", configName);
+//		jnlp.put("configName", configName);
 		
 		File jnlpFile = File.createTempFile("offstagearts", ".jnlp");
 System.out.println("jnlpFile = " + jnlpFile);
