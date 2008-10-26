@@ -1,5 +1,11 @@
 \documentclass[11pt]{article}
 
+\setlength{\topmargin}{-.5in}
+\setlength{\textheight}{9in}    % 9 inch page
+\setlength{\textwidth}{5.5in}     % 5 3/4 inch line 
+\setlength{\oddsidemargin}{36pt}  % 1/4 inch (yields 1 1/4 inch left margin)
+\setlength{\evensidemargin}{36pt} % 1/4 inch
+
 \title{OffstageArts User Manual (draft)}
 
 \author{Robert Fischer}
@@ -34,26 +40,26 @@ The comparator part of an element specifies how an element is matched to its val
 
 \begin{description}
 
-\item{=} Matches if the column equals the value.  For example, ``lastname = Fischer''.  This comparator is \emph{case sensitive}: ``lastname = Fischer'' will mathc Robert Fischer, but ``lastname = fischer'' will not.
+\item{{\bf =}} Matches if the column equals the value.  For example, ``lastname = Fischer''.  This comparator is \emph{case sensitive}: ``lastname = Fischer'' will mathc Robert Fischer, but ``lastname = fischer'' will not.
 
-\item{$\lt\gt$} This is the opposite of {\tt =}.  It matches only if the column does \emph{not} equal the value.  For example, ``lastname $\lt\gt$ Fischer'' matches everyone whose last name is \emph{not} Fischer.
+\item{{\bf $<>$}} This is the opposite of {\tt =}.  It matches only if the column does \emph{not} equal the value.  For example, ``lastname $<>$ Fischer'' matches everyone whose last name is \emph{not} Fischer.
 
-\item{in} Matches if the column is in a set of values specified in the value column.  For example, ``lastname in Fischer,Jones,Smith'' would match everyone whose last name is Fischer, Jones or Smith.  Similarly, ``term in Fall 2008, Spring 2009'' matches everyone who was enrolled in the Fall 2008 or Spring 2009 terms.  The {\tt in} comparator can be powerful when assembling marketing mailing lists.
+\item{{\bf in}} Matches if the column is in a set of values specified in the value column.  For example, ``lastname in Fischer,Jones,Smith'' would match everyone whose last name is Fischer, Jones or Smith.  Similarly, ``term in Fall 2008, Spring 2009'' matches everyone who was enrolled in the Fall 2008 or Spring 2009 terms.  The {\tt in} comparator can be powerful when assembling marketing mailing lists.
 
-\item{$\gt$} For numerical and date column, this comparator matches if the value is greater than the column.  For example ``dob $\gt$ 4/1/2008'' maches everyone born AFTER April 1, 2008.  NOTE: It does \emph{not} match people born \emph{on} April 1.
+\item{{\bf $>$}} For numerical and date column, this comparator matches if the value is greater than the column.  For example ``dob $>$ 4/1/2008'' maches everyone born AFTER April 1, 2008.  NOTE: It does \emph{not} match people born \emph{on} April 1.
 
-\item{$\gt=$} This comparator is like $\gt$, except it also matches if the column \emph{equals} the value.  For example, ``dob $\gt=$ 4/1/2008'' matches everyone born \emph{on or after} April 1, 2008.
+\item{{\bf $>=$}} This comparator is like $>$, except it also matches if the column \emph{equals} the value.  For example, ``dob $>=$ 4/1/2008'' matches everyone born \emph{on or after} April 1, 2008.
 
-\item{$\lt$}
+\item{{\bf $<$}}
 
-\item{$lt=$}
+\item{{\bf $lt=$}}
 
-\item{ilike}
+\item{{\bf ilike}}
 
-\item{not ilike}
+\item{{\bf not ilike}}
 
-\item{similar to}
-\item{not similar to}
+\item{{\bf similar to}}
+\item{{\bf not similar to}}
 
 \end{description}
 
@@ -71,13 +77,13 @@ A query composed of elements and clauses is used to select a set of records from
 
 \begin{description}
 
-\item{Main Person} No modification is performed.  The query returned is the query specified.
+\item{{\bf Main Person}} No modification is performed.  The query returned is the query specified.
 
-\item{Head of Household} The query returns the head of household for each record specified.  If two records were specified from the same household, only one head of household record is returned for them.  This option is commonly used for SnailMail marketing campaigns.  Not only does it ensure that no more than one mailing is sent to each household, it also ensures that parents are contacted, rather than their children.
+\item{{\bf Head of Household}} The query returns the head of household for each record specified.  If two records were specified from the same household, only one head of household record is returned for them.  This option is commonly used for SnailMail marketing campaigns.  Not only does it ensure that no more than one mailing is sent to each household, it also ensures that parents are contacted, rather than their children.
 
-\item{parent} The query returns the parent of each record specified (parent is set up in the School Registration screen).  This option is used when making school-related general mailings.
+\item{{\bf parent}} The query returns the parent of each record specified (parent is set up in the School Registration screen).  This option is used when making school-related general mailings.
 
-\item{payer} The query returns the payer of each record specified (payer is set up on a per-term basis in the School Registratio nscreen).  Since payers are set up per-term, the query must make sense for a particular term.   In particular, the query must include an element of the form ``terms = xxxxx.''
+\item{{\bf payer}} The query returns the payer of each record specified (payer is set up on a per-term basis in the School Registratio nscreen).  Since payers are set up per-term, the query must make sense for a particular term.   In particular, the query must include an element of the form ``terms = xxxxx.''
 
 \end{description}
 
@@ -87,7 +93,7 @@ There is currently no easy way to query all records of the database.  This will 
 
 \subsubsection{Nulls}
 
-Comparators NEVER match a null field (except for $=$ null or $\lt\gt$ null).
+Comparators NEVER match a null field (except for $=$ null or $<>$ null).
 
 \subsubsection{Missing Tabs}
 
@@ -116,8 +122,6 @@ Future work on the query system includes:
  \item Make an easy way to query all records
 \end{itemize}
 
-\end{document}
-
 \section{Example: Annual Appeal}
 
 We will describe now how to generate an annual appeal mailing.  This consists of a few steps and decisions:
@@ -134,7 +138,7 @@ For small organizations, one might wish to send to all (valid) addresses.  This 
 
 Larger or older organizations need to be more selective.  It is common for an older organization to accumulate many inactive records.  The query needed to determine active records will vary by situation.
 
-\subsetion{Mailing Labels}
+\subsection{Mailing Labels}
 
 If mailing labels are desired, click on ``mailing labels'' under the ``Action'' tab of the Development window.  Note that mailing labels will only print for records that seem to have a valid name and address.  Incomplete records will be ignored, even if they were selected from the query.
 

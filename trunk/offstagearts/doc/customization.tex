@@ -1,5 +1,11 @@
 \documentclass[11pt]{article}
 
+\setlength{\topmargin}{-.5in}
+\setlength{\textheight}{9in}    % 9 inch page
+\setlength{\textwidth}{5.5in}     % 5 3/4 inch line 
+\setlength{\oddsidemargin}{36pt}  % 1/4 inch (yields 1 1/4 inch left margin)
+\setlength{\evensidemargin}{36pt} % 1/4 inch
+
 \title{OffstageArts Features and Design}
 
 \author{Robert Fischer}
@@ -11,9 +17,7 @@
 
 \maketitle
 
-\section{Connection Configuration}
-
-\emph{app.properties}
+The first step in customizing OA is to download and compile it from source code.  This is described in the accompanying document \emph{progguide.html}.
 
 
 \section{Java Customizations}
@@ -25,7 +29,7 @@ In general, customizations in OA are built by loading a ``sitecode.jar'' JAR fil
 In order to begin customizing a database, a new NetBeans/Maven project must be set up to build that database's customizations.  In order to do this:
 
 \begin{enumerate}
- \item Follow the instructions to compile OA.
+ \item Follow the instructions to compile OA (\emph{progguide.html} on web site).
  \item Create a new NetBeans/Maven project using the default Archetype.
  \item Add the following to the new project's \emph{pom.xml} file:
 \begin{verbatim}
@@ -37,7 +41,7 @@ In order to begin customizing a database, a new NetBeans/Maven project must be s
         </dependency>
   </dependencies>
 \end{verbatim}
- \item Make sure you have specified the version of OA that you have compiled.
+Make sure you have specified \emph{your} version of OA under the \emph{version} tag!
 \end{enumerate}
 
 You are now ready to start overriding OA core classes!  OA allows many classes to be overridden.  To get a complete list of such classes:
@@ -58,7 +62,7 @@ Customziations are accomplished by overriding classes; we will describe specific
 
 \subsection{Loading sitecode.jar}
 
-Two steps are required to load \emph{sitecode.jar} into the database.  First, the \emph{sitecode.jar} resource must be \emph{created}.  Then an external \emph{sitecode.jar} neds to be loaded into the resource.  Creation is only required once; loading it in is performed every time new customizations have been added, and therefore \emph{sitecode.jar} changes.
+Once you have created and compiled a customization project, you need to load its resulting JAR file into the database as ``sitecode.jar.''  Two steps are required to load \emph{sitecode.jar} into the database.  First, the \emph{sitecode.jar} resource must be \emph{created}.  Then an external \emph{sitecode.jar} neds to be loaded into the resource.  Creation is only required once; loading it in is performed every time new customizations have been added, and therefore \emph{sitecode.jar} changes.
 
 \subsubsection{Creating a sitecode.jar resource}
 
@@ -116,7 +120,7 @@ The OA schema is set up in the Java package \emph{offstage.schema}.  Each class 
 
 \section{Custom Fields and Tabs}
 
-OA allows for custom fields and tabs to be added to the database schema as needed, and for those
+OA allows for custom fields and tabs to be added to the database schema as needed, and for those new fields to be fully integrated in the system and searchable.
 
 \section{New Field}
 
@@ -147,18 +151,18 @@ public class PersonsSchema extends offstage.schema.PersonsSchema {
 public PersonsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {
-	super(str, change, tz);
-	
-	KeyedModel homeclubKmodel = new DbKeyedModel(str, change,
-		"sc_homeclubids", "homeclubid", "name", "name", "<Unknown>");
-	KeyedModel yaleaffiliationidKmodel = new DbKeyedModel(str, change,
-		"sc_yaleaffiliationids", "yaleaffiliationid", "name", "name", "<None>");
-	appendCols(new SqlCol[] {
-		new SqlCol(new SqlString(7), "sc_usfsnum"),
-		new SqlCol(new SqlEnum(homeclubKmodel), "sc_homeclubid"),
-		new SqlCol(new SqlEnum(yaleaffiliationidKmodel), "sc_yaleaffiliationid"),
-		new SqlCol(new SqlBool(false), "sc_isadult")
-	});
+    super(str, change, tz);
+    
+    KeyedModel homeclubKmodel = new DbKeyedModel(str, change,
+        "sc_homeclubids", "homeclubid", "name", "name", "<Unknown>");
+    KeyedModel yaleaffiliationidKmodel = new DbKeyedModel(str, change,
+        "sc_yaleaffiliationids", "yaleaffiliationid", "name", "name", "<None>");
+    appendCols(new SqlCol[] {
+        new SqlCol(new SqlString(7), "sc_usfsnum"),
+        new SqlCol(new SqlEnum(homeclubKmodel), "sc_homeclubid"),
+        new SqlCol(new SqlEnum(yaleaffiliationidKmodel), "sc_yaleaffiliationid"),
+        new SqlCol(new SqlBool(false), "sc_isadult")
+    });
 }}
 \end{verbatim}
 
@@ -259,14 +263,14 @@ CREATE TABLE events
 
 The new table should have the following columns:
  \begin{description}
-\item{entityid} The database record to which this row of the table corresponds.
-\item{groupid} The main ``kind'' of row this is.
-\item{other} Anything else desired.
+\item{{\bf entityid}} The database record to which this row of the table corresponds.
+\item{{\bf groupid}} The main ``kind'' of row this is.
+\item{{\bf other}} Anything else desired.
  \end{description}
 
 \subsection{Create new DataTab Class}
 
-Once the SQL schema is set the class \emph{DataTab} must be extended to describe it.  If the table is called \emph{events}, then a class \emph{sc.offstage.datatab.events_DT} should be created (NOTE: The normal Java class name upper/lower case rules have been suspended here).
+Once the SQL schema is set the class \emph{DataTab} must be extended to describe it.  If the table is called \emph{events}, then a class \emph{sc.offstage.datatab.events\_DT} should be created (NOTE: The normal Java class name upper/lower case rules have been suspended here).
 
 Inside the new \emph{DataTab} class, a static inner class called \emph{MySchema} should be produced.  This describes the schema of the new table, just like the \emph{Schema} objects in \emph{offstage.schema}.
 
@@ -274,16 +278,36 @@ Finally, the constructor of the \emph{DataTab} subclass must be produced.  This 
 
 \begin{description}
 
-\item{title} The title that should be displayed on the tab in the GUI.
-\item{schema} Use {\tt new MySchema(str, app.dbChange(), app.timeZone())}
-\item{displayCols} The database columns of the new table that should be displayed in the tab.
-\item{displayColTitles} The titles that should be used in the tab to display each column.
- \item{equeryAliases} A pair of \emph{String}s should be added to this array for each new column that should be searchable: first the ``official'' name of the column as \emph{table.column}, and then the name that column should display as in the query builder dropdown.
- \item{idCol} Should be {\tt "groupid"}
- \item{orderClause} Part of the SQL order clause used to sort rows displayed in this tab.  For example, it might be {\tt year} or {\tt year desc} or {\tt year,groupid}.
- \item{requiredTables} This is an advanced query builder features --- used when searching by a column in one tab requires that data from another tab be brought into the query as well.  It should not generally be needed.  In case it is needed, then \emph{addToEQuerySchema()} will also be overridden.
+\item{{\bf title}} The title that should be displayed on the tab in the GUI.
+\item{{\bf schema}} Use {\tt new MySchema(str, app.dbChange(), app.timeZone())}
+\item{{\bf displayCols}} The database columns of the new table that should be displayed in the tab.
+\item{{\bf displayColTitles}} The titles that should be used in the tab to display each column.
+ \item{{\bf equeryAliases}} A pair of \emph{String}s should be added to this array for each new column that should be searchable: first the ``official'' name of the column as \emph{table.column}, and then the name that column should display as in the query builder dropdown.
+ \item{{\bf idCol}} Should be {\tt "groupid"}
+ \item{{\bf orderClause}} Part of the SQL order clause used to sort rows displayed in this tab.  For example, it might be {\tt year} or {\tt year desc} or {\tt year,groupid}.
+ \item{{\bf requiredTables}} This is an advanced query builder features --- used when searching by a column in one tab requires that data from another tab be brought into the query as well.  It should not generally be needed.  In case it is needed, then \emph{addToEQuerySchema()} will also be overridden.
 \end{description}
+
+\subsection{Integrate the New DataTab}
+
+Now that a new \emph{DataTab} has been created, it must be integrated into OA.  To do this:
+ \begin{enumerate}
+ \item Override \emph{offstage.datatab.DataTabSet} by creating \emph{sc.offstage.datatab.DataTabSet}.
+ \item Override \emph{init(SqlRun str, FrontApp app)} as follows:
+\begin{verbatim}
+public void init(SqlRun str, FrontApp app)
+throws Exception
+{
+    super.init(str, app);
+    addTab(new mytab_DT(str, app));
+    addAllLists("mytab");
+}
+\end{verbatim}
+ \end{enumerate}
+
 
 \section{New Reports}
 
 OA offers a variety of reporting technologies.  More to follow.
+
+\end{document}
