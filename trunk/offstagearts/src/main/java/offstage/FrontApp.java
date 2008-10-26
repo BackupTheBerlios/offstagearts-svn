@@ -51,9 +51,10 @@ import java.security.Policy;
 import javax.swing.JOptionPane;
 import offstage.config.ConfigChooser;
 import offstage.config.UpgradesDialog;
+import offstage.crypt.PBECrypt;
 import offstage.datatab.DataTabSet;
-import offstage.licensor.WriteJNLP;
 import offstage.resource.OffstageResSet;
+import org.apache.log4j.lf5.util.StreamUtils;
 
 public class FrontApp extends ReportsApp
 {
@@ -196,7 +197,8 @@ public static Map<String,String> readBasePrefs() throws IOException
 }
 
 // -------------------------------------------------------
-void loadPropFile(Properties props, String name) throws IOException
+
+void loadPropFile(Properties props, String name, PasswordDialog dialog) throws IOException
 {
 	InputStream in;
 	
@@ -208,27 +210,78 @@ System.out.println("loadPropFile: " + url);
 	props.load(in);
 	in.close();
 
+
 	// Next: Override with anything in user-created overrides
-//System.out.println("loadPropFile: configURL = " + configURL);
-//	if (configURL != null) {
+	String contents;
 	try {
 		url = new URL(configURL, name);
 		in = url.openStream();
-		props.load(in);
+		contents = new String(StreamUtils.getBytes(in));
 		in.close();
 	} catch(Exception e) {
 		// It didn't exit!
+		return;
 	}
-}	
+		
+	// Decrypt the contents if needed
+	int encrypt = contents.indexOf(PBECrypt.BEGIN_ENCRYPTED);
+	if (encrypt < 0) {
+		// Not encrypted, just read normally
+		props.load(new ByteArrayInputStream(contents.getBytes()));
+	} else {
+		boolean showDialog = true;
+		if (dialog.getHasShown()) showDialog = false;
+		dialog.setAlert("");
+		
+		// It is encrypted; find the password, etc.
+		PBECrypt pbe = new PBECrypt();
+		for (;;) {
+			if (showDialog) {
+				dialog.setVisible(true);
+				if (!dialog.getOK()) System.exit(0);
+			}
+			
+			char[] password = dialog.getPassword();
+			boolean goodPassword = true;
+			try {
+				contents = pbe.decrypt(contents, password);
+			} catch(Exception e) {
+				goodPassword = false;
+//				IOException ioe = new IOException(e.getMessage());
+//				ioe.initCause(e);
+//				throw ioe;
+			}
+			
+			if (goodPassword) try {
+				Properties nprops = new Properties();
+				nprops.load(new ByteArrayInputStream(contents.getBytes()));
+				
+				// They loaded just fine; now load into real properties
+				props.load(new ByteArrayInputStream(contents.getBytes()));
+				break;
+			} catch(Exception e) { goodPassword = false; }
+
+			// Decrypted file didn't load; bad password
+			dialog.setAlert("Bad password; try again!");
+			showDialog = true;
+		}
+		
+		// Load into real properties
+		props.load(new ByteArrayInputStream(contents.getBytes()));
+	}
+}
+
 Properties loadProps() throws IOException
 {
 	Properties props = new Properties();
 
-	loadPropFile(props, "app.properties");
+	PasswordDialog dialog = new PasswordDialog(null);
+	loadPropFile(props, "app.properties", dialog);
 	String os = System.getProperty("os.name");
         int space = os.indexOf(' ');
         if (space >= 0) os = os.substring(0,space);
-	loadPropFile(props, os + ".properties");
+	loadPropFile(props, os + ".properties", dialog);
+	dialog.clear();
 	//if (inn != null) props.load(inn);
 
 //try {

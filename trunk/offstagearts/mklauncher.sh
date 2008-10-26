@@ -3,13 +3,16 @@
 # eg:  ./mklauncher.sh 1.7 'Ballet Theatre (Test)' ~/mvn/oalaunch/src/main/resources/offstage/config test_ballettheatre.jar
 
 CMDDIR=$0
-CMDDIR=$(readlink -f $CMDDIR)
+#CMDDIR=$(readlink -f $CMDDIR)
 CMDDIR=$(dirname $CMDDIR)
 
 VERSION=$1
 #CONFIGNAME=$2
-CONFIGDIR=$(readlink -f "$2")
-OUTJAR=$(readlink -f "$3")
+
+#CONFIGDIR=$(readlink -f "$2")
+CONFIGDIR="$2"
+#OUTJAR=$(readlink -f "$3")
+OUTJAR="$3"
 
 OALAUNCH=$CMDDIR/../oalaunch
 TMP=`pwd`/tmp

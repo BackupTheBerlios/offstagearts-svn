@@ -153,7 +153,7 @@ lib/xstream-1.2.2.jar
     <dependency>
             <groupId>org.citibob</groupId>
             <artifactId>holyokereports</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.2</version>
             <scope>compile</scope>
     </dependency>
 		

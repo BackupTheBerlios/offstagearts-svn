@@ -5,6 +5,7 @@
 
 package offstage.crypt;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -18,6 +19,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
@@ -93,7 +95,7 @@ UnsupportedEncodingException
 	String cipherText =
 		BEGIN_ENCRYPTED + "\n" +
 		pubdomain.Base64.encodeBytes(cipherBytes) +		
-		END_ENCRYPTED + "\n";
+		"\n" + END_ENCRYPTED + "\n";
 	return cipherText;
 }
 public String decrypt(String cipherText, char[] password)
@@ -109,5 +111,37 @@ UnsupportedEncodingException
 	String clearText = new String(clearBytes, "UTF8");
 	return clearText;
 }
-		
+
+public void encrypt(File fin, File fout, char[] password)
+throws Exception
+{
+	String plain = FileUtils.readFileToString(fin);
+	String cipher = encrypt(plain, password);
+	FileUtils.writeStringToFile(fout, cipher);
+}
+
+public static void main(String[] args) throws Exception
+{
+	PBECrypt pbe = new PBECrypt();
+	char[] password = "password".toCharArray();
+	File inDir = new File("/Users/citibob//offstagearts/configs/test_ballettheatre_nocrypt");
+	File outDir = new File("/Users/citibob//offstagearts/configs/test_ballettheatre");
+	outDir.mkdirs();
+	for (File fin : inDir.listFiles()) {
+		if (!fin.getName().endsWith(".properties")) continue;
+		File fout = new File(outDir, fin.getName());
+		pbe.encrypt(fin, fout, password);
+	}
+	
+	
+//	String plain = "Hello world!  This is a new way to encrypt with passwords, etc...";
+//	PBECrypt pbe = new PBECrypt();
+//	String cipher = pbe.encrypt(plain, password);
+//	String decrypt = pbe.decrypt(cipher, password);
+//	
+//	System.out.println(cipher);
+//	System.out.println(decrypt);
+	
+}
+
 }
