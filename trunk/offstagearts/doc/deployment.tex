@@ -1,0 +1,60 @@
+\documentclass[11pt]{article}
+
+\title{OffstageArts User Manual (draft)}
+
+\author{Robert Fischer}
+\usepackage{float,graphics,url,times,listings}
+
+%\define{\emph{OffstageArts}}{\emph{OffstageArts}}
+
+\begin{document}
+
+\maketitle
+
+\section{Creating a new Database}
+
+Creating a new OA database is pretty easy.  Only the database needs to be created; OA will create the appropriate schema.  Make sure you are using PostgreSQL version 8 or higher.  You merely need to run the script below (or something equivalent to it).  Note that this script will create a PostgreSQL database and user of the same name.
+
+\begin{verbatim}
+#!/bin/sh
+# Usage: newuser name password
+
+psql template1 -U postgres <<EOF
+CREATE ROLE $1 LOGIN PASSWORD '$2'
+   VALID UNTIL 'infinity'
+   CONNECTION LIMIT 50;
+
+CREATE DATABASE $1
+  WITH ENCODING='UTF8'
+       OWNER=$1;
+EOF
+
+psql $1 -U postgres <<EOF
+CREATE PROCEDURAL LANGUAGE plpgsql;
+ALTER SCHEMA public OWNER TO $1;
+EOF
+\end{verbatim}
+
+Once a new database is created, OA needs to be configured to connect to it.  Th e first time it connects, it will generate the appropriate schema.
+
+\section{Connection Configuration}
+
+In order to configure OA to connect to a specific database:
+
+\begin{enumerate}
+
+ \item Launch OA via the class \emph{offstagearts.gui.MainLauncher} (or just run it off the JNLP file from the website).
+
+ \item In the configuration screen, click on ``Setup.''
+
+ \item In the Setup scren, click ``New.''
+
+ \item Enter any name you like under ``Name.'' Choose the name of a new directory under ``Directory.''  This will be your configuration directory.  When you're done choosing these items, click ``OK.''
+
+ \item You now see a window called ``Edit Configuration.'' It allows you to edit the four propreties files that were created in your configuration directory.  The ``All'' tab is properties that are the same on all platforms.  You should alos edit anything under the ``Mac,'' ``Windows'' or ``Linux'' tab, depending on your platform.
+
+ \item After the configuration has been edited, you should be able to launch that configuration from the main configuration screen.
+
+\end{enumerate}
+
+\end{document}
