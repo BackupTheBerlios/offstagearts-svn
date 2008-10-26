@@ -12,7 +12,6 @@ java -cp target/executable-netbeans.dir/offstagearts-*.jar offstage.licensor.Wri
 rsync -avz jaws/signed/ citibob@offstagearts.org:/home/citibob/offstagearts.org/jars
 rsync -avz jaws/jnlp/ citibob@offstagearts.org:/home/citibob/offstagearts.org/releases/offstagearts
 
-
 #`java -cp target/executable-netbeans.dir/offstagearts-*.jar offstage.licensor.ReleaseVersion`
 
 # Deploy to Ballet Theatre (quick but deprecated)
