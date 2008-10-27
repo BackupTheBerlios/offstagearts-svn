@@ -1,0 +1,313 @@
+\documentclass[11pt]{article}
+
+\setlength{\topmargin}{-.5in}
+\setlength{\textheight}{9in}    % 9 inch page
+\setlength{\textwidth}{5.5in}     % 5 3/4 inch line 
+\setlength{\oddsidemargin}{36pt}  % 1/4 inch (yields 1 1/4 inch left margin)
+\setlength{\evensidemargin}{36pt} % 1/4 inch
+
+\title{OffstageArts Features and Design}
+
+\author{Robert Fischer}
+\usepackage{float,graphics,url,times,listings}
+
+%\define{\emph{OffstageArts}}{\emph{OffstageArts}}
+
+\begin{document}
+
+\maketitle
+
+The first step in customizing OA is to download and compile it from source code.  This is described in the accompanying document \emph{progguide.html}.
+
+
+\section{Java Customizations}
+
+In general, customizations in OA are built by loading a ``sitecode.jar'' JAR file into the database.  This JAR file is integrated with the OA codebase when OA is run.
+
+\subsection{Customization Project}
+
+In order to begin customizing a database, a new NetBeans/Maven project must be set up to build that database's customizations.  In order to do this:
+
+\begin{enumerate}
+ \item Follow the instructions to compile OA (\emph{progguide.html} on web site).
+ \item Create a new NetBeans/Maven project using the default Archetype.
+ \item Add the following to the new project's \emph{pom.xml} file:
+\begin{verbatim}
+    <dependency>
+            <groupId>org.citibob</groupId>
+            <artifactId>offstagearts</artifactId>
+            <version>1.6.1</version>
+            <scope>compile</scope>
+        </dependency>
+  </dependencies>
+\end{verbatim}
+Make sure you have specified \emph{your} version of OA under the \emph{version} tag!
+\end{enumerate}
+
+You are now ready to start overriding OA core classes!  OA allows many classes to be overridden.  To get a complete list of such classes:
+ \begin{enumerate}
+ \item In NetBeans, go to the class \emph{offstage.FrontApp}
+ \item Right-click on the method \emph{newSiteInstance(Class defaultClass)}
+ \item Click ``find usages'' in the pop-up menu.
+ \item Do the same for the method \emph{newSiteInstance(Class defaultClass, Object... params)}
+ \end{enumerate}
+
+\subsection{Overriding a Class}
+
+Once you have identified a class you wish to override, you may do so by creating a new class of similar name in your customization project, with ``sc.'' prepended to the package name.
+
+For example, to override the OA class \emph{offstage.datatab.DataTabSet}, one would create the class \emph{sc.offstage.datatab.DataTabSet}.  An overriding class will normally inherit from the class it is overriding, or implement the same interface as that class.  This ensures it will be compatible with the overridden class at runtime.
+
+Customziations are accomplished by overriding classes; we will describe specific customizations below.
+
+\subsection{Loading sitecode.jar}
+
+Once you have created and compiled a customization project, you need to load its resulting JAR file into the database as ``sitecode.jar.''  Two steps are required to load \emph{sitecode.jar} into the database.  First, the \emph{sitecode.jar} resource must be \emph{created}.  Then an external \emph{sitecode.jar} neds to be loaded into the resource.  Creation is only required once; loading it in is performed every time new customizations have been added, and therefore \emph{sitecode.jar} changes.
+
+\subsubsection{Creating a sitecode.jar resource}
+
+\begin{enumerate}
+\item Go to the \emph{Window} $->$ \emph{Resources} menu item (from, eg, the Development window).
+ \item Click on \emph{sitecode.jar} under ``Resources.''
+
+\item Click on the one line showing under ``Upgrade Plans (Summary)
+
+\item Click ``upgrade'' button in the bottom right of the screen.
+
+\end{enumerate}
+
+\subsubsection{Loading sitecode.jar}
+
+\begin{enumerate}
+\item Go to the \emph{Window} $->$ \emph{Resources} menu item (from, eg, the Development window).
+ \item Click on \emph{sitecode.jar} under ``Resources.''
+
+\item Click on the line showing under ``Available Versions.''
+
+\item Click the ``Import'' button.
+
+\item Choose the appropriate file from your local disk.
+
+\item Make sure the \emph{Size} field showing is correct.
+
+\item OA must be exited and restarted before these changes take effect.
+
+\end{enumerate}
+
+\subsubsection{Testing sitecode.jar}
+
+When one is compiling and testing a \emph{sitecode.jar} file, it can be tedious to manually load it in each time it has changed.  For this purpose, it is also possible to have a specific \emph{sitecode.jar} file loaded by configuring the \emph{app.properties} file in the connection configuration.  If the \emph{sitecode.jar} property is set in \emph{app.properties}, then the specified JAR file will override any \emph{sitecode.jar} found in the database.
+
+This is good for testing, but \emph{not} production.  For production, \emph{sitecode.jar} must be in the database only, and any \emph{sitecode.jar} properties in \emph{app.properties} must be commented out.
+
+\section{Type-Driven Database System: An Introduction}
+
+In OA, typing information in the database schema is used at runtime, as fully as
+possible, at all levels of the system.  It drives not just data transfer
+between the database and internal model data structures, but is also used to format the user interface.
+
+For example, an SQL query with five columns might be used to populate an on-screen table widget, underlain by a model object.  Type information should be used at runtime by the direct relational map to set up a model object of the correct number of columns.
+
+That very same type information should then be used to set up the way in which each column in the GUI table will display and edit its data.  Boolean columns should show up as check boxes, enumerate columns as drop-downs, integer columns as text boxes with integrated data verifiers/converters, date columns as formatted data drop-downs.
+
+All of these mappings between semantic-level data types and physical-level GUI widgets are set up by default for an application .  They are also customizeable as needed by the programmer, on an ad-hoc basis --- for example, a programmer might wish one integer-type column to show up as a GUI spinner box, rather than a text box.
+
+\subsection{The Schema}
+
+In order for a type-driven system to work, the system must be aware of the underlying database schema.  It would be nice, in general, if the schema were automatically read out of the underlying database at start-up.  This has not yet been done for OA.  Therefore, the database schema in Java must be set up manually to mirror the SQL schema.  This has not turned out to be a big problem so far, although we would like more automated inspection of the database in the future.
+
+The OA schema is set up in the Java package \emph{offstage.schema}.  Each class that subclasses \emph{SqlSchema} represents the data types for one SQL table.  The class \emph{OffstageSchemaSet} represents the entire database schema.
+
+\section{Custom Fields and Tabs}
+
+OA allows for custom fields and tabs to be added to the database schema as needed, and for those new fields to be fully integrated in the system and searchable.
+
+\section{New Field}
+
+A new field may be added to the \emph{persons} table in the following steps:
+ \begin{enumerate}
+ \item Add the field in the database.
+ \item Add the field to the corresponding OA schema.
+ \item Make the field display in the GUI.
+ \item Make the field display in the HTML summary.
+ \item Make the field searchable if desired.
+ \end{enumerate}
+
+We go into further detail below.
+
+\subsection{Add to Database}
+
+This consists of simply adding it using the appropriate SQL ``ALTER TABLE'' command.  The consultant may which to keep a file containing the sum total of all SQL commands used to customize the database.  This is useful if the database needs to be re-built or replicated in the future.
+
+\subsection{Add to Schema}
+
+Override \emph{offstage.schema.PersonsSchema} by creating \emph{sc.offstage.schema.PersonsSchema} in your customization project.  This class should extend \emph{offstage.schema.PersonsSchema}.  In the constructor, you just need to add columns to the Schema using the \emph{appendCols()} method.
+
+Here is an example:
+\begin{verbatim}
+package sc.offstage.schema;
+
+public class PersonsSchema extends offstage.schema.PersonsSchema {
+public PersonsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
+throws SQLException
+{
+    super(str, change, tz);
+    
+    KeyedModel homeclubKmodel = new DbKeyedModel(str, change,
+        "sc_homeclubids", "homeclubid", "name", "name", "<Unknown>");
+    KeyedModel yaleaffiliationidKmodel = new DbKeyedModel(str, change,
+        "sc_yaleaffiliationids", "yaleaffiliationid", "name", "name", "<None>");
+    appendCols(new SqlCol[] {
+        new SqlCol(new SqlString(7), "sc_usfsnum"),
+        new SqlCol(new SqlEnum(homeclubKmodel), "sc_homeclubid"),
+        new SqlCol(new SqlEnum(yaleaffiliationidKmodel), "sc_yaleaffiliationid"),
+        new SqlCol(new SqlBool(false), "sc_isadult")
+    });
+}}
+\end{verbatim}
+
+\subsection{Add to GUI}
+
+Normally, any custom field must be added to the main data entry screen in the Development window.  This is done by modifying one of the GUI layouts used to create that screen.  To do so:
+
+\begin{enumerate}
+\item Copy the class \emph{offstage.devel.gui.MiddlePane} to \emph{sc.offstage.devel.gui.MiddlePane}.  Use NetBeans for this copy, so it copies the corresponding GUI form as well.
+ \item Edit the source code of the resulting class to make it extend \emph{offstage.devel.gui.MiddlePane}.
+ \item Use the visual editor to add additional fields as needed.  Make sure that any fields you add are subclasses of the \emph{TypedWidget} class from the \emph{Holyoke} library.  Also make sure you use an appropriate widget for the appropriate data type you specified in the underlying schema.  Booleans should use \emph{JBoolCheckbox}.  Columns of type \emph{SqlEnum} should use \emph{JKeyedComboBox}.  Just about anything else can use a \emph{JTypedTextField}.
+ \item Set the \emph{colName} property of each added widget to correspond to the name of the database column it is supposed to display and edit.
+ \end{enumerate}
+
+\subsection{Add to Summary}
+
+The ``Summary'' tab in the Development window is used to get an at-a-glance view of a record.  This tab is implemented by generating HTML to display.  Similar to a web application, the HTML is generated on-the-fly for a particular record using the StringTemplate package by Terrence Parr.
+
+Once a field has been added to the GUI, it should also be added to the corresponding summary screen.  This is accomplished by overriding the appropriate \emph{StringTemplate} file.  To do so:
+
+\begin{enumerate}
+\item Copy the files \emph{summary.st} and \emph{fdSummary.st} from the \emph{offstage/reports} Resources directory in the OA project, to \emph{sc/offstage/reports} in the customization project.
+ \item Edit the files as needed to add the new field(s).  Refer to StringTemplate documentation for specifics on syntax.
+ \item Repeat this procedure if and when a new version of OA has changed the base files.
+ \end{enumerate}
+
+\subsection{Make it Searchable}
+
+... to come... this involves subclassing and overriding yet another class.
+
+\section{New Tab}
+
+The process of creating a new tab is similar to that of creating a new field.  However, it is actually eaiser and has been modularized:
+ \begin{enumerate}
+ \item Add the new table to the database.
+ \item Create a new DataTab class for the table.
+ \item Integrate the DataTab class into OA.
+ \end{enumerate}
+
+\subsection{Add Table to Database}
+
+Before adding the table, some thought must be put into what kind of data this will be.  Most tabs have a ``groupid'' column that organizes entity records into groups.  A secondary table defines meaningful names (and maybe other attributes) for those groups.
+
+For example, suppose we want a new tab to store participation in the organization's events.  We would start by creating a table to describe the events the organization has had:
+\begin{verbatim}
+CREATE TABLE eventids
+(
+-- Inherited:   groupid integer NOT NULL DEFAULT nextval('groupids_groupid_seq'::regclass),
+-- Inherited:   name character varying(100) NOT NULL,
+  CONSTRAINT eventids_pkey PRIMARY KEY (groupid)
+) INHERITS (groupids);
+
+insert into eventids (name) values ('Event 1');
+insert into eventids (name) values ('Event 2');
+\end{verbatim}
+
+If additional data are required about each event, that may be stored in additional columns in this table.  For example, suppose we wish to record the date of each event:
+
+\begin{verbatim}
+CREATE TABLE eventids
+(
+-- Inherited:   groupid integer NOT NULL DEFAULT nextval('groupids_groupid_seq'::regclass),
+-- Inherited:   name character varying(100) NOT NULL,
+  date date not null,
+  CONSTRAINT eventids_pkey PRIMARY KEY (groupid)
+) INHERITS (groupids);
+
+insert into eventids (name) values ('Event 1', '10/1/2005');
+insert into eventids (name) values ('Event 2', '12/12/2006');
+\end{verbatim}
+
+We can now add the table that stores the actual data:
+\begin{verbatim}
+CREATE TABLE events
+(
+-- Inherited:   groupid integer NOT NULL,
+-- Inherited:   entityid integer NOT NULL,
+  amountpaid numeric(9,2),
+  CONSTRAINT events_pkey PRIMARY KEY (groupid, entityid)
+) INHERITS (groups) ;
+\end{verbatim}
+
+In some cases, one groupid may be used more than once for a record.  For example, suppose we wish our records to be able to list the same event more than once.  In this case, groupid cannot be part of the primary key.  Rather, a \emph{serialid} column is created and used as a primary key:
+
+\begin{verbatim}
+CREATE TABLE events
+(
+-- Inherited:   groupid integer NOT NULL,
+-- Inherited:   entityid integer NOT NULL,
+  serialid serial NOT NULL,
+  amountpaid numeric(9,2),
+  CONSTRAINT events_pkey PRIMARY KEY (serialid)
+) INHERITS (groups) ;
+\end{verbatim}
+
+
+
+
+The new table should have the following columns:
+ \begin{description}
+\item{{\bf entityid}} The database record to which this row of the table corresponds.
+\item{{\bf groupid}} The main ``kind'' of row this is.
+\item{{\bf other}} Anything else desired.
+ \end{description}
+
+\subsection{Create new DataTab Class}
+
+Once the SQL schema is set the class \emph{DataTab} must be extended to describe it.  If the table is called \emph{events}, then a class \emph{sc.offstage.datatab.events\_DT} should be created (NOTE: The normal Java class name upper/lower case rules have been suspended here).
+
+Inside the new \emph{DataTab} class, a static inner class called \emph{MySchema} should be produced.  This describes the schema of the new table, just like the \emph{Schema} objects in \emph{offstage.schema}.
+
+Finally, the constructor of the \emph{DataTab} subclass must be produced.  This involves setting a number of protected variables inherited from \emph{DataTab}.
+
+\begin{description}
+
+\item{{\bf title}} The title that should be displayed on the tab in the GUI.
+\item{{\bf schema}} Use {\tt new MySchema(str, app.dbChange(), app.timeZone())}
+\item{{\bf displayCols}} The database columns of the new table that should be displayed in the tab.
+\item{{\bf displayColTitles}} The titles that should be used in the tab to display each column.
+ \item{{\bf equeryAliases}} A pair of \emph{String}s should be added to this array for each new column that should be searchable: first the ``official'' name of the column as \emph{table.column}, and then the name that column should display as in the query builder dropdown.
+ \item{{\bf idCol}} Should be {\tt "groupid"}
+ \item{{\bf orderClause}} Part of the SQL order clause used to sort rows displayed in this tab.  For example, it might be {\tt year} or {\tt year desc} or {\tt year,groupid}.
+ \item{{\bf requiredTables}} This is an advanced query builder features --- used when searching by a column in one tab requires that data from another tab be brought into the query as well.  It should not generally be needed.  In case it is needed, then \emph{addToEQuerySchema()} will also be overridden.
+\end{description}
+
+\subsection{Integrate the New DataTab}
+
+Now that a new \emph{DataTab} has been created, it must be integrated into OA.  To do this:
+ \begin{enumerate}
+ \item Override \emph{offstage.datatab.DataTabSet} by creating \emph{sc.offstage.datatab.DataTabSet}.
+ \item Override \emph{init(SqlRun str, FrontApp app)} as follows:
+\begin{verbatim}
+public void init(SqlRun str, FrontApp app)
+throws Exception
+{
+    super.init(str, app);
+    addTab(new mytab_DT(str, app));
+    addAllLists("mytab");
+}
+\end{verbatim}
+ \end{enumerate}
+
+
+\section{New Reports}
+
+OA offers a variety of reporting technologies.  More to follow.
+
+\end{document}

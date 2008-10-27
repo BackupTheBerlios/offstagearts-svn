@@ -1,0 +1,192 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>OffstageArts Administration and Programming</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" lang="en"><div class="titlepage"><div><div><h1 class="title"><a name="id2788762"></a>OffstageArts Administration and Programming</h1></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#id2788932">1. Introduction</a></span></dt><dt><span class="chapter"><a href="#id2788934">2. Downloading and Compilation</a></span></dt><dd><dl><dt><span class="section"><a href="#id2788816">Prerequisites</a></span></dt><dt><span class="section"><a href="#id2788916">Configure Software</a></span></dt><dt><span class="section"><a href="#id2789101">Check Out the Source Code</a></span></dt><dt><span class="section"><a href="#id2789182">Open the Projects and Install into the Maven Repository</a></span></dt><dt><span class="section"><a href="#id2789211">Add Typed Widgets to NetBeans</a></span></dt><dt><span class="section"><a href="#id2789313">Compile and Run OffstageArts</a></span></dt></dl></dd><dt><span class="chapter"><a href="#id2789383">3. Database Administration</a></span></dt><dt><span class="chapter"><a href="#id2789487">4. Database Schema</a></span></dt><dd><dl><dt><span class="section"><a href="#id2789498">Core CRM</a></span></dt><dt><span class="section"><a href="#id2789876">Accounting</a></span></dt><dt><span class="section"><a href="#id2790048">School</a></span></dt><dt><span class="section"><a href="#id2790352">Resources</a></span></dt><dt><span class="section"><a href="#id2790405">DB Administration</a></span></dt><dt><span class="section"><a href="#id2790514">Misc.</a></span></dt><dt><span class="section"><a href="#id2790561">Obsolete</a></span></dt></dl></dd></dl></div><div class="chapter" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2788932"></a>Chapter 1. Introduction</h2></div></div></div><p>OffstageArts is an enterprise arts management system. It integrates
+    all aspects of a typical performing arts organization in one place:
+    development, marketing, school and ticket sales. For more information,
+    see: <code class="uri">http://offstagearts.org</code>.</p><p>OffstageArts is a Free Software aplication, licensed under the
+    GPLv3. All components it uses, along with the devlopment tools needed to
+    create it, are also free software. No commercial licenses are required to
+    run or develop OffstageArts.</p><p>OffstageArts is implemented as a two-tier client-server database
+    application, plus some web-based components. The server runs on the
+    PostgreSQL database. The client, meant to be run by organizational staff,
+    is at Java Swing application. Portions of OffstageArts --- those used
+    directly customers --- are also web-based, written in Ruby.</p><p>Since is build on top of commodity components and protocols, it may
+    be deployed in a flexible manner. The database may be accessed over a LAN
+    or WAN, and the web server components may be deployed in a variety of
+    manners. Technical consulting firms are able to determine and implement
+    the best configuration for any particular organization.</p></div><div class="chapter" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2788934"></a>Chapter 2. Downloading and Compilation</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#id2788816">Prerequisites</a></span></dt><dt><span class="section"><a href="#id2788916">Configure Software</a></span></dt><dt><span class="section"><a href="#id2789101">Check Out the Source Code</a></span></dt><dt><span class="section"><a href="#id2789182">Open the Projects and Install into the Maven Repository</a></span></dt><dt><span class="section"><a href="#id2789211">Add Typed Widgets to NetBeans</a></span></dt><dt><span class="section"><a href="#id2789313">Compile and Run OffstageArts</a></span></dt></dl></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2788816"></a>Prerequisites</h2></div></div></div><p>The following tools are required to download, compile, edit and
+      install OffstageArts. Please download and install each of them on your
+      system:</p><div class="orderedlist"><ol type="1"><li><p>A Subversion client. Although it is not free as in freedom, we
+          recommend SmartSVN:
+          <code class="uri">http://www.syntevo.com/smartsvn/index.html</code>.</p></li><li><p>Java JDK version 1.5:
+          <code class="uri">http://java.sun.com/javase/downloads/index_jdk5.jsp</code>.
+          <span class="emphasis"><em>OffstageArts does not work with Java
+          1.6.</em></span></p></li><li><p>NetBeans 6.0 or 6.1: <code class="uri">http://www.netbeans.org/</code>. As a
+          Swing-based application, OffstageArts makes extensive use of the
+          visual form builder in NetBeans. Eclipse unfortunately does not have
+          a well-developed visual builder.</p></li><li><p>Apache Maven build tool version 2:
+          <code class="uri">http://maven.apache.org/</code>. We use Maven because of its
+          excellent dependency resolution. A command line-based Maven is
+          required, in addition to the one built into NetBeans.</p></li><li><p>This document was created using the DocBook 5+ XML DTD in the
+          XMLMind XML editor (Personal Edition):
+          <code class="uri">http://www.xmlmind.com/xmleditor/download.shtml</code>. It is
+          also not free as in freedom, but it is an excellent GUI-based
+          product.</p></li></ol></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2788916"></a>Configure Software</h2></div></div></div><p>After downloading and installing the above tools, it is necessary
+      to configure them.</p><div class="orderedlist"><ol type="1"><li><p>Maven:</p><div class="orderedlist"><ol type="a"><li><p>Make sure you have Maven installed such that the command
+                "mvn" works from your command shell.</p></li></ol></div></li><li><p>NetBeans:</p><div class="orderedlist"><ol type="a"><li><p>Make sure you make available to NetBeans the Java sources
+              and Javadoc for your version of the JDK. This will allow
+              NetBeans to give context-sensitive documentation help, as well
+              as to take you to the source code of Java platform classes when
+              you Ctrl-click on them. To integrate Java sources and Javadoc,
+              start NetBeans and go to Tools-&gt;Java Platform.</p></li><li><p>Set up tab sizes: Go to
+              Tools-&gt;Options-&gt;Editor-&gt;Indentation. Un-check 'Expand
+              Tabs to Spaces." Set "Number of Spaces per Indent" and "Tab
+              Size" both to 4.</p></li><li><p>If you are behind a firewall, configure your HTTP proxy
+              via Tools-&gt;Options-&gt;General.</p></li><li><p>Get the Maven Plug-in: Go to
+              Tools-&gt;Plugins-&gt;Available Plugins. If your HTTP proxy
+              settings are not set right, you will see a blank screen. Once
+              you see something, make a checkmark by "Maven" and click the
+              "Install" button on the lower-left. Follow instructions.</p></li></ol></div></li><li><p>SmartSVN:</p><div class="orderedlist"><ol type="a"><li><p>Add the source code repositories to your system.</p><div class="orderedlist"><ol type="i"><li><p>Repository-&gt;Mange Profiles-&gt;Add.</p></li><li><p>Click on "Enter SVN URL".</p></li><li><p>Enter
+                  <code class="uri">http://svn.berlios.de/svnroot/repos/holyokefw</code></p></li><li><p>Do the same for:
+                  <code class="uri">http://svn.berlios.de/svnroot/repos/offstagearts</code></p></li></ol></div></li></ol></div></li></ol></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2789101"></a>Check Out the Source Code</h2></div></div></div><p>OffstageArts depends on a large number of independent projects.
+      Two of those are downloaded in source code format along with
+      OffstageArts; the rest are available as JAR files either from the
+      standard Maven repository, or are included in the source trees.</p><p>Three source-based NetBeans/Maven projects are required to compile
+      and run OffstageArts. These can be obtained by checking out the
+      following source code modules into one directory (say, ~/mvn):</p><div class="orderedlist"><ol type="1"><li><p><code class="filename">trunk/offstagearts</code> from the offstagearts
+          repository.</p></li><li><p><code class="filename">trunk/holyokefw</code> from the holyokefw
+          repository.</p></li><li><p><code class="filename">trunk/holyokewiz</code> from the holyokefw
+          repository.</p></li><li><p><code class="filename">trunk/holyokereports</code> from the holyokefw
+          repository.</p></li><li><p><code class="filename">trunk/objcobra</code> from the holyokefw
+          repository.</p></li><li><p><code class="filename">trunk/stringtemplate</code> from the holyokefw
+          repository.</p></li></ol></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2789182"></a>Open the Projects and Install into the Maven Repository</h2></div></div></div><p>Once you have downloaded all source code, use File-&gt;Open
+      Project on the downloaded project directories. If NetBeans does not
+      recognize them as project directories, you might not have your Maven
+      option installed. With all three projects open, set offstagearts as the
+      main project in NetBeans: right-click on it and choose "Set as Main
+      Project."</p><p>Now, run the following commands to install required JAR files into
+      your Maven repository. (You may use Cygwin on Windows, or rename the
+      install.sh files to Windows .bat files).</p><pre class="programlisting">cd ~/mvn/objcobra/lib
+sh ./install.bat
+cd ~/mvn/holyokefw/lib
+sh ./install.bat
+cd ~/mvn/offstagearts/lib
+sh ./install.bat</pre></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2789211"></a>Add Typed Widgets to NetBeans</h2></div></div></div><p>The Holyoke Framework provides a set of <span class="emphasis"><em>typed
+      widgets</em></span> that subclass from standard Swing widgets and allow
+      for the easy creation of GUI screens. In order to see the typed widgets
+      in the NetBeans visual builder, they must be compiled as a .nbm module
+      and loaded into NetBeans. This is accomplished as follows:</p><div class="orderedlist"><ol type="1"><li><p>Clean and compile stringtemplate.</p></li><li><p>Clean and compile objcobra.</p></li><li><p>Clean and compile holyokefw.</p></li><li><p>Right-click on offstagearts in the "Projects" tabe of NetBeans
+          and select "Set as Main Project."</p></li><li><p>Run the project (F6 in NetBeans).</p></li><li><p>Select <code class="literal">MakeNbm</code> from the dialog box that
+          appears.</p></li><li><p>When it is done running, you should now have the file
+          <code class="filename">~/mvn/holyokefw/target/holyokefw-1.0-SNAPSHOT.nbm</code>.</p></li><li><p>In NetBeans, use Tools-&gt;Plugins-&gt;Downloaded. Click on
+          the "Add Plugins..." button. Select the .nbm file created above.
+          Then click on the "Install" button in the lower left hand
+          corner.</p></li></ol></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2789313"></a>Compile and Run OffstageArts</h2></div></div></div><p>To do a clean compile of OffstageArts:</p><div class="orderedlist"><ol type="1"><li><p>Clean and compile stringtemplate.</p></li><li><p>Clean and compile objcobra.</p></li><li><p>Clean and compile holyokefw.</p></li><li><p>Clean and compile holyokewiz.</p></li><li><p>Clean and compile holyokereports.</p></li><li><p>Clean and compile offstagearts.</p></li><li><p>Press F6 in NetBeans to run, Ctrl-F5 to debug.</p></li></ol></div></div></div><div class="chapter" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2789383"></a>Chapter 3. Database Administration</h2></div></div></div><p>OffstageArts requires a database hosted on a server running
+    PostgreSQL version 8 or higher. When installing your PostgreSQL database
+    server for the first time, two configuration files need to be set up
+    properly:</p><div class="orderedlist"><ol type="1"><li><p><code class="filename">pg_hba.conf:</code> This configures how PostgreSQL
+        authenticates the various users. The user named "postgres" is the
+        superuser for the database system. Depending on your installation
+        requirements, you may wish to set up different forms of
+        authentication. On a development laptop, it would be normal to use
+        "trust" authentication.</p></li><li><p><code class="filename">postgresql.conf:</code> The option
+        "listen_addresses" in this file determines the IP address of clients
+        that will be allowed to connect to PostgreSQL. This should be
+        configured to allow connections from any clients that would be running
+        OffstageArts.</p></li></ol></div><p>The script <code class="filename">serverscripts/newuser.sh</code> creates a
+    new user and database, ready for OffstageArts; see the script for details
+    on command line arguments. A few notes:</p><div class="orderedlist"><ol type="1"><li><p>By convention, we create OffstageArts users and databases in
+        PostgreSQL using the same name. Thus, the database "tinytheater" is
+        associated with the user "tinytheater."
+        <code class="filename">newuser.sh</code> sfollows these conventions</p></li><li><p><code class="filename">newuser.sh requires that the postgres user
+        authentication be set to "trust." If this is not the case for your
+        PostgreSQL, a little bit of modification may be
+        necessary</code></p></li><li><p>newuser.sh creates essentially a blank database. The
+        OffstageArts client fills in the schema as needed.</p></li></ol></div><p>Finally, some people have reported problems with PostgreSQL version
+    8.3 with some applications. If you have problems with version 8.3, please
+    try 8.2 or 8.1 instead. </p></div><div class="chapter" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2789487"></a>Chapter 4. Database Schema</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#id2789498">Core CRM</a></span></dt><dt><span class="section"><a href="#id2789876">Accounting</a></span></dt><dt><span class="section"><a href="#id2790048">School</a></span></dt><dt><span class="section"><a href="#id2790352">Resources</a></span></dt><dt><span class="section"><a href="#id2790405">DB Administration</a></span></dt><dt><span class="section"><a href="#id2790514">Misc.</a></span></dt><dt><span class="section"><a href="#id2790561">Obsolete</a></span></dt></dl></div><p>NOTE: This schema is out of date. Tables have been added and
+    removed.</p><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2789498"></a>Core CRM</h2></div></div></div><div class="glosslist"><dl><dt>entities</dt><dd><p>The main table to store each person or organization's
+              record.</p></dd><dt>persons</dt><dd><p>Subclasses from entities. This subclassing is obsolete.
+              All entities are actually stored in the persons table. The isorg
+              column indicates whether or not it is an organization. The
+              persons table should be merged into entities.</p></dd><dt>groupids, groups</dt><dd><p>A group is a set of entities, with additional meta-data
+              identifying the set. Examples might include the set of students
+              enrolled in a particular class, the set of people who attended a
+              particular event, or the set of people who are donors.</p><p>Alternately, groups may be seen as a way to annotate
+              individual entity records. For example, each phone type (home,
+              work, cell, etc) is defined a groupid. Membership in the home
+              "group" is used to indicate that someone has a home phone
+              number.</p><p>Groups are defined in two tables. The group-wide meta-data
+              describing the nature of the group is stored in groupids.
+              Membership in the group, along with data attached to each
+              entity's membership, is stored in groups.</p><p>All groupings in the database subclass groupids and groups
+              in a predictable manner (see below).</p></dd><dt>mailprefids</dt><dd><p>Meta-data defining mail preferences in entities.</p></dd><dt>equeries</dt><dd><p>Storage for Offstage user-generated queries.</p></dd></dl></div><p>Below are the grouping tables, used to annotate entity
+      records:</p><div class="glosslist"><dl><dt>donationids</dt><dd><p></p></dd><dt>donations</dt><dd><p></p></dd><dt>eventids</dt><dd><p></p></dd><dt>events</dt><dd><p></p></dd><dt>flagids</dt><dd><p></p></dd><dt>flags</dt><dd><p></p></dd><dt>interestids</dt><dd><p></p></dd><dt>interests</dt><dd><p></p></dd><dt>noteids</dt><dd><p></p></dd><dt>notes</dt><dd><p></p></dd><dt>phoneids</dt><dd><p></p></dd><dt>phones</dt><dd><p></p></dd><dt>ticketeventids</dt><dd><p></p></dd><dt>ticketeventsales</dt><dd><p></p></dd><dt>tickettypes</dt><dd><p></p></dd><dt>offercodeids</dt><dd><p></p></dd><dt>perftypeids</dt><dd><p></p></dd><dt>venueids</dt><dd><p></p></dd></dl></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2789876"></a>Accounting</h2></div></div></div><p>OffstageArts is able to keep running accounts for each entity. It
+      stores multiple accounts per entity; the account types available are
+      defined in actypes.</p><p>Each account consists of a balance record, describing the account
+      balance at a point in time, followed by a series of transaction records,
+      which change the account. Balance records may be made at any point the
+      system feels is convenient. They should be seen as an optimization, so
+      that the system does not have to sum all the transaction records from
+      the beginning.</p><div class="glosslist"><dl><dt>acbal</dt><dd><p>Balances</p></dd><dt>actrans</dt><dd><p>Transaction superclass</p></dd><dt>actypes</dt><dd><p>Types of accounts --- School, Tickets, Donations,
+              etc.</p></dd><dt>tuitiontrans</dt><dd><p>Term bill transactions placed on the accounts. These
+              records are automatically generated by the tuition calculator
+              --- and also automatically revised if enrollment information is
+              modified.</p></dd><dt>adjpayments</dt><dd><p>Manual adjustments to account --- used only for special
+              cases</p></dd><dt>cashpayments</dt><dd><p>Record of cash payments</p></dd><dt>ccpayments</dt><dd><p>Record of credit card payments. A little more work needs
+              to go into recording the status of credit card payments as they
+              move through the validation process.</p></dd><dt>checkpayments</dt><dd><p>Record of check payments</p></dd><dt>ccbatches</dt><dd><p>For systems in which credit cards are batch processed,
+              this indicates the batches in which they were processed.</p></dd></dl></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2790048"></a>School</h2></div></div></div><div class="glosslist"><dl><dt>termids</dt><dd><p>Defines the terms the school goes through --- Fall 2008,
+              Nutcracker 2007, Summer 2009, etc.</p></dd><dt>termtypes</dt><dd><p>Different kinds of terms --- Fall, Spring, Summer,
+              Nutcracker, etc. Annotates termids.</p></dd><dt>termduedates</dt><dd><p>The dates at which different kinds of term bill payments
+              are due --- whether they're quarterly, yearly, monthly, etc. The
+              codes in this table ('y', 'q1', etc.) are referenced in the Java
+              tuition calculation code.</p></dd><dt>holidays</dt><dd><p>Combined with the start and end date of a term in termids,
+              the holidays table is used to define a school calendar. This is
+              used to automate the filling in of the meetings table.</p></dd><dt>courseids</dt><dd><p>Lists the courses offered on a particular term.</p></dd><dt>meetings</dt><dd><p>Lists all the times a course meets over the course of a
+              term.</p></dd><dt>enrollments, courseroles</dt><dd><p>Enrollments associates entities with courses, thus
+              enrolling a person in a course. Enrollment in a course can
+              involve peole in different roles --- which might include
+              student, pianist, or teacher. Thus, it is not just students who
+              get enrolled.</p></dd><dt>subs</dt><dd><p>Record of pre-arranged class substitutions --- or viewed
+              another way, this table allows students/teachers/pianists to
+              enroll (or un-enroll) in a course on a meeting-by-meeting basis.
+              The enrollment for any particular meeting is thus defined by
+              enrollments table, with overrids from subs.</p><p>An open class program will involve an enrollments table
+              with teacher and maybe pianist, but no permanent student
+              enrollment. Students will be put in the subs table on a
+              per-class basis.</p></dd><dt>attendance</dt><dd><p>Attendance record. Taken automatically or
+              semi-automatically from information obtained at front
+              desk.</p></dd><dt>absences</dt><dd><p>A record of any unexplained absences noticed by the system
+              (as obtained from the attendance table), plus what was done
+              about them.</p></dd><dt>coursesetids, coursesets</dt><dd><p>Courses may be grouped into sets, by level. In general, a
+              student a particular level (in entities_school) should only be
+              enrolled in level-appropriate courses. This information can be
+              used to streamline the backoffice interface, and also limit
+              options for parents on the web interface.</p></dd><dt>gradelevels</dt><dd><p>Meta-data table describing a number of different grade
+              levels. Used in entities_school.</p></dd><dt>programids</dt><dd><p>Meta-data describing the different programs (levels) at
+              the school. Eg: Pre-Ballet I, Level IV, etc.</p></dd><dt>registrations, regelig</dt><dd><p>Students are typically allowed to register for a
+              particular level (program) only after an audition. This table
+              records their eligibility, thus allowing automated school
+              registration, post-audition. Not yet used.</p></dd><dt>termregs</dt><dd><p>Before a student can be enrolled in courses, that student
+              must be registered for a term. This table includes columns
+              specific to a student on a per-term basis.</p></dd><dt>payertermregs</dt><dd><p>Per-term information for the payer of a student.</p></dd></dl></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2790352"></a>Resources</h2></div></div></div><p>OffstageArts maintains a system of versioned resource in the
+      database. These resources consist of report templates, and even the
+      database schema itself. Resources have a version number (corresponding
+      with the SVN version number of the code), as well as an overion number
+      (which corresponds to a term or season, for resources that get their
+      text changed every term or season.)</p><div class="glosslist"><dl><dt>resourceids</dt><dd><p>Names of the various resources the system keeps (versioned)
+            track of.</p></dd><dt>resources</dt><dd><p>The actual resources, as well as versioning information
+            (both by version and oversion).</p></dd></dl></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2790405"></a>DB Administration</h2></div></div></div><div class="glosslist"><dl><dt>accounts (web users)</dt><dd><p>Information that will allow entities (typically parents)
+              to log in via the web. Not yet used</p></dd><dt>dblogins, dblogingroups, dblogingroupids</dt><dd><p>In theory, OffstageArts client knows which user is using
+              the system, based on Macintosh/Windows logins. It does not seem
+              to work on Windows, and needs further testing.</p><p>This information can be used to restrict end-user access
+              to certain OffstageArts functions. Currently, all functions are
+              available to everyone.</p></dd><dt>dups</dt><dd><p>The duplicate finder program stores its results
+              here.</p></dd><dt>mergelog</dt><dd><p>A log of merged records in pursuit of elimination of
+              duplicates. Also indicates records that the duplicate finder
+              thinks are duplicates, but actually are not --- telling the
+              system to ignore those particular duplicates in the
+              future.</p></dd><dt>querylog, querylogcols</dt><dd><p>A log of all insert and update queries to the core CRM
+              tables (and maybe some others). It includes most changes to the
+              database, but not all.</p></dd></dl></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2790514"></a>Misc.</h2></div></div></div><div class="glosslist"><dl><dt>daysofweek</dt><dd><p>Conversions between days of the week in various forms.
+              Shortcut to allow this table lookup via an SQL join.</p></dd><dt>locations</dt><dd><p>Studio or Venue locations. Not sure if this is being used
+              anywhere.</p></dd></dl></div></div><div class="section" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2790561"></a>Obsolete</h2></div></div></div><div class="glosslist"><dl><dt>coursedeps</dt><dd><p></p></dd><dt>classes</dt><dd><p></p></dd><dt>classids</dt><dd><p></p></dd><dt>dtgroupids</dt><dd><p></p></dd><dt>dtgroups</dt><dd><p></p></dd><dt>invoiceids</dt><dd><p></p></dd><dt>invoices</dt><dd><p></p></dd><dt>mailingids</dt><dd><p></p></dd><dt>mailings</dt><dd><p></p></dd><dt>organizations</dt><dd><p></p></dd><dt>paymentallocs</dt><dd><p></p></dd><dt>paymentids</dt><dd><p></p></dd><dt>paymenttypeids</dt><dd><p></p></dd><dt>pplanids</dt><dd><p></p></dd><dt>pplaninvoiceids</dt><dd><p></p></dd><dt>pplantypeids</dt><dd><p></p></dd><dt>relprimarytypes</dt><dd><p></p></dd><dt>status</dt><dd><p></p></dd><dt>statusids</dt><dd><p></p></dd><dt>termregs_old</dt><dd><p></p></dd><dt>termids_old</dt><dd><p></p></dd></dl></div></div></div></div></body></html>
