@@ -25,7 +25,7 @@ package offstage.equery;
 import com.thoughtworks.xstream.converters.basic.StringConverter;
 
 /**
- *
+ * Used to serialize column names via XStream.
  * @author citibob
  */
 public class ColNameConverter extends StringConverter

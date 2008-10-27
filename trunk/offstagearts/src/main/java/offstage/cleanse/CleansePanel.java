@@ -212,7 +212,9 @@ displayTabs.remove(editTab);
 		this.cleanseMode = cleanseMode;
 
 		cbDbid0.setKeyedModel(app.schemaSet().getKeyedModel("entities", "dbid"));
+		cbDbid0.setValue(0);
 		cbDbid1.setKeyedModel(app.schemaSet().getKeyedModel("entities", "dbid"));
+		cbDbid1.setValue(0);
 		
 		PropertyChangeListener propChange = new java.beans.PropertyChangeListener() {
 	    public void propertyChange(final java.beans.PropertyChangeEvent evt) {
@@ -840,8 +842,18 @@ void mergeDbAction(SqlRun str, final int action, int entityid0, int entityid1)
 		entityidTo = entityid1;
 	}
 	if (cleanseMode != M_PROVISIONAL) {
-		String sql = MergeSql.mergeEntities(app, entityidFrom, entityidTo);
-		str.execSql(sql);
+
+///** Merges data FROM dm0 TO dm1 */
+//public static String mergeEntities(FrontApp app, Object entityid0, Object entityid1)
+//{
+//	merge.mergeEntities(entityid0, entityid1);
+//	String sql = merge.toSql();
+//	return sql;
+//}
+		MergeSql merge = new MergeSql(app);//.schemaSet());
+		merge.mergeEntities(entityidFrom, entityidTo);
+//		String sql = MergeSql.mergeEntities(app, entityidFrom, entityidTo);
+		str.execSql(merge.toSql());
 		
 		// Mark it as coming from the correct database
 		str.execSql(

@@ -303,7 +303,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {	
 	// Make sure we have the right version
-	version = new Version("1.7.0");
+	version = new Version("1.7.1");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
@@ -527,7 +527,10 @@ public void initWithDatabase()
 
 		// First look for sitecode.jar described in our configuration files
 		String siteCodeFileName = props().getProperty("sitecode.jar");
-		if (siteCodeFileName != null) {
+		if ("<none>".equals(siteCodeFileName)) {
+			// Ensure there is NO sitecode.
+			siteCode = getClass().getClassLoader();
+		} else if (siteCodeFileName != null) {
 			// Create a classloader on that jar file
 			URL siteCodeURL = new File(siteCodeFileName).toURL();
 			siteCode = new URLClassLoader(new URL[] {siteCodeURL}, getClass().getClassLoader());

@@ -22,15 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.equery;
 
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.basic.StringConverter;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import offstage.equery.compare.Comp;
 
 /**
- *
+ * Used to serialize Comparators (Comp.class) via XStream.
  * @author citibob
  */
 public class CompConverter extends StringConverter

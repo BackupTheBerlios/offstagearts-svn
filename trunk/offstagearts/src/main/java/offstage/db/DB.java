@@ -457,17 +457,17 @@ public static void rekeyEncryptedData(SqlRun str, offstage.crypt.KeyRing kr)
 }
 // --------------------------------------------------
 /** Given something the user typed into a simple search box, generate a SQL search query. */
-public static String simpleSearchSql(String text, int dbid)
+public static String simpleSearchSql(String text, Integer dbid)
 {
 	return simpleSearchSql(text, dbid, "", "");
 }
 /** Only gives names registered in a particular term */
-public static String registeredSearchSql(String text, int dbid, int termid)
+public static String registeredSearchSql(String text, Integer dbid, int termid)
 {
 	return simpleSearchSql(text, dbid, ", termregs",
 		" and persons.entityid = termregs.entityid and termregs.groupid = " + SqlInteger.sql(termid));
 }
-protected static String simpleSearchSql(String text, int dbid, String join, String whereClause)
+protected static String simpleSearchSql(String text, Integer prefDbid, String join, String whereClause)
 {
 	if (text == null) return null;
 	text = text.trim();
@@ -485,44 +485,46 @@ protected static String simpleSearchSql(String text, int dbid, String join, Stri
 		}
 	}
 	
-	int prefDbid = dbid;
+	String whereDbid = (prefDbid == null ? " " : " and persons.dbid = " + prefDbid + " ");
 	if (numeric) {
 		// entityid
 		return "select persons.entityid from persons" + join +
-		" where persons.dbid = " + prefDbid +
-		" and persons.entityid = " + text; // + " and not obsolete" + whereClause;
+			" where persons.entityid = " + text;
+//			+ whereDbid;
 	} else if (at >= 0) {
 		return "select persons.entityid from persons" + join +
-			" where persons.dbid = " + prefDbid +
-			" and email ilike " + SqlString.sql('%' + text.trim() + '%')
-			+ " " + whereClause;
+			" where email ilike " + SqlString.sql('%' + text.trim() + '%')
+			+ whereDbid + whereClause;
 	} else if (comma >= 0) {
 		// lastname, firstname
 		String lastname = text.substring(0,comma).trim();
 		String firstname = text.substring(comma+1).trim();
-		String idSql = "select persons.entityid from persons " + join + " where dbid = " + prefDbid + " and (" +
+		String idSql = "select persons.entityid from persons " + join +
+			" where (" +
 			" firstname ilike " + SqlString.sql('%' + firstname + '%') +
 			" and lastname ilike " + SqlString.sql('%' + lastname + '%') +
-			" ) and not obsolete" + whereClause;
+			" ) and not obsolete" + whereClause + whereDbid;
 		return idSql;
 	} else if (space >= 0) {
 		// firstname lastname
 		String firstname = text.substring(0,space).trim();
 		String lastname = text.substring(space+1).trim();
-		String idSql = "select persons.entityid from persons" + join + " where dbid = " + prefDbid + " and (" +
+		String idSql = "select persons.entityid from persons" + join +
+			" where (" +
 			" firstname ilike " + SqlString.sql('%' + firstname + '%') +
 			" and lastname ilike " + SqlString.sql('%' + lastname + '%') +
-			" ) and not obsolete" + whereClause;
+			" ) and not obsolete" + whereClause + whereDbid;
 		return idSql;
 	} else {
 		String ssearch = SqlString.sql(text, false);
-		String idSql = "select persons.entityid from persons " + join + " where dbid = " + prefDbid + " and (" +
+		String idSql = "select persons.entityid from persons " + join +
+			" where (" +
 			" firstname ilike " + SqlString.sql('%' + ssearch + '%') +
 			" or lastname ilike " + SqlString.sql('%' + ssearch + '%') +
 			" or orgname ilike " + SqlString.sql('%' + ssearch + '%') +
 			" or email ilike " + SqlString.sql('%' + ssearch + '%') +
 			" or url ilike " + SqlString.sql('%' + ssearch + '%') +
-			" ) and not obsolete" + whereClause;
+			" ) and not obsolete" + whereClause + whereDbid;
 		return idSql;
 	}
 }

@@ -75,7 +75,7 @@ throws SQLException
 	
 	EQueryTableModel eqModel = new EQueryTableModel(fapp.equerySchema());
 //		new EQuerySchema(fapp.getSchemaSet()));
-	eQueryEditor.initRuntime(eqModel, fapp.swingerMap(), fapp.timeZone());
+	eQueryEditor.initRuntime(fapp, eqModel);
 
 	equeryDm = new SchemaBufDbModel(new SchemaBuf(fapp.getSchema("equeries")));
 	row = new SchemaBufRowModel(equeryDm.getSchemaBuf());

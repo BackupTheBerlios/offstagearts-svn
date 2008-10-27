@@ -53,14 +53,14 @@ public String toSql()
 	{ return sql.toString(); }
 
 
-/** Merges data FROM dm0 TO dm1 */
-public static String mergeEntities(FrontApp app, Object entityid0, Object entityid1)
-{
-	MergeSql merge = new MergeSql(app);//.schemaSet());
-	merge.mergeEntities(entityid0, entityid1);
-	String sql = merge.toSql();
-	return sql;
-}
+///** Merges data FROM dm0 TO dm1 */
+//public static String mergeEntities(FrontApp app, Object entityid0, Object entityid1)
+//{
+//	MergeSql merge = new MergeSql(app);//.schemaSet());
+//	merge.mergeEntities(entityid0, entityid1);
+//	String sql = merge.toSql();
+//	return sql;
+//}
 
 public void subordinateEntities(Object entityid0, Object entityid1)
 {
@@ -71,8 +71,37 @@ public void subordinateEntities(Object entityid0, Object entityid1)
 	searchAndReplace(app.schemaSet().get("persons"), "primaryentityid", entityid0, entityid1);
 }
 
+// These columns should NOT be auto-merged.
+static final Set<String> noDOB = new TreeSet();
+static {
+	noDOB.add("dob");
+	noDOB.add("dobapprox");
+}
+
+void mergeDOB(Integer entityid0, Integer entityid1)
+{
+	sql.append(" update persons set\n");
+	
+	sql.append(
+		" dob =\n" +
+		" (case when persons.dob is null or\n" +
+		" (persons.dobapprox and p0.dob is not null and not p0.dobapprox)\n" +
+		" then p0.dob else persons.dob end)\n" +
+		"," +
+		" dobapprox =\n" +
+		" (case when persons.dob is null or\n" +
+		" (persons.dobapprox and p0.dob is not null and not p0.dobapprox)\n" +
+		" then p0.dobapprox else persons.dobapprox end)\n");
+
+	sql.append(
+		" from persons as p0" +
+		" where persons.entityid = " + entityid1 +
+		" and p0.entityid = " + entityid0 +
+		";\n");	
+}
+
 /** Merges data FROM dm0 TO dm1 */
-public void mergeEntities(Object entityid0, Object entityid1)
+public void mergeEntities(Integer entityid0, Integer entityid1)
 {
 // ONE MORE THING: need to tell mergeOneRow() about columns that default to entityid.
 // This can be done in a special update statement after-the-fact.
@@ -82,7 +111,8 @@ public void mergeEntities(Object entityid0, Object entityid1)
 	SchemaSet sset = app.schemaSet();
 
 	// =================== Main Data
-	mergeOneRow(sset.get("persons"), "entityid", entityid0, entityid1);
+	mergeOneRow(sset.get("persons"), "entityid", entityid0, entityid1, noDOB);
+		mergeDOB(entityid0, entityid1);		// Special treatment for the DOB entry.
 	mergeOneRowEntityID(sset.get("persons"), "entityid", new String[] {"primaryentityid"}, entityid0, entityid1);
 	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
 	searchAndReplace(sset.get("persons"), "parent1id", entityid0, entityid1);
@@ -205,8 +235,10 @@ Object entityid0, Object entityid1)
 	System.out.println(sql);
 }
 // -------------------------------------------------------------------
-/** Merges the (one) row fully keyed by sKeyCol.  Only changes columns with null values. */
-public void mergeOneRow(SqlSchema schema, String sEntityCol, Object entityid0, Object entityid1)
+/** Merges the (one) row fully keyed by sKeyCol.  Only changes columns with null values.
+ @param exceptionCols Ignore these columns. */
+public void mergeOneRow(SqlSchema schema, String sEntityCol,
+Object entityid0, Object entityid1, Set<String> exceptionCols)
 {
 	int entityColIx = schema.findCol(sEntityCol);
 	SqlCol entityCol = (SqlCol)schema.getCol(entityColIx);
@@ -218,12 +250,18 @@ public void mergeOneRow(SqlSchema schema, String sEntityCol, Object entityid0, O
 	sql.append(" set\n");
 	for (int i=0; ;) {
 		SqlCol col = (SqlCol)schema.getCol(i);
-		if (col.isKey()) {
+		if (col.isKey() || exceptionCols.contains(col.getName())) {
 			++i;
 			continue;
 		}
+		
+		// Treat blank fields as null
+		String colVal = table + "." + col.getName();
+		if (col.getSqlType().getObjClass() == String.class) {
+			colVal = "(case when char_length(trim(" + colVal + ")) = 0 then null else " + colVal + " end)";
+		}
 		sql.append(col.getName() + " = " +
-			" (case when " + table + "." + col.getName() + " is null then " +
+			" (case when " + colVal + " is null then " +
 			" t0." + col.getName() + " else " + table + "." + col.getName() + " end)");
 		if (++i >= schema.size()) break;
 		sql.append(",\n");
@@ -407,15 +445,43 @@ public static void bufMerge(DataTabSet tabs, DevelModel dmod0, DevelModel dmod1)
 /** Merge main part of the record.. */
 public static void bufMergeMain(SchemaBuf sb0, SchemaBuf sb1)
 {
-	for (int col=0; col < sb0.getColumnCount(); ++col) bufMergeCol(sb0, sb1, col);
+	// Decide whether to overwrite sb1's dob with sb0's dob
+	int dobCol = sb0.findColumn("dob");
+	int dobapproxCol = sb0.findColumn("dobapprox");
+	Object dob0 = sb0.getValueAt(0, dobCol);
+	Object dob1 = sb1.getValueAt(0, dobCol);
+	boolean dobapprox0 = (Boolean)sb0.getValueAt(0, dobapproxCol);
+	boolean dobapprox1 = (Boolean)sb1.getValueAt(0, dobapproxCol);
+
+	if (dob1 == null || (dobapprox1 && dob0 != null && !dobapprox0)) {
+		sb1.setValueAt(dob0, 0, dobCol);
+		sb1.setValueAt(dobapprox0, 0, dobapproxCol);
+	}
+	
+	for (int col=0; col < sb0.getColumnCount(); ++col) {
+		String colName = sb0.getColumnName(col);
+		if (col == dobCol || col == dobapproxCol) continue;
+		bufMergeCol(sb0, sb1, col);
+	}
+}
+
+/** Accept a blank string as null also. */
+static boolean isnull(Object val)
+{
+	if (val == null) return true;
+	if (val instanceof String) {
+		String sval = (String)val;
+		return sval.trim().length() == 0;
+	} else return false;
 }
 
 /** Merge main part of the record.. */
 public static void bufMergeCol(SchemaBuf sb0, SchemaBuf sb1, int col)
 {
 	Object val1 = sb1.getValueAt(0, col);
-System.out.println(col + " val1 = " + val1);
-	if (val1 == null) {
+//System.out.println(col + " val1 = " + val1);
+//	if (val1 == null) {
+	if (isnull(val1)) {
 		Object val0 = sb0.getValueAt(0, col);
 		sb1.setValueAt(val0, 0, col);
 	}

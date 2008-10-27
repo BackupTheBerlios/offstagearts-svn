@@ -82,7 +82,9 @@ static class LastModifiedComparator implements Comparator<Entity>
 static class PositionComparator implements Comparator<Entity>
 {
 	public int compare(Entity e0, Entity e1) {
-		return -1;
+		// e0 > e1 ==> e0 is newer than e1
+		// (which will cause output to not swap)
+		return 1;
 	}
 }
 
@@ -181,7 +183,8 @@ final int dbid0, final int dbid1, final double thresh,
 final Writer out)
 {
 	final Map<Integer,Entity> map0 = loadNameMap(str, dbid0);
-	final Map<Integer,Entity> map1 = loadNameMap(str, dbid1);
+	final Map<Integer,Entity> map1 =
+		(dbid0 == dbid1 ? map0 : loadNameMap(str, dbid1));
 	
 	final String type = "n";
 	
@@ -197,7 +200,7 @@ final Writer out)
 //			" and dups.entityid0 = e0 and dups.entityid1 = e1" +
 //			" and e0.dbid = " + SqlInteger.sql(dbid0) +
 //			" and e1.dbid = " + SqlInteger.sql(dbid1) + ";\n");
-		Hist fullHist = new Hist(0,1,10);
+		Hist fullHist = new Hist(0,1,10);		// Histograms
 
 		//process(dbid0, nameMap0, dbid1, nameMap1, .95, "n");
 
@@ -207,38 +210,44 @@ final Writer out)
 		// Train the matcher...
 		List<StringWrapper> list0 = prepareMap(map0, fullD);
 		fullD.train(new BasicStringWrapperIterator(list0.iterator()));
-		if (map1 != map0) {
+		if (dbid1 != dbid0) {
 			List<StringWrapper> list1 = prepareMap(map1, fullD);
 			fullD.train(new BasicStringWrapperIterator(list1.iterator()));			
 		}
 
 	System.out.println("Full Processing: sizes = " + map0.size() + " and " + map1.size());
-		int i,j;
-		i=0; j=0;
+//		int i,j;
+//		i=0; j=0;
+		int i=0;
 		for (Entity e0 : map0.values()) {
 			if (i % 10 == 0) System.out.println("  " + i);
-			j=0;
 			for (Entity e1 : map1.values()) {
-				if (map1 == map0 && j >= i) continue;
+				if (e1.entityid == e0.entityid) continue;
+				if (dbid0 == dbid1
+					&& e1.entityid >= e0.entityid) continue;
 				double score = fullD.score(e0.name, e1.name);
 				fullHist.add(score);		// histograms
 				if (score >= thresh) {
 					Entity aa,bb;
-					if (swapOrder.compare(e0, e1) > 1) {
+					if (swapOrder.compare(e0, e1) < 0) {
+						// e1 newer than e0: swap, so that e0 ends up newest
 						aa = e1;
 						bb = e0;
 					} else {
+						// e0 newer than e1: do not swap
 						aa = e0;
 						bb = e1;
 					}
+					// In the output, entity0 should be "newer" than entity1
 					out.write(
 						"insert into dups (type, entityid0, string0, entityid1, string1, score) values (\n" +
 						SqlString.sql(type) + ", " +
 						SqlInteger.sql(aa.entityid) + ", " + SqlString.sql(aa.name) + ", " +
 						SqlInteger.sql(bb.entityid) + ", " + SqlString.sql(bb.name) + ", " +
 						SqlDouble.sql(score) + ");\n");
+					out.flush();
 				}
-				++j;
+//				++j;
 			}
 			++i;
 		}
@@ -252,7 +261,8 @@ public static void main(String[] args) throws Exception
 	app.initWithDatabase();
 	File dir = ClassPathUtils.getMavenProjectRoot();
 	Writer out = new FileWriter(new File(dir, "dups.sql"));
-	new MergePurge(app).findDups(app.sqlRun(), 1, 0, .95, out);
+//	new MergePurge(app).findDups(app.sqlRun(), 1, 0, .95, out);
+	new MergePurge(app).findDups(app.sqlRun(), 0, 0, .95, out);
 	app.sqlRun().flush();
 	out.close();
 }

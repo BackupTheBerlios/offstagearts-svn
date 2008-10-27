@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.equery.swing;
 
+import citibob.app.App;
 import citibob.swing.*;
 import citibob.swing.table.*;
 import citibob.swing.typed.*;
@@ -56,20 +57,20 @@ implements TypedWidget
 		eClauseScrollPane.setRowHeaderView(new TableRowHeader(eClauseScrollPane, eQueryTable, 15));
     }
 
-	public void initRuntime(EQueryTableModel qm, SwingerMap smap, TimeZone tz)
+	public void initRuntime(App app, EQueryTableModel qm)
 	throws SQLException
 	{
 		this.model = qm;
 //		eQueryTable.setModel(new EQueryTableModel());
 		eQueryTable.setModel(qm);
-		eQueryTable.setSwingerMap(smap);
+		eQueryTable.setSwingerMap(app.swingerMap());
 
 		cbDistinctType.setKeyedModel(Query.distinctKmodel);
-		
-		JDateType jt = new JDate(true);
-		DateFormat fmt = new SimpleDateFormat("MM-dd-yyyy");
+		cbDbid.setKeyedModel(app.schemaSet().getKeyedModel("entities", "dbid"));
+//		JDateType jt = new JDate(true);
+//		DateFormat fmt = new SimpleDateFormat("MM-dd-yyyy");
 
-		Swinger swinger = smap.newSwinger(new SqlDate(tz, true));
+		Swinger swinger = app.swingerMap().newSwinger(new SqlDate(app.timeZone(), true));
 		swinger.configureWidget(dtFirst);
 		swinger.configureWidget(dtNext);
 	}
@@ -81,6 +82,7 @@ implements TypedWidget
      */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         eClauseScrollPane = new javax.swing.JScrollPane();
         eQueryTable = new offstage.equery.swing.EQueryTable();
@@ -92,10 +94,13 @@ implements TypedWidget
         jPanel2 = new javax.swing.JPanel();
         cbDistinctType = new citibob.swing.typed.JKeyedComboBox();
         jLabel1 = new javax.swing.JLabel();
+        cbDbid = new citibob.swing.typed.JKeyedComboBox();
+        jPanel3 = new javax.swing.JPanel();
         dtFirst = new citibob.swing.typed.JTypedDateChooser();
         jLabel2 = new javax.swing.JLabel();
         dtNext = new citibob.swing.typed.JTypedDateChooser();
         jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -142,21 +147,56 @@ implements TypedWidget
 
         jPanel1.add(jToolBar1, java.awt.BorderLayout.WEST);
 
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
         cbDistinctType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel2.add(cbDistinctType);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel2.add(cbDistinctType, gridBagConstraints);
 
-        jLabel1.setText("Last Modified:");
-        jPanel2.add(jLabel1);
-        jPanel2.add(dtFirst);
+        jLabel1.setText("Last Modified (not inclusive)");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        jPanel2.add(jLabel1, gridBagConstraints);
+
+        cbDbid.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel2.add(cbDbid, gridBagConstraints);
+
+        jPanel3.add(dtFirst);
 
         jLabel2.setText("-");
-        jPanel2.add(jLabel2);
-        jPanel2.add(dtNext);
+        jPanel3.add(jLabel2);
+        jPanel3.add(dtNext);
 
-        jLabel3.setText("(not inclusive)");
-        jPanel2.add(jLabel3);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        jPanel2.add(jPanel3, gridBagConstraints);
+
+        jLabel3.setText("From Database:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        jPanel2.add(jLabel3, gridBagConstraints);
+
+        jLabel4.setText("Query Scope:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        jPanel2.add(jLabel4, gridBagConstraints);
 
         jPanel1.add(jPanel2, java.awt.BorderLayout.CENTER);
 
@@ -195,6 +235,7 @@ private void bAddElementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     private javax.swing.JButton bAddClause;
     private javax.swing.JButton bAddElement;
     private javax.swing.JButton bRemoveRow;
+    private citibob.swing.typed.JKeyedComboBox cbDbid;
     private citibob.swing.typed.JKeyedComboBox cbDistinctType;
     private citibob.swing.typed.JTypedDateChooser dtFirst;
     private citibob.swing.typed.JTypedDateChooser dtNext;
@@ -203,8 +244,10 @@ private void bAddElementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JToolBar jToolBar1;
     // End of variables declaration//GEN-END:variables
 
@@ -223,6 +266,7 @@ public EQuery getEQuery()
 	EQuery q = model.getQuery();
 	if (q != null) {
 		q.setLastUpdatedFirst((java.util.Date)dtFirst.getValue());
+		q.setDbid((Integer)cbDbid.getValue());
 		q.setLastUpdatedNext((java.util.Date)dtNext.getValue());
 		q.setDistinctType((Integer)cbDistinctType.getValue());
 	}
@@ -244,6 +288,7 @@ public void setValue(Object o)
 	model.setSQuery((String)o);
 	EQuery q = model.getQuery();
 	dtFirst.setValue(q.getLastUpdatedFirst());
+	cbDbid.setValue(q.getDbid());
 	dtNext.setValue(q.getLastUpdatedNext());
 	cbDistinctType.setValue(q.getDistinctType());
 	this.firePropertyChange("value", oldValue, getValue());

@@ -37,8 +37,12 @@ public class EQuery extends Query
 ArrayList<EClause> clauses = new ArrayList();
 java.util.Date lastUpdatedFirst;
 java.util.Date lastUpdatedNext;
+Integer dbid = 0;			// Database to search in; default to main (default) database
 int distinctType = Query.DISTINCT_PRIMARYENTITYID;
 // ============================================
+/** The database we should be searching in.  null for all databases. */
+public Integer getDbid() { return dbid;}
+public void setDbid(Integer dbid) { this.dbid = dbid; }
 
 public void setLastUpdatedFirst(java.util.Date dt)
 	{ this.lastUpdatedFirst = dt; }
@@ -142,6 +146,7 @@ throws IOException
 	if (clause.elements.size() == 0) return null;
 	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
 	sql.addTable("entities as main");
+	if (this.dbid != null) sql.addWhereClause("main.dbid = " + dbid);		// For now, only select out of main database!
 	String ewhere = getWhereSql(schema, sql, clause);
 	sql.addWhereClause("(" + ewhere + ")");
 	sql.addColumn("main.entityid as id");
@@ -178,7 +183,7 @@ throws IOException
 
 
 
-/** @param primaryOnly Select only head of household (dinstinct primaryentityid)? */
+/** Returns the SQL for one clause of the query. */
 public String getSql(QuerySchema schema, EClause clause)
 throws IOException
 {
@@ -191,7 +196,6 @@ throws IOException
 	sql.addTable("entities as main");
 	sql.addTable("(" + sql0 + ")", "yy", SqlQuery.JT_INNER,
 		"main.entityid = yy.id");
-	sql.addWhereClause("main.dbid = 0");		// For now, only select out of main database!
 	sql.addWhereClause("not main.obsolete");
 	sql.setDistinct(true);
 	

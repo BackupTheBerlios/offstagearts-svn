@@ -97,6 +97,7 @@ public void initRuntime(FrontApp xapp, int termid) //Statement st, FullEntityDbM
 	// Set up DBID dropdown
 	KeyedModel km = app.schemaSet().getKeyedModel("entities", "dbid");
 	cbDbid.setKeyedModel(km);
+	cbDbid.setValue(0);		// Default database
 	
 	// Pressing ENTER will initiate search.
 	searchWord.addKeyListener(new KeyAdapter() {
@@ -125,7 +126,7 @@ public void setSearchIdSql(SqlRun str, String idSql)
 public void setSearch(SqlRun str, String text)//, int dbid)
 //throws SQLException
 {
-	int dbid = (Integer)cbDbid.getValue();
+	Integer dbid = (Integer)cbDbid.getValue();
 	String idSql = (termid >= 0 ? DB.registeredSearchSql(text, dbid, termid) : DB.simpleSearchSql(text, dbid));
 	setSearchIdSql(str, idSql);
 }
