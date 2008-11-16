@@ -38,13 +38,14 @@ import javax.swing.*;
 import offstage.cleanse.*;
 import citibob.sql.*;
 import java.io.File;
+import offstage.email.VettEmail;
 import offstage.equery.EQuery;
-import offstage.equery.Query;
 import offstage.equery.swing.EQueryWizard;
 import offstage.reports.ClauseReport;
 import offstage.reports.DonationReport;
 import offstage.reports.MailMerge;
 import offstage.reports.SegmentationReport;
+import offstage.school.gui.SchoolSetupFrame;
 
 /**
  *
@@ -107,9 +108,24 @@ throws org.xml.sax.SAXException, java.io.IOException
 
 	actionMap.put("emails", new Job("", new SqlTask() {
 	public void run(SqlRun str) throws Exception {
-//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
-		wizard.runEmails(str);
+		if (!wizard.runBulkEmails(str)) return;
+
+		// Text of the email we wish to send
+		byte[] msgBytes = (byte[])wizard.getVal("emails");
+//if (msg != null) System.out.println("Email = " + msg.subject);
+
+		// SQL of people we wish to send to
+		EQuery equery = (EQuery)wizard.getVal("equery");
+
+		VettEmail.sendJangoMail(fapp, str, msgBytes,
+			equery.getSql((fapp.equerySchema())),
+			equery.toXML((fapp.equerySchema())),
+				(Integer)wizard.getVal("equeryid"), VettEmail.ET_BULK);
+		
+//		//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+//		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
+//		wizard.runCSEmails(str);
 	}}));
 
 	actionMap.put("donationreport", new Job("", new SqlTask() {

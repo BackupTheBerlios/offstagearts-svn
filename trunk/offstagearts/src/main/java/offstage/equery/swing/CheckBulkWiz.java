@@ -33,7 +33,7 @@ import offstage.swing.typed.IdSqlPanel;
  *
  * @author citibob
  */
-public class CheckSchoolWiz extends HtmlWiz {
+public class CheckBulkWiz extends HtmlWiz {
 
 public IdSqlPanel newIdSqlPanel(App app)
 {
@@ -47,13 +47,13 @@ public IdSqlPanel newIdSqlPanel(App app)
 /**
  * Creates a new instance of PersonWiz 
  */
-public CheckSchoolWiz(SqlRun str, java.awt.Frame owner, FrontApp fapp, EQuery equery)
+public CheckBulkWiz(SqlRun str, java.awt.Frame owner, FrontApp fapp, EQuery equery)
 throws org.xml.sax.SAXException, java.io.IOException, MessagingException
 {
 	super(owner, fapp.swingerMap());
 	setSize(700,530);
 
-	str.execSql(VettEmail.checkSchoolEmailQuery(
+	str.execSql(VettEmail.checkBulkEmailQuery(
 		equery.getSql(fapp.equerySchema())));
 	
 
@@ -67,12 +67,12 @@ throws org.xml.sax.SAXException, java.io.IOException, MessagingException
 		, "lastname,firstname");
 	
 	
-	final IdSqlPanel notCurrent = newIdSqlPanel(fapp);
-	final TableRowCounter notCurrentCount = notCurrent.newRowCounter();
-	notCurrent.getTable().executeQuery(str,
-		" select id from _mm" +
-		" where not _mm.iscurrent;\n"
-		, "lastname,firstname");
+//	final IdSqlPanel notCurrent = newIdSqlPanel(fapp);
+//	final TableRowCounter notCurrentCount = notCurrent.newRowCounter();
+//	notCurrent.getTable().executeQuery(str,
+//		" select id from _mm" +
+//		" where not _mm.iscurrent;\n"
+//		, "lastname,firstname");
 
 	final IdSqlPanel goodAddr = newIdSqlPanel(fapp);
 	final TableRowCounter goodAddrCount = goodAddr.newRowCounter();
@@ -87,8 +87,8 @@ throws org.xml.sax.SAXException, java.io.IOException, MessagingException
 	
 	addWidget("goodAddr", goodAddr);
 	addWidget("goodAddrCount", goodAddrCount);
-	addWidget("notCurrent", notCurrent);
-	addWidget("notCurrentCount", notCurrentCount);
+//	addWidget("notCurrent", notCurrent);
+//	addWidget("notCurrentCount", notCurrentCount);
 	addWidget("noEmail", noEmail);
 	addWidget("noEmailCount", noEmailCount);
 	super.addSubmitButton("updateaddr", "Update Emails");

@@ -39,15 +39,13 @@ import offstage.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
-import citibob.swing.table.TableRowCounter;
 import citibob.util.IntVal;
 import offstage.equery.*;
 import offstage.reports.*;
 import java.io.*;
 import offstage.devel.gui.DevelFrame;
+import offstage.email.VettEmail;
 import offstage.gui.*;
-import offstage.school.gui.SchoolDB;
-import offstage.swing.typed.IdSqlPanel;
 
 /**
  *
@@ -212,7 +210,7 @@ addState(new AbstractWizState("emailmsg") {
 		{ return new EmailMsgWiz(frame, app); }
 	public void process(Wizard.Context con) throws Exception
 	{
-		MailMsg buf = (MailMsg)v.get("emails");
+		byte[] buf = (byte[])v.get("emails");
 		if (buf == null) stateName = "emailmsg";	// An exception happened
 		else ((EmailMsgWiz)wiz).close();
 //System.out.println("Email =\n" + new String(buf));
@@ -229,7 +227,29 @@ addState(new AbstractWizState("checkschool") {
 			DevelFrame devel = (DevelFrame)app.frameSet().getFrame("devel");
 			
 			EQuery equery = (EQuery)con.v.get("equery");
-			con.str.execSql(SchoolDB.checkSchoolEmailQuery(
+			con.str.execSql(VettEmail.checkSchoolEmailQuery(
+				equery.getSql((fapp.equerySchema()))));
+			devel.getDevelPanel().getEntitySelector().setSearchIdSql(con.str,
+				" select id from _mm" +
+				" where _mm.iscurrent and not _mm.hasemail;\n");
+			con.str.execSql(" drop table _mm;");
+
+			app.frameSet().openFrame("devel");
+			stateName = null;
+		}
+	}
+});
+addState(new AbstractWizState("checkbulk") {
+	public Wiz newWiz(Wizard.Context con) throws Exception
+		{ return new CheckBulkWiz(con.str, frame, fapp, (EQuery)con.v.get("equery")); }
+	public void process(Wizard.Context con) throws Exception
+	{
+		if ("updateaddr".equals(con.v.get("submit"))) {
+			// This could flush the SQL; make sure we have our frame ready.
+			DevelFrame devel = (DevelFrame)app.frameSet().getFrame("devel");
+			
+			EQuery equery = (EQuery)con.v.get("equery");
+			con.str.execSql(VettEmail.checkBulkEmailQuery(
 				equery.getSql((fapp.equerySchema()))));
 			devel.getDevelPanel().getEntitySelector().setSearchIdSql(con.str,
 				" select id from _mm" +
@@ -319,17 +339,29 @@ public boolean runMailingLabels(SqlRun str) throws Exception
 	return true;
 }
 
-public boolean runEmails(SqlRun str) throws Exception
+public boolean runCSEmails(SqlRun str) throws Exception
 {
-	setWizardName("Bulk Mail --- Email Only");
+	setWizardName("Bulk Mail --- Customers Only");
 	setNavigator(new HashNavigator(new String[] {
 		"editquery", "checkschool",
 		"checkschool", "emailmsg",
 		"emailmsg", "<end>"
 	}));
 	return runWizard("listquery");	
-	
 }
+public boolean runBulkEmails(SqlRun str) throws Exception
+{
+	setWizardName("Bulk Mail");
+	setNavigator(new HashNavigator(new String[] {
+		"editquery", "checkbulk",
+		"checkbulk", "emailmsg",
+		"emailmsg", "<end>"
+	}));
+	return runWizard("listquery");	
+}
+
+
+
 public boolean runAdvancedSearch(SqlRun str) throws Exception
 {
 	setWizardName("Advanced Search");

@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+				<meta name="keywords" content="Keytool to OpenSSL Conversion tips,Keytool,OpenSSL Usage tips,OpenSSL to Keytool Conversion tips,Fostermarkd,Rfreedman" />
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="search" type="application/opensearchdescription+xml" href="/wiki/opensearch_desc.php" title="ConShell (English)" />
+		<link rel="copyright" href="http://creativecommons.org/licenses/by-sa/3.0/" />
+		<title>Keytool to OpenSSL Conversion tips - ConShell</title>
+		<style type="text/css" media="screen, projection">/*<![CDATA[*/
+			@import "/wiki/skins/common/shared.css?97";
+			@import "/wiki/skins/foreskin/main.css?97";
+		/*]]>*/</style>
+		<link rel="stylesheet" type="text/css" media="print" href="/wiki/skins/common/commonPrint.css?97" />
+		<!--[if lt IE 5.5000]><style type="text/css">@import "/wiki/skins/foreskin/IE50Fixes.css?97";</style><![endif]-->
+		<!--[if IE 5.5000]><style type="text/css">@import "/wiki/skins/foreskin/IE55Fixes.css?97";</style><![endif]-->
+		<!--[if IE 6]><style type="text/css">@import "/wiki/skins/foreskin/IE60Fixes.css?97";</style><![endif]-->
+		<!--[if IE 7]><style type="text/css">@import "/wiki/skins/foreskin/IE70Fixes.css?97";</style><![endif]-->
+		<!--[if lt IE 7]><script type="text/javascript" src="/wiki/skins/common/IEFixes.js?97"></script>
+		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+		
+		<script type= "text/javascript">/*<![CDATA[*/
+var skin = "foreskin";
+var stylepath = "/wiki/skins";
+var wgArticlePath = "/wiki/index.php/$1";
+var wgScriptPath = "/wiki";
+var wgScript = "/wiki/index.php";
+var wgServer = "http://conshell.net";
+var wgCanonicalNamespace = "";
+var wgCanonicalSpecialPageName = false;
+var wgNamespaceNumber = 0;
+var wgPageName = "Keytool_to_OpenSSL_Conversion_tips";
+var wgTitle = "Keytool to OpenSSL Conversion tips";
+var wgAction = "view";
+var wgRestrictionEdit = [];
+var wgRestrictionMove = [];
+var wgArticleId = "1906";
+var wgIsArticle = true;
+var wgUserName = null;
+var wgUserGroups = null;
+var wgUserLanguage = "en";
+var wgContentLanguage = "en";
+var wgBreakFrames = false;
+var wgCurRevisionId = "4218";
+/*]]>*/</script>
+                
+		<script type="text/javascript" src="/wiki/skins/common/wikibits.js?97"><!-- wikibits js --></script>
+		<script type="text/javascript" src="/wiki/index.php?title=-&amp;action=raw&amp;gen=js&amp;useskin=foreskin"><!-- site js --></script>
+		<style type="text/css">/*<![CDATA[*/
+@import "/wiki/index.php?title=MediaWiki:Common.css&usemsgcache=yes&action=raw&ctype=text/css&smaxage=18000";
+@import "/wiki/index.php?title=MediaWiki:Foreskin.css&usemsgcache=yes&action=raw&ctype=text/css&smaxage=18000";
+@import "/wiki/index.php?title=-&action=raw&gen=css&maxage=18000";
+/*]]>*/</style>
+		<!-- Head Scripts -->
+		<script type="text/javascript" src="/wiki/skins/common/ajax.js?97"></script>
+	</head>
+<body  class="mediawiki ns-0 ltr page-Keytool_to_OpenSSL_Conversion_tips">
+	<div id="globalWrapper">
+		<div id="column-content">
+	<div id="content">
+		<a name="top" id="top"></a>
+				<h1 class="firstHeading">Keytool to OpenSSL Conversion tips</h1>
+		<div id="bodyContent">
+			<h3 id="siteSub">From ConShell</h3>
+			<div id="contentSub"></div>
+									<div id="jump-to-nav">Jump to: <a href="#column-one">navigation</a>, <a href="#searchInput">search</a></div>			<!-- start content -->
+			<div align="right">
+<p><script type="text/javascript">/* <![CDATA[ */
+google_ad_client = "pub-0799764087167850";
+google_ad_width = 468;
+google_ad_height = 15;
+google_ad_format = "468x15_0ads_al";
+//2007-09-13: wiki
+google_ad_channel = "0771539253";
+google_color_border = "336699";
+google_color_bg = "FFFFFF";
+google_color_link = "0000FF";
+google_color_text = "000000";
+google_color_url = "008000";
+google_ui_features = "rc:6";
+/* ]]> */</script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+</p>
+</div>
+<p>You may find yourself in a situation where you have a JKS-format keystore, and
+need to extract the certificate and private key. With the keytool program you
+can only extract the certificate (public key), so a separate method is needed  (such as '<b>ExportPriv'</b> or '<b>Keystore Explorer'</b>) to export the private key. Then the public and private
+key can be combined into a <a href="http://en.wikipedia.org/wiki/PKCS12" class="extiw" title="wikipedia:PKCS12">PKCS12</a> file, or just left separate depending on your needs.
+</p>
+<a name="Extracting_the_certificate_.28public_key.29"></a><h2> <span class="mw-headline"> Extracting the certificate (public key) </span></h2>
+<p>The result is a DER (binary) formatted certificate into the file exported.crt
+</p>
+<pre>keytool -export -alias mykey -keystore keystore -file exported-der.crt
+</pre>
+<p>Simply view &amp; verify it
+</p>
+<pre>openssl x509 -noout -text -in exported-der.crt -inform der
+</pre>
+<p>Now you will want to convert it to another format - PEM - which is more widely used in applications such as apache and by openssl to do the PKCS12 conversion.
+</p>
+<pre>openssl x509 -out exported-pem.crt -outform pem -in exported-der.crt -inform der
+</pre>
+<a name="Extracting_the_private_key"></a><h2> <span class="mw-headline"> Extracting the private key </span></h2>
+<p><img src="http://mark.foster.cc/images/icon/info.gif" alt="info.gif" /> New version of ExportPriv.java - now compiles on Java2 1.6!
+</p><p>Download, compile &amp; run <a href="http://mark.foster.cc/pub/java/ExportPriv.java" class="external text" title="http://mark.foster.cc/pub/java/ExportPriv.java" rel="nofollow">ExportPriv</a>. You will also need the Base64Coder.java file from <a href="http://www.source-code.biz/snippets/java/2.htm" class="external free" title="http://www.source-code.biz/snippets/java/2.htm" rel="nofollow">http://www.source-code.biz/snippets/java/2.htm</a> (rename without .txt).
+</p>
+<pre>javac ExportPriv.java Base64Coder.java
+
+</pre>
+<p>The key will be produced to STDOUT so I suggest you redirect &gt; to exported-pkcs8.key. Enter your own values for <b>keystore</b>, <b>alias</b> and <b>password</b>.
+</p>
+<pre>java ExportPriv &lt;keystore&gt; &lt;alias&gt; &lt;password&gt; &gt; exported-pkcs8.key
+
+cat exported-pkcs8.key 
+-----BEGIN PRIVATE KEY-----
+MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAMKTXSLw/mT0IHfIvwXd3Mr9DSL+oOHF0Rqmfdd4Mtb
+OaMXQyk34G6/Yhx6WRthqQ62GgHwEsJayAAOWRc+ZcaueJVsoeWFJfJXxLQ7Rq6JJNL6AmCWK5rfFvAvArpXdxQ0M+w
+[...]
+yS03EKrUnMA2k8U6OpeqIZynvnFkw8Di76b0PeKacmMHK6+qdk5+MtjuXlgX0exGBNsG8ChGAPeYI7w==
+-----END PRIVATE KEY-----
+</pre>
+<p>By now you probably realize, the private key is being exported as PKCS#8 PEM format. To get it into the RSA format that works with Apache (see below) you can issue the following command:
+</p>
+<pre>openssl pkcs8 -inform PEM -nocrypt -in exported-pkcs8.key -out exported.key
+</pre>
+<a name="Alternate_method_to_extract_the_private_key"></a><h2> <span class="mw-headline"> Alternate method to extract the private key </span></h2>
+<p>Another option would be purchase <a href="http://www.lazgosoftware.com/kse/" class="external text" title="http://www.lazgosoftware.com/kse/" rel="nofollow">Keystore Explorer</a>, which claims to support exporting private keys and key-pairs. I haven't tried it myself. Let me know if you have and if it works.
+</p><p>It (Keystore Explorer) works. It exports the key pair to pkcs12 format. However this feature is not present in the evaluation version.
+--Ambarish Mitra, 2006-Feb-01
+</p><p>Here is a freeware tool (KeyTool-IUI) that will do it as well.  <a href="http://www.icewalkers.com/download/KeyTool-IUI/3073/dls/" class="external autonumber" title="http://www.icewalkers.com/download/KeyTool-IUI/3073/dls/" rel="nofollow">[1]</a>.  I just used it to pull the key out.
+</p>
+<a name="Combine_extracted_public.2Fprivate_keys_into_PKCS12_format"></a><h2> <span class="mw-headline"> Combine extracted public/private keys into PKCS12 format </span></h2>
+<p>A PKCS12 format file is typically suffixed with .p12 or .pfx. It is more commonly used on the Microsoft platform.
+</p><p>Now that you have the private key and public key (certificate) combo that go together you can package them in pkcs12-formatted file... this should do the trick for using with IIS, for example.
+</p>
+<pre>openssl pkcs12 -export -out exported.pfx -inkey exported.key -in exported-pem.crt
+</pre>
+<a name="Quips.2C_quotes_and_other_user_comments"></a><h2> <span class="mw-headline"> Quips, quotes and other user comments </span></h2>
+<p>Thanks for your "OpenSSL to Keytool Conversion tips" web page.  It's helped me a great deal to set up client authentication via SSL between Apache 2 and Tomcat 5.
+</p><p>However, I ran into one problem with Apache 2 when using the Java-base64-encoded private key.  I wrote up a <a href="http://issues.apache.org/bugzilla/show_bug.cgi?id=31856" class="external text" title="http://issues.apache.org/bugzilla/show_bug.cgi?id=31856" rel="nofollow">bug report</a> about the issue.
+</p><p>In summary, I had to re-encode the Java-base64-encoded private key using openssl to make it palatable to Apache:
+</p>
+<pre>openssl rsa -in privkey-java.key -out privkey.key
+</pre>
+<p>I'm not sure why this is required (or why Apache can't decode the base64-encoded version of the private key created by Java), but it fixed the problem I was seeing.
+</p><p>--Dave Kilzer, 2004-Oct-22
+</p><p><br />
+<b>KeyStoreBuilder</b> (part of Not-Yet-Commons-SSL) converts <a href="http://en.wikipedia.org/wiki/PKCS12" class="extiw" title="wikipedia:PKCS12">PKCS12</a> and <a href="http://en.wikipedia.org/wiki/PKCS8" class="extiw" title="wikipedia:PKCS8">PKCS8</a> to/from Java "Keystore".
+</p><p>Check it out <a href="http://juliusdavies.ca/commons-ssl/" class="external free" title="http://juliusdavies.ca/commons-ssl/" rel="nofollow">http://juliusdavies.ca/commons-ssl/</a>
+</p><p>--Julius Davies, 2007-Feb-9
+</p><p><br />
+</p>
+<a name="Additional_help_and_information"></a><h2> <span class="mw-headline"> Additional help and information </span></h2>
+<p>You can also check out the
+<a href="http://marc.theaimsgroup.com/?l=openssl-users/" class="external text" title="http://marc.theaimsgroup.com/?l=openssl-users/" rel="nofollow">openssl-users</a> mailing list archives and consider posing your question to the list. 
+</p><p>Another great resource is
+the <a href="http://archives.real-time.com/mailman/listinfo/tomcat-users" class="external text" title="http://archives.real-time.com/mailman/listinfo/tomcat-users" rel="nofollow">tomcat-users</a> mailing list.
+</p><p>If you need OpenSSL for Windows if can be found <a href="http://gnuwin32.sourceforge.net/packages/openssl.htm" class="external text" title="http://gnuwin32.sourceforge.net/packages/openssl.htm" rel="nofollow">here</a> or better yet <a href="http://www.slproweb.com/products/Win32OpenSSL.html" class="external text" title="http://www.slproweb.com/products/Win32OpenSSL.html" rel="nofollow">here</a>.
+</p><p>My thanks to Alexey Zilber who provided the patch which enables compilation of ExportPriv.java under Java2 SDK 1.6. --<a href="/wiki/index.php/User:Fostermarkd" title="User:Fostermarkd">User:Fostermarkd</a> 2007-01-13
+</p><p><b>NOTE</b>: I have not used nor do I endorse the Windows port of OpenSSL. Do not ask me for help using it. I am only providing the link as a convenience to the poor souls who have not switched to a better OS. --<a href="/wiki/index.php/User:Fostermarkd" title="User:Fostermarkd">User:Fostermarkd</a>
+</p><p><br />
+<b>NOTE</b>: I cleaned up the code for ExportPriv.java a bit - you can get it <a href="http://richfreedman.googlepages.com/ExportPrivateKey.java" class="external text" title="http://richfreedman.googlepages.com/ExportPrivateKey.java" rel="nofollow">here</a>
+Also note that for Windows, openssl works fine on <a href="http://www.cygwin.com/" class="external text" title="http://www.cygwin.com/" rel="nofollow">cygwin</a>. --<a href="/wiki/index.php?title=User:Rfreedman&amp;action=edit" class="new" title="User:Rfreedman">Rfreedman</a> 14:35, 30 October 2007 (PDT)
+</p>
+<a name="See_Also"></a><h2> <span class="mw-headline"> See Also </span></h2>
+<ul><li> <a href="/wiki/index.php/OpenSSL_to_Keytool_Conversion_tips" title="OpenSSL to Keytool Conversion tips">OpenSSL to Keytool Conversion tips</a>
+</li><li> <a href="/wiki/index.php/OpenSSL_Usage_tips" title="OpenSSL Usage tips">OpenSSL Usage tips</a>
+</li><li> <a href="/wiki/index.php/Keytool" title="Keytool">Keytool</a>
+</li></ul>
+<div align="center">
+<p><script type="text/javascript">/* <![CDATA[ */
+google_ad_client = "pub-0799764087167850";
+google_ad_width = 468;
+google_ad_height = 60;
+google_ad_format = "468x60_as";
+google_ad_type = "image";
+google_ad_channel = "0771539253";
+google_color_border = "336699";
+google_color_bg = "FFFFFF";
+google_color_link = "0000FF";
+google_color_text = "000000";
+google_color_url = "008000";
+google_ui_features = "rc:6";
+/* ]]> */</script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+</p>
+</div>
+
+<!-- Saved in parser cache with key wikidb-mw_:pcache:idhash:1906-0!1!0!!en!2!edit=0 and timestamp 20081109184336 -->
+<div class="printfooter">
+Retrieved from "<a href="http://conshell.net/wiki/index.php/Keytool_to_OpenSSL_Conversion_tips">http://conshell.net/wiki/index.php/Keytool_to_OpenSSL_Conversion_tips</a>"</div>
+			<div id="catlinks"><p class='catlinks'><a href="/wiki/index.php/Special:Categories" title="Special:Categories">Categories</a>: <span dir='ltr'><a href="/wiki/index.php?title=Category:Java&amp;action=edit" class="new" title="Category:Java">Java</a></span> | <span dir='ltr'><a href="/wiki/index.php/Category:Security" title="Category:Security">Security</a></span> | <span dir='ltr'><a href="/wiki/index.php?title=Category:Keytool&amp;action=edit" class="new" title="Category:Keytool">Keytool</a></span> | <span dir='ltr'><a href="/wiki/index.php?title=Category:OpenSSL&amp;action=edit" class="new" title="Category:OpenSSL">OpenSSL</a></span> | <span dir='ltr'><a href="/wiki/index.php?title=Category:PKI&amp;action=edit" class="new" title="Category:PKI">PKI</a></span></p></div>			<!-- end content -->
+			<div class="visualClear"></div>
+		</div>
+	</div>
+		</div>
+		<div id="column-one">
+	<div id="p-cactions" class="portlet">
+		<h5>Views</h5>
+		<div class="pBody">
+			<ul>
+					 <li id="ca-nstab-main" class="selected"><a href="/wiki/index.php/Keytool_to_OpenSSL_Conversion_tips" title="View the content page [c]" accesskey="c">Article</a></li>
+					 <li id="ca-talk" class="new"><a href="/wiki/index.php?title=Talk:Keytool_to_OpenSSL_Conversion_tips&amp;action=edit" title="Discussion about the content page [t]" accesskey="t">Discussion</a></li>
+					 <li id="ca-viewsource"><a href="/wiki/index.php?title=Keytool_to_OpenSSL_Conversion_tips&amp;action=edit" title="This page is protected. You can view its source. [e]" accesskey="e">View source</a></li>
+					 <li id="ca-history"><a href="/wiki/index.php?title=Keytool_to_OpenSSL_Conversion_tips&amp;action=history" title="Past versions of this page. [h]" accesskey="h">History</a></li>
+				</ul>
+		</div>
+	</div>
+	<div class="portlet" id="p-personal">
+		<h5>Personal tools</h5>
+		<div class="pBody">
+			<ul>
+				<li id="pt-login"><a href="/wiki/index.php?title=Special:Userlogin&amp;returnto=Keytool_to_OpenSSL_Conversion_tips" title="You are encouraged to log in, it is not mandatory however. [o]" accesskey="o">Log in / create account</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="portlet" id="p-logo">
+		<a style="background-image: url(/wiki/images/ConShell-1.gif);" href="/wiki/index.php/Conshell_Wiki" title="Visit the Main Page [z]" accesskey="z"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+		<div class='portlet' id='p-navigation'>
+		<h5>Navigation</h5>
+		<div class='pBody'>
+			<ul>
+				<li id="n-mainpage"><a href="/wiki/index.php/Main_Page" title="Visit the Main Page [z]" accesskey="z">Conshell Wiki</a></li>
+				<li id="n-categories"><a href="/wiki/index.php/Special:Categories">Categories</a></li>
+				<li id="n-recentchanges"><a href="/wiki/index.php/Special:Recentchanges" title="The list of recent changes in the wiki. [r]" accesskey="r">Recent changes</a></li>
+				<li id="n-randompage"><a href="/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li>
+				<li id="n-help"><a href="/wiki/index.php/Help:Contents" title="The place to find out.">Help</a></li>
+			</ul>
+		</div>
+	</div>
+		<div id="p-search" class="portlet">
+		<h5><label for="searchInput">Search</label></h5>
+		<div id="searchBody" class="pBody">
+			<form action="/wiki/index.php/Special:Search" id="searchform"><div>
+				<input id="searchInput" name="search" type="text" title="Search ConShell [f]" accesskey="f" value="" />
+				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="Go" />&nbsp;
+				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="Search" />
+			</div></form>
+		</div>
+	</div>
+	<div class="portlet" id="p-tb">
+		<h5>Toolbox</h5>
+		<div class="pBody">
+			<ul>
+				<li id="t-whatlinkshere"><a href="/wiki/index.php/Special:Whatlinkshere/Keytool_to_OpenSSL_Conversion_tips" title="List of all wiki pages that link here [j]" accesskey="j">What links here</a></li>
+				<li id="t-recentchangeslinked"><a href="/wiki/index.php/Special:Recentchangeslinked/Keytool_to_OpenSSL_Conversion_tips" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li>
+<li id="t-specialpages"><a href="/wiki/index.php/Special:Specialpages" title="List of all special pages [q]" accesskey="q">Special pages</a></li>
+				<li id="t-print"><a href="/wiki/index.php?title=Keytool_to_OpenSSL_Conversion_tips&amp;printable=yes" title="Printable version of this page [p]" accesskey="p">Printable version</a></li>				<li id="t-permalink"><a href="/wiki/index.php?title=Keytool_to_OpenSSL_Conversion_tips&amp;oldid=4218" title="Permanent link to this version of the page">Permanent link</a></li>			</ul>
+		</div>
+	</div>
+<!-- Google AdSense -->
+<CENTER>
+<!-- Google AdSense -->
+<div id="column-google">
+<script type="text/javascript"><!--
+google_ad_client = "pub-0799764087167850";
+google_ad_width = 120;
+google_ad_height = 240;
+google_ad_format = "120x240_as";
+google_ad_type = "text_image";
+google_ad_channel ="0771539253";
+google_color_border = "336699";
+google_color_bg = "FFFFFF";
+google_color_link = "0000FF";
+google_color_text = "000000";
+google_color_url = "000000";
+google_ui_features = "rc:6";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</div>
+<!-- end of Google Adsense -->
+<BR><BR>
+<!-- Begin uptime image -->
+<a href='http://host-tracker.com/' onMouseOver='this.href="http://host-tracker.com/web-site-monitoring-stats/747497/lvuc/";'><img
+width=80 height=15 border=0 alt='check web page'
+src="http://ext.host-tracker.com/uptime-img/?s=15&amp;t=747497&amp;m=00.09&amp;p=Total&amp;src=lvuc"></a><noscript><a href='http://host-tracker.com/' >website monitoring services</a></noscript>
+<!-- End uptime image -->
+</CENTER>
+
+<!-- End Google AdSense -->
+
+		</div><!-- end of the left (by default at least) column -->
+			<div class="visualClear"></div>
+			<div id="footer">
+				<div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="/wiki/skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>
+				<div id="f-copyrightico"><a href="http://creativecommons.org/licenses/by-sa/3.0/"><img src="http://creativecommons.org/images/public/somerights.png" alt='Creative Commons Attribution-Share Alike 3.0' /></a></div>
+			<ul id="f-list">
+				<li id="lastmod"> This page was last modified 15:19, 22 July 2008.</li>
+				<li id="viewcount">This page has been accessed 17,051 times.</li>
+				<li id="copyright">Content is available under <a href="http://creativecommons.org/licenses/by-sa/3.0/" class="external " title="http://creativecommons.org/licenses/by-sa/3.0/" rel="nofollow">Creative Commons Attribution-Share Alike 3.0</a>.</li>
+				<li id="privacy"><a href="/wiki/index.php/ConShell:Privacy_policy" title="ConShell:Privacy policy">Privacy policy</a></li>
+				<li id="about"><a href="/wiki/index.php/ConShell:About" title="ConShell:About">About ConShell</a></li>
+				<li id="disclaimer"><a href="/wiki/index.php/ConShell:General_disclaimer" title="ConShell:General disclaimer">Disclaimers</a></li>
+			</ul>
+		</div>
+		
+	
+		<script type="text/javascript">if (window.runOnloadHook) runOnloadHook();</script>
+</div>
+<!-- Served in 0.231 secs. --></body></html>

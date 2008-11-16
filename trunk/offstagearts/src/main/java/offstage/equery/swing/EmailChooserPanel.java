@@ -30,15 +30,13 @@ import citibob.types.JDate;
 import citibob.types.JType;
 import citibob.types.JavaJType;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.text.ParseException;
 import java.util.Properties;
 import javax.mail.FetchProfile;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
-import offstage.equery.swing.MailMsg;
+import offstage.email.VettEmail;
 
 /**
  *
@@ -56,41 +54,6 @@ public class EmailChooserPanel extends JTypedPanel
 		initComponents();
 	}
 
-static String getHeader(Message msg, String headerName) throws Exception
-{
-	String[] ct = msg.getHeader(headerName);
-	if (ct == null || ct.length == 0) return null;
-	
-	return ct[0];
-}
-
-static String getBoundary(Message msg) throws Exception
-{
-	String header = getHeader(msg, "Content-type");
-	if (header == null) return null;
-	
-	String lheader = header.toLowerCase();
-	
-	int c = lheader.indexOf("boundary");
-	if (c < 0) return null;
-	c += "boundary".length();
-	
-	for (; Character.isWhitespace(lheader.charAt(c)); ++c) ;	// Skip whitespace
-	if (lheader.charAt(c) != '=') throw new ParseException("Cannot parse header: " + header, c);
-	++c;	// skip the '='
-	for (; Character.isWhitespace(lheader.charAt(c)); ++c) ;	// Skip whitespace
-
-	int start,next;
-	if (lheader.charAt(c) == '"') {
-		start = c+1;
-		next = lheader.indexOf('"', start);
-	} else {
-		start = c;
-		next = lheader.indexOf(';', start);
-		if (next < 0) next = lheader.length();
-	}
-	return header.substring(start, next).trim();
-}
 	
 	public void setValue(Object obj) {}
 	public Object getValue()
@@ -100,23 +63,27 @@ static String getBoundary(Message msg) throws Exception
 			if (row < 0) return null;
 
 			Message msg = messages[row];
-			MailMsg omsg = new MailMsg();
+//			byte[] omsg = new MailMsg();
 			
-			// Parse out the boundary
-			omsg.boundary = getBoundary(msg);
-			omsg.subject = getHeader(msg, "Subject");
+//			// Parse out the boundary
+//			omsg.boundary = VettEmail.getBoundary(msg);
+//			omsg.subject = VettEmail.getHeader(msg, "Subject");
 			
-//System.out.println("** Getting Content-type");
-//String[] ct = msg.getHeader("Content-type");
-//if (ct != null && ct.length > 0) System.out.println("** Content-type: " + ct[0]);
-			// Read the main body of the message
-			InputStream in = msg.getInputStream();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			byte[] buf = new byte[8192];
-			int n;
-			while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
-			in.close();
-			omsg.body = out.toByteArray();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			msg.writeTo(baos);
+			byte[] omsg = baos.toByteArray();
+			
+////System.out.println("** Getting Content-type");
+////String[] ct = msg.getHeader("Content-type");
+////if (ct != null && ct.length > 0) System.out.println("** Content-type: " + ct[0]);
+//			// Read the main body of the message
+//			InputStream in = msg.getInputStream();
+//			ByteArrayOutputStream out = new ByteArrayOutputStream();
+//			byte[] buf = new byte[8192];
+//			int n;
+//			while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+//			in.close();
+//			omsg.body = out.toByteArray();
 			return omsg;
 		} catch(Exception e) {
 			app.expHandler().consume(e);

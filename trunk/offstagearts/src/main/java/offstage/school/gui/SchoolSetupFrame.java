@@ -42,9 +42,9 @@ import offstage.reports.RollBook;
 import offstage.reports.SchoolAccounts;
 import offstage.reports.StudentConfirmationLetter;
 import offstage.*;
+import offstage.email.VettEmail;
 import offstage.equery.EQuery;
 import offstage.equery.swing.EQueryWizard;
-import offstage.equery.swing.MailMsg;
 import offstage.reports.StudentSchedule;
 import offstage.schema.TermidsSchema;
 import offstage.school.tuition.TuitionCalc;
@@ -134,7 +134,6 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
         mActions = new javax.swing.JMenu();
         miRecalcAllTuition = new javax.swing.JMenuItem();
         miApplyLateFees = new javax.swing.JMenuItem();
-        miSchoolEmail = new javax.swing.JMenuItem();
         miRefresh = new javax.swing.JMenuItem();
         mStudent = new javax.swing.JMenu();
         miConfirmationLetter = new javax.swing.JMenuItem();
@@ -166,7 +165,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
             .add(jPanel1Layout.createSequentialGroup()
                 .add(jLabel3)
                 .add(3, 3, 3)
-                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE))
+                .add(vTermID, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 1003, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -200,14 +199,6 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
             }
         });
         mActions.add(miApplyLateFees);
-
-        miSchoolEmail.setText("School Email");
-        miSchoolEmail.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miSchoolEmailActionPerformed(evt);
-            }
-        });
-        mActions.add(miSchoolEmail);
 
         miRefresh.setText("Refresh");
         miRefresh.addActionListener(new java.awt.event.ActionListener() {
@@ -509,28 +500,6 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 // TODO add your handling code here:
 	}//GEN-LAST:event_miRecalcAllTuitionActionPerformed
 
-	private void miSchoolEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSchoolEmailActionPerformed
-		fapp.guiRun().run(SchoolSetupFrame.this, new SqlTask() {
-		public void run(SqlRun str) throws Exception {
-			EQueryWizard wizard = new EQueryWizard(fapp, SchoolSetupFrame.this);
-			if (!wizard.runEmails(str)) return;
-			
-			// Text of the email we wish to send
-			MailMsg msg = (MailMsg)wizard.getVal("emails");
-if (msg != null) System.out.println("Email = " + msg.subject);
-
-			// SQL of people we wish to send to
-			EQuery equery = (EQuery)wizard.getVal("equery");
-
-			SchoolDB.sendSchoolJangoMail(fapp, str, msg,
-				equery.getSql((fapp.equerySchema())),
-				equery.toXML((fapp.equerySchema())),
-				(Integer)wizard.getVal("equeryid"));
-			
-		}});
-		// TODO add your handling code here:
-	}//GEN-LAST:event_miSchoolEmailActionPerformed
-
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private offstage.school.gui.CoursesPanel coursesPanel;
@@ -554,7 +523,6 @@ if (msg != null) System.out.println("Email = " + msg.subject);
     private javax.swing.JMenuItem miRefresh;
     private javax.swing.JMenuItem miRollBooks;
     private javax.swing.JMenuItem miSchedule;
-    private javax.swing.JMenuItem miSchoolEmail;
     private javax.swing.JMenuItem miStudentAccounts;
     private javax.swing.JMenuItem miStudentSchedules;
     private offstage.school.gui.TermsPanel schedulePanel;

@@ -42,9 +42,9 @@ import offstage.reports.RollBook;
 import offstage.reports.SchoolAccounts;
 import offstage.reports.StudentConfirmationLetter;
 import offstage.*;
+import offstage.email.VettEmail;
 import offstage.equery.EQuery;
 import offstage.equery.swing.EQueryWizard;
-import offstage.equery.swing.MailMsg;
 import offstage.reports.StudentSchedule;
 import offstage.schema.TermidsSchema;
 import offstage.school.tuition.TuitionCalc;
@@ -514,19 +514,19 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			EQueryWizard wizard = new EQueryWizard(fapp, SchoolRegFrame.this);
-			if (!wizard.runEmails(str)) return;
+			if (!wizard.runCSEmails(str)) return;
 			
 			// Text of the email we wish to send
-			MailMsg msg = (MailMsg)wizard.getVal("emails");
-if (msg != null) System.out.println("Email = " + msg.subject);
+			byte[] msg = (byte[])wizard.getVal("emails");
+//if (msg != null) System.out.println("Email = " + msg.subject);
 
 			// SQL of people we wish to send to
 			EQuery equery = (EQuery)wizard.getVal("equery");
 
-			SchoolDB.sendSchoolJangoMail(fapp, str, msg,
+			VettEmail.sendJangoMail(fapp, str, msg,
 				equery.getSql((fapp.equerySchema())),
 				equery.toXML(fapp.equerySchema()),
-				(Integer)wizard.getVal("equeryid"));
+				(Integer)wizard.getVal("equeryid"), VettEmail.ET_CUSTOMER);
 			
 		}});
 		// TODO add your handling code here:

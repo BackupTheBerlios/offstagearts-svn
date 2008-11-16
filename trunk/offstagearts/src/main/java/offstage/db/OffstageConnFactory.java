@@ -20,6 +20,47 @@ import java.util.Properties;
 public class OffstageConnFactory extends WrapConnFactory
 {
 
+//private static URL getResourceOrURL(Properties props, String propName)
+//{
+//	String surl;
+//	surl = props.getProperty("db.store", "");
+//	if (surl.contains("://")) {
+//		// Interpret as URL
+//		return new URL(surl);
+//	} else {
+//		return OffstageConnFactory.class.getClassLoader().getResource(surl);
+//	}
+//	
+//}
+	
+private static ConnFactory newSSLSub(Properties props)
+throws ClassNotFoundException
+{
+//	final Properties p2 = new Properties();
+//	final String url;
+//
+//	// Set up the sub-properties
+//	p2.setProperty("user", props.getProperty("db.user", null));
+//	String pwd = props.getProperty("db.password", null);
+//	if (pwd != null) p2.setProperty("password", pwd);
+//
+//	// Put together as URL
+//	Class.forName(props.getProperty("db.driverclass", null));
+//	url = "jdbc:" + props.getProperty("db.drivertype", null) + "://" +
+//		props.getProperty("db.host", null) +
+//		":%port%/" + props.getProperty("db.database", null);
+//	
+//	// Set the SSL tunnel parameters
+//	String defaultPass = "keyst0re";
+//	SSLRelayClient.Params prm = new SSLRelayClient.Paramas();
+//		prm.storeURL = getResourceOrURL(props, "db.store");
+//		prm.trustURL = getResourceOrURL(props, "db.trust");
+//		prm.storePass = ((String)props.getProperty("db.storePass", defaultPass)).toCharArray();
+//		prm.trustPass
+//	return new SSLConnFactory(url, p2);	
+	return null;
+}
+	
 private static ConnFactory newSub(Properties props)
 throws ClassNotFoundException
 //throws java.util.prefs.BackingStoreException, java.sql.SQLException, ClassNotFoundException
