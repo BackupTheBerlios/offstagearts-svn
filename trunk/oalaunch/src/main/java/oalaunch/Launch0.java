@@ -1,6 +1,5 @@
 package oalaunch;
 
-import oalaunch.citibob.gui.BareBonesOpen;
 import oalaunch.citibob.reflect.ClassPathUtils;
 import oalaunch.citibob.reflect.JarURL;
 import oalaunch.citibob.template.Template;
@@ -12,6 +11,7 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Properties;
+import oalaunch.citibob.gui.RobustOpen;
 
 /**
  * Hello world!
@@ -85,7 +85,7 @@ System.out.println("jnlpFile = " + jnlpFile);
 		jnlp.write(out);
 		out.close();
 		
-		BareBonesOpen.open(jnlpFile);
+		RobustOpen.open(jnlpFile);
 		
 	
 		// Wait long enough for Java Web Start to pick up the JNLP file
