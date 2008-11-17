@@ -31,10 +31,13 @@ import offstage.*;
 import citibob.swing.table.*;
 import java.util.*;
 import citibob.sql.*;
+import citibob.sql.ConsSqlQuery.TableJoin;
+import citibob.text.SFormat;
 import citibob.types.JType;
 import citibob.types.JavaJType;
 import java.io.*;
 import offstage.equery.*;
+import offstage.types.PhoneSFormat;
 
 /**
  
@@ -57,18 +60,66 @@ public JTypeTableModel model;
 //	"relname", "groupname", "entityid", "customaddressto", "salutation", "firstname", "lastname",
 //	 "address1", "address2", "city", "state", "zip", "orgname", "isorg", "title", "occupation", "email",
 //	 "phone1type", "phone1", "phone2type", "phone2", "phone3type", "phone3", "recordsource"};
-	
-public ClauseReport(FrontApp fapp, SqlRun str, final SqlTypeSet tset, EQuery equery)
+
+/**
+ * 
+ * @param fapp
+ * @param str
+ * @param tset
+ * @param equery
+ * @param cols Columns to display in report
+ * @param joins Tables (including persons) that we should join with
+ * @throws java.io.IOException
+ * @param phoneDistinctType Set to EQuery.DISTINCT_PARENT1ID if you want
+ * the parent phones; otherwise, set to EQuery.DISTINCT_PRIMARYENTITYID
+ */
+public ClauseReport(FrontApp fapp, SqlRun str, final SqlTypeSet tset, EQuery equery,
+String[] cols, TableJoin[] joins, boolean parentPhones)
+//int phoneDistinctType, String phoneJoin)
 throws IOException
 {
-	// Create the main query
 	String idSql = equery.getSql(fapp.equerySchema());
-	StringBuffer sql = new StringBuffer(
-		" select e.entityid,customaddressto,salutation,firstname,lastname," +
-		" address1,address2,city,state,zip," +
-		" orgname,isorg,title,occupation,email\n" +
-		" from persons e, (" + idSql + ") xx\n" +
-		" where e.entityid = xx.id;\n");
+
+	// Create temp table for our SQL
+	str.execSql(
+		" create temporary table _ids (id int);\n" +
+		" insert into _ids " + idSql + ";\n");
+	
+	// Create temp table for phones
+	PhoneJoin pu = new PhoneJoin(3);
+	if (parentPhones) {
+		str.execSql(pu.pphonesSql(
+			"select parent.entityid as id" +
+			" from _ids, persons e, persons parent" +
+			" where _ids.id = e.entityid" +
+			" and e.parent1id = parent.entityid"));
+	} else {
+		str.execSql(pu.pphonesSql("select id from _ids"));
+	}
+	
+	// Create the main query
+	ConsSqlQuery csql = new ConsSqlQuery(ConsSqlQuery.SELECT);
+	csql.addTable("_ids xx");
+	
+	// Joins
+	for (TableJoin tj : joins) csql.addTable(tj);
+	String phoneJoin = parentPhones ?
+		"pphones.id = parent.entityid" :
+		"pphones.id = xx.id";
+	csql.addTable("(" + pu.pphonesTable() + ")", "pphones",
+		SqlQuery.JT_LEFT_OUTER, phoneJoin);
+	
+	// Columns
+	for (String col : cols) csql.addColumn(col);
+	StringBuffer sql = new StringBuffer(csql.getSql());
+	sql.append(";\n");
+	
+//	StringBuffer sql = new StringBuffer(
+//		" select e.entityid,customaddressto,salutation,firstname,lastname," +
+//		" address1,address2,city,state,zip," +
+//		" orgname,isorg,title,occupation,email\n" +
+//		" from persons e, (" + idSql + ") xx\n" +
+//		" where e.entityid = xx.id;\n");
 	
 	// Add the per-clause queries, so we know which records came from which clauses
 	final List<EClause> clauses = equery.getClauses();
@@ -81,6 +132,7 @@ throws IOException
 		sql.append(clauseSql);
 		sql.append(";\n");
 	}
+	sql.append("drop table _ids;\n");
 
 	str.execSql(sql.toString(), new RssTasklet() {
 	public void run(java.sql.ResultSet[] rss) throws Exception {
@@ -130,15 +182,87 @@ throws IOException
 	
 }
 
-public static void writeCSV(final FrontApp fapp, SqlRun str,
+public static void writeClauseCSV(final FrontApp fapp, SqlRun str,
 EQuery equery, final File outFile) throws Exception
 {
+//	StringBuffer sql = new StringBuffer(
+//		" select e.entityid,customaddressto,salutation,firstname,lastname," +
+//		" address1,address2,city,state,zip," +
+//		" orgname,isorg,title,occupation,email\n" +
+//		" from persons e, (" + idSql + ") xx\n" +
+//		" where e.entityid = xx.id;\n");
 	final ClauseReport report = new ClauseReport(fapp, str,
-		fapp.sqlTypeSet(), equery);
+		fapp.sqlTypeSet(), equery, new String[] {
+			"e.entityid","customaddressto","salutation","firstname",
+			"lastname",
+			"phonename1","phone1","phonename2","phone2",
+			"address1","address2","city","state","zip"
+		}, new TableJoin[] {
+			new TableJoin("persons", "e", SqlQuery.JT_INNER, "e.entityid = xx.id")
+		}, false
+	);
+	str.execSql("drop table pphones");
+	
+	str.execUpdate(new UpdTasklet2() {
+	public void run(SqlRun str) throws Exception {
+		Reports rr = fapp.reports();
+		StringTableModel stm = rr.format(report.model);
+		SFormat phoneSF = new PhoneSFormat();
+		stm.setFormatU("phone1", phoneSF);
+		stm.setFormatU("phone2", phoneSF);
+		rr.writeCSV(stm, outFile);
+	}});
+}
+public static void writeCastingCSV(final FrontApp fapp, SqlRun str,
+EQuery equery, final File outFile) throws Exception
+{
+	// Figure out which show the main query is for, by digging through
+	// the query.  The query must have a "showid = xxx" somewhere
+	// in it.
+	Integer xshowid = null;
+	outer : for (EClause clause : equery.getClauses()) {
+		for (Element el : clause.getElements()) {
+			ColName cn = el.getColName();
+			if (cn.getTable().equals("shows")
+				&& cn.getSCol().equals("groupid")
+				&& el.getComparator().getDisplayName().equals("=")) {
+				xshowid = (Integer)el.value;
+				break outer;
+			}
+		}
+	}
+	final Integer showid = xshowid;
+	
+	final ClauseReport report = new ClauseReport(fapp, str,
+		fapp.sqlTypeSet(), equery, new String[] {
+			"e.entityid", "e.firstname", "e.lastname",
+			"shows.castno", "shows.showroleid", "shows.partno",
+			"parent.firstname as parent_firstname", "parent.lastname as parent_lastname",
+			"phonename1","phone1","phonename2","phone2",
+			"parent.address1","parent.address2","parent.city","parent.state","parent.zip"
+		}, new TableJoin[] {
+			new TableJoin("persons", "e", SqlQuery.JT_INNER,
+				"e.entityid = xx.id"),
+			new TableJoin("persons", "parent", SqlQuery.JT_LEFT_OUTER,
+				"e.parent1id = parent.entityid"),
+			new TableJoin("shows", null, SqlQuery.JT_LEFT_OUTER,
+				"shows.groupid = " + showid + " and shows.entityid = e.entityid")
+		}, true
+	);
+	str.execSql("drop table pphones");
+	
+	
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 				Reports rr = fapp.reports();
-		rr.writeCSV(rr.format(report.model), outFile);
+		StringTableModel stm = rr.format(report.model);
+		SFormat phoneSF = new PhoneSFormat();
+		stm.setFormatU("phone1", phoneSF);
+		stm.setFormatU("phone2", phoneSF);
+		stm.setFormatU("castno", fapp.schemaSet().getKeyedModel("shows", "castno"));
+		stm.setFormatU("showroleid", fapp.schemaSet().getKeyedModel("shows", "showroleid"));
+//		stm.setFormatU("castno", fapp.schemaSet().getJType("shows", "castno"));
+		rr.writeCSV(stm, outFile);
 	}});
 }
 

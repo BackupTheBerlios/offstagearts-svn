@@ -149,7 +149,19 @@ throws org.xml.sax.SAXException, java.io.IOException
 		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
 		if (wizard.runClauseReport()) {
 			EQuery equery = (EQuery)wizard.getVal("equery");
-			ClauseReport.writeCSV(fapp, str,
+			ClauseReport.writeClauseCSV(fapp, str,
+				(EQuery)wizard.getVal("equery"),
+				(File)wizard.getVal("file"));
+		}
+	}}));
+
+	actionMap.put("castingreport", new Job("", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
+//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
+		if (wizard.runClauseReport()) {
+			EQuery equery = (EQuery)wizard.getVal("equery");
+			ClauseReport.writeCastingCSV(fapp, str,
 				(EQuery)wizard.getVal("equery"),
 				(File)wizard.getVal("file"));
 		}

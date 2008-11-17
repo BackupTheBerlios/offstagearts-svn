@@ -104,7 +104,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel xsmod, SqlRun str)
 	
 	holidaysDm = new IntKeyedDbModel(fapp.getSchema("holidays"),
 		"termid", fapp.dbChange()); //, new IntKeyedDbModel.Params(false));
-	holidaysDm.setWhereClause("entityid is null");
+	holidaysDm.setWhereClause("entityid = 0");
 	holidaysDm.setDoInsertKeys(false);
 	holidays.setModelU(holidaysDm.getSchemaBuf(),
 		new String[] {"Status", "First Day", "Last Day", "Description"},

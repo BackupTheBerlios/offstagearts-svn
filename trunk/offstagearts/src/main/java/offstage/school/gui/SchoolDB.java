@@ -87,7 +87,7 @@ final int courseid, final TimeZone tz)//, final UpdTasklet2 rr)
 		" or (h.firstday >= t.firstdate and h.lastday <= t.nextdate-1)\n" +
 		" or (h.firstday >= t.firstdate and h.firstday < t.nextdate and h.lastday is null))\n" +
 		" and (h.lastday >= h.firstday or h.lastday is null)\n" +
-		" and h.termid = t.groupid and h.entityid is null\n" +
+		" and h.termid = t.groupid and h.entityid = 0\n" +
 		" and t.groupid=" + SqlInteger.sql(termid) + ";\n" +
 
 		// rss[1]: Start and end of each course
