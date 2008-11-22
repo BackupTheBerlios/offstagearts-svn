@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: DES cipher algorithm and key schedule algorithm; DES decryption algorithm."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, algorithm, secret, key, encryption, decryption, cipher"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Cipher - DES Algorithm</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="cipher_des.html">
+Cipher - DES Algorithm
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="cipher_des.html">1</a>&nbsp;
+<a href="cipher_des_2.html">2</a>&nbsp;
+<a href="cipher_des_3.html">3</a>&nbsp;
+<span class="part_list_curr">4</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+Permuted Choice 2 - PC2:
+</p>
+<pre class="block_source">
+14    17   11    24     1    5
+ 3    28   15     6    21   10
+23    19   12     4    26    8
+16     7   27    20    13    2
+41    52   31    37    47   55
+30    40   51    45    33   48
+44    49   39    56    34   53
+46    42   50    36    29   32
+</pre>
+
+<p>
+Left shifts (number of bits to rotate) - r1, r2, ..., r16:
+</p>
+<pre class="block_source">
+ r1  r2  r3  r4  r5  r6  r7  r8  r9 r10 r11 r12 r13 r14 r15 r16 
+  1   1   2   2   2   2   2   2   1   2   2   2   2   2   2   1
+</pre>
+
+
+<p class="section_title">
+DES Decryption Algorithm
+</p>
+
+<p>
+The decryption algorithm of a block cipher should be identical to encryption algorithm 
+step by step in reverse order. But for DES cipher, the encryption algorithm is so well
+designed, that the decryption algorithm is identical to the encryption algorithm
+step by step in the same order, only with the subkeys applied in the reverse order.
+</p>
+
+<p>
+DES decryption algorithm:
+</p>
+<pre class="block_source">
+Input: 
+   CC: 64 bits of cipher text
+   k16, k15, ..., k1: 16 round keys
+   IP: Initial permutation
+   FP: Final permutation
+   f(): Round function
+   
+Output: 
+   TT: 64 bits of clear text
+
+Algorithm:
+   CC' = IP(CC), applying initial permutation
+   (LL0, RR0) = CC', dividing CC' into two 32-bit parts
+   (LL1, RR1) = (RR0, LL0 ^ f(RR0, k16))
+   (LL2, RR2) = (RR1, LL1 ^ f(RR1, k15))
+   ......
+   TT' = (RR16, LL16), swapping the two parts
+   TT = FP(TT'), applying final permutation
+</pre>
+
+<p>
+Here is how to approve the decryption algorithm:
+</p>
+<pre class="block_source">
+Let: 
+   T: 64 bits of clear text
+   C: 64 bits of cipher text encrypted from T
+   CC: 64 bits of cipher text
+   TT: 64 bits of clear text decrypted from CC
+
+If: 
+   CC = C
+   
+Then: 
+   TT = T
+
+Prove:
+   CC' = IP(CC)               First step of decryption
+      = IP(C)                 Assumption of CC = C
+      = IP(FP(C'))            Last step of encryption
+      = C'                    IP is the inverse permutation of FP
+
+   (LL0, RR0) = CC'           Initializing step in decryption
+      = C'                    CC' = C'
+      = (R16, L16)            Swapping step in encryption
+       
+   (LL1, RR1) = (RR0, LL0 ^ f(RR0, k16))
+                              First round of decryption
+      = (L16, R16 ^ f(L16, k16))
+                              Previous result
+      = (R15, (L15 ^ f(R15,k16)) ^ f(R15, k16))
+                              (L16, R16) = (R15, L15 ^ f(R15, k16))
+      = (R15, L15)           ^ reverse itself
+       
+   ......   
+
+   (LL16, RR16) = (R0, L0)
+   
+   TT' = (RR16, LL16)         Swapping in decryption
+      = (L0, R0)              Previous result
+      = T'                    Initializing step in encryption
+
+   TT = FP(TT')               Last step in decryption
+      = FP(T')                Previous result
+      = FP(IP(T))             First step in encryption
+      = T                     FP is the inverse permutation of IP
+</pre>
+
+
+<p>
+<b>Conclusions</b>:
+</p>
+<ul>
+<li>DES is a 64-bit block cipher.
+</li>
+<li>16 round keys are derived from a single 64-bit key.
+</li>
+<li>Decryption algorithm is identical to the encryption algorithm except 
+for the order of the round keys.
+</li>
+</ul>
+
+<p>
+Now we know how DES encryption algorithm works, let's try to implement it in Java.
+See the next two chapters.
+</p>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="cipher_des.html">1</a>&nbsp;
+<a href="cipher_des_2.html">2</a>&nbsp;
+<a href="cipher_des_3.html">3</a>&nbsp;
+<span class="part_list_curr">4</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "cipher_des.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Cipher - DES Algorithm</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

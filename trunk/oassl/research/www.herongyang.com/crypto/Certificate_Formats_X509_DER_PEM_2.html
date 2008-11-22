@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is X.509 Certificate Standard, PEM (Privacy Enhanced Mail), and DER (Distinguished Encoding Rules); 'keytool' Exporting Certificates in DER and PEM; 'OpenSSL' Verifying 'keytool' Certificates; 'OpenSSL' Generating Certificates in DER and PEM; 'keytool' Viewing and Importing 'OpenSSL' Certificates."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, keytool, Certificate, X.509, Base64, PEM, DER"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Certificate Formats - X.509, DER and PEM</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="Certificate_Formats_X509_DER_PEM.html">
+Certificate Formats - X.509, DER and PEM
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="Certificate_Formats_X509_DER_PEM.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="Certificate_Formats_X509_DER_PEM_3.html">3</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p class="section_title">
+DER (Distinguished Encoding Rules) Encoding
+</p>
+
+<p>
+DER (Distinguished Encoding Rules) is another popular encoding 
+used to store X.509 certificate files. Here is how wikipedia.com describes PEM:
+</p>
+
+<p><i>
+DER or Distinguished Encoding Rules is a method for encoding a data object, such as an X.509 certificate, to be digitally signed or to have its signature verified.
+</i></p>
+
+<p><i>
+The Distinguished Encoding Rules of ASN.1 is an International Standard drawn from the constraints placed on BER encodings by X.509. DER encodings are valid BER encodings. DER is the same thing as BER with all but one sender's options removed. For example, in BER a boolean value of true can be encoded in 255 ways, while in DER there is only one way to encode a boolean value of true.
+</i></p>
+
+<p>
+The full specification of DER is in 
+<a href="http://www.itu.int/ITU-T/studygroups/com17/languages/X.690-0207.pdf">RFC 1421</a>. 
+</p>
+
+<p>
+X.509 certificate files encode in DER are binary files, which can not be view with text editors.
+</p>
+
+<p>
+DER encoded certificate files are supported by almost all applications. 
+"OpenSSL" and "keytool" support DER encoded certificate files with no problem.
+See other sections below for test notes.
+</p>
+
+
+<p class="section_title">
+"keytool" Exporting Certificates in DER and PEM
+</p>
+
+<p>
+My first test was about "keytool" exporting certificates in DER and PEM encodings.
+This was done as:
+</p>
+<ul>
+<li>Using "keytool -genkeypair" to generated a key pair and a self-sign certificate in a keystore file.
+</li>
+<li>Using "keytool -exportcert" to export the certificate in DER encoding.
+</li>
+<li>Using "keytool -exportcert -rfc" to export the certificate in PEM encoding.
+</li>
+</ul>
+
+<p>
+The test session was recorded below:
+</p>
+<pre class="block_source">
+>keytool -genkeypair -keysize 1024 -alias herong_key 
+-keypass keypass -keystore herong.jks -storepass jkspass
+
+What is your first and last name?
+  [Unknown]:  Herong Yang
+What is the name of your organizational unit?
+  [Unknown]:  Herong Unit
+What is the name of your organization?
+  [Unknown]:  Herong Company
+What is the name of your City or Locality?
+  [Unknown]:  Herong City
+What is the name of your State or Province?
+  [Unknown]:  Herong State
+What is the two-letter country code for this unit?
+  [Unknown]:  CA
+Is CN=Herong Yang, OU=Herong Unit, O=Herong Company, L=Herong City,
+ST=Herong State, C=CA correct?
+  [no]:  yes
+
+>keytool -exportcert -alias herong_key -keypass keypass 
+-keystore herong.jks -storepass jkspass -file keytool_crt.der
+
+Certificate stored in file &lt;keytool_crt.der&gt;
+
+>keytool -exportcert -alias herong_key -keypass keypass 
+-keystore herong.jks -storepass jkspass -rfc -file keytool_crt.pem
+
+Certificate stored in file &lt;keytool_crt.pem&gt;
+</pre>
+
+<p>
+Not that "keytool -exportcert" command applies DER encoding by default. 
+The "-rfc" option is to change it to PEM (RFC 1421) encoding.
+</p>
+
+<p>
+Now I got one certificate generated by "keytool" and stored in two encoding files: keytool_crt.der and keytool_crt.pem.
+How can I verify that they are really using the correct encoding schemas?
+I used "OpenSSL" to try to view them as described in the next section.
+</p>
+
+
+<p class="section_title">
+"OpenSSL" Verifying "keytool" Certificates
+</p>
+
+<p>
+One way to verify if "keytool" did export my certificate using DER and PEM encoding correctly
+is to use "OpenSSL" view the encoded certificate files.
+To do this, I used the "openssl x509" command to view keytool_crt.der and keytool_crt.pem:
+</p>
+<pre class="block_source">
+>openssl x509 -in keytool_crt.pem -inform pem -noout -text
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1185636568 (0x46ab60d8)
+        Signature Algorithm: dsaWithSHA1
+        Issuer: C=CA, ST=Herong State, L=Herong City, ...
+        ...
+
+>openssl x509 -in keytool_crt.der -inform der -noout -text
+
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1185636568 (0x46ab60d8)
+        Signature Algorithm: dsaWithSHA1
+        Issuer: C=CA, ST=Herong State, L=Herong City, ...
+        O=Herong Company, OU=Heron
+        ...
+</pre> 
+
+<p>
+What I learned so far:
+</p>
+<ul>
+<li>"keytool" can generate self-signed X5.09 version 3 certificates.
+</li>
+<li>"keytool" can export certificates with DER and PEM encodings. 
+</li>
+<li>"OpenSSL" can read certificates generated by "keytool" in both DER and PEM encodings.
+</li>
+</ul>
+
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="Certificate_Formats_X509_DER_PEM.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="Certificate_Formats_X509_DER_PEM_3.html">3</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "Certificate_Formats_X509_DER_PEM.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Certificate Formats - X.509, DER and PEM</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

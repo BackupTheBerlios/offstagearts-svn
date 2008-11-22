@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: DES cipher algorithm and key schedule algorithm; DES decryption algorithm."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, algorithm, secret, key, encryption, decryption, cipher"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Cipher - DES Algorithm</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="cipher_des.html">
+Cipher - DES Algorithm
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="cipher_des_2.html">2</a>&nbsp;
+<a href="cipher_des_3.html">3</a>&nbsp;
+<a href="cipher_des_4.html">4</a>&nbsp;
+</p>
+
+
+
+<p>
+This chapter describes:
+</p>
+<ul>
+<li>What is block cipher.
+</li>
+<li>The DES (Data Encryption Standard) cipher algorithm.
+</li>
+<li>The DES key schedule algorithm.
+</li>
+<li>The DES decryption algorithm
+</li>
+</ul>
+
+
+<p class="section_title">
+Block Cipher
+</p>
+
+<p>
+<b>Block Cipher</b> - An encryption scheme that "the clear text is broken up into blocks 
+of fixed length, and encrypted one block at a time".
+</p>
+
+<p>
+Usually, a block cipher encrypts a block of clear text into a block of cipher text 
+of the same length. In this case, a block cipher can be viewed as a simple substitute 
+cipher with character size equal to the block size.
+</p>
+
+<p>
+<b>ECB Operation Mode</b> - Blocks of clear text are encrypted independently.  
+ECB stands for Electronic Code Book. Main properties of this mode:
+</p>
+<ul>
+<li>Identical clear text blocks are encrypted to identical cipher text blocks.
+</li>
+<li>Re-ordering clear text blocks results in re-ordering cipher text blocks.
+</li>
+<li>An encryption error affects only the block where it occurs.
+</li>
+</ul>
+
+<p>
+<b>CBC Operation Mode</b> - The previous cipher text block is XORed with 
+the clear text block before applying the encryption mapping. Main properties of
+this mode:
+</p>
+<ul>
+<li>An encryption error affects only the block where is occurs and one next block.
+</li>
+</ul>
+
+<p>
+<b>Product Cipher</b> - An encryption scheme that "uses multiple ciphers
+in which the cipher text of one cipher is used as the clear text of
+the next cipher". Usually, substitution ciphers and transposition ciphers are used
+alternatively to construct a product cipher.
+</p>
+
+<p>
+<b>Iterated Block Cipher</b> - A block cipher that "iterates a fixed number of times
+of another block cipher, called round function, with a different key, called round key,
+for each iteration". 
+</p>
+
+<p>
+<b>Feistel Cipher</b> - An iterate block cipher that uses the following algorithm:
+</p>
+<pre class="block_source">
+Input: 
+   T: 2t bits of clear text
+   k1, k2, ..., kr: r round keys
+   f: a block cipher with bock size of t
+   
+Output: 
+   C: 2t bits of cipher text
+
+Algorithm: 
+   (L0, R0) = T, dividing T in two t-bit parts 
+   (L1, R1) = (R0, L0 ^ f(R0, k1))
+   (L2, R2) = (R1, L1 ^ f(R1, k2))
+   ......
+   C = (Rr, Lr), swapping the two parts
+</pre>
+<p>
+^ is the XOR operation.
+</p>
+
+<p>
+<b>DES Cipher</b> - A 16-round Feistel cipher with block size of 64 bits. 
+DES stands for Data Encryption Standard. 
+</p>
+
+
+<p class="section_title">
+DES (Data Encryption Standard) Cipher Algorithm
+</p>
+
+<p>
+<b>DES Cipher</b> - A 16-round Feistel cipher with block size of 64 bits. 
+DES stands for Data Encryption Standard. 
+</p>
+
+<p>
+DES was developed by IBM in 1974 in response to a federal government public
+invitation for data encryption algorithms. In 977, DES was published as a 
+federal standard, FIPS PUB 46.
+</p>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="cipher_des_2.html">2</a>&nbsp;
+<a href="cipher_des_3.html">3</a>&nbsp;
+<a href="cipher_des_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "cipher_des.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Cipher - DES Algorithm</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

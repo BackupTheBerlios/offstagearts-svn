@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is a certificate; Generating self-signed certificate; Viewing certificate contents."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, certificate, self-signed"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Generating Self-Signed Certificates</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="openssl_crt.html">
+OpenSSL - Generating Self-Signed Certificates
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="openssl_crt.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+Here is the command to generated a self-signed certificate based on a RSA key pair file, herong_rsa_des.key, 
+generated previously:
+</p>
+<pre class="block_source">
+>openssl req -new -key herong_rsa_des.key -x509 -out herong.crt 
+   -config openssl.cnf
+
+Enter pass phrase for herong_rsa_des.key:
+You are about to be asked to enter information that will be 
+incorporated into your certificate request.
+What you are about to enter is what is called a Distinguished 
+Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) []:CN
+State or Province Name (full name) []:PN
+Locality Name (eg, city) []:LN
+Organization Name (eg, company) []:ON
+Organizational Unit Name (eg, section) []:UN
+Common Name (eg, YOUR name) []:Herong Yang
+Email Address []:.
+
+>type herong.crt
+-----BEGIN CERTIFICATE-----
+MIICUTCCAfugAwIBAgIBADANBgkqhkiG9w0BAQQFADBXMQswCQYDVQQGEwJDTjEL
+MAkGA1UECBMCUE4xCzAJBgNVBAcTAkNOMQswCQYDVQQKEwJPTjELMAkGA1UECxMC
+VU4xFDASBgNVBAMTC0hlcm9uZyBZYW5nMB4XDTA1MDcxNTIxMTk0N1oXDTA1MDgx
+NDIxMTk0N1owVzELMAkGA1UEBhMCQ04xCzAJBgNVBAgTAlBOMQswCQYDVQQHEwJD
+TjELMAkGA1UEChMCT04xCzAJBgNVBAsTAlVOMRQwEgYDVQQDEwtIZXJvbmcgWWFu
+ZzBcMA0GCSqGSIb3DQEBAQUAA0sAMEgCQQCp5hnG7ogBhtlynpOS21cBewKE/B7j
+V14qeyslnr26xZUsSVko36ZnhiaO/zbMOoRcKK9vEcgMtcLFuQTWDl3RAgMBAAGj
+gbEwga4wHQYDVR0OBBYEFFXI70krXeQDxZgbaCQoR4jUDncEMH8GA1UdIwR4MHaA
+FFXI70krXeQDxZgbaCQoR4jUDncEoVukWTBXMQswCQYDVQQGEwJDTjELMAkGA1UE
+CBMCUE4xCzAJBgNVBAcTAkNOMQswCQYDVQQKEwJPTjELMAkGA1UECxMCVU4xFDAS
+BgNVBAMTC0hlcm9uZyBZYW5nggEAMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEE
+BQADQQA/ugzBrjjK9jcWnDVfGHlk3icNRq0oV7Ri32z/+HQX67aRfgZu7KWdI+Ju
+Wm7DCfrPNGVwFWUQOmsPue9rZBgO
+-----END CERTIFICATE-----
+</pre>
+<p>
+Note that:
+</p>
+<ul>
+<li>My information, as both "issuer" and "subject", is entered from the keyboard.
+</li>
+<li>My public key that is included in the certificate is supplied from my RSA key pair file, herong_rsa_des.key.
+See the previous chapter on how to generate a RSA key pair file.
+</li>
+<li>My private key that is used to sign the certificate is also supplied from my RSA key pair file, herong_rsa_des.key.
+But the private key itself will not be included in the certificate. 
+So don't be afraid of send the self-signed certificate to others. 
+</li>
+<li>The certificate is saved in an encoded format called PEM.
+</li>
+</ul>
+
+
+<p class="section_title">
+Viewing Components of Certificates
+</p>
+
+<p>
+Here is how to see the components of a certificate: 
+</p>
+<pre class="block_source">
+>openssl x509 -in herong.crt -noout -text
+Certificate:
+ Data:
+  Version: 3 (0x2)
+  Serial Number: 0 (0x0)
+  Signature Algorithm: md5WithRSAEncryption
+  Issuer: C=CN, ST=PN, L=LN, O=ON, OU=UN, CN=Herong Yang
+  Validity
+   Not Before: Jul 15 02:19:47 2002 GMT
+   Not After : Aug 14 02:19:47 2002 GMT
+  Subject: C=CN, ST=PN, L=LN, O=ON, OU=UN, CN=Herong Yang
+  Subject Public Key Info:
+   Public Key Algorithm: rsaEncryption
+   RSA Public Key: (512 bit)
+    Modulus (512 bit):
+     00:a9:e6:19:c6:ee:88:01:86:d9:72:9e:93:92:db:
+     57:01:7b:02:84:fc:1e:e3:57:5e:2a:7b:2b:25:9e:
+     bd:ba:c5:95:2c:49:59:28:df:a6:67:86:26:8e:ff:
+     36:cc:3a:84:5c:28:af:6f:11:c8:0c:b5:c2:c5:b9:
+     04:d6:0e:5d:d1
+    Exponent: 65537 (0x10001)
+  X509v3 extensions:
+   X509v3 Subject Key Identifier:
+    55:C8:EF:49:2B:5D:E4:03:C5:98:1B:68:24:28:47:88:D4:0E:77:04
+   X509v3 Authority Key Identifier:
+    keyid:55:C8:EF:49:2B:5D:E4:03:C5:98:1B:68:24:28:47:88:D4:0E:77:04
+    DirName:/C=CN/ST=PN/L=LN/O=ON/OU=UN/CN=Herong Yang
+    serial:00
+   X509v3 Basic Constraints:
+    CA:TRUE
+ Signature Algorithm: md5WithRSAEncryption
+  3f:ba:0c:c1:ae:38:ca:f6:37:16:9c:35:5f:18:79:64:de:27:
+  0d:46:ad:28:57:b4:62:df:6c:ff:f8:74:17:eb:b6:91:7e:06:
+  6e:ec:a5:9d:23:e2:6e:5a:6e:c3:09:fa:cf:34:65:70:15:65:
+  10:3a:6b:0f:b9:ef:6b:64:18:0e
+</pre>
+<p>
+This certificate tells us that:
+</p>
+<ul>
+<li>The subject is "C=CN, ST=PN, L=LN, O=ON, OU=UN, CN=Herong Yang"
+</li>
+<li>The subject's public key is included in it. 
+</li>
+<li>The issuer is "C=CN, ST=PN, L=LN, O=ON, OU=UN, CN=Herong Yang". The issuer is identical 
+to the subject, because this is a self-signed certificate.
+</li>
+<li>The certificate is valid for one month.
+</li>
+<li>The certificate is signed by the issuer with the signature at the end. 
+</li>
+</ul>
+
+
+<p class="section_title">
+Conclusion
+</p>
+
+<p>
+In this chapter, we have learned how to use the "req" command to generate a self-signed certificate, 
+and how to use the "x509" command to view the content of a certificate.
+</p>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="openssl_crt.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "openssl_crt.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Generating Self-Signed Certificates</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

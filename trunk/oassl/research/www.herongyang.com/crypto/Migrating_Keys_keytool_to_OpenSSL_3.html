@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: 'keytool' generating a key pair; 'keytool' exporting the from PrivateKeyEntry; 'keytool' displaying certificate info; 'OpenSSL' viewing certificate details; 'DumpKey.java' dumping key pair out of 'keytool' keystore files; 'OpenSSL' converting dumped key pair from binary to Base64; 'OpenSSL' viewing converted key pair. "/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, keytool, Keys, Migrating, keystore, Base64, PEM"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Migrating Keys from  'keytool' to 'OpenSSL'</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="Migrating_Keys_keytool_to_OpenSSL.html">
+Migrating Keys from  'keytool' to 'OpenSSL'
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="Migrating_Keys_keytool_to_OpenSSL.html">1</a>&nbsp;
+<a href="Migrating_Keys_keytool_to_OpenSSL_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="Migrating_Keys_keytool_to_OpenSSL_4.html">4</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p class="section_title">
+DumpKey.java - Dumping Private Keys Out of "keystore"
+</p>
+
+<p>
+Since "keytool" can not be used to export the private and public key pair out of the keystore file, 
+I wrote the following Java program, DumpKey.java, to do this job:
+</p>
+<pre class="block_source">
+/* DumpKey.java
+ * Copyright (c) 2007 by Dr. Herong Yang, http://www.herongyang.com/
+ */
+import java.io.*;
+import java.security.*;
+public class DumpKey {
+   static public void main(String[] a) {
+      if (a.length&lt;5) {
+         System.out.println("Usage:");
+         System.out.println(
+            "java DumpKey jks storepass alias keypass out");
+         return;
+      }
+      String jksFile = a[0];
+      char[] jksPass = a[1].toCharArray();
+      String keyName = a[2];
+      char[] keyPass = a[3].toCharArray();
+      String outFile = a[4];
+
+      try {
+         KeyStore jks = KeyStore.getInstance("jks");
+         jks.load(new FileInputStream(jksFile), jksPass);
+         Key key = jks.getKey(keyName, keyPass);
+         System.out.println("Key algorithm: "+key.getAlgorithm());
+         System.out.println("Key format: "+key.getFormat());
+         System.out.println("Writing key in binary form to "
+            +outFile);
+
+         FileOutputStream out = new FileOutputStream(outFile);
+         out.write(key.getEncoded());
+         out.close();
+      } catch (Exception e) {
+         e.printStackTrace();
+         return;
+      }
+   }
+}
+</pre>
+
+<p>
+Notes on DumpKey.java:
+</p>
+<ul>
+<li>The first step is to load the keystore file into "jks". I am assuming that the keystore type is "jks",
+which is the default type used by "keytool". Another type is "pkcs12".  
+</li>
+<li>The second step is to obtain the key from the specified key entry name. I am assuming that
+the specified entry is a PrivateKeyEntry, which contains two components: the key and the self-signed certificate.
+</li>
+<li>The last step is to dump the key in the default encoding format. Note that the encoding format
+is still in a binary form.
+</li>
+<li>Converting the output in Base64 encoding is not done, because JDK does not offer any Base64 classes.
+</li>
+</ul>
+
+<p>
+I tried my DumpKey.java program with my key pair stored in herong.jks
+as show below:
+</p>
+<pre class="block_source">
+>javac DumpKey.java
+
+>java DumpKey herong.jks jkspass herong_key keypass herong_bin.key
+Key algorithm: DSA
+Key format: PKCS#8
+Writing key in binary form to herong_bin.key
+</pre>
+
+<p>
+Excellent. I got my key pair dumped out of the keystore file into a binary PKCS#8 format.
+</p>
+
+<p>
+Now I am ready to test my private and public key pair with "OpenSSL" 
+as shown in the next section.
+</p>
+
+
+<p class="section_title">
+"OpenSSL" Converting Keys from Binary to PEM
+</p>
+
+<p>
+Using my DumpKey.java program, I managed to get a private and public key pair 
+dumped out of the "keytool" keystore file into herong_bin.key.
+My DumpKey.java program told me that this is a DSA key pair stored in binary PKCS# format. 
+</p>
+
+<p>
+I tried to view herong_bin.key as is with the "openssl dsa" command:
+</p>
+<pre class="block_source">
+>openssl dsa -in herong_bin.key -text
+
+read DSA key
+unable to load Key
+2228:error:0906D06C:PEM routines:PEM_read_bio:no start line:
+pem_lib.c:632:Expecting: ANY PRIVATE KEY
+</pre> 
+
+<p>
+Looks like "openssl dsa" command only understand PEM format which requires the key
+to be encoded in Base64 format. This can be done in two steps. First, use "openssl enc" 
+command as shown below:
+</p>
+<pre class="block_source">
+>openssl enc -in herong_bin.key -out herong.key -a
+
+>type herong.key
+MIIBSwIBADCCASwGByqGSM44BAEwggEfAoGBAP1/U4EddRIpUt9KnC7s5Of2EbdS
+...
+g9/hWuWfBpKLZl6Ae1UlZAFMO/7PSSoEFgIUSVbo98XAZDN9RZoZ+li3kIKVEbk=
+</pre>
+
+<p>
+Notes on what I did:
+</p>
+<ul>
+<li>"openssl enc" command does various encryptions and encodings. 
+</li>
+<li>"-a" option applies Base64 encoding.
+</li>
+<li>"-in herong_bin.key" option specifies the key in binary form.
+</li>
+<li>"-out herong.key" option specifies encoded output file.
+</li>
+<li>"type herong.key" command confirms that the key file is Base64 encoded.
+</li>
+</ul>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="Migrating_Keys_keytool_to_OpenSSL.html">1</a>&nbsp;
+<a href="Migrating_Keys_keytool_to_OpenSSL_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="Migrating_Keys_keytool_to_OpenSSL_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "Migrating_Keys_keytool_to_OpenSSL.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Migrating Keys from  'keytool' to 'OpenSSL'</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: How DES really works with illustrations in Java codes."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, algorithm, illustration, Java"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Illustrated with Java Programs</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_implTest.html">
+DES Algorithm - Illustrated with Java Programs
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="des_implTest_2.html">2</a>&nbsp;
+<a href="des_implTest_3.html">3</a>&nbsp;
+<a href="des_implTest_4.html">4</a>&nbsp;
+<a href="des_implTest_5.html">5</a>&nbsp;
+<a href="des_implTest_6.html">6</a>&nbsp;
+</p>
+
+
+
+<p>
+This chapter describes:
+</p>
+<ul>
+<li>A Java program to illustrate the DES key schedule Algorithm.
+</li>
+<li>A Java program to illustrate the DES cipher algorithm.
+</li>
+</ul>
+
+
+<p class="section_title">
+DESSubkeysTest.java - DES Key Schedule Algorithm Illustration
+</p>
+
+<p>
+As an illustration to the DES key schedule algorithm described in the
+previous chapter, I wrote the following Java program, DESKSubkeysTest.java:
+</p>
+
+<pre class="block_source">
+/* DESSubkeysTest.java
+ * Copyright (c) 2002 by Dr. Herong Yang
+ */
+class DESSubkeysTest {
+   public static void main(String[] a) {
+      try {
+         byte[] theKey = getTestKey();
+         byte[][] subKeys = getSubkeys(theKey);
+         boolean ok = validateSubkeys(subKeys);
+         System.out.println("DES subkeys test result: "+ok);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
+   static final int[] PC1 = {
+      57, 49, 41, 33, 25, 17,  9,
+       1, 58, 50, 42, 34, 26, 18,
+      10,  2, 59, 51, 43, 35, 27,
+      19, 11,  3, 60, 52, 44, 36,
+      63, 55, 47, 39, 31, 23, 15,
+       7, 62, 54, 46, 38, 30, 22,
+      14,  6, 61, 53, 45, 37, 29,
+      21, 13,  5, 28, 20, 12,  4
+   };
+   static final int[] PC2 = {
+      14, 17, 11, 24,  1,  5,
+       3, 28, 15,  6, 21, 10,
+      23, 19, 12,  4, 26,  8,
+      16,  7, 27, 20, 13,  2,
+      41, 52, 31, 37, 47, 55,
+      30, 40, 51, 45, 33, 48,
+      44, 49, 39, 56, 34, 53,
+      46, 42, 50, 36, 29, 32
+   };
+   static final int[] SHIFTS = {
+      1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1
+   };
+   private static byte[][] getSubkeys(byte[] theKey)
+      throws Exception {
+      printBytes(theKey,"Input key");
+      int activeKeySize = PC1.length;
+      int numOfSubKeys = SHIFTS.length;
+      byte[] activeKey = selectBits(theKey,PC1);
+      printBytes(activeKey,"After permuted choice 1 - Active key");
+      int halfKeySize = activeKeySize/2;
+      byte[] c = selectBits(activeKey,0,halfKeySize);
+      byte[] d = selectBits(activeKey,halfKeySize,halfKeySize);
+      byte[][] subKeys = new byte[numOfSubKeys][];
+      for (int k=0; k&lt;numOfSubKeys; k++) {
+         c = rotateLeft(c,halfKeySize,SHIFTS[k]);
+         d = rotateLeft(d,halfKeySize,SHIFTS[k]);
+         byte[] cd = concatenateBits(c,halfKeySize,d,halfKeySize);
+         printBytes(cd,"Subkey #"+(k+1)+" after shifting");
+         subKeys[k] = selectBits(cd,PC2);
+         printBytes(subKeys[k],"Subkey #"+(k+1)
+            +" after permuted choice 2");
+      }
+      return subKeys;
+   }
+   private static byte[] rotateLeft(byte[] in, int len, int step) {
+      int numOfBytes = (len-1)/8 + 1;
+      byte[] out = new byte[numOfBytes];
+      for (int i=0; i&lt;len; i++) {
+         int val = getBit(in,(i+step)%len);
+         setBit(out,i,val);
+      }
+      return out;
+   }
+   private static byte[] concatenateBits(byte[] a, int aLen, byte[] b, 
+      int bLen) {
+      int numOfBytes = (aLen+bLen-1)/8 + 1;
+      byte[] out = new byte[numOfBytes];
+      int j = 0;
+      for (int i=0; i&lt;aLen; i++) {
+         int val = getBit(a,i);
+         setBit(out,j,val);
+         j++;
+      }
+      for (int i=0; i&lt;bLen; i++) {
+         int val = getBit(b,i);
+         setBit(out,j,val);
+         j++;
+      }
+      return out;
+   }
+   private static byte[] selectBits(byte[] in, int pos, int len) {
+      int numOfBytes = (len-1)/8 + 1;
+      byte[] out = new byte[numOfBytes];
+      for (int i=0; i&lt;len; i++) {
+         int val = getBit(in,pos+i);
+         setBit(out,i,val);
+      }
+      return out;
+   }
+   private static byte[] selectBits(byte[] in, int[] map) {
+      int numOfBytes = (map.length-1)/8 + 1;
+      byte[] out = new byte[numOfBytes];
+      for (int i=0; i&lt;map.length; i++) {
+         int val = getBit(in,map[i]-1);
+         setBit(out,i,val);
+//       System.out.println("i="+i+", pos="+(map[i]-1)+", val="+val);
+      }
+      return out;
+   }
+   private static int getBit(byte[] data, int pos) {
+      int posByte = pos/8; 
+      int posBit = pos%8;
+      byte valByte = data[posByte];
+      int valInt = valByte>>(8-(posBit+1)) &amp; 0x0001;
+      return valInt;
+   }
+   private static void setBit(byte[] data, int pos, int val) {
+      int posByte = pos/8; 
+      int posBit = pos%8;
+      byte oldByte = data[posByte];
+      oldByte = (byte) (((0xFF7F>>posBit) &amp; oldByte) &amp; 0x00FF);
+      byte newByte = (byte) ((val&lt;&lt;(8-(posBit+1))) | oldByte);
+      data[posByte] = newByte;
+   }
+</pre>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="des_implTest_2.html">2</a>&nbsp;
+<a href="des_implTest_3.html">3</a>&nbsp;
+<a href="des_implTest_4.html">4</a>&nbsp;
+<a href="des_implTest_5.html">5</a>&nbsp;
+<a href="des_implTest_6.html">6</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_implTest.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Illustrated with Java Programs</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

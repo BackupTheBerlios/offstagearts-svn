@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: Generating RSA public and private keys; Viewing Components of RSA Keys; Encrypting RSA keys."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , RSA, public, private, key"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Generating RSA Private and Public Keys</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="openssl_rsa.html">
+OpenSSL - Generating RSA Private and Public Keys
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="openssl_rsa_2.html">2</a>&nbsp;
+</p>
+
+
+
+<p>
+This chapter describes:
+</p>
+<ul>
+<li>What is RSA?
+</li>
+<li>Generating RSA public and private keys.
+</li>
+<li>Viewing Components of RSA Keys.
+</li>
+<li>Encrypting RSA Keys.
+</li>
+</ul>
+
+
+<p class="section_title">
+What is RSA?
+</p>
+
+<p>
+RSA is an asymmetric encryption algorithm developed in 1977 that use a pair of private key and public key.
+RSA is the initials of the developers of the RSA algorithm: Ron Rivest, Adi Shamir, and Leonard Adleman.
+Today, RSA is probably the most used the encryption algorithm for the Internet communication.
+</p>
+
+
+<p class="section_title">
+Generating RSA Key Pairs
+</p>
+
+<p>
+Here is how to use OpenSSL to generate a pair of RSA private key and public key:
+</p>
+<pre class="block_source">
+>openssl genrsa -out herong_rsa.key
+Loading 'screen' into random state - done
+Generating RSA private key, 512 bit long modulus
+..++++++++++++
+................++++++++++++
+e is 65537 (0x10001)
+
+>type herong_rsa.key
+-----BEGIN RSA PRIVATE KEY-----
+MIIBOwIBAAJBANoK3b+0NV1xrFLjsKFPLrxMReu3ezPxLjDWjktakq9gDGM5WUvI
+CSENry/M1h2AhxGSxQluy4b1ynzBGWeO320CAwEAAQJAbQQn0NSKJflSvnLG+i/7
+3vuHrg4j1FmOza5IoNZdJr9DyESMC+prebZkAFM2EW+ZLZy2JiEIqdDz79VAVRzs
+ZQIhAPBvHYEWxCIcSYn8aG7o2lyY5/EB1gvwgAfSdWFlemUDAiEA6CijmKOX1WRd
+KPf9g52Tpxk4TZzdjIpcbvYR7znIZs8CIBDxI3kXK5bju2LXwFwgWFKyC5X19Sk+
+NydV8yN7zRYVAiEAni7CeUhONfmyeC2wsLL3Xg2TDV7qnc3QeVJ0mdl3MIUCIQCo
+o0AdFXm789FfHuB+mVIKNtBLTAQNaMuXz6lXl7Ib7Q==
+-----END RSA PRIVATE KEY-----
+</pre>
+<p>
+Note that:
+</p>
+<ul>
+<li>The output says generating private key. But it is actually 
+generating a pair of private key and public key. 
+</li>
+<li>The key pair is saved in an encoded format called PEM.
+</li>
+</ul>
+
+
+<p class="section_title">
+Viewing Components of RSA Keys
+</p>
+
+<p>
+Here is how to see the components of a RSA key: 
+</p>
+<pre class="block_source">
+>openssl rsa -in herong_rsa.key -text
+Private-Key: (512 bit)
+modulus:
+    00:da:0a:dd:bf:b4:35:5d:71:ac:52:e3:b0:a1:4f:
+    2e:bc:4c:45:eb:b7:7b:33:f1:2e:30:d6:8e:4b:5a:
+    92:af:60:0c:63:39:59:4b:c8:09:21:0d:af:2f:cc:
+    d6:1d:80:87:11:92:c5:09:6e:cb:86:f5:ca:7c:c1:
+    19:67:8e:df:6d
+publicExponent: 65537 (0x10001)
+privateExponent:
+    6d:04:27:d0:d4:8a:25:f9:52:be:72:c6:fa:2f:fb:
+    de:fb:87:ae:0e:23:d4:59:8e:cd:ae:48:a0:d6:5d:
+    26:bf:43:c8:44:8c:0b:ea:6b:79:b6:64:00:53:36:
+    11:6f:99:2d:9c:b6:26:21:08:a9:d0:f3:ef:d5:40:
+    55:1c:ec:65
+prime1:
+    00:f0:6f:1d:81:16:c4:22:1c:49:89:fc:68:6e:e8:
+    da:5c:98:e7:f1:01:d6:0b:f0:80:07:d2:75:61:65:
+    7a:65:03
+prime2:
+    00:e8:28:a3:98:a3:97:d5:64:5d:28:f7:fd:83:9d:
+    93:a7:19:38:4d:9c:dd:8c:8a:5c:6e:f6:11:ef:39:
+    c8:66:cf
+exponent1:
+    10:f1:23:79:17:2b:96:e3:bb:62:d7:c0:5c:20:58:
+    52:b2:0b:95:f5:f5:29:3e:37:27:55:f3:23:7b:cd:
+    16:15
+exponent2:
+    00:9e:2e:c2:79:48:4e:35:f9:b2:78:2d:b0:b0:b2:
+    f7:5e:0d:93:0d:5e:ea:9d:cd:d0:79:52:74:99:d9:
+    77:30:85
+coefficient:
+    00:a8:a3:40:1d:15:79:bb:f3:d1:5f:1e:e0:7e:99:
+    52:0a:36:d0:4b:4c:04:0d:68:cb:97:cf:a9:57:97:
+    b2:1b:ed
+writing RSA key
+-----BEGIN RSA PRIVATE KEY-----
+MIIBOwIBAAJBANoK3b+0NV1xrFLjsKFPLrxMReu3ezPxLjDWjktakq9gDGM5WUvI
+CSENry/M1h2AhxGSxQluy4b1ynzBGWeO320CAwEAAQJAbQQn0NSKJflSvnLG+i/7
+3vuHrg4j1FmOza5IoNZdJr9DyESMC+prebZkAFM2EW+ZLZy2JiEIqdDz79VAVRzs
+ZQIhAPBvHYEWxCIcSYn8aG7o2lyY5/EB1gvwgAfSdWFlemUDAiEA6CijmKOX1WRd
+KPf9g52Tpxk4TZzdjIpcbvYR7znIZs8CIBDxI3kXK5bju2LXwFwgWFKyC5X19Sk+
+NydV8yN7zRYVAiEAni7CeUhONfmyeC2wsLL3Xg2TDV7qnc3QeVJ0mdl3MIUCIQCo
+o0AdFXm789FfHuB+mVIKNtBLTAQNaMuXz6lXl7Ib7Q==
+-----END RSA PRIVATE KEY-----
+</pre>
+
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="openssl_rsa_2.html">2</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "openssl_rsa.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Generating RSA Private and Public Keys</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

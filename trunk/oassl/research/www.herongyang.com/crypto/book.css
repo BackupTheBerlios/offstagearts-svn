@@ -1,0 +1,290 @@
+/* 
+* Name: book.css
+* Version: 2006.10
+* Version: 2006.07
+* Author: Dr. Herong Yang
+* Copyright (c) 2006 by Dr. Herong Yang. All rights reserved.
+*/
+
+body {text-align: left}
+div.hy_body {margin: auto; width: 1000px; border: 1px solid #000000}
+p.hy_copyright {text-align: right; font-style: italic}
+p.syndication {margin: 4px 0px 0px 0px; padding: 0px; text-align: right;}
+form {margin: 0px 0px 0px 0px; padding: 0px;}
+p.gg_search {margin: 0px 0px 0px 0px; padding: 0px;}
+
+a {
+	link-color: green;
+	visited-color: mediumblue;
+	active-color: red;
+	hover-color: black
+}
+
+body {
+	background-color: #a0a0a0;
+	font-family: 'arial';
+	font-size: 14px; 
+	margin-top: 0pt;
+	margin-bottom: 0pt;
+	margin-left: 0pt;
+	margin-right: 0pt
+}
+
+p {
+	margin-top: 8px;
+	margin-bottom: 4px;
+	margin-left: 0px;
+	margin-right: 0px;
+	font-family: 'arial';
+	font-size: 14px; 
+}
+
+td {
+	font-family: 'arial';
+	font-size: 14px; 
+}
+
+p.picture {
+	background-color: #bfbfbf;
+	text-align: center;
+	margin-top: 4px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 4px;
+	border: 10px;
+	padding: 10px;
+	width: 558px
+}
+
+pre.title {
+	font-family: 'times new roman';
+	font-weight: bold;
+	font-size: 20px; 
+	text-align: center;
+	margin-top: 10px;
+	margin-bottom: 0px;
+	padding-top: 6pt;
+	padding-bottom: 0pt;
+	background-color: #cfcfcf
+}
+
+pre.version {
+	font-family: 'times new roman';
+	font-weight: bold;
+	font-size: 12pt; 
+	text-align: center;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-top: 4pt;
+	padding-bottom: 0pt;
+	background-color: #cfcfcf
+}
+
+pre.author {
+	font-family: 'times new roman';
+	font-weight: bold;
+	font-size: 12pt; 
+	text-align: center;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-top: 4pt;
+	padding-bottom: 0pt;
+	background-color: #cfcfcf
+}
+
+pre.copyright {
+	font-family: 'times new roman';
+	font-weight: bold;
+	font-size: 12pt; 
+	text-align: center;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-top: 4pt;
+	padding-bottom: 6pt;
+	background-color: #cfcfcf
+}
+
+p.chapter_title {
+	font-weight: bold;
+	font-size: 18px; 
+	color: black
+}
+
+p.section_title {
+	margin-top: 32px;
+	font-weight: bold;
+	font-size: 16px; 
+	color: black
+}
+
+pre.block_bold {
+	font-family: 'new courier';
+	font-weight: bold;
+	background-color: #cfcfcf;
+	margin-top: 4px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 4px;
+	border: 10px;
+	color: black;
+	padding: 5px;
+	width: 558px
+}
+
+pre.block_source_gb {
+	font-family: 'new courier';
+	background-color: #cfcfcf;
+	margin-top: 4px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 4px;
+	border: 10px;
+	color: black;
+	padding: 5px;
+	width: 558px
+}
+
+pre.block_source {
+	font-family: 'new courier', monospace;
+	font-size: 12px; 
+	background-color: #cfcfcf;
+	margin-top: 4px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 4px;
+	border: 10px;
+	color: black;
+	padding: 5px;
+	width: 558px
+}
+
+pre.block_source_85 {
+	font-family: 'new courier';
+	font-size: 8pt; 
+	background-color: #cfcfcf;
+	margin-top: 4px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 4px;
+	border: 10px;
+	color: black;
+	padding: 5px;
+	width: 558px
+}
+
+pre.block_syntax {
+	font-family: 'new courier';
+	font-style: italic;
+	font-size: 12px; 
+	background-color: #cfcfcf;
+	margin-top: 4px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 4px;
+	border: 10px;
+	color: black;
+	padding: 5px;
+	width: 558px
+}
+
+table.frame {
+	width: 750px;
+	height: 100px;
+	border: 0pt solid transparent;
+	margin-left: 0px;
+	padding: 0pt;
+	background-color: transparent
+}
+
+table.page_border {
+	width: 780px;
+	height: 100px;
+	border: 0pt solid red;
+	padding: 0pt;
+	background-color: #ffffff
+}
+
+table.page {
+	border: 0pt solid red;
+	padding-top: 14px;
+	padding-bottom: 14px;
+	padding-left: 24px;
+	padding-right: 24px;
+	background-color: #fbfbfb
+}
+
+td.body {
+	padding-top: 2px;
+	padding-bottom: 2px
+}
+
+td.frame_top {
+	border-width: 0px;
+	background-color: #707070;
+}
+
+td.frame_left {
+	background-color: #fbfbfb;
+	vertical-align: top; 
+}
+
+td.frame_center {
+	border-width: 0px;
+	background-color: #a0a0a0;
+	vertical-align: top; 
+	width: 650px;
+	height: 200px;
+	padding-left: 0px;
+}
+
+td.frame_right {
+	background-color: #fbfbfb;
+	vertical-align: top; 
+}
+
+td.frame_bottom {
+	border-width: 0px;
+	background-color: #a0a0a0;
+}
+
+td.page_line {
+	width: 728px;
+	height: 1px
+}
+
+ul {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	list-style-type: disc
+}
+
+td.page_sw {
+	width: 170px;
+	vertical-align: top; 
+	padding-top: 10px;
+}
+
+td.page_se {
+	width: 558px;
+	vertical-align: top; 
+	padding-top: 10px;
+}
+
+p.g_key {
+	font-family: 'verdana';
+	font-weight: bold;
+	font-size: 10px;
+	margin-top: 7px;
+	margin-left: 3px;
+	margin-right: 3px;
+	margin-bottom: 0px;
+}
+
+p.g_des {
+	font-family: 'verdana';
+	font-size: 10px;
+	margin-top: 2px;
+	margin-left: 3px;
+	margin-right: 3px;
+	margin-bottom: 6px;
+}

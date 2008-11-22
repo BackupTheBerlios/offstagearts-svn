@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is a certificate and a certificate chain? What is keystore? What are the functions offered by keytool? Examples of using keytool."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , keytool, keystore, Certificates"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - keytool - JDK Tool to Manage Certificates Using 'keystore'</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="jca_keytool.html">
+keytool - JDK Tool to Manage Certificates Using 'keystore'
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="jca_keytool.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="jca_keytool_3.html">3</a>&nbsp;
+</p>
+
+tool introduced in JDK 1.2 to manage keys and certificates 
+using "keystore". "keytool" 
+
+<p><i>(Continued from previous part...)</i></p>
+
+
+<p class="section_title">
+"keytool" - Key and Certificate Management Tool
+</p>
+
+<p>
+"keytool" is command line tool introduced in JDK 1.2 to manage keys and certificates 
+using "keystore". "keytool" replaces the same functions offered by "javakey" in JDK 1.1.
+"keytool" offers a number functions through the following major command options:
+</p>
+<ul>
+<li>"-genkey": Generates a key pair and stores it as a key entry in the keystore.
+</li>
+<li>"-list": Lists all entries in the keystore. 
+</li>
+<li>"-export": Exports the certificate of the specified key entry or certificate entry
+out of the keystore to a certificate file.
+</li>
+<li>"-printcert": Prints summary information of a certificate from a certificate file.
+</li>
+<li>"-import": Imports the certificate from a certificate file as a certificate entry into the keystore.
+</li>
+<li>"-keyclone": Creates a new key entry by copying an existing key entry.
+</li>
+<li>"-selfcert": Replaces the certificate in a key entry with a new self-signed certificate. 
+</li>
+<li>"-delete": Deletes the entry of the specified alias name.
+</li>
+</ul>
+
+
+<p class="section_title">
+"keytool" Example - Generating Key Pairs and Self-Signed Certificates
+</p>
+
+<p>
+In the first example, I want to try the "-genkey" command option using JDK 1.3.1:
+</p>
+<pre class="block_source">
+keytool -genkey -alias my_home -keystore herong.jks
+Enter keystore password:  HerongJKS
+What is your first and last name?
+  [Unknown]:  Herong Yang
+What is the name of your organizational unit?
+  [Unknown]:  My Unit
+What is the name of your organization?
+  [Unknown]:  My Home
+What is the name of your City or Locality?
+  [Unknown]:  My City
+What is the name of your State or Province?
+  [Unknown]:  My State
+What is the two-letter country code for this unit?
+  [Unknown]:  US
+Is &lt;CN=Herong Yang, OU=My Unit, O=My Home, L=My City, ST=My State, 
+   C=US> correct?
+  [no]:  yes
+Enter key password for &lt;my_home>
+        (RETURN if same as keystore password):  My1stKey
+</pre>
+
+<p>
+Based on the documentation, the above example command should do the following for me:
+</p>
+<ul>
+<li>Create a "keystore" file, herong.jks, in JKS format, with password of "HerongJKS".
+</li>
+<li>Generate a pair of private key and public key for me using the default implementation
+of the default security package.
+</li>
+<li>Generate a certificate chain with a single self-signed certificate of my public key.
+</li>
+<li>Insert a key entry into the keystore with my private key and the certificate chain.
+</li>
+</ul>
+
+<p>
+The following command shows that we do have a key entry in the keystore file:
+</p>
+<pre class="block_source">
+keytool -list -keystore herong.jks -storepass HerongJKS
+
+Keystore type: jks
+Keystore provider: SUN
+
+Your keystore contains 1 entry:
+
+my_home, Sat Jun 1 07:15:16 EDT 2002, keyEntry,
+Certificate fingerprint 
+   (MD5): BE:D2:AF:4E:A7:44:13:08:16:4C:68:3B:D1:99:79:55
+</pre>
+
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="jca_keytool.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="jca_keytool_3.html">3</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "jca_keytool.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - keytool - JDK Tool to Manage Certificates Using 'keystore'</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

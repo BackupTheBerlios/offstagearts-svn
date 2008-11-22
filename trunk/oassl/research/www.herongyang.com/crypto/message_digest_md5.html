@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is MD5 message digest; Implementation in Java, PHP, and Perl."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , MD5, algorithm, message, digest, implementation, Java, PHP, Perl"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Message Digest - MD5 Algorithm</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="message_digest_md5.html">
+Message Digest - MD5 Algorithm
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="message_digest_md5_2.html">2</a>&nbsp;
+<a href="message_digest_md5_3.html">3</a>&nbsp;
+<a href="message_digest_md5_4.html">4</a>&nbsp;
+<a href="message_digest_md5_5.html">5</a>&nbsp;
+</p>
+
+
+
+<p>
+This tutorial helps you to understand 
+</p>
+<ul>
+<li>What is MD5?
+</li>
+<li>MD5 Algorithm Overview
+</li>
+<li>MD5 Implementation in Java
+</li>
+<li>MD5 Implementation in PHP
+</li>
+<li>MD5 Implementation in Perl
+</li>
+</ul>
+
+<p class="section_title">
+What is MD5?
+</p>
+
+<p>
+Based on the MD5 RFC document, MD5 is message-digest algorithm, which 
+takes as input a message of arbitrary length and produces
+   as output a 128-bit "fingerprint" or "message digest" of the input.
+   It is conjectured that it is computationally infeasible to produce
+   two messages having the same message digest, or to produce any
+   message having a given prespecified target message digest.
+</p>
+
+<p>
+MD5 was designed by Ronald Rivest in 1991 to replace an earlier hash function, MD4. 
+MD5 is more secure than MD4. However a number of weaknesses have been found in recent years. 
+The most recent paper published in this area shows that a collision of MD5 can be found 
+within one minute on a standard notebook PC, using a method called tunneling.
+</p>
+
+<p>
+Despite its weaknesses, MD5 is widely used in digital signature processes. 
+It's been implemented in many programming languages. 
+</p>
+
+
+<p class="section_title">
+MD5 Algorithm Overview
+</p>
+
+<p>
+MD5 algorithm is well described in RFC 1321 - The MD5 Message-Digest Algorithm, 
+see http://www.ietf.org/rfc/rfc1321.txt. Below is a quick overview of the algorithm.
+</p>
+
+<p>
+MD5 algorithm consists of 5 steps:
+</p>
+
+<p>
+Step 1. Appending Padding Bits. The original message is "padded" (extended) 
+so that its length (in bits) is congruent to 448, modulo 512. The padding rules are:
+</p>
+<ul>
+<li>The original message is always padded with one bit "1" first. 
+</li>
+<li>Then zero or more bits "0" are padded to bring the length of the message up to 64 bits fewer
+than a multiple of 512. 
+</li>
+</ul>
+
+<p>
+Step 2. Appending Length. 64 bits are appended to the end of the padded message
+to indicate the length of the original message in bytes. The rules of appending length are:
+</p>
+<ul>
+<li>The length of the original message in bytes is converted to its binary format of 64 bits. 
+If overflow happens, only the low-order 64 bits are used. 
+</li>
+<li>Break the 64-bit length into 2 words (32 bits each). 
+</li>
+<li>The low-order word is appended first and followed by the high-order word.
+</li>
+</ul>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="message_digest_md5_2.html">2</a>&nbsp;
+<a href="message_digest_md5_3.html">3</a>&nbsp;
+<a href="message_digest_md5_4.html">4</a>&nbsp;
+<a href="message_digest_md5_5.html">5</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "message_digest_md5.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Message Digest - MD5 Algorithm</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

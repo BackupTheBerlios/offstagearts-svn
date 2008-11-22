@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is X.509 Certificate Standard, PEM (Privacy Enhanced Mail), and DER (Distinguished Encoding Rules); 'keytool' Exporting Certificates in DER and PEM; 'OpenSSL' Verifying 'keytool' Certificates; 'OpenSSL' Generating Certificates in DER and PEM; 'keytool' Viewing and Importing 'OpenSSL' Certificates."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, keytool, Certificate, X.509, Base64, PEM, DER"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Certificate Formats - X.509, DER and PEM</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="Certificate_Formats_X509_DER_PEM.html">
+Certificate Formats - X.509, DER and PEM
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="Certificate_Formats_X509_DER_PEM.html">1</a>&nbsp;
+<a href="Certificate_Formats_X509_DER_PEM_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p class="section_title">
+"OpenSSL" Generating Certificates in DER and PEM
+</p>
+
+<p>
+After tested how "keytool" can be used to export certificates in DER and PEM encodings, 
+I decided to try with "OpenSSL" to see if it can generate certificates in the same encodings or not.
+What I did was to:
+</p>
+<ul>
+<li>Run "openssl genrsa" to generate a RSA key pair.
+</li>
+<li>Run "openssl req -new -x509" to generate a self-signed certificate and stored it in PEM encoding.
+</li>
+<li>Run "openssl x509" to convert the certificate from PEM encoding to DER encoding.
+</li>
+</ul>
+
+<p>
+The test session was recorded below:
+</p>
+<pre class="block_source">
+>openssl genrsa -out herong.key -des 1024
+
+Loading 'screen' into random state - done
+Generating RSA private key, 1024 bit long modulus
+.........................++++++
+...................++++++
+e is 65537 (0x10001)
+Enter pass phrase for herong.key: keypass
+Verifying - Enter pass phrase for herong.key: keypass
+
+>openssl req -new -x509 -key herong.key -out openssl_crt.pem
+-outform pem -config openssl.cnf
+
+Enter pass phrase for herong.key: keypass
+You are about to be asked to enter information that will be 
+incorporated into your certificate request.
+What you are about to enter is what is called a Distinguished 
+Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [CA]:
+State or Province Name (full name) [HY State]:
+Locality Name (eg, city) [HY City]:
+Organization Name (eg, company) [HY Company]:
+Organizational Unit Name (eg, section) [HY Unit]:
+Common Name (eg, YOUR name) [Herong Yang]:
+Email Address [herongyang.com]:
+
+>openssl x509 -in openssl_crt.pem -inform pem 
+-out openssl_crt.der -outform der
+</pre>
+
+<p>
+Now I got one certificate generated by "OpenSSL" and stored in two encoding files: openssl_crt.der and openssl_crt.pem.
+How can I verify that they are really using the correct encoding schemas?
+I used "keytool" to try to import them as described in the next section.
+</p>
+
+
+<p class="section_title">
+"keytool" Viewing "OpenSSL" Certificates
+</p>
+
+<p>
+One way to verify the certificate generated by "OpenSSL" and stored in PEM and DER encodings
+is to view it with the "keytool -printcert" command:
+</p>
+<pre class="block_source">
+>keytool -printcert -file openssl_crt.pem
+
+Owner: EMAILADDRESS=herongyang.com, CN=Herong Yang, OU=HY Unit, ...
+Issuer: EMAILADDRESS=herongyang.com, CN=Herong Yang, OU=HY Unit, ...
+Serial number: 0
+Valid from: Sun Apr 1 13:02:22 EDT 2007 until: ...
+Certificate fingerprints:
+         MD5:  BF:B8:3A:19:E5:05:CE:CA:8C:F7:05:FA:FE:51:A6:EC
+         SHA1: F7:C7:2A:57:73:5E:CE:E5:73:09:13:35:FB:91:CF:27:...
+         Signature algorithm name: MD5withRSA
+         Version: 3
+
+Extensions:
+...
+
+>keytool -printcert -file openssl_crt.der
+
+Owner: EMAILADDRESS=herongyang.com, CN=Herong Yang, OU=HY Unit, ...
+Issuer: EMAILADDRESS=herongyang.com, CN=Herong Yang, OU=HY Unit, ...
+Serial number: 0
+Valid from: Sun Apr 1 13:02:22 EDT 2007 until: ...
+Certificate fingerprints:
+         MD5:  BF:B8:3A:19:E5:05:CE:CA:8C:F7:05:FA:FE:51:A6:EC
+         SHA1: F7:C7:2A:57:73:5E:CE:E5:73:09:13:35:FB:91:CF:27:...
+         Signature algorithm name: MD5withRSA
+         Version: 3
+
+Extensions:
+...
+</pre> 
+
+<p>
+What I learned so far:
+</p>
+<ul>
+<li>"OpenSSL" can generate self-signed X5.09 version 3 certificates.
+</li>
+<li>"OpenSSL" can write certificates with DER and PEM encodings. 
+</li>
+<li>"keytool" can read certificates generated by "OpenSSL" in both DER and PEM encodings.
+</li>
+</ul>
+
+
+<p class="section_title">
+"keytool" Importing "OpenSSL" Certificates
+</p>
+
+<p>
+I also tried to import the certificate generated by "OpenSSL" into "keytoo" keystore files. 
+The "keytool -importcert" command had no trouble reading the certificate in both PEM and DER encodings.
+My command session is recorded here:
+</p>
+<pre class="block_source">
+>keytool -importcert -file openssl_crt.pem
+-keystore herong.jks -storepass jkspass 
+-alias openssl_crt_pem -keypass keypass
+
+Owner: EMAILADDRESS=herongyang.com, CN=Herong Yang, OU=HY Unit, ...
+Issuer: EMAILADDRESS=herongyang.com, CN=Herong Yang, OU=HY Unit, ...
+Serial number: 0
+Valid from: Sun Apr 1 13:02:22 EDT 2007 until: ...
+Certificate fingerprints:
+         MD5:  BF:B8:3A:19:E5:05:CE:CA:8C:F7:05:FA:FE:51:A6:EC
+         SHA1: F7:C7:2A:57:73:5E:CE:E5:73:09:13:35:FB:91:CF:27:...
+         Signature algorithm name: MD5withRSA
+         Version: 3
+
+Extensions:
+...
+Trust this certificate? [no]:  yes
+Certificate was added to keystore
+
+>keytool -importcert -file openssl_crt.der
+-keystore herong.jks -storepass jkspass 
+-alias openssl_crt_der -keypass keypass
+
+Certificate already exists in keystore under alias &lt;openssl_crt_pem&gt;
+Do you still want to add it? [no]:  yes
+Certificate was added to keystore
+
+>keytool -list -keystore herong.jks -store
+pass jkspass
+
+Keystore type: JKS
+Keystore provider: SUN
+
+Your keystore contains 3 entries
+
+openssl_crt_der, Apr 1, 2007, trustedCertEntry,
+Certificate fingerprint (MD5): BF:B8:3A:19:E5:05:CE:CA:8C:F7:05:...
+openssl_crt_pem, Apr 1, 2007, trustedCertEntry,
+Certificate fingerprint (MD5): BF:B8:3A:19:E5:05:CE:CA:8C:F7:05:...
+herong_key, Apr 1, 2007, PrivateKeyEntry,
+Certificate fingerprint (MD5): 5B:44:F1:D7:3D:9F:9E:15:5B:D1:25:...
+</pre>
+
+<p>
+Wonderful! There was no trouble at for "keytool" to import my 
+self-signed certificate generated by "OpenSSL" into the keystore file.
+</p>
+
+
+<p class="section_title">
+Conclusion
+</p>
+
+<ul>
+<li>X.509 defines a digital certificate standard.
+</li>
+<li>PEM (Privacy Enhanced Mail) is a certificate encoding schema.
+</li>
+<li>DER (Distinguished Encoding Rules) is another certificate encoding schema.
+</li>
+<li>"keytool" supports both PEM and DER certificate encodings.
+</li>
+<li>"OpenSSL" supports both PEM and DER certificate encodings.
+</li>
+</ul>
+
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="Certificate_Formats_X509_DER_PEM.html">1</a>&nbsp;
+<a href="Certificate_Formats_X509_DER_PEM_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "Certificate_Formats_X509_DER_PEM.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Certificate Formats - X.509, DER and PEM</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

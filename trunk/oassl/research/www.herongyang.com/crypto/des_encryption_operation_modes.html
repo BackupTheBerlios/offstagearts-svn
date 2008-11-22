@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: DES algorithm operation modes: ECB, CBC, CFB, and OFB implemented by Sun in Java JDK JCE package."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, Operation Modes, ECB, CBC, CFB, OFB, IV, JCE, JDK, SUN"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Operation Modes and JCE SUN Implementation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_encryption_operation_modes.html">
+DES Algorithm - Operation Modes and JCE SUN Implementation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="des_encryption_operation_modes_2.html">2</a>&nbsp;
+<a href="des_encryption_operation_modes_3.html">3</a>&nbsp;
+</p>
+
+
+
+<p>
+This tutorial helps you understand: 
+</p>
+<ul>
+<li>DES Encryption Operation Modes</li>
+<li>What is ECB (Electronic CodeBook) Operation Mode?</li>
+<li>What is CBC (Cipher Block Chaining) Operation Mode?</li>
+<li>What is CFB (Cipher FeedBack) Operation Mode?</li>
+<li>What is OFB (Output FeedBack) Operation Mode?</li>
+<li>Sun Java Implementation of DES Operation Modes</li>
+<li>JceSunDesOperationModeTest.java - JCE DES Operation Mode Testing Program</li>
+<li>Test Cases of DES Operation Modes</li>
+</ul>
+
+
+<p class="section_title">DES Encryption Operation Modes</p>
+
+<p>
+DES encryption algorithm defines how a single 64-bit plaintext block can be encrypted. It does not define 
+how a real plaintext message with an arbitrary number of bytes should be padded and arranged into 64-bit input blocks
+for the encryption process. It does not define how one input block should be coupled with other blocks from the same 
+original plaintext message to improve the encryption strength.</p>
+
+<p>
+(FIPS) Federal Information Processing Standards Publication 81 published in 1980 provided the following block 
+encryption operation modes to address how blocks of the same plaintext message should be coupled:
+</p>
+<ul>
+<li>ECB - Electronic Code Book operation mode.</li>
+<li>CBC - Cipher Block Chaining operation mode.</li>
+<li>CFB - Cipher Feedback operation mode</li>
+<li>OFB - Output Feedback operation mode</li>
+</ul>
+
+<p>
+See <a href="http://www.itl.nist.gov/fipspubs/fip81.htm">http://www.itl.nist.gov/fipspubs/fip81.htm</a> for details.
+</p>
+
+<p>
+In order to describe these operation modes, we need to define the following notations:
+</p>
+
+<p>
+P = P[1], P[2], P[3], ..., P[i], ... - Representing the original plaintext message, P, being arranged into multiple 64-bit
+plaintext blocks. P[i] represents plaintext block number i.
+</p>
+
+<p>
+Ek(P[i]) - Representing the DES encryption algorithm applied on a single 64-bit plaintext block, P[i], with a predefined key, k. 
+</p>
+
+<p>
+C = C[1], C[2], C[3], ..., C[i], ... - Representing the final ciphertext message, C, being regrouped from multiple 64-bit
+ciphertext blocks. C[i] represents ciphertext block number i.
+</p>
+
+<p>
+IV - Called "Initial Vector", representing a predefined 64-bit initial value.
+</p>
+
+
+<p class="section_title">What is ECB (Electronic CodeBook) Operation Mode?</p>
+
+<p>
+ECB (Electronic CodeBook) is the simplest operation mode comparing to other operation modes. It can be described
+by the formula and the diagram below with notations defined earlier:
+</p>
+<pre class="block_source">
+C[i] = Ek(P[i])
+
+ P[1]--|       P[2]--|       P[3]--|
+       |             |             |
+     Ek()          Ek()          Ek()
+       |             |             | 
+     C[1]          C[2]          C[3]
+</pre> 
+
+<p>
+As you can see from the formula and the diagram, in ECB mode, each ciphertext block is obtained by applying the DES encryption 
+process to the current plaintext block directly. So the current ciphertext block has not dependency on any previous 
+plaintext blocks.</p>
+
+<p>
+The disadvantage of ECB mode is that identical plaintext blocks are encrypted to identical ciphertext blocks; 
+thus, it does not hide data patterns well. In some senses it doesn't provide message confidentiality at all, 
+and it is not recommended for cryptographic protocols.
+</p>
+
+<p>
+<a href="http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation">wikipedia</a> has a striking example 
+of the degree to which ECB can reveal patterns in the plaintext. The example uses a bitmap file of an image as
+the plaintext message. After applying DES encryption in ECB mode, the ciphertext message can be viewed as 
+a new bitmap image file. The new image does reveal major patterns of the original image very clearly.
+</p>
+
+
+<p class="section_title">What is CBC (Cipher Block Chaining) Operation Mode?</p>
+
+<p>
+CBC (Cipher Block Chaining) operation mode can be described with notations defined earlier 
+as the following formula and diagram:
+</p>
+<pre class="block_source">
+C[i] = Ek(P[i] XOR C[i-1])
+C[1] = Ek(P[1] XOR IV)
+
+      IV                             
+       |       ------|       ------|
+       |     /       |     /       | 
+P[1]--XOR   / P[2]--XOR   / P[3]--XOR
+       |   /         |   /         |
+     Ek() /        Ek() /        Ek()
+       | /           | /           | 
+     C[1]          C[2]          C[3]
+</pre> 
+
+<p>
+As you can see from the formula and the diagram, in CBC mode, each block of plaintext is XORed with the previous ciphertext
+block before being encrypted to generate the current ciphertext block. 
+In this way, each ciphertext block is depending on all plaintext blocks up to that
+point. Note that for the first block, the Initial Vector (IV) is used as the previous ciphertext block.
+</p>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="des_encryption_operation_modes_2.html">2</a>&nbsp;
+<a href="des_encryption_operation_modes_3.html">3</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_encryption_operation_modes.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Operation Modes and JCE SUN Implementation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

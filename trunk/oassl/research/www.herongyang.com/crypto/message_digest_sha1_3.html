@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is SHA1 message digest; Implementations in Java, PHP, and Perl."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , SHA1, algorithm, message, digest, implementation, Java, PHP, Perl"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Message Digest - SHA1 Algorithm</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="message_digest_sha1.html">
+Message Digest - SHA1 Algorithm
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="message_digest_sha1.html">1</a>&nbsp;
+<a href="message_digest_sha1_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="message_digest_sha1_4.html">4</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+Here is a sample Java program to show you how to use the MessageDigest class to perform some tests
+on SHA1 algorithms. 
+</p>
+<pre class="block_source">
+/**
+ * JceSha1Test.java
+ * Copyright (c) 2006 by Dr. Herong Yang, http://www.herongyang.com/
+ */
+import java.security.*;
+class JceSha1Test {
+   public static void main(String[] a) {
+      try {
+         MessageDigest md = MessageDigest.getInstance("SHA1");
+         System.out.println("Message digest object info: ");
+         System.out.println("   Algorithm = "+md.getAlgorithm());
+         System.out.println("   Provider = "+md.getProvider());
+         System.out.println("   toString = "+md.toString());
+
+         String input = "";
+         md.update(input.getBytes()); 
+      	 byte[] output = md.digest();
+         System.out.println();
+         System.out.println("SHA1(\""+input+"\") =");
+         System.out.println("   "+bytesToHex(output));
+
+         input = "abc";
+         md.update(input.getBytes()); 
+      	 output = md.digest();
+         System.out.println();
+         System.out.println("SHA1(\""+input+"\") =");
+         System.out.println("   "+bytesToHex(output));
+
+         input = "abcdefghijklmnopqrstuvwxyz";
+         md.update(input.getBytes()); 
+      	 output = md.digest();
+         System.out.println();
+         System.out.println("SHA1(\""+input+"\") =");
+         System.out.println("   "+bytesToHex(output));
+         
+      } catch (Exception e) {
+         System.out.println("Exception: "+e);
+      }
+   }
+   public static String bytesToHex(byte[] b) {
+      char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7',
+                         '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+      StringBuffer buf = new StringBuffer();
+      for (int j=0; j&lt;b.length; j++) {
+         buf.append(hexDigit[(b[j] >> 4) &amp; 0x0f]);
+         buf.append(hexDigit[b[j] &amp; 0x0f]);
+      }
+      return buf.toString();
+   }
+}
+</pre>
+
+<p>
+If you run this sample program with JDK 1.5, you should get the following output:
+</p>
+<pre class="block_source">
+Message digest object info:
+   Algorithm = SHA1
+   Provider = SUN version 1.5
+   toString = SHA1 Message Digest from SUN, &lt;initialized>
+
+
+SHA1("") =
+   DA39A3EE5E6B4B0D3255BFEF95601890AFD80709
+
+SHA1("abc") =
+   A9993E364706816ABA3E25717850C26C9CD0D89D
+
+SHA1("abcdefghijklmnopqrstuvwxyz") =
+   32D10C7B8CF96570CA04CE37F2A19D84240D3A89
+</pre>
+
+
+<p class="section_title">
+SHA1 Implementation in PHP
+</p>
+
+<p>
+If you are interested in using SHA1 in PHP, you can use the built-in function sha1(). 
+Here is a sample program showing you how to use sha1() function:
+</p>
+<pre class="block_source">
+&lt;?php # PhpSha1Test.php
+# Copyright (c) 2006 by Dr. Herong Yang, http://www.herongyang.com/
+# 
+   $input = "";
+   $output = sha1($input);
+   print("\n");
+   print("SHA1(\"".$input."\") =\n");
+   print("   $output\n");
+
+   $input = "abc";
+   $output = sha1($input);
+   print("\n");
+   print("SHA1(\"".$input."\") =\n");
+   print("   $output\n");
+
+   $input = "abcdefghijklmnopqrstuvwxyz";
+   $output = sha1($input);
+   print("\n");
+   print("SHA1(\"".$input."\") =\n");
+   print("   $output\n");
+?>
+</pre>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="message_digest_sha1.html">1</a>&nbsp;
+<a href="message_digest_sha1_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="message_digest_sha1_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "message_digest_sha1.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Message Digest - SHA1 Algorithm</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

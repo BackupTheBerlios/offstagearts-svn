@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: How to implement DES algorithm in Java."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, algorithm, Java, Implementation"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Java Implementation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_implJava.html">
+DES Algorithm - Java Implementation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_implJava.html">1</a>&nbsp;
+<a href="des_implJava_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="des_implJava_4.html">4</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<pre class="block_source">
+   private static byte[] selectBits(byte[] in, int pos, int len) {
+      int numOfBytes = (len-1)/8 + 1;
+      byte[] out = new byte[numOfBytes];
+      for (int i=0; i&lt;len; i++) {
+         int val = getBit(in,pos+i);
+         setBit(out,i,val);
+      }
+      return out;
+   }
+   private static byte[] selectBits(byte[] in, int[] map) {
+      int numOfBytes = (map.length-1)/8 + 1;
+      byte[] out = new byte[numOfBytes];
+      for (int i=0; i&lt;map.length; i++) {
+         int val = getBit(in,map[i]-1);
+         setBit(out,i,val);
+      }
+      return out;
+   }
+   private static int getBit(byte[] data, int pos) {
+      int posByte = pos/8; 
+      int posBit = pos%8;
+      byte valByte = data[posByte];
+      int valInt = valByte>>(8-(posBit+1)) &amp; 0x0001;
+      return valInt;
+   }
+   private static void setBit(byte[] data, int pos, int val) {
+      int posByte = pos/8; 
+      int posBit = pos%8;
+      byte oldByte = data[posByte];
+      oldByte = (byte) (((0xFF7F>>posBit) &amp; oldByte) &amp; 0x00FF);
+      byte newByte = (byte) ((val&lt;&lt;(8-(posBit+1))) | oldByte);
+      data[posByte] = newByte;
+   }
+   private static byte[] readBytes(String in) throws Exception {
+      FileInputStream fis = new FileInputStream(in);
+      int numOfBytes = fis.available();
+      byte[] buffer = new byte[numOfBytes];
+      fis.read(buffer);
+      fis.close();
+      return buffer;
+   }
+   private static void writeBytes(byte[] data, String out)
+      throws Exception {
+      FileOutputStream fos = new FileOutputStream(out);
+      fos.write(data);
+      fos.close();
+   }
+   private static void printBytes(byte[] data, String name) {
+      System.out.println("");
+      System.out.println(name+":");
+      for (int i=0; i&lt;data.length; i++) {
+         System.out.print(byteToBits(data[i])+" ");
+      }
+      System.out.println();
+   }
+   private static String byteToBits(byte b) {
+      StringBuffer buf = new StringBuffer();
+      for (int i=0; i&lt;8; i++)
+         buf.append((int)(b>>(8-(i+1)) &amp; 0x0001));
+      return buf.toString();
+   }
+}
+</pre>
+
+<p>
+If you run this program with JDK 1.4.1 with test key and clear text block
+mentioned in the previous chapter, you will get:
+</p>
+<pre class="block_source">
+java -cp . CipherDES encrypt TestKey.des TestMsg.clr TestMsg.cph
+
+Key block:
+00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001
+
+Input block:
+00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111
+
+Output block:
+10000101 11101000 00010011 01010100 00001111 00001010 10110100 00000101
+
+java -cp . CipherDES decrypt TestKey.des TestMsg.cph TestMsg.bck
+
+Key block:
+00010011 00110100 01010111 01111001 10011011 10111100 11011111 11110001
+
+Input block:
+10000101 11101000 00010011 01010100 00001111 00001010 10110100 00000101
+
+Output block:
+00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111
+</pre>
+
+<p>
+As you can see from the output, the program works perfectly.
+</p>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_implJava.html">1</a>&nbsp;
+<a href="des_implJava_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="des_implJava_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_implJava.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Java Implementation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: Some basic concepts of encryption and decryption."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , concepts, encryption, decryption, cipher"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Basic Concepts</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="concept.html">
+Basic Concepts
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="concept.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+
+<p class="section_title">
+Encryption
+</p>
+
+<p>
+<b>Encryption Function</b> - A bijection that uses a key, encryption key,
+to compute the image. 
+</p>
+
+
+<p>
+<b>Clear Text Space</b> - The domain of an encryption function. 
+</p>
+
+<p>
+<b>Cipher Text Space</b> - The codomain of an encryption function. 
+</p>
+
+<p>
+<b>Decryption Function</b> - The inversion function of an encryption function. 
+Decryption function also uses a key, decryption key, to compute the image.
+</p>
+
+<p>
+<b>Encryption Scheme</b> - An algorithm that defines a cleartext space, a ciphertext space,
+and a set of encryption keys. For each encryption key, the scheme also defines 
+an encryption function, a decryption key, and a decryption function. An encryption
+scheme is also called a cipher.
+</p>
+
+<p>
+<b>Symmetric Key Encryption</b> - An encryption scheme that "the decryption
+function uses the same key as its encryption function". Symmetric key encryption is
+also called one key, or secret key encryption.
+</p>
+
+<p>
+<b>Asymmetric Key Encryption</b> - An encryption scheme that 
+"the decryption function uses needs a different key than the key used in its encryption function, 
+and it is almost impossible to compute one from another". Asymmetric key encryption is
+also called public key encryption.
+</p>
+
+<p>
+<b>Block Cipher</b> - An encryption scheme that "cleartext is broken up into blocks 
+of fixed length, and encrypted one block at a time".
+</p>
+
+<p>
+<b>Stream Cipher</b> - An encryption scheme that "cleartext is encrypted as 
+a continuous stream alphabets".
+</p>
+
+<p>
+<b>Simple Substitution Cipher</b> - An encryption scheme that "Each alphabet
+in the cleartext is substituted by a single alphabet defined by the key".
+</p>
+
+<p>
+<b>Homophonic Substitution Cipher</b> - An encryption scheme that "Each alphabet
+in the cleartext is substituted by an alphabetic string randomly selected 
+from a set of strings defined by the key".
+</p>
+
+<p>
+<b>Transposition Cipher</b> - A block cipher that "Alphabets in a block is
+permuted in an order defined by the key".
+</p>
+
+<p>
+<b>Product Cipher</b> - An encryption scheme that "uses multiple ciphers
+in which the ciphertext of one cipher is used as the cleartext of
+the next cipher". Usually, substitution ciphers and transposition ciphers are used
+alternatively to construct a product cipher.
+</p>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="concept.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "concept.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Basic Concepts</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is SHA1 message digest; Implementations in Java, PHP, and Perl."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , SHA1, algorithm, message, digest, implementation, Java, PHP, Perl"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Message Digest - SHA1 Algorithm</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="message_digest_sha1.html">
+Message Digest - SHA1 Algorithm
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="message_digest_sha1.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="message_digest_sha1_3.html">3</a>&nbsp;
+<a href="message_digest_sha1_4.html">4</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+Task 3. Preparing Processing Functions. SHA1 requires 80 processing functions defined as:
+</p>
+<pre class="block_source">
+   f(t;B,C,D) = (B AND C) OR ((NOT B) AND D)         ( 0 &lt;= t &lt;= 19) 
+   f(t;B,C,D) = B XOR C XOR D                        (20 &lt;= t &lt;= 39) 
+   f(t;B,C,D) = (B AND C) OR (B AND D) OR (C AND D)  (40 &lt;= t &lt;= 59) 
+   f(t;B,C,D) = B XOR C XOR D                        (60 &lt;= t &lt;= 79) 
+</pre>
+
+<p>
+Task 4. Preparing Processing Constants. SHA1 requires 80 processing constant words defined as:
+</p>
+<pre class="block_source">
+   K(t) = 0x5A827999         ( 0 &lt;= t &lt;= 19) 
+   K(t) = 0x6ED9EBA1         (20 &lt;= t &lt;= 39) 
+   K(t) = 0x8F1BBCDC         (40 &lt;= t &lt;= 59) 
+   K(t) = 0xCA62C1D6         (60 &lt;= t &lt;= 79) 
+</pre>
+
+<p>
+Task 5. Initializing Buffers. SHA1 algorithm requires 5 word buffers with the following initial values:
+</p>
+<pre class="block_source">
+   H0 = 0x67452301
+   H1 = 0xEFCDAB89
+   H2 = 0x98BADCFE
+   H3 = 0x10325476
+   H4 = 0xC3D2E1F0
+</pre>
+
+<p>
+Task 6. Processing Message in 512-bit Blocks. 
+This is the main task of SHA1 algorithm, which 
+loops through the padded and appended message in blocks of 512 bits each. For each input block,
+a number of operations are performed. This task can be
+described in the following pseudo code slightly modified from the RFC 3174's method 1:
+</p>
+<pre class="block_source">
+Input and predefined functions: 
+   M[1, 2, ..., N]: Blocks of the padded and appended message
+   f(0;B,C,D), f(1,B,C,D), ..., f(79,B,C,D): Defined as above
+   K(0), K(1), ..., K(79): Defined as above
+   H0, H1, H2, H3, H4, H5: Word buffers with initial values
+
+Algorithm:
+   For loop on k = 1 to N
+
+     (W(0),W(1),...,W(15)) = M[k] /* Divide M[k] into 16 words */
+
+     For t = 16 to 79 do:
+         W(t) = (W(t-3) XOR W(t-8) XOR W(t-14) XOR W(t-16)) &lt;&lt;&lt; 1
+
+     A = H0, B = H1, C = H2, D = H3, E = H4
+
+     For t = 0 to 79 do:
+         TEMP = A&lt;&lt;&lt;5 + f(t;B,C,D) + E + W(t) + K(t)
+         E = D, D = C, C = B&lt;&lt;&lt;30, B = A, A = TEMP
+     End of for loop
+
+     H0 = H0 + A, H1 = H1 + B, H2 = H2 + C, H3 = H3 + D, H4 = H4 + E
+   End of for loop
+   
+Output: 
+   H0, H1, H2, H3, H4, H5: Word buffers with final message digest
+</pre>
+
+<p>
+Step 5. Output. The contents in H0, H1, H2, H3, H4, H5 are returned in sequence 
+the message digest.
+</p>
+
+
+<p class="section_title">
+SHA1 Implementation in Java
+</p>
+
+<p>
+Sun provides SHA1 algorithm in Java under their JCE (Java Cryptography Extension) package, 
+which is included in JDK 1.5.
+</p>
+
+<p>
+Sun's implementation of SHA1 can be accessed through a generic class called MessageDigest.
+Here are the main methods of MessageDigest class:
+</p>
+<ul>
+<li>getInstance("SHA1") - Returns a message digest object represents a specific implementation 
+of SHA1 algorithm from the default provider, Sun.
+</li>
+<li>getProvider() - Returns the provider name of the current object.
+</li>
+<li>update(bytes) - Updates the input message by appending a byte array at the end.
+</li>
+<li>digest() - Performs SHA1 algorithm on the current input message and returns the message digest
+as a byte array. This method also resets the input message to an empty byte string. 
+</li>
+<li>reset() - Resets the input message to an empty byte string.
+</li>
+</ul>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="message_digest_sha1.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="message_digest_sha1_3.html">3</a>&nbsp;
+<a href="message_digest_sha1_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "message_digest_sha1.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Message Digest - SHA1 Algorithm</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: Generating certificate signing requests; Signing certificates by CA."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, Certificate, Request, CA, signing"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Signing Certificates from Others</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="openssl_csr.html">
+OpenSSL - Signing Certificates from Others
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="openssl_csr.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p class="section_title">
+Viewing Components of Certificate Signing Request
+</p>
+
+<p>
+Here is how to see the components of a certificate signing request: 
+</p>
+<pre class="block_source">
+>openssl req -in herong.csr -noout -text -config openssl.cnf
+Certificate Request:
+    Data:
+        Version: 0 (0x0)
+        Subject: C=CN, ST=PN, L=LN, O=ON, OU=UN, CN=Herong Yang
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (512 bit)
+                Modulus (512 bit):
+                    00:a9:e6:19:c6:ee:88:01:86:d9:72:9e:93:92:db:
+                    57:01:7b:02:84:fc:1e:e3:57:5e:2a:7b:2b:25:9e:
+                    bd:ba:c5:95:2c:49:59:28:df:a6:67:86:26:8e:ff:
+                    36:cc:3a:84:5c:28:af:6f:11:c8:0c:b5:c2:c5:b9:
+                    04:d6:0e:5d:d1
+                Exponent: 65537 (0x10001)
+        Attributes:
+            challengePassword        :myreq
+    Signature Algorithm: md5WithRSAEncryption
+        80:be:77:39:65:0f:24:db:70:c1:76:e3:b6:c7:99:a5:c7:af:
+        ae:98:5a:73:98:f8:60:f1:65:08:a9:f7:df:6f:bd:77:aa:f7:
+        bb:0b:f2:0d:71:6e:ad:ee:52:5a:2b:a7:2a:c0:fd:0e:4c:8f:
+        c1:43:18:58:0b:10:03:e0:e5:a3
+</pre>
+<p>
+Some interesting notes here:
+</p>
+<ul>
+<li>The request is signed with my private key. I don't see any need for this.
+</li>
+<li>My "challengePassword" is displayed in plain text. What's the value of this password, if every one can see it?
+</li>
+</ul>
+
+
+<p class="section_title">
+Signing a Certificate Signing Request
+</p>
+
+<p>
+Even though I am not a well established CA, but I can still use OpenSSL to sign somebody else's certificate. 
+The following process shows you how Herong Yang signs John Smith's certificate:
+</p>
+<pre class="block_source">
+>echo generating a key pair for John
+>openssl genrsa -out john_rsa.key
+Loading 'screen' into random state - done
+Generating RSA private key, 512 bit long modulus
+..................++++++++++++
+.++++++++++++
+e is 65537 (0x10001)
+
+>echo generating the certificate signing request for John
+>openssl req -new -key john_rsa.key -out john.csr 
+   -config openssl.cnf
+   
+You are about to be asked to enter information that will be incorp...
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name...
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) []:CN
+State or Province Name (full name) []:PN
+Locality Name (eg, city) []:LN
+Organization Name (eg, company) []:ON
+Organizational Unit Name (eg, section) []:UN
+Common Name (eg, YOUR name) []:John Smith
+Email Address []:.
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:.
+An optional company name []:.
+
+>echo signing John's request with Herong's private key
+>openssl x509 -req -in john.csr -CA herong.crt 
+   -CAkey herong_rsa_des.key -out john.crt
+
+Loading 'screen' into random state - done
+Signature ok
+subject=/C=CN/ST=PN/L=LN/O=ON/OU=UN/CN=John Smith
+Getting CA Private Key
+Enter pass phrase for herong_rsa_des.key:
+
+>echo looking at John's certificate
+>openssl x509 -in john.crt -noout -text
+Certificate:
+    Data:
+        Version: 1 (0x0)
+        Serial Number: 5 (0x5)
+        Signature Algorithm: md5WithRSAEncryption
+        Issuer: C=CN, ST=PN, L=CN, O=ON, OU=UN, CN=Herong Yang
+        Validity
+            Not Before: Jul 17 03:10:39 2002 GMT
+            Not After : Aug 16 03:10:39 2002 GMT
+        Subject: C=CN, ST=PN, L=LN, O=ON, OU=UN, CN=John Smith
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (512 bit)
+                Modulus (512 bit):
+                    00:d4:a4:be:ce:2d:be:88:56:ef:d3:de:13:15:33:
+                    59:84:ea:08:fe:bc:c8:70:93:30:c0:c4:c5:de:e3:
+                    65:e8:98:e1:15:12:27:d4:00:69:6e:22:fa:c3:72:
+                    4a:75:a6:d8:66:dc:ec:12:f6:92:94:09:3c:3a:61:
+                    69:47:99:b3:91
+                Exponent: 65537 (0x10001)
+    Signature Algorithm: md5WithRSAEncryption
+        57:a5:9f:93:8e:f8:69:cd:9b:70:ff:f5:fc:78:e3:f6:da:70:
+        b9:5d:d6:a8:ac:ae:76:41:13:04:99:28:97:55:9b:5e:94:c7:
+        c5:59:26:77:33:cb:67:aa:1c:d5:0e:b7:de:33:73:b1:f6:3a:
+        0b:c2:d9:6a:5b:f1:d1:ab:60:9b
+</pre>
+<p>
+This is nice. Now I can sign anyone's certificate, and become a CA! 
+All I need is my RSA key pair, herong_rsa_des.key, my self-signed certificate, herong.crt,
+and the "x509" command. 
+</p>
+
+
+<p class="section_title">
+Conclusion
+</p>
+
+<p>
+In this chapter, we have learned how to generate a certificate signing request with the "req", 
+and how to sign someone else's certificate with the "x509" command.
+</p>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="openssl_csr.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "openssl_csr.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Signing Certificates from Others</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

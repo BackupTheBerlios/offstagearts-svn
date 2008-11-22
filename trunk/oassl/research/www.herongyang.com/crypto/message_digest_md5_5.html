@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is MD5 message digest; Implementation in Java, PHP, and Perl."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , MD5, algorithm, message, digest, implementation, Java, PHP, Perl"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Message Digest - MD5 Algorithm</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="message_digest_md5.html">
+Message Digest - MD5 Algorithm
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="message_digest_md5.html">1</a>&nbsp;
+<a href="message_digest_md5_2.html">2</a>&nbsp;
+<a href="message_digest_md5_3.html">3</a>&nbsp;
+<a href="message_digest_md5_4.html">4</a>&nbsp;
+<span class="part_list_curr">5</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p class="section_title">
+MD5 Implementation in Perl
+</p>
+
+<p>
+If you are interested in using MD5 in Perl, you can look a very interesting 
+implementation by John Allen in 8 lines of perl5, see  
+http://www.cypherspace.org/adam/rsa/md5.html. Here is a copy of John's code, 
+stored in PerlMd5In8Lines.pl:
+</p>
+<pre class="block_source_85">
+#!/usr/bin/perl -iH9T4C`&gt;_-JXF8NMS^$#)4=@&lt;,$18%"0X4!`L0%P8*#Q4``04``04#!P``
+@A=unpack N4C24,unpack u,$^I;@K=map{int abs 2**32*sin$_}1..64;sub L{($x=pop)
+&lt;&lt;($n=pop)|2**$n-1&amp;$x&gt;&gt;32-$n}sub M{($x=pop)-($m=1+~0)*int$x/$m}do{$l+=$r=read
+STDIN,$_,64;$r++,$_.="\x80"if$r&lt;64&amp;&amp;!$p++;@W=unpack V16,$_."\0"x7;$W[14]=$l*8
+if$r&lt;57;($a,$b,$c,$d)=@A;for(0..63){$a=M$b+L$A[4+4*($_&gt;&gt;4)+$_%4],M&amp;{(sub{$b&amp;$c
+|$d&amp;~$b},sub{$b&amp;$d|$c&amp;~$d},sub{$b^$c^$d},sub{$c^($b|~$d)})[$z=$_/16]}+$W[($A[
+20+$z]+$A[24+$z]*($_%16))%16]+$K[$_]+$a;($a,$b,$c,$d)=($d,$a,$b,$c)}$v=a;for(
+@A[0..3]){$_=M$_+${$v++}}}while$r&gt;56;print unpack(H32,pack V4,@A),"\n"
+</pre>
+
+<p>
+To test this Perl program on Windows, I did the following in a command window:
+</p>
+<pre class="block_source">
+>copy con empty.txt
+^Z
+        1 file(s) copied.
+
+>perl PerlMd5In8Lines.pl &lt; empty.txt
+d41d8cd98f00b204e9800998ecf8427e
+
+>copy con abc.txt
+abc^Z
+        1 file(s) copied.
+
+>perl PerlMd5In8Lines.pl &lt; abc.txt
+900150983cd24fb0d6963f7d28e17f72
+
+>copy con a_to_z.txt
+abcdefghijklmnopqrstuvwxyz^Z
+        1 file(s) copied.
+
+>perl PerlMd5In8Lines.pl &lt; a_to_z.txt
+c3fcd3d76192e4007dfb496cca67e13b
+</pre>
+
+<p>
+The output proves that John's program works perfectly. Note that:
+</p>
+<ul>
+<li>"copy con file_name" command allows to copy enter data from keyboard into a new file.
+</li>
+<li>^Z stands for (Ctrl-Z). It sends an end-of-file signal to the "copy" command. 
+</li>
+</ul>
+
+<p>
+<b>Conclusions</b>:
+</p>
+<ul>
+<li>MD5 is a message digest algorithm producing 128 bits of data.
+</li>
+<li>It uses constants derived to Sines function. 
+</li>
+<li>It loops through the original message in blocks of 512 bits, 
+with 4 rounds of operations for each block, and 16 operations in each round.
+</li>
+<li>Most modern programming languages provides MD5 algorithm as built-in functions. 
+</li>
+</ul>
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="message_digest_md5.html">1</a>&nbsp;
+<a href="message_digest_md5_2.html">2</a>&nbsp;
+<a href="message_digest_md5_3.html">3</a>&nbsp;
+<a href="message_digest_md5_4.html">4</a>&nbsp;
+<span class="part_list_curr">5</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "message_digest_md5.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Message Digest - MD5 Algorithm</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

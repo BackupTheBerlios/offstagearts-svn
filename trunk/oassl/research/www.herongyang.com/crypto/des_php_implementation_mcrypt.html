@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: PHP mcrypt extension with DES ECB, CBC, CFB, OFB operation modes."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, algorithm, PHP, Implementation, mcrypt"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - PHP Implementation in mcrypt</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_php_implementation_mcrypt.html">
+DES Algorithm - PHP Implementation in mcrypt
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="des_php_implementation_mcrypt_2.html">2</a>&nbsp;
+</p>
+
+
+
+<p>
+This tutorial help you to understand:
+</p>
+<ul>
+<li>mcrypt Library for PHP</li>
+<li>mcrypt Encryption Functions</li>
+<li>des_mcrypt_operation_mode_test.php - mcrypt Operation Mode Test PHP Script</li>
+<li>Block Padding in mcrypt</li>
+<li>Other PHP Implementations of DES Algorithm</li>
+</ul>
+
+
+<p class="section_title">mcrypt Library for PHP</p>
+
+<p>
+"mcrypt" is the suggested encryption extension for PHP. It supports a wide variety of block algorithms 
+such as DES, TripleDES, Blowfish (default), 3-WAY, SAFER-SK64, SAFER-SK128, TWOFISH, TEA, RC2 
+and GOST in CBC, OFB, CFB and ECB cipher modes. See <a href="http://sourceforge.net/projects/mcrypt">
+http://sourceforge.net/projects/mcrypt</a> for details.
+</p>
+
+<p>
+The best way to download and install "mcrypt" for your Windows system is to download 
+the pre-compiled "mcrypt" version by the steps below:
+</p>
+
+<p>
+1. Go to http://ftp.emini.dk/pub/php/win32/mcrypt/. 
+</p>
+
+<p>
+2. Download the binary file, libmcrypt.dll, 19-Jan-2004 02:27, 163k.
+</p>
+
+<p>
+3. Save libmcrypt.dll to your PHP directory, like \php\.
+</p>
+
+<p>
+4. Open PHP initialization file, \php\php.ini.
+</p>
+
+<p>
+5. Uncomment line "extension=php_mcrypt.dll".
+</p>
+
+<p>
+You are ready to use "mcrypt" encryption functions.
+</p>
+
+
+<p class="section_title">mcrypt Encryption Functions</p>
+
+<p>
+"mcrypt" encryption extension offers the following main functions to perform an encryption operation:
+</p>
+<ul>
+<li>mcrypt_module_open() - Creates a resource handle for the specified encryption algorithm and operation mode.</li>
+<li>mcrypt_generic_init() - Initializes an encryption handle with a key and an initial vector.</li>
+<li>mcrypt_generic() - Encrypts a plaintext message with an initialized encryption handle.</li>
+<li>mcrypt_generic_deinit() - De-initializes an encryption handle.</li>
+<li>mcrypt_module_close() - Closes an encryption resource handle.</li>
+</ul>
+
+<p>
+"mcrypt" does support all 4 DES operation modes through predefined constants:
+</p>
+<ul>
+<li>MCRYPT_MODE_ECB - The 64-bit ECB (Electronic CodeBook) operation mode.</li>
+<li>MCRYPT_MODE_CBC - The 64-bit CBC (Cipher Block Chaining) operation mode.</li>
+<li>MCRYPT_MODE_CFB - The 8-bit CFB (Cipher FeedBack) operation mode</li>
+<li>MCRYPT_MODE_OFB - The 8-bit OFB (Output FeedBack) operation mode</li>
+</ul>
+
+
+<p class="section_title">des_mcrypt_operation_mode_test.php - mcrypt Operation Mode Test PHP Script</p>
+
+<p>
+To test out the DES operation modes and stream cipher modes implemented in the "mcrypt" extention, 
+I wrote the following test PHP script:
+</p>
+<pre class="block_source">
+&lt;?php # des_mcrypt_operation_mode_test.php
+# Copyright (c) 2006 by Dr. Herong Yang, http://www.herongyang.com/
+# 
+   $key = pack("H*", "0123456789ABCDEF");
+   $iv = pack("H*", "1234567890ABCDEF");
+   # "Now is the time for all "   
+   $plain_text = pack("H*", 
+      "4E6F77206973207468652074696D6520666F7220616C6C20");
+
+   $mode = MCRYPT_MODE_ECB;
+   $expected = pack("H*", 
+      "3FA40E8A984D43156A271787AB8883F9893D51EC4B563B53");
+   print("\n\nTest 1 - DES ECB 64-bit:");
+   des_test($mode);
+
+   $mode = MCRYPT_MODE_CBC;
+   $expected = pack("H*", 
+      "E5C7CDDE872BF27C43E934008C389C0F683788499A7C05F6");
+   print("\n\nTest 2 - DES CBC 64-bit:");
+   des_test($mode);
+
+   $mode = MCRYPT_MODE_CFB; # 8-bit
+   $expected = pack("H*", 
+      "F31FDA07011462EE187F43D80A7CD9B5B0D290DA6E5B9A87");
+   print("\n\nTest 3 - DES CFB 8-bit:");
+   des_test($mode);
+
+   $mode = MCRYPT_MODE_OFB; # 8-bit
+   $expected = pack("H*", 
+      "F34A2850C9C64985D684AD96D772E2F243EA499ABEE8AE95");
+   print("\n\nTest 4 - DES OFB 8-bit:");
+   des_test($mode);
+
+function des_test($mode) {
+   global $key, $iv, $plain_text, $expected;
+   $cipher = mcrypt_module_open(MCRYPT_DES, '', $mode, '');
+   mcrypt_generic_init($cipher, $key, $iv);
+   $cipher_text = mcrypt_generic($cipher, $plain_text);
+   mcrypt_generic_deinit($cipher);
+   mcrypt_module_close($cipher);
+   print("\nThe key       : ".bin2Hex($key));
+   print("\nThe IV        : ".bin2Hex($iv));
+   print("\nThe plaintext : ".bin2Hex($plain_text));
+   print("\nThe ciphertext: ".bin2Hex($cipher_text));
+   print("\nThe expected  : ".bin2Hex($expected));
+}
+?>
+</pre>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="des_php_implementation_mcrypt_2.html">2</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_php_implementation_mcrypt.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - PHP Implementation in mcrypt</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

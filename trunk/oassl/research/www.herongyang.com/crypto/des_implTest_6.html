@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: How DES really works with illustrations in Java codes."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, algorithm, illustration, Java"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Illustrated with Java Programs</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_implTest.html">
+DES Algorithm - Illustrated with Java Programs
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_implTest.html">1</a>&nbsp;
+<a href="des_implTest_2.html">2</a>&nbsp;
+<a href="des_implTest_3.html">3</a>&nbsp;
+<a href="des_implTest_4.html">4</a>&nbsp;
+<a href="des_implTest_5.html">5</a>&nbsp;
+<span class="part_list_curr">6</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<pre class="block_source">
+R: After S boxes:
+00010001 00001100 01010111 01110111
+
+R: After P permutation:
+00100010 00110110 01111100 01101010
+
+Right half at round #9:
+00100100 01111100 11000110 01111010
+
+R: After E expansion:
+00010000 10000011 11111001 01100000 11000011 11110100
+
+R: After XOR with the subkey:
+10100001 01110000 10111110 11011010 10000101 10111011
+
+R: After S boxes:
+11011010 00000100 01010010 01110101
+
+R: After P permutation:
+01100010 10111100 10011100 00100010
+
+Right half at round #10:
+10110111 11010101 11010111 10110010
+
+R: After E expansion:
+01011010 11111110 10101011 11101010 11111101 10100101
+
+R: After XOR with the subkey:
+01111011 10100001 01111000 00110100 00101110 00100011
+
+R: After S boxes:
+01110011 00000101 11010001 00000001
+
+R: After P permutation:
+11100001 00000100 11111010 00000010
+
+Right half at round #11:
+11000101 01111000 00111100 01111000
+
+R: After E expansion:
+01100000 10101011 11110000 00011111 10000011 11110001
+
+R: After XOR with the subkey:
+00010101 11011010 00000101 10001011 11100100 00011000
+
+R: After S boxes:
+01111011 10001011 00100110 00110101
+
+R: After P permutation:
+11000010 01101000 11001111 11101010
+
+Right half at round #12:
+01110101 10111101 00011000 01011000
+
+R: After E expansion:
+00111010 10111101 11111010 10001111 00000010 11110000
+
+R: After XOR with the subkey:
+10101101 01111000 00101011 01110101 10111000 10110001
+
+R: After S boxes:
+10011010 11010001 10001011 01001111
+
+R: After P permutation:
+11011101 10111011 00101001 00100010
+
+Right half at round #13:
+00011000 11000011 00010101 01011010
+
+R: After E expansion:
+00001111 00010110 00000110 10001010 10101010 11110100
+
+R: After XOR with the subkey:
+01010000 01010101 10110001 01111000 01001101 11001110
+
+R: After S boxes:
+01100100 01111001 10011010 11110001
+
+R: After P permutation:
+10110111 00110001 10001110 01010101
+
+Right half at round #14:
+11000010 10001100 10010110 00001101
+
+R: After E expansion:
+11100000 01010100 01011001 01001010 11000000 01011011
+
+R: After XOR with the subkey:
+01011111 11000101 11010100 01110111 11111111 01010001
+
+R: After S boxes:
+10110010 11101000 10001101 00111100
+
+R: After P permutation:
+01011011 10000001 00100111 01101110
+
+Right half at round #15:
+01000011 01000010 00110010 00110100
+
+R: After E expansion:
+00100000 01101010 00000100 00011010 01000001 10101000
+
+R: After XOR with the subkey:
+11101011 01010111 10001111 00010100 01010110 01011101
+
+R: After S boxes:
+10100111 10000011 00100100 00101001
+
+R: After P permutation:
+11001000 11000000 01001111 10011000
+
+Right half at round #16:
+00001010 01001100 11011001 10010101
+
+After 16 rounds:
+00001010 01001100 11011001 10010101 01000011 01000010 00110010 00110100
+
+After final permutation:
+10000101 11101000 00010011 01010100 00001111 00001010 10110100 00000101
+DES cipher test result: true
+</pre>
+
+<p>
+Now we got all elements of the implementation working, and validated, let's 
+put them together to make a generic DES encryption program. 
+See the next chapter.
+</p>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_implTest.html">1</a>&nbsp;
+<a href="des_implTest_2.html">2</a>&nbsp;
+<a href="des_implTest_3.html">3</a>&nbsp;
+<a href="des_implTest_4.html">4</a>&nbsp;
+<a href="des_implTest_5.html">5</a>&nbsp;
+<span class="part_list_curr">6</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_implTest.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Illustrated with Java Programs</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

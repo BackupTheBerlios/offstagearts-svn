@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: PHP mcrypt extension with DES ECB, CBC, CFB, OFB operation modes."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, algorithm, PHP, Implementation, mcrypt"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - PHP Implementation in mcrypt</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_php_implementation_mcrypt.html">
+DES Algorithm - PHP Implementation in mcrypt
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_php_implementation_mcrypt.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+If you run this script, you should get:
+</p>
+<pre class="block_source">
+Test 1 - DES ECB 64-bit:
+The key       : 0123456789abcdef
+The IV        : 1234567890abcdef
+The plaintext : 4e6f77206973207468652074696d6520666f7220616c6c20
+The ciphertext: 3fa40e8a984d48156a271787ab8883f9893d51ec4b563b53
+The expected  : 3fa40e8a984d43156a271787ab8883f9893d51ec4b563b53
+
+Test 2 - DES CBC 64-bit:
+The key       : 0123456789abcdef
+The IV        : 1234567890abcdef
+The plaintext : 4e6f77206973207468652074696d6520666f7220616c6c20
+The ciphertext: e5c7cdde872bf27c43e934008c389c0f683788499a7c05f6
+The expected  : e5c7cdde872bf27c43e934008c389c0f683788499a7c05f6
+
+Test 3 - DES CFB 8-bit:
+The key       : 0123456789abcdef
+The IV        : 1234567890abcdef
+The plaintext : 4e6f77206973207468652074696d6520666f7220616c6c20
+The ciphertext: f31fda07011462ee187f43d80a7cd9b5b0d290da6e5b9a87
+The expected  : f31fda07011462ee187f43d80a7cd9b5b0d290da6e5b9a87
+
+Test 4 - DES OFB 8-bit:
+The key       : 0123456789abcdef
+The IV        : 1234567890abcdef
+The plaintext : 4e6f77206973207468652074696d6520666f7220616c6c20
+The ciphertext: f34a2850c9c64985d684ad96d772e2f243ea499abee8ae95
+The expected  : f34a2850c9c64985d684ad96d772e2f243ea499abee8ae95
+</pre>
+
+<p>
+Output looks very good. All 4 test cases match the expected ciphertext message documented in 
+<a href="http://www.itl.nist.gov/fipspubs/fip81.htm">http://www.itl.nist.gov/fipspubs/fip81.htm</a>.
+</p>
+
+
+<p class="section_title">Block Padding in mcrypt</p>
+
+<p>
+"mycypt" offers a very simple padding method which simply adds 0x00 to the end of the plaintext message 
+to make it multiples of 8 bytes (64 bits) for ECB and CBC modes. There is no need for padding for CFB 
+and OFB modes because they are operated on 8-bit blocks.
+</p>
+
+
+<p class="section_title">Other PHP Implementations of DES Algorithm</p>
+
+<p>
+If you search "DES algorithm implement in PHP" on Google, you will see Paul Tero's DES page
+at <a href="http://www.tero.co.uk/des/">http://www.tero.co.uk/des/</a>. It offers 
+a source code version of DES implementation in PHP. 
+</p>
+
+
+<p class="section_title">Conclusion</p>
+
+<ul>
+<li>mcrypt extension offers DES 64-bit ECB, 64-bit CBC, 8-bit CFB and 8-bit OFB operation modes.</li>
+<li>mcrypt pads plaintext messages with 0x00 bytes.</li>
+</ul>
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_php_implementation_mcrypt.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_php_implementation_mcrypt.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - PHP Implementation in mcrypt</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: How to implement DES algorithm in Java."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, algorithm, Java, Implementation"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Java Implementation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_implJava.html">
+DES Algorithm - Java Implementation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_implJava.html">1</a>&nbsp;
+<a href="des_implJava_2.html">2</a>&nbsp;
+<a href="des_implJava_3.html">3</a>&nbsp;
+<span class="part_list_curr">4</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p class="section_title">
+Test Cases of DES Encryption and Decryption
+</p>
+
+<p>Once I got my DES implementation working, I created the following testing Java 
+program to performed several test cases so that I can validate the results 
+with other DES implementations:
+</p>
+<pre class="block_source">
+/* CipherDesTest.java
+ * Copyright (c) 2002 by Dr. Herong Yang, http://www.herongyang.com/
+ */
+import java.io.*;
+import herong.CipherDES;
+class CipherDesTest {
+   public static void main(String[] a) {
+      if (a.length&lt;1) {
+         System.out.println("Usage:");
+         System.out.println("java CipherDesTest 1");
+         return;
+      }
+      String test = a[0];
+      try {
+         byte[] theKey = null;
+         byte[] theMsg = null; 
+         byte[] theExp = null; 
+         if (test.equals("1")) { 
+            theKey = hexToBytes("133457799BBCDFF1");
+            theMsg = hexToBytes("0123456789ABCDEF");
+            theExp = hexToBytes("85E813540F0AB405");
+         } else if (test.equals("2")) { 
+            theKey = hexToBytes("38627974656B6579"); // "8bytekey"
+            theMsg = hexToBytes("6D6573736167652E"); // "message."
+            theExp = hexToBytes("7CF45E129445D451");
+         } else {
+            System.out.println("Usage:");
+            System.out.println("java CipherDesTest 1");
+            return;
+         }	
+         byte[][] subKeys = CipherDES.getSubkeys(theKey);
+         byte[] theCph = CipherDES.cipher(theMsg,subKeys,"encrypt");
+         System.out.println("Key     : "+bytesToHex(theKey));
+         System.out.println("Message : "+bytesToHex(theMsg));
+         System.out.println("Cipher  : "+bytesToHex(theCph));
+         System.out.println("Expected: "+bytesToHex(theExp));
+      } catch (Exception e) {
+         e.printStackTrace();
+         return;
+      }
+   }
+   public static byte[] hexToBytes(String str) {
+      if (str==null) {
+         return null;
+      } else if (str.length() &lt; 2) {
+         return null;
+      } else {
+         int len = str.length() / 2;
+         byte[] buffer = new byte[len];
+         for (int i=0; i&lt;len; i++) {
+             buffer[i] = (byte) Integer.parseInt(
+                str.substring(i*2,i*2+2),16);
+         }
+         return buffer;
+      }
+
+   }
+   public static String bytesToHex(byte[] data) {
+      if (data==null) {
+         return null;
+      } else {
+         int len = data.length;
+         String str = "";
+         for (int i=0; i&lt;len; i++) {
+            if ((data[i]&amp;0xFF)&lt;16) str = str + "0" 
+               + java.lang.Integer.toHexString(data[i]&amp;0xFF);
+            else str = str
+               + java.lang.Integer.toHexString(data[i]&amp;0xFF);
+         }
+         return str.toUpperCase();
+      }
+   }            
+}
+</pre>
+
+<p>Note that this program, CipherDesTest.java, can be easily modified to add other testing cases.
+To run CipherDesTest.java, you need compile CipherDES.java into a package called "herong", and run
+them together.
+</p>
+
+<p>Case 1 - Taken from <a href="http://www.orlingrabbe.com/des.htm">The DES Algorithm Illustrated:</a>
+</p>
+<pre class="block_source">
+java -cp . CipherDesTest 1
+
+Key     : 133457799BBCDFF1
+Message : 0123456789ABCDEF
+Cipher  : 85E813540F0AB405
+Expected: 85E813540F0AB405
+</pre>
+
+<p>Case 2 - Modified from <a href="http://www.tero.co.uk/des/code.php">DES Source Code:</a>
+</p>
+<pre class="block_source">
+java -cp . CipherDesTest 2
+
+Key     : 38627974656B6579
+Message : 6D6573736167652E
+Cipher  : 7CF45E129445D451
+Expected: 7CF45E129445D451
+</pre>
+
+
+<p>
+<b>Exercise</b>: Improve this program to handle multiple input blocks.
+</p>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_implJava.html">1</a>&nbsp;
+<a href="des_implJava_2.html">2</a>&nbsp;
+<a href="des_implJava_3.html">3</a>&nbsp;
+<span class="part_list_curr">4</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_implJava.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Java Implementation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

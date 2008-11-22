@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: 'keytool' generating a key pair; 'keytool' exporting the from PrivateKeyEntry; 'keytool' displaying certificate info; 'OpenSSL' viewing certificate details; 'DumpKey.java' dumping key pair out of 'keytool' keystore files; 'OpenSSL' converting dumped key pair from binary to Base64; 'OpenSSL' viewing converted key pair. "/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, keytool, Keys, Migrating, keystore, Base64, PEM"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Migrating Keys from  'keytool' to 'OpenSSL'</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="Migrating_Keys_keytool_to_OpenSSL.html">
+Migrating Keys from  'keytool' to 'OpenSSL'
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="Migrating_Keys_keytool_to_OpenSSL_2.html">2</a>&nbsp;
+<a href="Migrating_Keys_keytool_to_OpenSSL_3.html">3</a>&nbsp;
+<a href="Migrating_Keys_keytool_to_OpenSSL_4.html">4</a>&nbsp;
+</p>
+
+
+
+<p>
+The other type of questions I received is related to moving keys from "keytool" keystore files 
+to "OpenSSL" key files. Since "keytool" does not support key exporting function, 
+I wrote a Java program to dump keys out of the keystore file. 
+In this chapter, I recorded the following testing scenarios to find a way to move keys from
+"keytool" keystore files to "OpenSSL" key files:
+</p>
+<ul>
+<li>Using "keytool" to generate a private and public key pair.
+</li>
+<li>Using "keytool" to export the self-signed certificate from PrivateKeyEntry.
+</li>
+<li>Using "keytool" to display details of a certificate.
+</li>
+<li>Using "OpenSSL" to view certificate exported by "keytool".
+</li>
+<li>Writing "DumpKey.java" to dump key pair out of "keytool" keystore files. 
+</li>
+<li>Using "OpenSSL" to convert dumped key pair from binary to Base64 encoding. 
+</li>
+<li>Using "OpenSSL" to view key pair dumped and converted from "keytool" keystore files. 
+</li>
+</ul>
+
+
+<p class="section_title">
+"keytool" Generating Private and Public Key Pair
+</p>
+
+<p>
+To test out how to transfer private and public key pair from "keytool" keystore file to OpenSSL format,
+I need to generate a pair of keys first with the "keytool -genkeypair" command.
+What I did was recorded below:
+</p>
+<pre class="block_source">
+>java -version
+
+java version "1.6.0_01"
+Java(TM) SE Runtime Environment (build 1.6.0_01-b06)
+Java HotSpot(TM) Client VM (build 1.6.0_01-b06, mixed mode,
+  sharing)
+  
+>keytool -genkeypair -alias herong_key -keypass keypass
+-keysize 1024 -keystore herong.jks -storepass jkspass
+
+What is your first and last name?
+  [Unknown]:  Herong Yang
+What is the name of your organizational unit?
+  [Unknown]:  Herong Unit
+What is the name of your organization?
+  [Unknown]:  Herong Company
+What is the name of your City or Locality?
+  [Unknown]:  Herong City
+What is the name of your State or Province?
+  [Unknown]:  Herong State
+What is the two-letter country code for this unit?
+  [Unknown]:  CA
+Is CN=Herong Yang, OU=Herong Unit, O=Herong Company, 
+L=Herong City, ST=Herong State, C=CA correct?
+  [no]:  yes
+
+>keytool -list -keystore herong.jks -storepass jkspass
+
+Keystore type: JKS
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+herong_key, Apr 1, 2007, PrivateKeyEntry,
+Certificate fingerprint (MD5): 0C:54:AE:99:4E:3D:F7:A9:7...
+</pre>
+
+<p>
+I am not going to explain all the command options used above, because they were explained 
+in previous chapters.
+</p>
+
+<p>
+I have a key pair in keystore file, herong.jks, now. But there seems to be no "keytool" command
+to export it out. The "keytool -help" gave me the following command options:
+</p>
+
+<pre class="block_source">
+keytool usage:
+
+-certreq
+	Generating CSR from a key pair entry
+
+-changealias
+	Renaming an entry in the keystore file
+
+-delete
+	Deleting an entry in the keystore file
+
+-exportcert
+	Exporting a certificate entry
+
+-genkeypair
+	Generating a new key pair entry
+
+-genseckey
+	Generating a secret key entry
+
+-help
+	Displaying help information
+
+-importcert
+	Importing a certificate into the keystore file
+
+-importkeystore
+	Importing all entries from another keystore file
+
+-keypasswd
+	Changing the password for an existing entry
+
+-list
+	Display all entry names
+
+-printcert
+	Print a certificate file
+
+-storepasswd
+	Changing the keystore file password
+</pre>
+
+<p>
+In the next section, I tried to use "keytool -exportcert" to export the key pair. 
+</p>
+
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="Migrating_Keys_keytool_to_OpenSSL_2.html">2</a>&nbsp;
+<a href="Migrating_Keys_keytool_to_OpenSSL_3.html">3</a>&nbsp;
+<a href="Migrating_Keys_keytool_to_OpenSSL_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "Migrating_Keys_keytool_to_OpenSSL.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Migrating Keys from  'keytool' to 'OpenSSL'</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

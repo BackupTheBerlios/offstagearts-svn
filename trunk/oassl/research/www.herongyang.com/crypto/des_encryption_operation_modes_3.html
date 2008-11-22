@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: DES algorithm operation modes: ECB, CBC, CFB, and OFB implemented by Sun in Java JDK JCE package."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, Operation Modes, ECB, CBC, CFB, OFB, IV, JCE, JDK, SUN"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Operation Modes and JCE SUN Implementation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_encryption_operation_modes.html">
+DES Algorithm - Operation Modes and JCE SUN Implementation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_encryption_operation_modes.html">1</a>&nbsp;
+<a href="des_encryption_operation_modes_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<pre class="block_source">
+         KeySpec ks = new DESKeySpec(theKey);
+         SecretKeyFactory kf 
+            = SecretKeyFactory.getInstance("DES");
+         SecretKey ky = kf.generateSecret(ks);
+         Cipher cf = Cipher.getInstance(algorithm);
+         if (theIVp == null) {
+            cf.init(Cipher.ENCRYPT_MODE, ky);
+         } else {
+            AlgorithmParameterSpec aps = new IvParameterSpec(theIVp);
+            cf.init(Cipher.ENCRYPT_MODE, ky, aps);
+         }
+         byte[] theCph = cf.doFinal(theMsg);
+         System.out.println("Key     : "+bytesToHex(theKey));
+         if (theIVp != null) {
+            System.out.println("IV      : "+bytesToHex(theIVp));
+         }
+         System.out.println("Message : "+bytesToHex(theMsg));
+         System.out.println("Cipher  : "+bytesToHex(theCph));
+         System.out.println("Expected: "+bytesToHex(theExp));
+      } catch (Exception e) {
+         e.printStackTrace();
+         return;
+      }
+   }
+   public static byte[] hexToBytes(String str) {
+      if (str==null) {
+         return null;
+      } else if (str.length() &lt; 2) {
+         return null;
+      } else {
+         int len = str.length() / 2;
+         byte[] buffer = new byte[len];
+         for (int i=0; i&lt;len; i++) {
+             buffer[i] = (byte) Integer.parseInt(
+                str.substring(i*2,i*2+2),16);
+         }
+         return buffer;
+      }
+   }
+   public static String bytesToHex(byte[] data) {
+      if (data==null) {
+         return null;
+      } else {
+         int len = data.length;
+         String str = "";
+         for (int i=0; i&lt;len; i++) {
+            if ((data[i]&amp;0xFF)&lt;16) str = str + "0" 
+               + java.lang.Integer.toHexString(data[i]&amp;0xFF);
+            else str = str
+               + java.lang.Integer.toHexString(data[i]&amp;0xFF);
+         }
+         return str.toUpperCase();
+      }
+   }            
+}
+</pre>
+
+<p>
+This program provides 4 tests: one for each operation mode. All tests share the same plaintext message,
+"Now is the time for all ". For CBC, CFB and OFB modes, the same IV is used, 0x1234567890ABCDEF.
+</p>
+
+
+<p class="section_title">Test Cases of DES Operation Modes</p>
+
+<p>
+I used my testing program, JceSunDesOperationModeTest.java, to test the cases listed in the 
+<a href="http://www.itl.nist.gov/fipspubs/fip81.htm">http://www.itl.nist.gov/fipspubs/fip81.htm</a>:
+</p>
+<pre class="block_source">
+java JceSunDesOperationModeTest 1 -- with ECB
+Key     : 0123456789ABCDEF
+Message : 4E6F77206973207468652074696D6520666F7220616C6C20
+Cipher  : 3FA40E8A984D48156A271787AB8883F9893D51EC4B563B53
+Expected: 3FA40E8A984D43156A271787AB8883F9893D51EC4B563B53
+
+java JceSunDesOperationModeTest 2 -- with CBC
+Key     : 0123456789ABCDEF
+IV      : 1234567890ABCDEF
+Message : 4E6F77206973207468652074696D6520666F7220616C6C20
+Cipher  : E5C7CDDE872BF27C43E934008C389C0F683788499A7C05F6
+Expected: E5C7CDDE872BF27C43E934008C389C0F683788499A7C05F6
+
+java JceSunDesOperationModeTest 3 -- with CFB
+Key     : 0123456789ABCDEF
+IV      : 1234567890ABCDEF
+Message : 4E6F77206973207468652074696D6520666F7220616C6C20
+Cipher  : F3096249C7F46E51A69E839B1A92F78403467133898EA622
+Expected: F3096249C7F46E51A69E839B1A92F78403467133898EA622
+
+java JceSunDesOperationModeTest 4 -- with OFB
+Key     : 0123456789ABCDEF
+IV      : 1234567890ABCDEF
+Message : 4E6F77206973207468652074696D6520666F7220616C6C20
+Cipher  : F3096249C7F46E5135F24A242EEB3D3F3D6D5BE3255AF8C3
+Expected: F3096249C7F46E5135F24A242EEB3D3F3D6D5BE3255AF8C3
+</pre>
+
+<p>
+Outputs of the first 3 test cases match well with the expected values documented in 
+<a href="http://www.itl.nist.gov/fipspubs/fip81.htm">http://www.itl.nist.gov/fipspubs/fip81.htm</a>.
+The output of the last test case can not be compared, since it is not document in FIPS 81.
+</p>
+
+
+<p class="section_title">Conclusion</p>
+
+<ul>
+<li>DES operation modes are ways to couple previous plaintext blocks with the current plaintext block to
+improve the strength of the encryption.</li>
+<li>Initial vector is used to parameterize the operation modes.</li>
+<li>Sun JCE implementation of DES operation modes work as expected.</li>
+</ul>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_encryption_operation_modes.html">1</a>&nbsp;
+<a href="des_encryption_operation_modes_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_encryption_operation_modes.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Operation Modes and JCE SUN Implementation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is a certification path? Validation and testing certification path."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , verify, certificate chain, certification path, OpenSSL, CA, self-signed"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Certification Path and Validation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="openssl_verify.html">
+OpenSSL - Certification Path and Validation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="openssl_verify_2.html">2</a>&nbsp;
+</p>
+
+
+
+<p>
+This chapter describes:
+</p>
+<ul>
+<li>
+What Is a Certification Path?
+</li>
+<li>
+Certification Path Validation
+</li>
+<li>
+Certification Path Testing with OpenSSL
+</li>
+</ul>
+
+
+<p class="section_title">
+What Is a Certification Path?
+</p>
+
+<p>
+<b>Certification Path</b>: Also called Certificate Chain. An ordered list of certificates where the subject entity 
+of one certificate is identical to the issuing entity of the next certificate. 
+</p>
+
+<p>
+A certification path can also be defined as an ordered list of certificates where the issuing entity of one certificate
+can be identified as the subject entity of the previous certificate. But the first certificate has to be a special one,
+because there is no previous certificate to identify the issuing entity. The first certificate must be a self-signed 
+certificate, where the issuing entity is the same as the subject entity. 
+</p>
+
+<p>
+For example, the following diagram shows you a certification path: 
+</p>
+<pre class="block_source">
+Certificate 1
+   Issuer: Herong Yang
+   Subject: Herong Yang
+
+Certificate 2
+   Issuer: Herong Yang
+   Subject: John Smith
+
+Certificate 3
+   Issuer: John Smith
+   Subject: Bill White
+
+Certificate 4
+   Issuer: Bill White
+   Subject: Tom Bush
+</pre>
+
+
+<p class="section_title">
+Certification Path Validation
+</p>
+
+<p>
+A certification path needs to be validated. Here are the validation rules:
+</p>
+<ul>
+<li>The first certificate must be self-signed. Its issuer must be recognized as a certificate authority (CA). 
+</li>
+<li>The issuer of any certificate, except the first one, must be "identical" to the subject of the previous certificate. 
+</li>
+<li>"identical" means that issuer's digital signature can verified by the subject's public key in the previous certificate. 
+</li>
+</ul>
+
+<p>
+OpenSSL offers a nice tool, the "verify" command, to validate a certification path. Here is the syntax of the 
+"verify" command:
+</p>
+<pre class="block_syntax">
+verify -CAfile first.crt -untrusted all_middle.crt last.crt
+</pre>
+<ul>
+<li>"first.crt" is the first certificate of the path. It should be self-signed certificate.
+</li>
+<li>"last.crt" is the last certificate of the path.
+</li>
+<li>"all_middle.crt" is a collection of all middle certificates. If certificates are store in PEM format, you can 
+join them into a collection in any text editor. 
+</li>
+</ul>
+
+
+<p class="section_title">
+Certification Path Testing with OpenSSL
+</p>
+
+<p>
+Here is a testing scenario I followed to generate some certificates with different issuers and subjects.
+See previous notes if you have trouble generating keys and signing certificates. 
+</p>
+
+<p>
+1. Generating a self-signed certificate for Herong, herong.crt:
+</p>
+<pre class="block_source">
+>echo Generating keys for Herong
+>openssl genrsa -des3 -out herong_rsa.key
+...
+
+>echo Generating a self-signed certificate for Herong
+>openssl req -new -key herong_rsa.key -x509 -out herong.crt 
+   -config openssl.cnf
+...
+</pre>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="openssl_verify_2.html">2</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "openssl_verify.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Certification Path and Validation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

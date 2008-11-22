@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: DES CFB and OFB stream cipher modes implemented by Sun in Java JDK JCE package."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, Stream Cipher Modes, CFB, OFB, JCE, JDK, SUN"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Stream Cipher Modes and JCE SUN Implementation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_in_stream_cipher_mode.html">
+DES Algorithm - Stream Cipher Modes and JCE SUN Implementation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_in_stream_cipher_modes.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="des_in_stream_cipher_modes_3.html">3</a>&nbsp;
+<a href="des_in_stream_cipher_modes_4.html">4</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+With the above notations, a k-bit CFB operation mode variation can be described as:
+</p>
+<pre class="block_source">
+C[i] = P[i] XOR Fk(E(I[i]))
+I[i] = Sk(I[i-1], C[i-1]) 
+I[1] = IV
+
+      IV
+       |
+     I[1]------Sk()--I[2]------Sk()--I[3] 
+       |       /       |       /       |
+      E()     /       E()     /       E()
+       |     /         |     /         |
+     Fk()   /        Fk()   /        Fk()
+       |   /           |   /           | 
+P[1]--XOR /     P[2]--XOR /     P[3]--XOR
+       | /             | /             | 
+     C[1]            C[2]            C[3]
+</pre> 
+
+<p>
+Note that there are some special cases of CFB variations:
+</p>
+<ul>
+<li>The 64-bit CFB variation is the original CFB operation mode.</li>
+<li>The 8-bit CFB variation is a stream cipher that takes 1 byte (8 bits) from the plaintext message at a time.</li>
+<li>The 1-bit CFB variation is a stream cipher that takes 1 bit from the plaintext message at a time.</li>
+</ul>
+
+
+<p class="section_title">OFB (Output FeedBack) Operation Mode as a Stream Cipher</p>
+
+
+<p>
+OFB (Output FeedBack) operation mode can be described with notations defined earlier as the following formula and diagram:
+</p>
+<pre class="block_source">
+C[i] = P[i] XOR O[i]
+O[i] = E(O[i-1])
+O[1] = E(IV)
+
+      IV                             
+       |        -----|        -----| 
+      E()     /     E()     /     E()
+       |--O[1]       |--O[2]       |--O[3] 
+       |             |             | 
+P[1]--XOR     P[2]--XOR     P[3]--XOR
+       |             |             | 
+     C[1]          C[2]          C[3]
+</pre> 
+
+<p>
+As you can see from the formula and the diagram, in OFB mode, each block of plaintext is XORed with the current output block
+to generate the current ciphertext block. The current output block is obtained by applying the encryption 
+process on the previous output block. Note that for the first block, the Initial Vector (IV) is used as the 
+previous output block.
+</p>
+
+<p>
+In order to run the OFB operation mode as a stream cipher, FIPS 81 defines OFB variations where plaintext blocks 
+can have any size less than 64 bits. To describe OFB variations, we need the following additional notations:
+</p>
+
+<p>
+k - Representing the size plaintext blocks. k can have a value between 1 and 64. 
+</p>
+
+<p>
+Fk() - Representing a filter function that take the first k bits of a 64-bit block. 
+</p>
+
+<p>
+I = I[1], I[2], I[3], ..., I[i], ... - Representing the input block, I, used as input to the DES encryption process.
+</p>
+
+<p>
+Sk() - Representing a shifting function that shifts k bits out of the input block from the left side. 
+The missing k bits are taken from the output block.
+</p>
+
+<p>
+With the above notations, a k-bit OFB operation mode variation can be described as:
+</p>
+<pre class="block_source">
+C[i] = P[i] XOR Fk(O[i])
+O[i] = E(I[i])
+I[i] = Sk(I[i-1], O[i-1]) 
+I[1] = IV
+
+      IV
+       |
+     I[1]------Sk()--I[2]------Sk()--I[3]
+       |       /       |       /       | 
+      E()     /       E()     /       E()
+       |--O[1]         |--O[2]         |--O[3] 
+     Fk()            Fk()            Fk()
+       |               |               | 
+P[1]--XOR       P[2]--XOR       P[3]--XOR
+       |               |               | 
+     C[1]            C[2]            C[3]
+</pre> 
+
+<p>
+Note that there are some special cases of OFB variations:
+</p>
+<ul>
+<li>The 64-bit OFB variation is the original OFB operation mode.</li>
+<li>The 8-bit OFB variation is a stream cipher that takes 1 byte (8 bits) from the plaintext message at a time.</li>
+<li>The 1-bit OFB variation is a stream cipher that takes 1 bit from the plaintext message at a time.</li>
+</ul>
+
+
+<p class="section_title">Sun Java Implementation of DES Operation Modes</p>
+
+<p>
+Sun has implemented stream cipher modes for both CFB and OFB modes, but with restrictions that the feedback sizes
+must be multiples of 8 bits. To use CFB or OFB in a stream cipher mode, you nee to specify the feedback size in 
+bits right after the mode name when calling Cipher.getInstance(algorithm) to create a cipher object like:
+</p>
+<pre class="block_source">
+   Cipher cObj1 = Cipher.getInstance("DES/CFB8/NoPadding");
+   Cipher cObj2 = Cipher.getInstance("DES/CFB16/NoPadding");
+   Cipher cObj3 = Cipher.getInstance("DES/CFB24/NoPadding");
+   ...
+   Cipher cObja = Cipher.getInstance("DES/OFB8/NoPadding");
+   Cipher cObjb = Cipher.getInstance("DES/OFB16/NoPadding");
+   Cipher cObjc = Cipher.getInstance("DES/OFB24/NoPadding");
+   ...
+</pre>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_in_stream_cipher_modes.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="des_in_stream_cipher_modes_3.html">3</a>&nbsp;
+<a href="des_in_stream_cipher_modes_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_in_stream_cipher_modes.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Stream Cipher Modes and JCE SUN Implementation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

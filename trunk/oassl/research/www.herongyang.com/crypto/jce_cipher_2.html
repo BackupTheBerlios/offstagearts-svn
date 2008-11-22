@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: Cipher class in JDK; Generating keys; Secret key encryption; Public key encryption."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , cipher, class, JDK, secret, private, public, key, JCE"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - JCE - Cipher for Encryption and Decryption</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="jce_cipher.html">
+JCE - Cipher for Encryption and Decryption
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="jce_cipher.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="jce_cipher_3.html">3</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<pre class="block_source">
+      System.out.println();
+      System.out.println("KeySpec Object Info: ");
+      System.out.println("Saved File = "+fl);
+      System.out.println("Length = "+kb.length);
+      System.out.println("toString = "+ks.toString());
+      System.out.println();
+      System.out.println("SecretKey Object Info: ");
+      System.out.println("Algorithm = "+ky.getAlgorithm());
+      System.out.println("toString = "+ky.toString());
+      return ky;
+   }
+   private static void secretCipher(String algorithm, String mode,
+      SecretKey ky, String input, String output) throws Exception {
+      Cipher cf = Cipher.getInstance(algorithm);
+      if (mode.equalsIgnoreCase("encrypt")) 
+         cf.init(Cipher.ENCRYPT_MODE,ky);
+      else if (mode.equalsIgnoreCase("decrypt"))
+         cf.init(Cipher.DECRYPT_MODE,ky);
+      else
+         throw new Exception("Invalid mode: "+mode);
+      System.out.println();
+      System.out.println("Cipher Object Info: ");
+      System.out.println("Block Size = "+cf.getBlockSize());
+      System.out.println("Algorithm = "+cf.getAlgorithm());
+      System.out.println("Provider = "+cf.getProvider());
+      System.out.println("toString = "+cf.toString());
+
+      FileInputStream fis = new FileInputStream(input);
+      FileOutputStream fos = new FileOutputStream(output);
+      int bufSize = 1024;
+      byte[] buf = new byte[bufSize];
+      int n = fis.read(buf,0,bufSize);
+      int fisSize = 0;
+      int fosSize = 0;
+      while (n!=-1) {
+         fisSize += n;
+         byte[] out = cf.update(buf,0,n);
+         fosSize += out.length;
+         fos.write(out);
+         n = fis.read(buf,0,bufSize);
+      }
+      byte[] out = cf.doFinal();
+      fosSize += out.length;
+      fos.write(out);
+      fis.close();
+      fos.close();
+      System.out.println();
+      System.out.println("Cipher Process Info: ");
+      System.out.println("Input Size = "+fisSize);
+      System.out.println("Output Size = "+fosSize);
+   }
+}
+</pre>
+
+<p>
+Here is the result of my first test. It is done with JDK 1.4.1.
+</p>
+<pre class="block_source">
+java -cp . JceSecretCipher Blowfish encrypt bfish.key 
+   JceSecretCipher.java jce.cph
+
+KeySpec Object Info:
+Saved File = bfish.key
+Length = 7
+toString = javax.crypto.spec.SecretKeySpec@2685020e
+
+SecretKey Object Info:
+Algorithm = Blowfish
+toString = javax.crypto.spec.SecretKeySpec@2685020e
+
+Cipher Object Info:
+Block Size = 8
+Algorithm = Blowfish
+Provider = SunJCE version 1.4
+toString = javax.crypto.Cipher@106082
+
+Cipher Process Info:
+Input Size = 3684
+Output Size = 3688
+
+java -cp . JceSecretCipher Blowfish decrypt bfish.key jce.cph jce.clr
+
+KeySpec Object Info:
+Saved File = bfish.key
+Length = 7
+toString = javax.crypto.spec.SecretKeySpec@2685020e
+
+SecretKey Object Info:
+Algorithm = Blowfish
+toString = javax.crypto.spec.SecretKeySpec@2685020e
+
+Cipher Object Info:
+Block Size = 8
+Algorithm = Blowfish
+Provider = SunJCE version 1.4
+toString = javax.crypto.Cipher@106082
+
+Cipher Process Info:
+Input Size = 3688
+Output Size = 3684
+
+comp JceSecretCipher.java jce.clr
+Comparing JceSecretCipher.java and jce.clr...
+Files compare OK
+</pre>
+
+<p>
+Note that: 
+</p>
+<ul>
+<li>bfish.key is the key file generated by KeyGenerator with the Blowfish algorithm.
+</li>
+<li>The last command confirms that the encryption process and the decryption process
+work correctly.
+</li>
+<li>The block size of Blowfish encryption algorithm is 8 bytes. 
+</li>
+</ul>
+
+<p>
+You can do more tests with DES and HmacMD5 keys. 
+</p>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="jce_cipher.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="jce_cipher_3.html">3</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "jce_cipher.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - JCE - Cipher for Encryption and Decryption</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is MD5 message digest; Implementation in Java, PHP, and Perl."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , MD5, algorithm, message, digest, implementation, Java, PHP, Perl"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Message Digest - MD5 Algorithm</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="message_digest_md5.html">
+Message Digest - MD5 Algorithm
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="message_digest_md5.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="message_digest_md5_3.html">3</a>&nbsp;
+<a href="message_digest_md5_4.html">4</a>&nbsp;
+<a href="message_digest_md5_5.html">5</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+Step 3. Initializing MD Buffer. MD5 algorithm requires a 128-bit buffer with a specific 
+initial value. The rules of initializing buffer are:
+</p>
+<ul>
+<li>The buffer is divided into 4 words (32 bits each), named as A, B, C, and D.
+</li>
+<li>Word A is initialized to: 0x67452301.
+</li>
+<li>Word B is initialized to: 0xEFCDAB89.
+</li>
+<li>Word C is initialized to: 0x98BADCFE.
+</li>
+<li>Word D is initialized to: 0x10325476.
+</li>
+</ul>
+
+<p>
+Step 4. Processing Message in 512-bit Blocks. This is the main step of MD 5 algorithm, which 
+loops through the padded and appended message in blocks of 512 bits each. For each input block, 
+4 rounds of operations are performed with 16 operations in each round. This step can be
+described in the following pseudo code slightly modified from the RFC 1321's version:
+</p>
+<pre class="block_source">
+Input and predefined functions: 
+   A, B, C, D: initialized buffer words
+
+   F(X,Y,Z) = (X AND Y ) OR (NOT X AND Z)
+   G(X,Y,Z) = (X AND Z ) OR (Y AND NOT Z)
+   H(X,Y,Z) = X XOR Y XOR Z
+   I(X,Y,Z) = Y XOR (X OR NOT Z)
+
+   T[1, 2, ..., 64]: Array of special constants (32-bit integers) as:
+      T[i] = int(abs(sin(i)) * 2**32)
+   
+   M[1, 2, ..., N]: Blocks of the padded and appended message
+
+   R1(a,b,c,d,X,s,i): Round 1 operation defined as: 
+      a = b + ((a + F(b,c,d) + X + T[i]) &lt;&lt;&lt; s)
+
+   R2(a,b,c,d,X,s,i): Round 1 operation defined as: 
+      a = b + ((a + G(b,c,d) + X + T[i]) &lt;&lt;&lt; s)
+
+   R3(a,b,c,d,X,s,i): Round 1 operation defined as: 
+      a = b + ((a + H(b,c,d) + X + T[i]) &lt;&lt;&lt; s)
+
+   R4(a,b,c,d,X,s,i): Round 1 operation defined as: 
+      a = b + ((a + I(b,c,d) + X + T[i]) &lt;&lt;&lt; s)
+
+Algorithm:
+   For k = 1 to N do the following
+
+     AA = A
+     BB = B
+     CC = C
+     DD = D
+     (X[0], X[1], ..., X[15]) = M[k] /* Divide M[k] into 16 words */
+     
+     /* Round 1. Do 16 operations. */
+     R1(A,B,C,D,X[ 0], 7, 1)
+     R1(D,A,B,C,X[ 1],12, 2)
+     R1(C,D,A,B,X[ 2],17, 3)
+     R1(B,C,D,A,X[ 3],22, 4)
+     R1(A,B,C,D,X[ 4], 7, 5)
+     R1(D,A,B,C,X[ 5],12, 6)
+     R1(C,D,A,B,X[ 6],17, 7)
+     R1(B,C,D,A,X[ 7],22, 8)
+     R1(A,B,C,D,X[ 8], 7, 9)
+     R1(D,A,B,C,X[ 9],12,10)
+     R1(C,D,A,B,X[10],17,11)
+     R1(B,C,D,A,X[11],22,12)
+     R1(A,B,C,D,X[12], 7,13)
+     R1(D,A,B,C,X[13],12,14)
+     R1(C,D,A,B,X[14],17,15)
+     R1(B,C,D,A,X[15],22,16)
+
+     /* Round 2. Do 16 operations. */
+     R2(A,B,C,D,X[ 1], 5,17)
+     R2(D,A,B,C,X[ 6], 9,18)
+     R2(C,D,A,B,X[11],14,19)
+     R2(B,C,D,A,X[ 0],20,20)
+     R2(A,B,C,D,X[ 5], 5,21)
+     R2(D,A,B,C,X[10], 9,22)
+     R2(C,D,A,B,X[15],14,23)
+     R2(B,C,D,A,X[ 4],20,24)
+     R2(A,B,C,D,X[ 9], 5,25)
+     R2(D,A,B,C,X[14], 9,26)
+     R2(C,D,A,B,X[ 3],14,27)
+     R2(B,C,D,A,X[ 8],20,28)
+     R2(A,B,C,D,X[13], 5,29)
+     R2(D,A,B,C,X[ 2], 9,30)
+     R2(C,D,A,B,X[ 7],14,31)
+     R2(B,C,D,A,X[12],20,32)
+     
+     /* Round 3. Do 16 operations. */
+     R3(A,B,C,D,X[ 5], 4,33)
+     R3(D,A,B,C,X[ 8],11,34)
+     R3(C,D,A,B,X[11],16,35)
+     R3(B,C,D,A,X[14],23,36)
+     R3(A,B,C,D,X[ 1], 4,37)
+     R3(D,A,B,C,X[ 4],11,38)
+     R3(C,D,A,B,X[ 7],16,39)
+     R3(B,C,D,A,X[10],23,40)
+     R3(A,B,C,D,X[13], 4,41)
+     R3(D,A,B,C,X[ 0],11,42)
+     R3(C,D,A,B,X[ 3],16,43)
+     R3(B,C,D,A,X[ 6],23,44)
+     R3(A,B,C,D,X[ 9], 4,45)
+     R3(D,A,B,C,X[12],11,46)
+     R3(C,D,A,B,X[15],16,47)
+     R3(B,C,D,A,X[ 2],23,48)
+
+     /* Round 4. Do 16 operations. */
+     R4(A,B,C,D,X[ 0], 6,49)
+     R4(D,A,B,C,X[ 7],10,50)
+     R4(C,D,A,B,X[14],15,51)
+     R4(B,C,D,A,X[ 5],21,52)
+     R4(A,B,C,D,X[12], 6,53)
+     R4(D,A,B,C,X[ 3],10,54)
+     R4(C,D,A,B,X[10],15,55)
+     R4(B,C,D,A,X[ 1],21,56)
+     R4(A,B,C,D,X[ 8], 6,57)
+     R4(D,A,B,C,X[15],10,58)
+     R4(C,D,A,B,X[ 6],15,59)
+     R4(B,C,D,A,X[13],21,60)
+     R4(A,B,C,D,X[ 4], 6,61)
+     R4(D,A,B,C,X[11],10,62)
+     R4(C,D,A,B,X[ 2],15,63)
+     R4(B,C,D,A,X[ 9],21,64)
+     
+     A = A + AA
+     B = B + BB
+     C = C + CC
+     D = D + DD
+   End of for loop
+   
+Output: 
+   A, B, C, D: Message digest
+</pre>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="message_digest_md5.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="message_digest_md5_3.html">3</a>&nbsp;
+<a href="message_digest_md5_4.html">4</a>&nbsp;
+<a href="message_digest_md5_5.html">5</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "message_digest_md5.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Message Digest - MD5 Algorithm</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

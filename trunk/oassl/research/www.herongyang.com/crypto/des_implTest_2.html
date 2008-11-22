@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: How DES really works with illustrations in Java codes."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, algorithm, illustration, Java"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Illustrated with Java Programs</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_implTest.html">
+DES Algorithm - Illustrated with Java Programs
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_implTest.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="des_implTest_3.html">3</a>&nbsp;
+<a href="des_implTest_4.html">4</a>&nbsp;
+<a href="des_implTest_5.html">5</a>&nbsp;
+<a href="des_implTest_6.html">6</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<pre class="block_source">
+   private static void printBytes(byte[] data, String name) {
+      System.out.println("");
+      System.out.println(name+":");
+      for (int i=0; i&lt;data.length; i++) {
+         System.out.print(byteToBits(data[i])+" ");
+      }
+      System.out.println();
+   }
+   private static String byteToBits(byte b) {
+      StringBuffer buf = new StringBuffer();
+      for (int i=0; i&lt;8; i++)
+         buf.append((int)(b>>(8-(i+1)) &amp; 0x0001));
+      return buf.toString();
+   }
+   private static byte[] getTestKey() {
+      String strKey = " 00010011 00110100 01010111 01111001"
+                     +" 10011011 10111100 11011111 11110001";
+      byte[] theKey = new byte[8];
+      for (int i=0; i&lt;8; i++) {
+         String strByte = strKey.substring(9*i+1,9*i+1+8);
+         theKey[i] = (byte) Integer.parseInt(strByte,2);
+      }
+      return theKey;
+   }
+   private static boolean validateSubkeys(byte[][] subKeys) {
+      boolean ok = true;
+      String[] strKeys = {
+         " 00011011 00000010 11101111 11111100 01110000 01110010",//1
+         " 01111001 10101110 11011001 11011011 11001001 11100101",//2
+         " 01010101 11111100 10001010 01000010 11001111 10011001",//3
+         " 01110010 10101101 11010110 11011011 00110101 00011101",//4
+         " 01111100 11101100 00000111 11101011 01010011 10101000",//5
+         " 01100011 10100101 00111110 01010000 01111011 00101111",//6
+         " 11101100 10000100 10110111 11110110 00011000 10111100",//7
+         " 11110111 10001010 00111010 11000001 00111011 11111011",//8
+         " 11100000 11011011 11101011 11101101 11100111 10000001",//9
+         " 10110001 11110011 01000111 10111010 01000110 01001111",//0
+         " 00100001 01011111 11010011 11011110 11010011 10000110",//1
+         " 01110101 01110001 11110101 10010100 01100111 11101001",//2
+         " 10010111 11000101 11010001 11111010 10111010 01000001",//3
+         " 01011111 01000011 10110111 11110010 11100111 00111010",//4
+         " 10111111 10010001 10001101 00111101 00111111 00001010",//5
+         " 11001011 00111101 10001011 00001110 00010111 11110101"};
+      for (int k=0; k&lt;16; k++) {
+         for (int i=0; i&lt;6; i++) {
+            String strByte = strKeys[k].substring(9*i+1,9*i+1+8);
+            byte keyByte = (byte) Integer.parseInt(strByte,2);
+            if (keyByte!=subKeys[k][i]) ok = false;
+         }
+      }
+      return ok;
+   }
+}
+</pre>
+
+<p>
+In this program, the input key is hard coded to the same same value used by 
+J. Orlin Grabbe in "The DES Algorithm Illustrated". The subkeys generated
+by the algorithm are validated with those mentioned by J. Orlin Grabbe. 
+</p>
+
+<p>
+If you run this program with JDK 1.4.1, you will get:
+</p>
+<pre class="block_source">
+Input key:
+00010011 00110100 01010111 01111001 10011011 10111100 11011111 111...
+
+After permuted choice 1 - Active key:
+11110000 11001100 10101010 11110101 01010110 01100111 10001111
+
+Subkey #1 after shifting:
+11100001 10011001 01010101 11111010 10101100 11001111 00011110
+
+Subkey #1 after permuted choice 2:
+00011011 00000010 11101111 11111100 01110000 01110010
+
+Subkey #2 after shifting:
+11000011 00110010 10101011 11110101 01011001 10011110 00111101
+
+Subkey #2 after permuted choice 2:
+01111001 10101110 11011001 11011011 11001001 11100101
+
+Subkey #3 after shifting:
+00001100 11001010 10101111 11110101 01100110 01111000 11110101
+
+Subkey #3 after permuted choice 2:
+01010101 11111100 10001010 01000010 11001111 10011001
+
+Subkey #4 after shifting:
+00110011 00101010 10111111 11000101 10011001 11100011 11010101
+
+Subkey #4 after permuted choice 2:
+01110010 10101101 11010110 11011011 00110101 00011101
+
+Subkey #5 after shifting:
+11001100 10101010 11111111 00000110 01100111 10001111 01010101
+
+Subkey #5 after permuted choice 2:
+01111100 11101100 00000111 11101011 01010011 10101000
+
+Subkey #6 after shifting:
+00110010 10101011 11111100 00111001 10011110 00111101 01010101
+
+Subkey #6 after permuted choice 2:
+01100011 10100101 00111110 01010000 01111011 00101111
+
+Subkey #7 after shifting:
+11001010 10101111 11110000 11000110 01111000 11110101 01010110
+
+Subkey #7 after permuted choice 2:
+11101100 10000100 10110111 11110110 00011000 10111100
+
+Subkey #8 after shifting:
+00101010 10111111 11000011 00111001 11100011 11010101 01011001
+
+Subkey #8 after permuted choice 2:
+11110111 10001010 00111010 11000001 00111011 11111011
+
+Subkey #9 after shifting:
+01010101 01111111 10000110 01100011 11000111 10101010 10110011
+
+Subkey #9 after permuted choice 2:
+11100000 11011011 11101011 11101101 11100111 10000001
+
+Subkey #10 after shifting:
+01010101 11111110 00011001 10011111 00011110 10101010 11001100
+
+Subkey #10 after permuted choice 2:
+10110001 11110011 01000111 10111010 01000110 01001111
+
+Subkey #11 after shifting:
+01010111 11111000 01100110 01011100 01111010 10101011 00110011
+
+Subkey #11 after permuted choice 2:
+00100001 01011111 11010011 11011110 11010011 10000110
+
+Subkey #12 after shifting:
+01011111 11100001 10011001 01010001 11101010 10101100 11001111
+
+Subkey #12 after permuted choice 2:
+01110101 01110001 11110101 10010100 01100111 11101001
+
+Subkey #13 after shifting:
+01111111 10000110 01100101 01010111 10101010 10110011 00111100
+
+Subkey #13 after permuted choice 2:
+10010111 11000101 11010001 11111010 10111010 01000001
+
+Subkey #14 after shifting:
+11111110 00011001 10010101 01011110 10101010 11001100 11110001
+
+Subkey #14 after permuted choice 2:
+01011111 01000011 10110111 11110010 11100111 00111010
+
+Subkey #15 after shifting:
+11111000 01100110 01010101 01111010 10101011 00110011 11000111
+
+Subkey #15 after permuted choice 2:
+10111111 10010001 10001101 00111101 00111111 00001010
+
+Subkey #16 after shifting:
+11110000 11001100 10101010 11110101 01010110 01100111 10001111
+
+Subkey #16 after permuted choice 2:
+11001011 00111101 10001011 00001110 00010111 11110101
+DES subkeys test result: true
+</pre>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_implTest.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="des_implTest_3.html">3</a>&nbsp;
+<a href="des_implTest_4.html">4</a>&nbsp;
+<a href="des_implTest_5.html">5</a>&nbsp;
+<a href="des_implTest_6.html">6</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_implTest.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Illustrated with Java Programs</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

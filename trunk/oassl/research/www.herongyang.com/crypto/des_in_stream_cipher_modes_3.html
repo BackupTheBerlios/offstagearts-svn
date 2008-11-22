@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: DES CFB and OFB stream cipher modes implemented by Sun in Java JDK JCE package."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, Stream Cipher Modes, CFB, OFB, JCE, JDK, SUN"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Stream Cipher Modes and JCE SUN Implementation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_in_stream_cipher_mode.html">
+DES Algorithm - Stream Cipher Modes and JCE SUN Implementation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_in_stream_cipher_modes.html">1</a>&nbsp;
+<a href="des_in_stream_cipher_modes_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="des_in_stream_cipher_modes_4.html">4</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p class="section_title">JceSunDesStreamCipherTest.java - JCE DES Stream Cipher Mode Testing Program</p>
+
+<p>
+To test out JCE DES stream cipher mode implementation, I wrote the following testing program: 
+</p>
+<pre class="block_source">
+/**
+ * JceSunDesStreamCipherTest.java
+ * Copyright (c) 2006 by Dr. Herong Yang, http://www.herongyang.com/
+ */
+import java.security.spec.*;
+import javax.crypto.*;
+import javax.crypto.spec.*;
+class JceSunDesStreamCipherTest {
+   public static void main(String[] a) {
+      if (a.length&lt;1) {
+         System.out.println("Usage:");
+         System.out.println(
+            "java JceSunDesStreamCipherTest 1/2/3/4");
+         return;
+      }
+      String test = a[0];
+      try {
+         byte[] theKey = null;
+         byte[] theIVp = null;
+         byte[] theMsg = null; 
+         byte[] theExp = null; 
+         String algorithm = null;
+         if (test.equals("1")) { 
+            algorithm = "DES/CFB8/NoPadding";
+            theKey = hexToBytes("0123456789ABCDEF");
+            theIVp = hexToBytes("1234567890ABCDEF");
+            theMsg = hexToBytes("4E6F7720697320746865");
+            // "Now is the"
+            theExp = hexToBytes("F31FDA07011462EE187F");
+         } else if (test.equals("2")) { 
+            algorithm = "DES/CFB64/NoPadding";
+            theKey = hexToBytes("0123456789ABCDEF");
+            theIVp = hexToBytes("1234567890ABCDEF");
+            theMsg = hexToBytes(
+               "4E6F77206973207468652074696D6520666F7220616C6C20");
+            // "Now is the time for all "
+            theExp = hexToBytes(
+               "F3096249C7F46E51A69E839B1A92F78403467133898EA622");
+         } else if (test.equals("3")) { 
+            algorithm = "DES/OFB8/NoPadding";
+            theKey = hexToBytes("0123456789ABCDEF");
+            theIVp = hexToBytes("1234567890ABCDEF");
+            theMsg = hexToBytes("4E6F7720697320746865");
+            // "Now is the"
+            theExp = hexToBytes("F34A2850C9C64985D684");
+         } else if (test.equals("4")) { 
+            algorithm = "DES/OFB64/NoPadding";
+            theKey = hexToBytes("0123456789ABCDEF");
+            theIVp = hexToBytes("1234567890ABCDEF");
+            theMsg = hexToBytes(
+               "4E6F77206973207468652074696D6520666F7220616C6C20");
+            // "Now is the time for all "
+            theExp = hexToBytes(
+               "F3096249C7F46E5135F24A242EEB3D3F3D6D5BE3255AF8C3");
+         } else {
+            System.out.println("Wrong option. For help enter:");
+            System.out.println("java JceSunDesStreamCipherTest");
+            return;
+         }	
+         KeySpec ks = new DESKeySpec(theKey);
+         SecretKeyFactory kf 
+            = SecretKeyFactory.getInstance("DES");
+         SecretKey ky = kf.generateSecret(ks);
+         Cipher cf = Cipher.getInstance(algorithm);
+         if (theIVp == null) {
+            cf.init(Cipher.ENCRYPT_MODE, ky);
+         } else {
+            AlgorithmParameterSpec aps = new IvParameterSpec(theIVp);
+            cf.init(Cipher.ENCRYPT_MODE, ky, aps);
+         }
+         byte[] theCph = cf.doFinal(theMsg);
+         System.out.println("Key     : "+bytesToHex(theKey));
+         if (theIVp != null) {
+            System.out.println("IV      : "+bytesToHex(theIVp));
+         }
+         System.out.println("Message : "+bytesToHex(theMsg));
+         System.out.println("Cipher  : "+bytesToHex(theCph));
+         System.out.println("Expected: "+bytesToHex(theExp));
+      } catch (Exception e) {
+         e.printStackTrace();
+         return;
+      }
+   }
+   public static byte[] hexToBytes(String str) {
+      if (str==null) {
+         return null;
+      } else if (str.length() &lt; 2) {
+         return null;
+      } else {
+         int len = str.length() / 2;
+         byte[] buffer = new byte[len];
+         for (int i=0; i&lt;len; i++) {
+             buffer[i] = (byte) Integer.parseInt(
+                str.substring(i*2,i*2+2),16);
+         }
+         return buffer;
+      }
+   }
+   public static String bytesToHex(byte[] data) {
+      if (data==null) {
+         return null;
+      } else {
+         int len = data.length;
+         String str = "";
+         for (int i=0; i&lt;len; i++) {
+            if ((data[i]&amp;0xFF)&lt;16) str = str + "0" 
+               + java.lang.Integer.toHexString(data[i]&amp;0xFF);
+            else str = str
+               + java.lang.Integer.toHexString(data[i]&amp;0xFF);
+         }
+         return str.toUpperCase();
+      }
+   }            
+}
+</pre>
+
+<p>
+This program provides 4 tests: CFB8, CFB64, OFB8 and OFB64 with testing plaintext messages, keys 
+and initial vectors used in FIPS81. 
+</p>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_in_stream_cipher_modes.html">1</a>&nbsp;
+<a href="des_in_stream_cipher_modes_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="des_in_stream_cipher_modes_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_in_stream_cipher_modes.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Stream Cipher Modes and JCE SUN Implementation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: DES algorithm implemented by Sun in Java JDK JCE package with PKCS5Padding or NoPadding."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, Java, JDK, JCE, SUN, PKCS5Padding"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Java JCE SUN Implementation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_java_jce_sun_implementation.html">
+DES Algorithm - Java JCE SUN Implementation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_java_jce_sun_implementation.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="des_java_jce_sun_implementation_3.html">3</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<pre class="block_source">
+   public static byte[] hexToBytes(String str) {
+      if (str==null) {
+         return null;
+      } else if (str.length() &lt; 2) {
+         return null;
+      } else {
+         int len = str.length() / 2;
+         byte[] buffer = new byte[len];
+         for (int i=0; i&lt;len; i++) {
+             buffer[i] = (byte) Integer.parseInt(
+                str.substring(i*2,i*2+2),16);
+         }
+         return buffer;
+      }
+
+   }
+   public static String bytesToHex(byte[] data) {
+      if (data==null) {
+         return null;
+      } else {
+         int len = data.length;
+         String str = "";
+         for (int i=0; i&lt;len; i++) {
+            if ((data[i]&amp;0xFF)&lt;16) str = str + "0" 
+               + java.lang.Integer.toHexString(data[i]&amp;0xFF);
+            else str = str
+               + java.lang.Integer.toHexString(data[i]&amp;0xFF);
+         }
+         return str.toUpperCase();
+      }
+   }            
+}
+</pre>
+
+<p>Note that this program, CipherDesTest.java, can be easily modified to add other testing cases.
+I am using the ECB mode and NoPadding option to make it compatible with original DES standard.
+</p>
+
+<p>Case 1 - Taken from <a href="http://www.orlingrabbe.com/des.htm">The DES Algorithm Illustrated:</a>
+</p>
+<pre class="block_source">
+java JceSunDesTest 1
+
+Key     : 133457799BBCDFF1
+Message : 0123456789ABCDEF
+Cipher  : 85E813540F0AB405
+Expected: 85E813540F0AB405
+</pre>
+
+<p>Case 2 - Modified from <a href="http://www.tero.co.uk/des/code.php">DES Source Code:</a>
+</p>
+<pre class="block_source">
+java JceSunDesTest 2
+
+Key     : 38627974656B6579
+Message : 6D6573736167652E
+Cipher  : 7CF45E129445D451
+Expected: 7CF45E129445D451
+</pre>
+
+<p>This result is identical to my Java implementation! 
+See <a href="des_implJava.html">the previous tutorial</a> in this book.
+</p>
+
+
+<p class="section_title">What Is PKCS5Padding?</p>
+
+<p>
+As you can see from previous tutorials, DES algorithm requires that the input data to be 8-byte blocks.
+If you want to encrypt a text message that is not multiples of 8-byte blocks, the text message must be
+padded with additional bytes to make the text message to be multiples of 8-byte blocks.
+</p>
+
+<p>
+PKCS5Padding is a padding scheme described in: RSA Laboratories, 
+<a href="ftp://ftp.rsasecurity.com/pub/pkcs/doc/pkcs-5.doc">"PKCS #5: Password-Based Encryption Standard,"</a>
+version 1.5, November 1993.
+</p> 
+
+<p>
+PKCS5Padding schema is actually very simple. It follows the following rules: 
+</p>
+<ul>
+<li>The number of bytes to be padded equals to "8 - numberOfBytes(clearText) mod 8". 
+So 1 to 8 bytes will be padded to the clear text data depending on the length of the clear text data.</li>
+<li>All padded bytes have the same value - the number of bytes padded.</li> 
+</ul>
+
+<p>
+PKCS5Padding schema can also be explained with the diagram below, if M is the original clear text 
+and PM is the padded clear text:
+</p>
+<pre class="block_source">
+If numberOfBytes(clearText) mod 8 == 7, PM = M + 0x01
+If numberOfBytes(clearText) mod 8 == 6, PM = M + 0x0202
+If numberOfBytes(clearText) mod 8 == 5, PM = M + 0x030303
+...
+If numberOfBytes(clearText) mod 8 == 0, PM = M + 0x0808080808080808
+</pre>
+
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_java_jce_sun_implementation.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="des_java_jce_sun_implementation_3.html">3</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_java_jce_sun_implementation.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Java JCE SUN Implementation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

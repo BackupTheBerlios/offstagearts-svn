@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: DES CFB and OFB stream cipher modes implemented by Sun in Java JDK JCE package."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, Stream Cipher Modes, CFB, OFB, JCE, JDK, SUN"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Stream Cipher Modes and JCE SUN Implementation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_in_stream_cipher_mode.html">
+DES Algorithm - Stream Cipher Modes and JCE SUN Implementation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="des_in_stream_cipher_modes_2.html">2</a>&nbsp;
+<a href="des_in_stream_cipher_modes_3.html">3</a>&nbsp;
+<a href="des_in_stream_cipher_modes_4.html">4</a>&nbsp;
+</p>
+
+
+
+<p>
+This tutorial helps you understand: 
+</p>
+<ul>
+<li>DES in Stream Cipher Modes</li>
+<li>CFB (Cipher FeedBack) Operation Mode as a Stream Cipher</li>
+<li>OFB (Output FeedBack) Operation Mode as a Stream Cipher</li>
+<li>Sun Java Implementation of DES Operation Modes</li>
+<li>JceSunDesStreamCipherTest.java - JCE DES Stream Cipher Mode Testing Program</li>
+<li>Test Cases of DES Stream Cipher Modes</li>
+</ul>
+
+
+<p class="section_title">DES in Stream Cipher Modes</p>
+
+<p>
+As we from previous tutorials, DES algorithm is a block cipher algorithm. But it can be operated 
+in different ways to become stream ciphers.</p>
+
+<p>
+(FIPS 81) Federal Information Processing Standards Publication 81 published in 1980 defined the following 
+4 operation modes:
+</p>
+<ul>
+<li>ECB - Electronic Code Book operation mode.</li>
+<li>CBC - Cipher Block Chaining operation mode.</li>
+<li>CFB - Cipher Feedback operation mode</li>
+<li>OFB - Output Feedback operation mode</li>
+</ul>
+
+<p>
+See <a href="http://www.itl.nist.gov/fipspubs/fip81.htm">http://www.itl.nist.gov/fipspubs/fip81.htm</a> for details.
+</p>
+
+<p>
+In FIPS 81, the last two operation modes, CFB and OFB, are defined in ways so that they can be used as 
+stream ciphers. 
+</p>
+
+<p>
+In order to describe these operation modes, we need to define the following notations:
+</p>
+
+<p>
+P = P[1], P[2], P[3], ..., P[i], ... - Representing the original plaintext message, P, being arranged into multiple 64-bit
+plaintext blocks. P[i] represents plaintext block number i.
+</p>
+
+<p>
+E(P[i]) - Representing the DES encryption algorithm applied on a single 64-bit plaintext block, P[i], with a predefined key, k. 
+</p>
+
+<p>
+C = C[1], C[2], C[3], ..., C[i], ... - Representing the final ciphertext message, C, being regrouped from multiple 64-bit
+ciphertext blocks. C[i] represents ciphertext block number i.
+</p>
+
+<p>
+IV - Called "Initial Vector", representing a predefined 64-bit initial value.
+</p>
+
+
+<p class="section_title">CFB (Cipher FeedBack) Operation Mode as a Stream Cipher</p>
+
+<p>
+CFB (Cipher FeedBack) operation mode as a block cipher can be described with notations defined earlier 
+as the following formula and diagram:
+</p>
+<pre class="block_source">
+C[i] = P[i] XOR E(C[i-1])
+C[1] = P[1] XOR E(IV)
+
+      IV                             
+       |        -----|        -----| 
+      E()     /     E()     /     E()
+       |     /       |     /       |
+       |    /        |    /        | 
+P[1]--XOR  /  P[2]--XOR  /  P[3]--XOR
+       |  /          |  /          | 
+       | /           | /           | 
+     C[1]          C[2]          C[3]
+</pre> 
+
+<p>
+As you can see from the formula and the diagram, in CBC mode, each block of plaintext is XORed with the encrypted version of 
+the previous ciphertext to generate the current ciphertext block. 
+In this way, each ciphertext block is depending on all plaintext blocks up to that
+point. Note that for the first block, the Initial Vector (IV) is used as the previous ciphertext block.
+</p>
+
+<p>
+In order to run the CFB operation mode as a stream cipher, FIPS 81 defines CFB variations where plaintext blocks 
+can have any size less than 64 bits. To describe CFB variations, we need the following additional notations:
+</p>
+
+<p>
+k - Representing the size plaintext blocks. k can have a value between 1 and 64. 
+</p>
+
+<p>
+Fk() - Representing a filter function that take the first k bits of a 64-bit block. 
+</p>
+
+<p>
+I = I[1], I[2], I[3], ..., I[i], ... - Representing the input block, I, used as input to the DES encryption process.
+</p>
+
+<p>
+Sk() - Representing a shifting function that shifts k bits out of the input block from the left side. 
+The missing k bits are taken from the ciphertext block.
+</p>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="des_in_stream_cipher_modes_2.html">2</a>&nbsp;
+<a href="des_in_stream_cipher_modes_3.html">3</a>&nbsp;
+<a href="des_in_stream_cipher_modes_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_in_stream_cipher_modes.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Stream Cipher Modes and JCE SUN Implementation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is PKCS#8? What is PKCS#18? Reading and writing private keys in PKCS#8 format with 'openssl pkcs8'; Reading and writing key and certificate combination in PKCS#12 format with 'openssl pkcs12'; Converting between PKCS#12 files and JKS files 'keytool -importkeystore'."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, keytool, Keys, Migrating, keystore, PKCS#8, PKCS#12"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Key Formats PKCS#8 and PKCS#12 and Migration</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="Key_Formats_PKCS8_PKCS12.html">
+Key Formats PKCS#8 and PKCS#12 and Migration
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_2.html">2</a>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_3.html">3</a>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_4.html">4</a>&nbsp;
+</p>
+
+
+
+<p>
+This chapter describes:
+</p>
+<ul>
+<li>What is PKCS#8? 
+</li>
+<li>What is PKCS#18? 
+</li>
+<li>Reading and writing private keys in PKCS#8 format with "openssl pkcs8"? 
+</li>
+<li>Reading and writing key and certificate combination in PKCS#12 format with "openssl pkcs12"? 
+</li>
+<li>Converting between PKCS#12 files and JKS files "keytool -importkeystore"? 
+</li>
+</ul>
+
+
+<p class="section_title">
+What is PKCS#8?
+</p>
+
+<p>
+PKCS#8 is one of the PKCS (Public Key Cryptography Standards) devised and published by RSA Security.
+PKCS#8 is designed as the Private-Key Information Syntax Standard. 
+It is used to store private keys.
+</p>
+
+<p>
+PKCS#8 standard actually has two versions: non-encrypted and encrypted. 
+</p>
+
+<p>
+The non-encrypted PKCS#8 version defines the following syntax for a private key:
+</p>
+<pre class="block_source">
+PrivateKeyInfo ::= SEQUENCE {
+  version Version,
+
+  privateKeyAlgorithm PrivateKeyAlgorithmIdentifier,
+  privateKey PrivateKey,
+  attributes [0] IMPLICIT Attributes OPTIONAL }
+
+Version ::= INTEGER
+
+PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier
+
+PrivateKey ::= OCTET STRING
+
+Attributes ::= SET OF Attribute
+</pre>
+
+<p>
+The encrypted PKCS#8 version defines the following syntax:
+</p>
+<pre class="block_source">
+EncryptedPrivateKeyInfo ::= SEQUENCE {
+  encryptionAlgorithm EncryptionAlgorithmIdentifier,
+  encryptedData EncryptedData }
+
+EncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
+
+EncryptedData ::= OCTET STRING
+</pre>
+
+<p>
+Java SE "keytool" does not support exporting private keys in PKCS#8 format directly. 
+But you can use my "DumpKey.java" to do this as described in another chapter of this book.
+</p>
+
+<p>
+"OpenSSL" does not support exporting private keys in PKCS#8 format directly.
+It writes private keys in its own format referred as a private key traditional format.
+
+But it offers the "openssl pkcs8" command to convert private keys files from traditional format
+to pkcs#8 back and forth.
+</p>
+
+<p>
+When writing a private key in PKCS#8 format in a file, it needs to stored in either DER encoding or PEM encoding. 
+DER and PEM encodings are describes in other chapters in this book.
+</p>
+
+<p>
+Visit <a href="http://www.rsa.com/rsalabs/node.asp?id=2124">PKCS page at rsa.com</a>to read more about PKCS#8.
+</p>
+
+
+<p class="section_title">
+What is PKCS#12?
+</p>
+
+<p>
+PKCS#12 is one of the PKCS (Public Key Cryptography Standards) devised and published by RSA Security.
+PKCS#12 is designed as the Personal Information Exchange Syntax Standard. 
+</p>
+
+<p>
+PKCS#12 can be used in the same way as JKS (Java KeyStore) to store private keys and certificates together in a single file.
+In fact, the Java SE "keytool" supports two keystore types: "jks" and "pkcs12".
+</p>
+
+<p>
+When you use "OpenSSL" to generate private keys and certificates, they are stored as individual separate files.
+But "OpenSSL" does offer the "openssl pkcs12" command to merge private keys and certificates into a PKCS#12 file.
+</p>
+
+<p>
+The "openssl pkcs12" command is very important if you want exchange private keys can certificates 
+between "keytool" and "OpenSSL". Read other sections to see my tutorial notes on this.
+</p>
+
+<p>
+Visit <a href="http://www.rsa.com/rsalabs/node.asp?id=2124">PKCS page at rsa.com</a>to read more about PKCS#8.
+</p>
+
+
+<p class="section_title">
+"OpenSSL" Private Key in Traditional Format
+</p>
+
+<p>
+To understand better about PKCS#8 private key format, I started with "OpenSSL"
+to generate a RSA private key (it's really a private and public key pair).
+The "openssl genrsa" command can only store the key in the traditional format. 
+But it offers various encryptions as options. 
+</p>
+
+<p>
+In the following test, I tried to use:
+</p>
+<ul>
+<li>"openssl genrsa" to generate a RSA private key and store it in the traditional format with DER encoding, but no encryption.
+</li>
+<li>"openssl rsa" to convert the key file format to traditional with PEM encoding, but no encryption.
+</li>
+<li>"openssl rsa" to convert the key file format to traditional with DER encoding and encryption.
+</li>
+<li>"openssl rsa" to convert the key file format to traditional with PEM encoding and encryption.
+</li>
+</ul>
+
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_2.html">2</a>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_3.html">3</a>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "Key_Formats_PKCS8_PKCS12.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Key Formats PKCS#8 and PKCS#12 and Migration</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is X.509 Certificate Standard, PEM (Privacy Enhanced Mail), and DER (Distinguished Encoding Rules); 'keytool' Exporting Certificates in DER and PEM; 'OpenSSL' Verifying 'keytool' Certificates; 'OpenSSL' Generating Certificates in DER and PEM; 'keytool' Viewing and Importing 'OpenSSL' Certificates."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, keytool, Certificate, X.509, Base64, PEM, DER"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Certificate Formats - X.509, DER and PEM</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="Certificate_Formats_X509_DER_PEM.html">
+Certificate Formats - X.509, DER and PEM
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="Certificate_Formats_X509_DER_PEM_2.html">2</a>&nbsp;
+<a href="Certificate_Formats_X509_DER_PEM_3.html">3</a>&nbsp;
+</p>
+
+
+
+<p>
+Certificate standard and file encodings seem to be confusing. 
+I wrote down some notes about:
+</p>
+<ul>
+<li>What is X.509 Certificate Standard?
+</li>
+<li>PEM (Privacy Enhanced Mail) Encoding
+</li>
+<li>DER (Distinguished Encoding Rules) Encoding
+</li>
+<li>"keytool" Exporting Certificates in DER and PEM
+</li>
+<li>"OpenSSL" Verifying "keytool" Certificates
+</li>
+<li>"OpenSSL" Generating Certificates in DER and PEM
+</li>
+<li>"keytool" Viewing "OpenSSL" Certificates
+</li>
+<li>"keytool" Importing "OpenSSL" Certificates
+</li>
+</ul>
+
+
+<p class="section_title">
+X.509 Certificate Standard
+</p>
+
+<p>
+X.509 is an international standard for what should be included in a digital certificate. 
+Here is the definition from webpedia.com:
+</p>
+
+<p><i>
+A widely used standard for defining digital certificates.  X.509 (Version 1) was first issued in 1988 as a part of the ITU X.500 Directory Services standard. When X.509 was revised in 1993, two more fields were added resulting in the Version 2 format. These two additional fields support directory access control. X.509 Version 3 defines the format for certificate extensions used to store additional information regarding the certificate holder and to define certificate usage. Collectively, the term X.509 refers to the latest published version, unless the version number is stated. 
+</i></p>
+
+<p><i>
+X.509 is published as ITU recommendation ITU-T X.509 (formerly CCITT X.509) and ISO/IEC/ITU 9594-8 which defines a standard certificate format for public key certificates and certification validation. With minor differences in dates and titles, these publications provide identical text in the defining of public-key and attribute certificates. 
+</i></p>
+
+<p>My understanding of X.509 is that a certificate is required to have the following information: 
+</p>
+<ul>
+<li>Version - X.509 standard version number.
+</li>
+<li>Serial Number - A sequence number given to each certificate.
+</li>
+<li>Signature Algorithm Identifier - Name of the algorithm used 
+to sign this certificate by the issuer
+</li>
+<li>Issuer Name - Name of the issuer.
+</li>
+<li>Validity Period - Period during which this certificate is valid.
+</li>
+<li>Subject Name - Name of the owner of the public key. 
+</li>
+<li>Subject Public Key Information - The public key and its related information.
+</li>
+</ul>
+
+<p>
+The content structure of a Version 3 X.509 certificate should look like this:
+</p>
+<pre class="block_source">
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1185572113 (0x46aa6511)
+        Signature Algorithm: dsaWithSHA1
+        Issuer: C=CA, ST=Herong State, L=Herong City, ... 
+        Validity
+            Not Before: Apr 1 21:35:13 2007 GMT
+            Not After : Jun 30 21:35:13 2007 GMT
+        Subject: C=CA, ST=Herong State, L=Herong City, ... 
+        Subject Public Key Info:
+            Public Key Algorithm: dsaEncryption
+            DSA Public Key:
+                pub:
+                    00:b0:61:2b:c1:88:0e:19:66:58:37:b5:...
+                    ...
+                P:
+                    00:fd:7f:53:81:1d:75:12:29:52:df:4a:...
+                    ...
+                Q:
+                    00:97:60:50:8f:15:23:0b:cc:b2:92:b9:...
+                    ...
+                G:
+                    00:f7:e1:a0:85:d6:9b:3d:de:cb:bc:ab:...
+                    ...
+   Signature Algorithm: dsaWithSHA1
+       30:2c:02:14:6c:21:f3:43:b5:4f:d5:3d:2e:23:89:45:0...
+       ...
+</pre>
+
+<p>
+X.509 define how a certificate contents should be written. 
+It does define how certificate contents should be encoded to 
+store in files. 
+</p>
+
+<p>
+Two commonly used encoding schemas are used to store X.509 certificates
+in files, DER and PEM, as described in next sections.
+</p>
+
+
+<p class="section_title">
+PEM (Privacy Enhanced Mail) Encoding
+</p>
+
+<p>
+The most commonly used encoding schema for X.509 certificate files is
+the PEM (Privacy Enhanced Mail) encoding.
+</p>
+
+<p>
+Here is the definition of PEM on wikipedia.com: 
+"Privacy Enhanced Mail (PEM), is an early IETF proposal for securing email 
+using public key cryptography. Although PEM became an IETF proposed standard 
+it was never widely deployed or used.
+</p>
+
+<p>
+The full specification of PEM is in <a href="http://tools.ietf.org/html/rfc1421">RFC 1421</a>. But the idea of PEM encoding 
+on X.509 certificates is very simple:
+</p>
+<ul>
+<li>Encode the content with Base64 encoding. 
+</li>
+<li>Enclose the Base64 encoding output between two lines:  
+"-----BEGIN CERTIFICATE-----" and "-----END CERTIFICATE-----"
+</li>
+</ul>
+
+<p>
+Here is a structural sample of a PEM encoded X.509 certificate:
+</p>
+<pre class="block_source">
+-----BEGIN CERTIFICATE-----
+MIIDODCCAvagAwIBAgIERqplETALBgcqhkjOOAQDBQAwfzELMAkGA1UE...
+...
+Cgfs2kXj/IQCFDC5GT5IrLTIFxAyPUo1tJo2DPkK
+-----END CERTIFICATE-----
+</pre>
+
+<p>
+PEM encoded certificate files are supported by almost all applications. 
+"OpenSSL" and "keytool" support PEM encoded certificate files with no problem.
+See other sections below for test notes.
+</p>
+
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="Certificate_Formats_X509_DER_PEM_2.html">2</a>&nbsp;
+<a href="Certificate_Formats_X509_DER_PEM_3.html">3</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "Certificate_Formats_X509_DER_PEM.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Certificate Formats - X.509, DER and PEM</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

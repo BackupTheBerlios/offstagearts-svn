@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: Generating RSA public and private keys; Viewing Components of RSA Keys; Encrypting RSA keys."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , RSA, public, private, key"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Generating RSA Private and Public Keys</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="openssl_rsa.html">
+OpenSSL - Generating RSA Private and Public Keys
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="openssl_rsa.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p class="section_title">
+Encrypting RSA Keys
+</p>
+
+<p>
+Since RSA keys contains a private key, which should not be share with 
+anyone else. So it's strongly recommended to store the RSA keys in an 
+encrypted form with a password to protect them. 
+</p>
+
+<p>
+Here is how to use OpenSSL to generate a RSA key pair and encrypt it 
+DES3 algorithm:
+</p>
+<pre class="block_source">
+>openssl genrsa -des3 -out herong_rsa.key
+Loading 'screen' into random state - done
+Generating RSA private key, 2048 bit long modulus
+...............................................+++
+................................................................+++
+e is 65537 (0x10001)
+Enter pass phrase for user.key: mykey
+Verifying - Enter pass phrase for user.key: mykey
+
+>type herong_rsa.key
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: DES-EDE3-CBC,61523E68F580569D
+
+MC5FNOEYflddyBF2orcTtzHSUpzrevcxZpbUU827hdmgDEoZKg54VVd9xGnxnodm
+hq1LSenM1AxWO5Bzzmxr3WCiz94xPxNSUd/1f9eonaVZT7CaVzn533lj3G26uvtO
+OyNXyBcb/kUGHXeCeGU322lB1p8gShOC/P9ip/wQvlR2yaSQGc4xKwON7O4dAvtM
+rfoV0YJNCiK/tbK/5YBykMTYBsIAqJRmKKyAILd38dd0/lDTmLDxn2SEmMmuGjTC
+yYEXZfW1PJn+gELSD1xysQ58wVtBXvdbQWG0RJYukseLurZABSyz4Lvg8fUboBAJ
+42DFO101aaCWR/uuZefNPbPzBWrdh2w+ptqxWTKTOTYoqgrW15VdRE/4YH1N8R8a
+wbzOS1oDbiRWH2WXcJ+E1dxh4UEoGuNkCV8W3nmVTvE=
+-----END RSA PRIVATE KEY-----
+</pre>
+<p>
+Perfect. This extra parameter "-des3" triggers the "genrsa" command to generate a key pair 
+and encrypt it immediately with DES-EDE3-CBC algorithm. 
+</p>
+
+<p> 
+The above command is good for encrypting the key pair at the time of generation. 
+How about encrypt a key pair previously generated? This could be done by the "rsa" 
+command:
+</p>
+<pre class="block_source">
+>openssl genrsa -out herong_rsa.key
+Loading 'screen' into random state - done
+Generating RSA private key, 512 bit long modulus
+....++++++++++++
+.++++++++++++
+e is 65537 (0x10001)
+
+>type herong_rsa.key
+-----BEGIN RSA PRIVATE KEY-----
+MIIBOwIBAAJBAKnmGcbuiAGG2XKek5LbVwF7AoT8HuNXXip7KyWevbrFlSxJWSjf
+pmeGJo7/Nsw6hFwor28RyAy1wsW5BNYOXdECAwEAAQJAQsEsI6OZQLBRQ93Wsf8I
+goZoiQPexwiO8TYPz+o9NeLELOzhYHiKuzOO5c2oVYXTSgM9IMCCo35fkzOlTdyj
+oQIhANe/bnRWtO+7gSbcqmINtFW12pbkgzQ+SlQxp7HSNL3FAiEAyZjTrFGKlG9k
+Ub4EcNFkWjIzOM/vHifYdmB/ZO9ZzJ0CIHEnEYMqxpLFQKNlMGdk0KPzUMW666VG
+1iz6Lf1xRgARAiEAplhZiR27iKGlmKF/TowpDxfPFjjVaP+d6IfVdrbdVS0CIQCY
+OHLGbU3QZn2VjSUH/BF4kP7cEPDngxbYiZ2+f2D77Q==
+-----END RSA PRIVATE KEY-----
+
+>openssl rsa -in herong_rsa.key -des -out herong_rsa_des.key
+writing RSA key
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
+
+>type herong_rsa_des.key
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: DES-CBC,C386818044590B20
+
+10JtM182aDIEMcGLGHXC51woLVdcsYWAAp0tCI1NKJRy/ZBKQLs7gzgGD9ZFBA3D
+eZ0W7CVT226yDNSAq/3G+st1cR3kfFmxO3cfT8DHKV4zJVLSRrKfklURp0SdfaB6
+LLpbdz9OSwxYphVTBTQAaeLYBipZhyV5BJZeQH40b5S3SclHid5Bn3SaxmFIgRCp
+X07GQkiVU+KLhW4Q2v7uV7qU/dlym7WAsxlw4vEw9EhLw2RTPGEC0IaTzPtgWnsE
+wQcvS0gDg5C8sP/rpHdQcZFCqpt4+n9M/p1Ciz1d0DNYRefvZnmf9w/z02oT3KY+
+nJxrL6kh2kYVUOQKSwlA4Swtt4lPy6gimg+1xG96+BnrG803FYQ23rlusCThg+yw
+lHpltupnF9YW38dParIlLsxMxFRhRc8qNZSAwnBHP78=
+-----END RSA PRIVATE KEY-----
+</pre>
+
+
+<p class="section_title">
+Conclusion
+</p>
+
+<p>
+We have learned two commands here: genrsa and rsa. They can be used generate, view and encrypt RSA key pairs.
+</p>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="openssl_rsa.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "openssl_rsa.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Generating RSA Private and Public Keys</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

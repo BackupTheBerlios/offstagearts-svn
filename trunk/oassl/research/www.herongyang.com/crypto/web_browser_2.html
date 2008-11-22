@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: Using certificates with browser; Exporting and importing certificates from and to browsers."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , IE, Web, browser, FireFox, certificate."/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Using Certificates with Web Browsers</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="web_browser.html">
+Using Certificates with Web Browsers
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="web_browser.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="web_browser_3.html">3</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+Once exported, we can view the certificate with OpenSSL:
+</p>
+<pre class="block_source">
+>openssl x509 -in \verisign.cer -inform DER -noout -text
+Certificate:
+    Data:
+        Version: 1 (0x0)
+        Serial Number:
+            7d:d9:fe:07:cf:a8:1e:b7:10:79:67:fb:a7:89:34:c6
+        Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=US, O=VeriSign, Inc., OU=Class 3 Public Primary Cer
+tification Authority - G2, OU=(c) 1998 VeriSign, Inc. - For authorize
+d use only, OU=VeriSign Trust Network
+        Validity
+            Not Before: May 18 00:00:00 1998 GMT
+            Not After : Aug  1 23:59:59 2028 GMT
+        Subject: C=US, O=VeriSign, Inc., OU=Class 3 Public Primary Cer
+tification Authority - G2, OU=(c) 1998 VeriSign, Inc. - For authorized
+ use only, OU=VeriSign Trust Network
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (1024 bit)
+                Modulus (1024 bit):
+                    00:cc:5e:d1:11:5d:5c:69:d0:ab:d3:b9:6a:4c:99:
+                    1f:59:98:30:8e:16:85:20:46:6d:47:3f:d4:85:20:
+                    84:e1:6d:b3:f8:a4:ed:0c:f1:17:0f:3b:f9:a7:f9:
+                    25:d7:c1:cf:84:63:f2:7c:63:cf:a2:47:f2:c6:5b:
+                    33:8e:64:40:04:68:c1:80:b9:64:1c:45:77:c7:d8:
+                    6e:f5:95:29:3c:50:e8:34:d7:78:1f:a8:ba:6d:43:
+                    91:95:8f:45:57:5e:7e:c5:fb:ca:a4:04:eb:ea:97:
+                    37:54:30:6f:bb:01:47:32:33:cd:dc:57:9b:64:69:
+                    61:f8:9b:1d:1c:89:4f:5c:67
+                Exponent: 65537 (0x10001)
+    Signature Algorithm: sha1WithRSAEncryption
+        51:4d:cd:be:5c:cb:98:19:9c:15:b2:01:39:78:2e:4d:0f:67:
+        70:70:99:c6:10:5a:94:a4:53:4d:54:6d:2b:af:0d:5d:40:8b:
+        64:d3:d7:ee:de:56:61:92:5f:a6:c4:1d:10:61:36:d3:2c:27:
+        3c:e8:29:09:b9:11:64:74:cc:b5:73:9f:1c:48:a9:bc:61:01:
+        ee:e2:17:a6:0c:e3:40:08:3b:0e:e7:eb:44:73:2a:9a:f1:69:
+        92:ef:71:14:c3:39:ac:71:a7:91:09:6f:e4:71:06:b3:ba:59:
+        57:26:79:00:f6:f8:0d:a2:33:30:28:d4:aa:58:a0:9d:9d:69:
+        91:fd
+</pre>
+
+<p>
+Very nice. Right? A self-signed certificate from VeriSign Inc., valid until year 2028.
+</p>
+<ul>
+<li>A self-signed certificate from VeriSign Inc., valid until year 2028.
+</li>
+<li>The certificate file format is DER, not PEM. You need to use "-inform DER" with the OpenSSL 
+command.
+</li>
+</ul>
+
+<p>
+Of course, we can export the certificate out of IE, and save it in PEM formation. Just select 
+"Base-64 encoded X.509 (.CER)" as the export file format in step 7. 
+</p>
+
+
+<p class="section_title">
+Importing Certificates into IE
+</p>
+
+<p>
+To test importing certificates into IE, let's reuse the certificates created previously in this book. 
+</p>
+<ul>
+<li>herong.crt - self-signed by Herong.
+</li>
+<li>john.crt - signed by Herong.
+</li>
+<li>bill.crt - signed by John. 
+</li>
+<li>tom.crt - signed by John. 
+</li>
+</ul>
+
+<p>
+Here are the steps to import herong.crt into IE: 
+</p>
+
+<p>
+1. Open IE 6.0, and go to the "Tools / Internet Options..." menu option. The Internet Options dialog box shows up.
+</p>
+
+<p>
+2. Go to the Content tab, and click the "Certificates..." button in the Certificates section. 
+The Certificates dialog box shows up.
+</p>
+
+<p>
+3. Go to "Trusted Root Certification Authorities" tab, and click the "Import..." button. The Certificate Import Wizard shows up. 
+</p>
+
+<p>
+4. Clik Next, and enter herong.crt. 
+</p>
+
+<p>
+5. Clik Next, then click Finish. herong.crt is now imported into IE as a trusted root certificate. 
+</p>
+
+<p>
+Repeat the import process again to import john.crt, bill.crt, and tom.crt into the "Intermediate Certificate Authorities" tab. 
+</p>
+
+<p>
+Now if you view the "Tom Bush" certificate in IE, the certification path will be displayed as 
+"Herong Yang" --> "John Smith" --> "Bill White" --> "Tom Bush". 
+</p>
+
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="web_browser.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="web_browser_3.html">3</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "web_browser.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Using Certificates with Web Browsers</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

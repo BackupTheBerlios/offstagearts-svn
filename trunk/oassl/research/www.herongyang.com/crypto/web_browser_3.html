@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: Using certificates with browser; Exporting and importing certificates from and to browsers."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , IE, Web, browser, FireFox, certificate."/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Using Certificates with Web Browsers</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="web_browser.html">
+Using Certificates with Web Browsers
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="web_browser.html">1</a>&nbsp;
+<a href="web_browser_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p class="section_title">
+View Certificates in FireFox
+</p>
+
+<p>
+1. Open Firefox 1.0, and go to the "Tools / Options..." menu option. The Options dialog box shows up. 
+</p>
+
+
+<p>
+2. Click the Advanced icon, then open the Certificates section.
+</p>
+
+<p>
+3. Click the Manage Certificates... button. The Certificate Manager dialog box shows up. 
+</p>
+
+<p>
+4. Go to the Authorities tab. 
+</p>
+
+<p>
+5. Select "Verisign Class3 Public Primary Certification Authority", and click "View" button. 
+The Certificate Viewer dialog box shows up. 
+</p>
+
+<p>
+6. Review the details of the certificate on the "Details" tab. 
+</p>
+
+<p>
+Looks like FireFox allows you to view certificates, but not let you export them out to files. 
+</p>
+
+
+<p class="section_title">
+Importing Certificates into FireFox
+</p>
+
+
+<p>
+To test importing certificates into FireFox, let's reuse the same certificates:
+</p>
+<ul>
+<li>herong.crt - self-signed by Herong.
+</li>
+<li>john.crt - signed by Herong.
+</li>
+<li>bill.crt - signed by John. 
+</li>
+<li>tom.crt - signed by John. 
+</li>
+</ul>
+
+<p>
+Here are the steps to import herong.crt into FireFox: 
+</p>
+
+<p>
+1. Open Firefox 1.0, and go to the "Tools / Options..." menu option. The Options dialog box shows up. 
+</p>
+
+<p>
+2. Click the Advanced icon, then open the Certificates section.
+</p>
+
+<p>
+3. Click the Manage Certificates... button. The Certificate Manager dialog box shows up. 
+</p>
+
+<p>
+4. Go to the Authorities tab. 
+</p>
+
+<p>
+5. Click the Import button, and specify herong.crt. 
+</p>
+
+
+<p>
+6. Check all the "Trust this CA to identify ..." options, 
+and click OK. 
+</p>
+
+<p>
+Herong's certificate is now imported into FireFox as a trusted certificate. 
+</p>
+
+<p>
+Continue to import john.crt, bill.crt, and tom.crt into the FireFox on the Authorities tab.
+</p>
+
+
+
+<p class="section_title">
+Conclusion
+</p>
+
+<p>
+Web browser needs authority's certificates to validate Web server certificate, if the Web server is SSL enabled. 
+</p>
+
+<p>
+Web browser also needs client certificate, if the Web server is SSL enabled and asking for client certification. 
+</p>
+
+<p>
+Both IE and FireFox allow you to view and import certificates. 
+</p>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="web_browser.html">1</a>&nbsp;
+<a href="web_browser_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "web_browser.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Using Certificates with Web Browsers</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

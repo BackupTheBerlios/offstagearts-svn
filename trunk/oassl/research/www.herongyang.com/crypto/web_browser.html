@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: Using certificates with browser; Exporting and importing certificates from and to browsers."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , IE, Web, browser, FireFox, certificate."/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Using Certificates with Web Browsers</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="web_browser.html">
+Using Certificates with Web Browsers
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="web_browser_2.html">2</a>&nbsp;
+<a href="web_browser_3.html">3</a>&nbsp;
+</p>
+
+
+
+<p>
+This chapter describes:
+</p>
+<ul>
+<li>
+Why Using Certificates with Browser? 
+</li>
+<li>
+Exporting Certificates Out of Internet Explorer (IE)
+</li>
+<li>
+Importing Certificates into IE
+</li>
+<li>
+View Certificates in FireFox
+</li>
+<li>
+Importing Certificates into FireFox
+</li>
+</ul>
+
+
+<p class="section_title">
+Why Using Certificates with Browser? 
+</p>
+
+<p>
+In previous parts of the book, we have learned how to generate certificates. Now let's see how we can 
+use certificates with Web browsers. 
+</p>
+
+<p>
+The first question we need to ask is why do we need certificates in a Web browser? The answer is that 
+many Web sites supports SSL (Secure Socket Layer). 
+</p>
+
+<p>
+When a Web browser reaches a SSL enabled Web site (URL starts with https://), the server will send a certificate, 
+called server certificate, the Web browser. The subject of the server certificate represents the server. The browser
+is expected to trust the server certificate, or validate it with a trusted certification path. 
+</p>
+
+<p>
+A SSL enabled Web site may also ask the Web browser to send back a certificate, called client certificate, 
+to identify the client, so that the server can validate the client.
+</p>
+
+<p>
+So a Web browser needs to have certificates for two purposes:
+</p>
+<ul>
+<li>To form a certification path to validate the server certificate.
+</li>
+<li>To identify client, if the server wants to do client certification. 
+</li>
+</ul>
+
+<p>
+There is only one case where the Web browser doesn't need any certificate, even if the server is SSL enabled:
+</p>
+<ul>
+<li>The server is not asking client certification, and you let the Web browser trust the server certificate
+automatically. 
+</li>
+</ul>
+
+
+<p class="section_title">
+Exporting Certificates Out of Internet Explorer (IE)
+</p>
+
+<p>
+Now we know why a Web browser needs have certificates. Let's see how can we look at the certificates stored
+the Internet Explorer (IE). 
+</p>
+
+<p>
+1. Open IE 6.0, and go to the "Tools / Internet Options..." menu option. The Internet Options dialog box shows up.
+</p>
+
+<p>
+2. Go to the Content tab, and click the "Publishers..." button in the Certificates section. 
+The Certificates dialog box shows up.
+</p>
+
+<p>
+3. Go to "Trusted Root Certification Authorities" tab. You should see a list of certificates that come with 
+the IE installation. All certificates listed on this tab are automatically trusted. 
+</p>
+
+<p>
+4. Select "VeriSign Trust Network" with expiration date of 8/1/2028, and click the "View" button. 
+The Certificate dialog box shows up.
+</p>
+
+<p>
+5. You should see 3 tabs: General, Details, and Certificate Path. Review them. You should find some 
+interesting information on this certificate. 
+</p>
+
+<p>
+6. Go to the Details tab, and click the "Copy to File..." button. The Certificate Export Wizard shows up.
+</p>
+
+<p>
+7. Click Next, and select "DER encoded binary X.509 (.CER)" as the export file format.
+</p>
+
+<p>
+8. Click Next, and enter a file name: \verisign1.cer.
+</p>
+
+<p>
+9. Click Finish. The selected certificate will be exported into the specified file. 
+</p>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="web_browser_2.html">2</a>&nbsp;
+<a href="web_browser_3.html">3</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "web_browser.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Using Certificates with Web Browsers</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

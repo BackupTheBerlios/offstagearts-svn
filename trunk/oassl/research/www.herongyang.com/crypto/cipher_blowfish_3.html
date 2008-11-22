@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: Blowfish cipher algorithm and key schedule algorithm; Java implementation; 8366 hex digits of pi."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , Blowfish, algorithm, secret, key, encryption, decryption, cipher"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Cipher - Blowfish Algorithm</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="cipher_blowfish.html">
+Cipher - Blowfish Algorithm
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="cipher_blowfish.html">1</a>&nbsp;
+<a href="cipher_blowfish_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="cipher_blowfish_4.html">4</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+Encryption algorithm with temporary variables:
+</p>
+<pre class="block_source">
+Input: 
+   T: 64 bits of clear text
+   P1, P2, ..., P18: 18 sub-keys
+   F(): Round function
+   
+Output: 
+   C: 64 bits of cipher text
+
+Algorithm:
+   (L0, R0) = T, dividing T into two 32-bit parts
+   L1 = L0 XOR P1
+   R2 = R0 XOR F(L1) XOR P2
+   L3 = L1 XOR F(R2) XOR P3
+   R4 = R2 XOR F(L3) XOR P4
+   L5 = L3 XOR F(R4) XOR P5
+   R6 = R4 XOR F(L5) XOR P6
+   L7 = L5 XOR F(R6) XOR P7
+   R8 = R6 XOR F(L7) XOR P8
+   L9 = L7 XOR F(R8) XOR P9
+   R10 = R8 XOR F(L9) XOR P10
+   L11 = L9 XOR F(R10) XOR P11
+   R12 = R10 XOR F(L11) XOR P12
+   L13 = L11 XOR F(R12) XOR P13
+   R14 = R12 XOR F(L13) XOR P14
+   L15 = L13 XOR F(R14) XOR P15
+   R16 = R14 XOR F(L15) XOR P16
+   L17 = L15 XOR F(R16) XOR P17
+   R18 = R16 XOR P18
+   C = (R18, L17)
+</pre>
+
+<p>
+Decryption algorithm with temporary variables:
+</p>
+<pre class="block_source">
+Input: 
+   CC: 64 bits of cipher text
+   P1, P2, ..., P18: 18 sub-keys
+   F(): Round function
+   
+Output: 
+   TT: 64 bits of clear text
+
+Algorithm:
+   (LL0, RR0) = CC, dividing CC into two 32-bit parts
+   LL1 = LL0 XOR P18
+   RR2 = RR0 XOR F(LL1) XOR P17
+   LL3 = LL1 XOR F(RR2) XOR P16
+   RR4 = RR2 XOR F(LL3) XOR P15
+   LL5 = LL3 XOR F(RR4) XOR P14
+   RR6 = RR4 XOR F(LL5) XOR P13
+   LL7 = LL5 XOR F(RR6) XOR P12
+   RR8 = RR6 XOR F(LL7) XOR P11
+   LL9 = LL7 XOR F(RR8) XOR P10
+   RR10 = RR8 XOR F(LL9) XOR P9
+   LL11 = LL9 XOR F(RR10) XOR P8
+   RR12 = RR10 XOR F(LL11) XOR P7
+   LL13 = LL11 XOR F(RR12) XOR P6
+   RR14 = RR12 XOR F(LL13) XOR P5
+   LL15 = LL13 XOR F(RR14) XOR P4
+   RR16 = RR14 XOR F(LL15) XOR P3
+   LL17 = LL15 XOR F(RR16) XOR P2
+   RR18 = R16 XOR P1
+   TT = (RR18, LL17)
+</pre>
+
+<p>
+Here is how to approve the decryption algorithm:
+</p>
+<pre class="block_source">
+Let: 
+   T: 64 bits of clear text
+   C: 64 bits of cipher text encrypted from T
+   CC: 64 bits of cipher text
+   TT: 64 bits of clear text decrypted from CC
+
+If: 
+   CC = C
+   
+Then: 
+   TT = T
+
+Prove:
+   (LL0, RR0) = CC            Initializing step in decryption
+      = C                     Assumption of CC = C
+      = (R18, L17)            Finalizing step in encryption
+
+   LL1 = LL0 XOR P18          Applying P18 in decryption
+      = R18 XOR P18           Previous result
+      = R16 XOR P18 XOR P18   Applying P18 in encryption
+      = R16
+
+   RR2 = RR0 XOR F(LL1) XOR P17
+                              Applying P17 in decryption
+      = L17 XOR F(R16) XOR P17
+                              Previous result
+      = L15 XOR F(R16) XOR P17 XOR F(R16) XOR P17
+                              Applying P17 in encryption
+      = L15
+
+   ......
+   
+   LL17 = LL15 XOR F(RR16) XOR P2
+                              Applying P2 in decryption
+      = R2 XOR F(L1) XOR P2
+                              Previous result
+      = R0 XOR F(L1) XOR P2 XOR F(L1) XOR P2
+                              Applying P2 in encryption
+      = R0
+
+   RR18 = RR16 XOR P1         Applying P1 in decryption
+      = L1 XOR P1             Previous result
+      = L0 XOR P1 XOR P1      Applying P1 in encryption
+      = L0
+
+   TT = (RR18, LL17)          Finalizing step in decryption
+      = (L0, R0)              Initializing step in encryption
+      = T 
+</pre>
+
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="cipher_blowfish.html">1</a>&nbsp;
+<a href="cipher_blowfish_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="cipher_blowfish_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "cipher_blowfish.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Cipher - Blowfish Algorithm</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is OpenSSL; Installation of OpenSSL."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, SSL, toolkit, Windows"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Installation on Windows</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="openssl.html">
+OpenSSL - Installation on Windows
+</p>
+
+
+
+
+<p>
+This chapter describes:
+</p>
+<ul>
+<li>Installation of OpenSSL on Windows system.
+</li>
+</ul>
+
+
+<p class="section_title">
+What is OpenSSL?
+</p>
+
+<p>
+OpenSSL is a cryptography toolkit implementing the Secure Sockets Layer
+       (SSL v2/v3) and Transport Layer Security (TLS v1) network protocols and
+       related cryptography standards required by them.
+</p>
+
+<p>
+       The openssl program is a command line tool for using the various cryptography 
+       functions of OpenSSL's crypto library from the shell. It can
+       be used for:
+</p>
+<ul>
+<li>Creation of RSA, DH and DSA key parameters</li>
+<li>Creation of X.509 certificates, CSRs and CRLs</li>
+<li>Calculation of Message Digests</li>
+<li>Encryption and Decryption with Ciphers</li>
+<li>SSL/TLS Client and Server Tests</li>
+<li>Handling of S/MIME signed or encrypted mail</li>
+</ul>
+
+
+<p class="section_title">
+Installing OpenSSL on Windows
+</p>
+
+<p>
+OpenSSL is officially distributed in C source code format. This is not a problem for 
+Unix systems where C compiler is always available. But if you have a Windows system, 
+you will have a hard time to install OpenSSL in C source code format. What you should
+do is to find a pre-compiled binary version for Windows. Here is my sugge I installed 
+OpenSSL on my Windows system:
+</p>
+
+<p>
+1. Go to http://gnuwin32.sourceforge.net/packages/openssl.htm, and 
+download the "Setup" version of "Binaries", openssl-0.9.7c-bin.exe.
+</p>
+
+<p>
+2. Double click on openssl-0.9.7c-bin.exe to install OpenSSL to \local\gnuwin32 directory.
+</p>
+
+<p>
+3. Go back to the same page, download the "Setup" version of "Documentation", and 
+install it to the same directory.
+</p>
+
+<p>
+4. Open command line window, and try the following command:
+</p>
+
+<pre class="block_source">
+>\local\gnuwin32\bin\openssl -help
+openssl:Error: '-help' is an invalid command.
+
+Standard commands
+asn1parse      ca             ciphers        crl            crl2pkcs7
+dgst           dh             dhparam        dsa            dsaparam
+enc            engine         errstr         gendh          gendsa
+genrsa         nseq           ocsp           passwd         pkcs12
+pkcs7          pkcs8          rand           req            rsa
+rsautl         s_client       s_server       s_time         sess_id
+smime          speed          spkac          verify         version
+x509
+......
+</pre>
+
+<p>
+If you see the list of commands printed by OpenSSL, you know that your installation
+is done correctly.
+</p>
+
+
+
+
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "openssl.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Installation on Windows</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

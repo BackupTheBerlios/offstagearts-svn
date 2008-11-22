@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: Terminologies used in cryptography"/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , term"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Terminology</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="term.html">
+Terminology
+</p>
+
+
+
+
+<p class="section_title">
+Cryptography Terminology
+</p>
+
+<p>
+<b>Blowfish</b>: A Feistel network iterating a simple encryption function 16 times. 
+The block size is 64 bits, 
+and the key can be any length up to 448 bits. Although there is a complex 
+initialization phase required before any encryption can take place, the actual 
+encryption of data is very efficient on large microprocessors.
+</p>
+
+<p>
+<b>CBC (Cipher Block Chaining)</b>: An operation mode for block ciphers, where each plaintext block is XORed 
+with the previous ciphertext block before encryption.
+</p>
+
+<p>
+<b>Certification Chain</b>: Also called Certificate Path. An ordered list of certificates where the subject entity 
+of one certificate is identical to the issuing entity of the next certificate. 
+</p>
+
+<p>
+<b>Certificate Path</b>: Also called Certification Chain. An ordered list of certificates where the subject entity 
+of one certificate is identical to the issuing entity of the next certificate. 
+</p>
+
+<p>
+<b>CFB (Cipher FeedBack)</b>: An operation mode for block ciphers, where each block of plaintext is XORed with the encrypted version of 
+the previous ciphertext to generate the current ciphertext block.
+</p>
+
+<p>
+<b>DES (Data Encryption Standard)</b>: A 16-round Feistel cipher with block size of 64 bits.
+DES was developed by IBM in 1974 in response to a federal government public
+invitation for data encryption algorithms. In 977, DES was published as a 
+federal standard, FIPS PUB 46.
+</p>
+
+<p>
+<b>ECB (Electronic CodeBook)</b>: An operation mode for block ciphers, where each plaintext block is encrypted
+independent from other blocks.
+</p>
+
+<p>
+<b>MD5 (Message Digest 5)</b>: A message-digest algorithm, which 
+takes as input a message of arbitrary length and produces
+   as output a 128-bit "fingerprint" or "message digest" of the input.
+   It is conjectured that it is computationally infeasible to produce
+   two messages having the same message digest, or to produce any
+   message having a given prespecified target message digest.
+</p>
+
+<p>
+<b>OFB (Output FeedBack)</b>: An operation mode for block ciphers, where each block of plaintext is XORed with the encrypted version of 
+the previous ciphertext to generate the current ciphertext block.
+</p>
+
+<p>
+<b>OpenSSL</b>: A cryptography toolkit implementing the Secure Sockets Layer
+(SSL v2/v3) and Transport Layer Security (TLS v1) network protocols and
+related cryptography standards required by them.
+</p>
+
+<p>
+<b>PKCS5Padding</b>: A padding schema for block ciphers, where the number of padded bytes equals 
+to "8 - numberOfBytes(clearTextMessage) mod 8", and the value of each padded byte is an integer 
+value of the number of padded bytes.
+</p>
+
+<p>
+<b>RSA (Ronald L. Rivest, Adi Shamir, and Leonard M. Adleman)</b>: A public key algorithm 
+invented in 1976 by three MIT mathematicians, Ronald L. Rivest, Adi Shamir, 
+and Leonard M. Adleman.
+</p>
+
+<p>
+<b>SHA1 (Secure Hash Algorithm 1)</b>: A message-digest algorithm, which takes 
+an input message of any length &lt; 2^64 bits and produces a 160-bit output
+as the message digest.
+</p>
+
+
+
+
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "term.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Terminology</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

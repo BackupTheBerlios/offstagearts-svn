@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is PKCS#8? What is PKCS#18? Reading and writing private keys in PKCS#8 format with 'openssl pkcs8'; Reading and writing key and certificate combination in PKCS#12 format with 'openssl pkcs12'; Converting between PKCS#12 files and JKS files 'keytool -importkeystore'."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, keytool, Keys, Migrating, keystore, PKCS#8, PKCS#12"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Key Formats PKCS#8 and PKCS#12 and Migration</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="Key_Formats_PKCS8_PKCS12.html">
+Key Formats PKCS#8 and PKCS#12 and Migration
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="Key_Formats_PKCS8_PKCS12.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_3.html">3</a>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_4.html">4</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+My command session was recorded as blow:
+</p>
+<pre class="block_source">
+>rem traditional format, PEM encoding, no encryption
+>openssl genrsa -out openssl_key.pem 1024
+
+Loading 'screen' into random state - done
+Generating RSA private key, 1024 bit long modulus
+.......++++++
+........................................++++++
+e is 65537 (0x10001)
+
+>rem traditional format, DER encoding, no encryption
+>openssl rsa -in openssl_key.pem -inform pem 
+-out openssl_key.der -outform der
+
+writing RSA key
+
+>rem traditional format, PEM encoding, DES encryption
+>openssl rsa -in openssl_key.pem -inform pem 
+-out openssl_key_des.pem -outform pem -des
+
+writing RSA key
+Enter PEM pass phrase: keypass
+Verifying - Enter PEM pass phrase: keypass
+
+>rem traditional format, DER encoding, DES encryption
+>openssl rsa -in openssl_key.pem -inform pem 
+-out openssl_key_des.der -outform der -des
+
+writing RSA key
+</pre>
+
+<p>
+All commands were executed as expected except the last one. The traditional format with DER encoding seems 
+not able to apply the DES encryption.
+</p>
+
+<p>
+Anyway, I got my RSA private key stored in OpenSSL traditional format with 3 flavors:
+</p>
+<pre class="block_source">
+04/01/2007  09:55 AM               608 openssl_key.der
+04/01/2007  09:52 AM               887 openssl_key.pem
+04/01/2007  10:01 AM               958 openssl_key_des.pem
+</pre>
+
+<p>
+Now I am ready to my private key to PKCS#8 format as described in the next section.
+</p>
+
+
+<p class="section_title">
+"OpenSSL" Private Key in PKCS#8 Format
+</p>
+
+<p>
+Once I have my private key stored in the traditional format,
+I can use the "openssl pkcs8" command to convert it into PKCS#8 format.
+My plan was to try to do the following:
+</p>
+<ul>
+<li>"openssl pkcs8 -topk8" to convert the key file format to PKCS#8 with PEM encoding, but no encryption.
+</li>
+<li>"openssl pkcs8 -topk8" to convert the key file format to PKCS#8 with DER encoding, but no encryption.
+</li>
+<li>"openssl pkcs8 -topk8" to convert the key file format to PKCS#8 with PEM encoding and encryption.
+</li>
+<li>"openssl pkcs8 -topk8" to convert the key file format to PKCS#8 with DER encoding and encryption.
+</li>
+</ul>
+
+<p>
+My command session was recorded as blow:
+</p>
+<pre class="block_source">
+>rem PKCS#8 format, PEM encoding, no encryption
+>openssl pkcs8 -topk8 -in openssl_key.pem -inform pem 
+-out openssl_key_pk8.pem -outform pem -nocrypt
+
+>rem PKCS#8 format, DER encoding, no encryption
+>openssl pkcs8 -topk8 -in openssl_key.pem -inform pem 
+-out openssl_key_pk8.der -outform der -nocrypt
+
+>rem PKCS#8 format, PEM encoding, encrypted
+>openssl pkcs8 -topk8 -in openssl_key.pem -inform pem 
+-out openssl_key_pk8_enc.pem -outform pem
+
+Enter Encryption Password: keypass
+Verifying - Enter Encryption Password: keypass
+Loading 'screen' into random state - done
+
+>rem PKCS#8 format, DER encoding, encrypted
+>openssl pkcs8 -topk8 -in openssl_key.pem -inform pem 
+-out openssl_key_pk8_enc.der -outform der
+
+Enter Encryption Password: keypass
+Verifying - Enter Encryption Password: keypass
+Loading 'screen' into random state - done
+</pre>
+
+<p>
+All commands executed as expected this time. I got my RSA private key stored in 
+OpenSSL traditional format and PKCS#8 format in 7 flavors:
+</p>
+<pre class="block_source">
+04/01/2007  09:55 AM               608 openssl_key.der
+04/01/2007  09:52 AM               887 openssl_key.pem
+04/01/2007  10:01 AM               958 openssl_key_des.pem
+04/01/2007  10:29 AM               634 openssl_key_pk8.der
+04/01/2007  10:28 AM               916 openssl_key_pk8.pem
+04/01/2007  11:53 AM               677 openssl_key_pk8_enc.der
+04/01/2007  10:29 AM               993 openssl_key_pk8_enc.pem
+</pre>
+
+<p>
+Now the question is how to verify them? Looks like there no easy tool to do this. 
+I will leave this task later by writing a Java program to verify them.
+</p>
+
+
+<p class="section_title">
+"OpenSSL" Key and Certificate in PKCS#12 Format
+</p>
+
+<p>
+PKCS#12 (Personal Information Exchange Syntax Standard) defines how a private key 
+and its related certificates should be stored in single file. In this section, 
+I want to try the following:
+</p>
+<ul>
+<li>Use "openssl reg -new -x509" command to create a self-signed certificate with my private key. 
+</li>
+<li>Use "openssl pkcs12 -export" command to merge my private key and my certificate into a PKCS#12 file.
+</li>
+<li>Use "openssl pkcs12" command to parse a PKCS#12 file into an encrypted PEM file.
+</li>
+</ul>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="Key_Formats_PKCS8_PKCS12.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_3.html">3</a>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "Key_Formats_PKCS8_PKCS12.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Key Formats PKCS#8 and PKCS#12 and Migration</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

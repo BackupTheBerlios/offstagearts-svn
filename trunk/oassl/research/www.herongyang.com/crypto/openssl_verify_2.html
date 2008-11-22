@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is a certification path? Validation and testing certification path."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , verify, certificate chain, certification path, OpenSSL, CA, self-signed"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Certification Path and Validation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="openssl_verify.html">
+OpenSSL - Certification Path and Validation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="openssl_verify.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+2. Generating a certificate for John and signed by Herong, john.crt:
+</p>
+<pre class="block_source">
+>echo Generating keys for John
+>openssl genrsa -des3 -out john_rsa.key
+...
+
+>echo Generating a certificate signing request for John
+>openssl req -new -key john_rsa.key -out john.csr -config openssl.cnf
+...
+
+>echo Signing a John's request by Herong's key
+>openssl x509 -req -in john.csr -CA herong.crt -CAkey herong_rsa.key
+   -out john.crt -set_serial 3
+...
+</pre>
+
+<p>
+3. Generating a certificate for Bill and signed by John, bill.crt:
+</p>
+<pre class="block_source">
+>echo Generating keys for Bill
+>openssl genrsa -des3 -out bill_rsa.key
+...
+
+>echo Generating a certificate signing request for Bill
+>openssl req -new -key bill_rsa.key -out bill.csr -config openssl.cnf
+...
+
+>echo Signing a Bill's request by John's key
+>openssl x509 -req -in bill.csr -CA john.crt -CAkey john_rsa.key 
+   -out bill.crt -set_serial 7
+...
+</pre>
+
+<p>
+4. Generating a certificate for Tom and signed by Bill, tom.crt:
+</p>
+<pre class="block_source">
+>echo Generating keys for Tom
+>openssl genrsa -des3 -out tom_rsa.key
+...
+
+>echo Generating a certificate signing request for Bill
+>openssl req -new -key tom_rsa.key -out tom.csr -config openssl.cnf
+...
+
+>echo Signing a Tom's request by Bill's key
+>openssl x509 -req -in tom.csr -CA bill.crt -CAkey bill_rsa.key 
+   -out tom.crt -set_serial 11
+...
+</pre>
+
+<p>
+Ok. 4 certificates are enough to do some interesting tests with the "verify" command:
+</p>
+
+<p>
+5. Verify the shortest certification path, one certificate only:
+</p>
+<pre class="block_source">
+>openssl verify herong.crt
+herong.crt: /C=CN/ST=PN/L=LN/O=ON/OU=UN/CN=Herong Yang
+error 18 at 0 depth lookup:self signed certificate
+OK
+
+>openssl verify -CAfile herong.crt herong.crt
+herong.crt: OK
+OK
+
+>openssl verify john.crt
+john.crt: /C=CN/ST=PN/L=LN/O=ON/OU=UN/CN=John Smith
+error 20 at 0 depth lookup:unable to get local issuer certificate
+
+>openssl verify -CAfile john.crt john.crt
+john.crt: /C=CN/ST=PN/L=LN/O=ON/OU=UN/CN=John Smith
+error 20 at 0 depth lookup:unable to get local issuer certificate
+</pre>
+<p>
+Note that:
+</p>
+<ul>
+<li>You will get an OK with an error, when validating a self-signed certificate without specifying it as the CA certificate. 
+</li>
+<li>You will get a perfect OK, when validating a self-signed certificate with the CA certificate specified as itself.
+</li>
+<li>You will get an error, when validating a non self-signed certificate with or without specifying it as the CA certificate.
+</li>
+</ul>
+
+<p>
+6. Verify certification paths of two certificates:
+</p>
+<pre class="block_source">
+>openssl verify -CAfile herong.crt john.crt
+john.crt: OK
+
+>openssl verify -CAfile herong.crt bill.crt
+bill.crt: /C=CN/ST=PN/L=LN/O=ON/OU=UN/CN=Bill White
+error 20 at 0 depth lookup:unable to get local issuer certificate
+
+>openssl verify -CAfile john.crt bill.crt
+bill.crt: /C=CN/ST=PN/L=LN/O=ON/OU=UN/CN=John Smith
+error 2 at 1 depth lookup:unable to get issuer certificate
+</pre>
+<p>
+Note that:
+</p>
+<ul>
+<li>Test 1: Perfect.
+</li>
+<li>Test 2: Path broken at 0 depth. Could not find the issuer on bill.crt. 
+</li>
+<li>Test 3: Path broken at 1 depth. Could not find the issuer on john.crt.
+</li>
+</ul>
+
+<p>
+7. Verify certification paths of many certificates:
+</p>
+<pre class="block_source">
+>openssl verify -CAfile herong.crt -untrusted john.crt bill.crt
+bill.crt: OK
+
+>openssl verify -CAfile herong.crt -untrusted bill.crt tom.crt
+tom.crt: /C=CN/ST=PN/L=LN/O=ON/OU=UN/CN=Bill Gate
+error 20 at 1 depth lookup:unable to get local issuer certificate
+
+>copy john.crt+bill.crt all.crt
+>openssl verify -CAfile herong.crt -untrusted all.crt tom.crt
+tom.crt: OK
+</pre>
+<p>
+Note that:
+</p>
+<ul>
+<li>Test 1: Perfect.
+</li>
+<li>Test 2: Path broken at 1 depth. Could not find the issuer on bill.crt. 
+</li>
+<li>Test 3: Perfect. Look at how I join two certificates file together with the DOS command "copy". 
+</li>
+</ul>
+
+
+<p class="section_title">
+Conclusion
+</p>
+
+<p>
+The certification path concept is simple. Just remember that the previous certificate identifies the issuer of the next certificate. 
+</p>
+
+<p>
+OpenSSL "verify" tool is cool. It needs only two command options: -CAfile and -untrusted.  
+</p>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="openssl_verify.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "openssl_verify.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Certification Path and Validation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

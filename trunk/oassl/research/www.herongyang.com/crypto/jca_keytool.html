@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is a certificate and a certificate chain? What is keystore? What are the functions offered by keytool? Examples of using keytool."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , keytool, keystore, Certificates"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - keytool - JDK Tool to Manage Certificates Using 'keystore'</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="jca_keytool.html">
+keytool - JDK Tool to Manage Certificates Using 'keystore'
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="jca_keytool_2.html">2</a>&nbsp;
+<a href="jca_keytool_3.html">3</a>&nbsp;
+</p>
+
+tool introduced in JDK 1.2 to manage keys and certificates 
+using "keystore". "keytool" 
+
+
+
+<p>
+This chapter describes some parts of the JCA (Java Cryptography Architecture)
+which has been included in JDK since 1.1:
+</p>
+<ul>
+<li>What is a certificate and a certificate chain? 
+</li>
+<li>What is "keystore"? 
+</li>
+<li>What are the functions offered by "keytool"?
+</li>
+<li>Examples of using "keytool".
+</li>
+</ul>
+
+
+<p class="section_title">
+Certificates and Certificate Chains
+</p>
+
+<p>
+<b>Certificate</b>: A digitally signed statement from the issuer saying 
+that the public key of the subject has some specific value. 
+</p>
+
+<p>
+The above definition is copied from the JDK 1.3.1 documentation. It has 
+a couple of important terms: 
+</p>
+<ul>
+<li>"signed statement" - The certificate must be signed by the issuer with 
+a digital signature. 
+</li>
+<li>"issuer" - The person or organization who is issuing this certificate. 
+</li>
+<li>"public key" - The public key of a key pair selected by the subject.
+</li>
+<li>"subject" - The person or organization who owns the public key.
+</li>
+</ul>
+
+<p>
+<b>X.509 Certificate</b> - A certificate written in X.509 standard format. 
+X.509 standard was introduction in 1988. It requires a certificate to have
+the following information: 
+</p>
+<ul>
+<li>Version - X.509 standard version number.
+</li>
+<li>Serial Number - A sequence number given to each certificate.
+</li>
+<li>Signature Algorithm Identifier - Name of the algorithm used 
+to sign this certificate by the issuer
+</li>
+<li>Issuer Name - Name of the issuer.
+</li>
+<li>Validity Period - Period during which this certificate is valid.
+</li>
+<li>Subject Name - Name of the owner of the public key. 
+</li>
+<li>Subject Public Key Information - The public key and its related information.
+</li>
+</ul>
+
+<p>
+How can you get a certificate for your own public key? 
+</p>
+<ul>
+<li>Requesting it from a Certificate Authority (CA), like VeriSign, Thawte or Entrust.
+</li>
+<li>Doing it yourself - using tools like JDK "keytool" to generate a self-signed certificate.
+</li>
+</ul>
+
+<p>
+<b>Certificate Chain</b>: A series of certificates that one certificate signs the
+public key of the issuer of the next certificate. Usually the top certificate 
+(the first certificate) is self-signed, where issuer signed its own public key.
+</p>
+
+
+<p class="section_title">
+What is "keystore"?
+</p>
+
+<p>
+"keystore" - A database used by JDK "keytool" command and KeyStore class to store your own private keys,
+and public key certificates you received from someone else. "keystore" supports 
+the following features:
+</p>
+<ul>
+<li>Two types of entries: key entries for private keys and certificate entries for 
+public key certificates.
+</li>
+<li>A key entry contains the private key and a certificate chain of the corresponding 
+public key.
+</li>
+<li>Every entry has a unique alias name.
+</li>
+<li>Key entries are protected by separate passwords.
+</li>
+<li>"keystore" may have different implementations from different security package providers.
+The default implementation from Sun is called JKS. 
+</li>
+</ul>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="jca_keytool_2.html">2</a>&nbsp;
+<a href="jca_keytool_3.html">3</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "jca_keytool.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - keytool - JDK Tool to Manage Certificates Using 'keystore'</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

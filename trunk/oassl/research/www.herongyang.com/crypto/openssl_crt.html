@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is a certificate; Generating self-signed certificate; Viewing certificate contents."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, certificate, self-signed"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Generating Self-Signed Certificates</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="openssl_crt.html">
+OpenSSL - Generating Self-Signed Certificates
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="openssl_crt_2.html">2</a>&nbsp;
+</p>
+
+
+
+<p>
+This chapter describes:
+</p>
+<ul>
+<li>What is a certificate?
+</li>
+<li>Generating Self-Signed Certificates
+</li>
+<li>Viewing Components of Certificates
+</li>
+</ul>
+
+
+<p class="section_title">
+What is a Certificate?
+</p>
+
+<p>
+<b>Certificate</b>: A digitally signed statement from the issuer saying 
+that the public key of the subject has some specific value. 
+</p>
+
+<p>
+The above definition is copied from the JDK 1.3.1 documentation. It has 
+a couple of important terms: 
+</p>
+<ul>
+<li>"signed statement" - The certificate must be signed by the issuer with 
+a digital signature. 
+</li>
+<li>"issuer" - The person or organization who is issuing this certificate. 
+</li>
+<li>"public key" - The public key of a key pair selected by the subject.
+</li>
+<li>"subject" - The person or organization who owns the public key.
+</li>
+</ul>
+
+<p>
+<b>X.509 Certificate</b> - A certificate written in X.509 standard format. 
+X.509 standard was introduction in 1988. It requires a certificate to have
+the following information: 
+</p>
+<ul>
+<li>Version - X.509 standard version number.
+</li>
+<li>Serial Number - A sequence number given to each certificate.
+</li>
+<li>Signature Algorithm Identifier - Name of the algorithm used 
+to sign this certificate by the issuer
+</li>
+<li>Issuer Name - Name of the issuer.
+</li>
+<li>Validity Period - Period during which this certificate is valid.
+</li>
+<li>Subject Name - Name of the owner of the public key. 
+</li>
+<li>Subject Public Key Information - The public key and its related information.
+</li>
+</ul>
+
+
+<p class="section_title">
+Generating Self-Signed Certificates
+</p>
+
+<p>
+A self-signed certificate is a certificate that the "issuer" is the "subject" himself. 
+In other words, a seft-signed certificate is a certificate where the "issuer" signs his 
+own public key with his private key. 
+</p>
+
+<p>
+If you want to generate a self-signed certificate for yourself, here what you to need to do:
+</p>
+<ul>
+<li>Enter your own name as the "subject".
+</li>
+<li>Provide your public key.
+</li>
+<li>Sign it with your private key.
+</li>
+<li>Put everything in the X.509 format.
+</li>
+</ul>
+
+<p>
+That sounds like a lot of work. But OpenSSL can do everything for you in one shot with the "req" command.
+Before we try the "req" command, we need to make sure that you have the "openssl.cnf" installed on your 
+local system. If you don't, go find a copy on the Web. If you can not find it, send me an email. I will 
+send you my copy. Here is how the "openssl.cnf" looks like: 
+</p>
+<pre class="block_source">
+domain                  = some.com
+dir                     = .
+
+####################################################################
+[ ca ]
+default_ca      = CA_default            # The default ca section
+
+####################################################################
+[ CA_default ]
+
+certs           = $dir/ssl.crt          # Where the issued certs are
+crl_dir         = $dir/ssl.crl          # Where the issued crl are k
+database        = $dir/.index.txt       # database index file.
+new_certs_dir   = $dir/.issued          # default place for new cert
+
+...
+</pre>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="openssl_crt_2.html">2</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "openssl_crt.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - OpenSSL - Generating Self-Signed Certificates</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: DES algorithm implemented by Sun in Java JDK JCE package with PKCS5Padding or NoPadding."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, Java, JDK, JCE, SUN, PKCS5Padding"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Java JCE SUN Implementation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_java_jce_sun_implementation.html">
+DES Algorithm - Java JCE SUN Implementation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="des_java_jce_sun_implementation_2.html">2</a>&nbsp;
+<a href="des_java_jce_sun_implementation_3.html">3</a>&nbsp;
+</p>
+
+
+
+<p>
+This tutorial helps you understand: 
+</p>
+<ul>
+<li>DES Java Implementation by Sun</li>
+<li>Using DES Algorithm in JDK JCE Package</li>
+<li>Test Cases of DES Encryption and Decryption</li>
+<li>What Is PKCS5Padding?</li>
+<li>JceSunDesPaddingTest.java - JCE DES Padding Testing Program</li>
+</ul>
+
+
+<p class="section_title">DES Java Implementation by Sun</p>
+
+<p>
+DES algorithm has been implement in Java by Sun as part of the JDK JCE (Java Cryptography Extension) package.
+Sun's implementation includes the following features:
+</p>
+<ul>
+<li>Offers both DES and Triple DES algorithms.</li>
+<li>Offers Electronic Code Book (ECB), Cipher Block Chaining (CBC), Cipher Feedback (CFB), 
+Output Feedback (OFB), and Propagating Cipher Block Chaining (PCBC) modes.</li>
+<li>Offers PKCS5 padding options</li>
+</ul>
+
+
+<p class="section_title">Using DES Algorithm in JDK JCE Package</p>
+
+<p>To use DES algorithm in the JDK JCE package, we need to use several JCE classes and following the 
+steps below:
+</p>
+
+<p>1. Creating a DESKeySpec object from a 8-byte key material by calling the javax.crypto.spec.DESKeySpec
+constructor.
+</p>
+
+<p>2. Creating a SecretKeyFactory object with DES algorithm name, mode name, and padding name by calling 
+the javax.crypto.SecretKeyFactory.getInstance() static method.
+</p>
+
+<p>3. Converting the DESKeySpec object to a SecretKey object through the SecretKeyFactory object by calling 
+the javax.crypto.SecretKeyFactory.generateSecret() method.
+</p>
+
+<p>4. Creating a Cipher object with DES algorithm name, mode name, and padding name by calling 
+the javax.crypto.Cipher.getInstance() static method.
+</p>
+
+<p>5. Initializing the Cipher object with the SecretKey object by calling 
+the javax.crypto.Cipher.init() method.
+</p>
+
+<p>6. Ciphering through input data as byte arrays by calling 
+the javax.crypto.Cipher.update() method.
+</p>
+
+<p>7. Finalizing the ciphering process by calling 
+the javax.crypto.Cipher.doFinal() method.
+</p>
+
+
+<p class="section_title">Test Cases of DES Encryption and Decryption</p>
+
+<p>To test out Sun's DES implementation, I created the following testing Java 
+program to performed several test cases to understand those classes and methods.
+</p>
+<pre class="block_source">
+/**
+ * JceSunDesTest.java
+ * Copyright (c) 2006 by Dr. Herong Yang, http://www.herongyang.com/
+ */
+import java.security.spec.*;
+import javax.crypto.*;
+import javax.crypto.spec.*;
+class JceSunDesTest {
+   public static void main(String[] a) {
+      if (a.length&lt;1) {
+         System.out.println("Usage:");
+         System.out.println("java JceSunDesTest 1/2");
+         return;
+      }
+      String test = a[0];
+      try {
+         byte[] theKey = null;
+         byte[] theMsg = null; 
+         byte[] theExp = null; 
+         if (test.equals("1")) { 
+            theKey = hexToBytes("133457799BBCDFF1");
+            theMsg = hexToBytes("0123456789ABCDEF");
+            theExp = hexToBytes("85E813540F0AB405");
+         } else if (test.equals("2")) { 
+            theKey = hexToBytes("38627974656B6579"); // "8bytekey"
+            theMsg = hexToBytes("6D6573736167652E"); // "message."
+            theExp = hexToBytes("7CF45E129445D451");
+         } else {
+            System.out.println("Usage:");
+            System.out.println("java JceSunDesTest 1/2");
+            return;
+         }	
+         KeySpec ks = new DESKeySpec(theKey);
+         SecretKeyFactory kf 
+            = SecretKeyFactory.getInstance("DES");
+         SecretKey ky = kf.generateSecret(ks);
+         Cipher cf = Cipher.getInstance("DES/ECB/NoPadding");
+         cf.init(Cipher.ENCRYPT_MODE,ky);
+         byte[] theCph = cf.doFinal(theMsg);
+         System.out.println("Key     : "+bytesToHex(theKey));
+         System.out.println("Message : "+bytesToHex(theMsg));
+         System.out.println("Cipher  : "+bytesToHex(theCph));
+         System.out.println("Expected: "+bytesToHex(theExp));
+      } catch (Exception e) {
+         e.printStackTrace();
+         return;
+      }
+   }
+</pre>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+<p class="part_list">Part: &nbsp; 
+<span class="part_list_curr">1</span>&nbsp;
+<a href="des_java_jce_sun_implementation_2.html">2</a>&nbsp;
+<a href="des_java_jce_sun_implementation_3.html">3</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_java_jce_sun_implementation.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Java JCE SUN Implementation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

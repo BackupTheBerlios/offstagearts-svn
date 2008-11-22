@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: How to implement DES algorithm in Java."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , DES, algorithm, Java, Implementation"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Java Implementation</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="des_implJava.html">
+DES Algorithm - Java Implementation
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_implJava.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="des_implJava_3.html">3</a>&nbsp;
+<a href="des_implJava_4.html">4</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<pre class="block_source">
+   private static byte[] doXORBytes(byte[] a, byte[] b) {
+      byte[] out = new byte[a.length];
+      for (int i=0; i&lt;a.length; i++) {
+         out[i] = (byte) (a[i] ^ b[i]);
+      }
+      return out;
+   }
+   static final int[] S = {
+14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7, // S1
+ 0, 15,  7,  4, 14,  2, 13,  1, 10,  6, 12, 11,  9,  5,  3,  8,
+ 4,  1, 14,  8, 13,  6,  2, 11, 15, 12,  9,  7,  3, 10,  5,  0,
+15, 12,  8,  2,  4,  9,  1,  7,  5, 11,  3, 14, 10,  0,  6, 13,
+15,  1,  8, 14,  6, 11,  3,  4,  9,  7,  2, 13, 12,  0,  5, 10, // S2
+ 3, 13,  4,  7, 15,  2,  8, 14, 12,  0,  1, 10,  6,  9, 11,  5,
+ 0, 14,  7, 11, 10,  4, 13,  1,  5,  8, 12,  6,  9,  3,  2, 15,
+13,  8, 10,  1,  3, 15,  4,  2, 11,  6,  7, 12,  0,  5, 14,  9,
+10,  0,  9, 14,  6,  3, 15,  5,  1, 13, 12,  7, 11,  4,  2,  8, // S3
+13,  7,  0,  9,  3,  4,  6, 10,  2,  8,  5, 14, 12, 11, 15,  1,
+13,  6,  4,  9,  8, 15,  3,  0, 11,  1,  2, 12,  5, 10, 14,  7,
+ 1, 10, 13,  0,  6,  9,  8,  7,  4, 15, 14,  3, 11,  5,  2, 12,
+ 7, 13, 14,  3,  0,  6,  9, 10,  1,  2,  8,  5, 11, 12,  4, 15, // S4
+13,  8, 11,  5,  6, 15,  0,  3,  4,  7,  2, 12,  1, 10, 14,  9,
+10,  6,  9,  0, 12, 11,  7, 13, 15,  1,  3, 14,  5,  2,  8,  4,
+ 3, 15,  0,  6, 10,  1, 13,  8,  9,  4,  5, 11, 12,  7,  2, 14,
+ 2, 12,  4,  1,  7, 10, 11,  6,  8,  5,  3, 15, 13,  0, 14,  9, // S5
+14, 11,  2, 12,  4,  7, 13,  1,  5,  0, 15, 10,  3,  9,  8,  6,
+ 4,  2,  1, 11, 10, 13,  7,  8, 15,  9, 12,  5,  6,  3,  0, 14,
+11,  8, 12,  7,  1, 14,  2, 13,  6, 15,  0,  9, 10,  4,  5,  3,
+12,  1, 10, 15,  9,  2,  6,  8,  0, 13,  3,  4, 14,  7,  5, 11, // S6
+10, 15,  4,  2,  7, 12,  9,  5,  6,  1, 13, 14,  0, 11,  3,  8,
+ 9, 14, 15,  5,  2,  8, 12,  3,  7,  0,  4, 10,  1, 13, 11,  6,
+ 4,  3,  2, 12,  9,  5, 15, 10, 11, 14,  1,  7,  6,  0,  8, 13,
+ 4, 11,  2, 14, 15,  0,  8, 13,  3, 12,  9,  7,  5, 10,  6,  1, // S7
+13,  0, 11,  7,  4,  9,  1, 10, 14,  3,  5, 12,  2, 15,  8,  6,
+ 1,  4, 11, 13, 12,  3,  7, 14, 10, 15,  6,  8,  0,  5,  9,  2,
+ 6, 11, 13,  8,  1,  4, 10,  7,  9,  5,  0, 15, 14,  2,  3, 12,
+13,  2,  8,  4,  6, 15, 11,  1, 10,  9,  3, 14,  5,  0, 12,  7, // S8
+ 1, 15, 13,  8, 10,  3,  7,  4, 12,  5,  6, 11,  0, 14,  9,  2,
+ 7, 11,  4,  1,  9, 12, 14,  2,  0,  6, 10, 13, 15,  3,  5,  8,
+ 2,  1, 14,  7,  4, 10,  8, 13, 15, 12,  9,  0,  3,  5,  6, 11
+   };   
+   private static byte[] substitution6x4(byte[] in) {
+      in = splitBytes(in,6); // Splitting byte[] into 6-bit blocks
+      byte[] out = new byte[in.length/2];
+      int lhByte = 0;
+      for (int b=0; b&lt;in.length; b++) { // Should be sub-blocks
+         byte valByte = in[b];
+         int r = 2*(valByte>>7&amp;0x0001)+(valByte>>2&amp;0x0001); // 1 and 6
+         int c = valByte>>3&amp;0x000F; // Middle 4 bits
+         int hByte = S[64*b+16*r+c]; // 4 bits (half byte) output
+         if (b%2==0) lhByte = hByte; // Left half byte
+         else out[b/2] = (byte) (16*lhByte + hByte);
+      }
+      return out;
+   }
+   private static byte[] splitBytes(byte[] in, int len) {
+      int numOfBytes = (8*in.length-1)/len + 1;
+      byte[] out = new byte[numOfBytes];
+      for (int i=0; i&lt;numOfBytes; i++) {
+         for (int j=0; j&lt;len; j++) {
+            int val = getBit(in, len*i+j); 
+            setBit(out,8*i+j,val);
+         }
+      }
+      return out;
+   }
+   static final int[] PC1 = {
+      57, 49, 41, 33, 25, 17,  9,
+       1, 58, 50, 42, 34, 26, 18,
+      10,  2, 59, 51, 43, 35, 27,
+      19, 11,  3, 60, 52, 44, 36,
+      63, 55, 47, 39, 31, 23, 15,
+       7, 62, 54, 46, 38, 30, 22,
+      14,  6, 61, 53, 45, 37, 29,
+      21, 13,  5, 28, 20, 12,  4
+   };
+   static final int[] PC2 = {
+      14, 17, 11, 24,  1,  5,
+       3, 28, 15,  6, 21, 10,
+      23, 19, 12,  4, 26,  8,
+      16,  7, 27, 20, 13,  2,
+      41, 52, 31, 37, 47, 55,
+      30, 40, 51, 45, 33, 48,
+      44, 49, 39, 56, 34, 53,
+      46, 42, 50, 36, 29, 32
+   };
+   static final int[] SHIFTS = {
+      1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1
+   };
+   public static byte[][] getSubkeys(byte[] theKey)
+      throws Exception {
+      int activeKeySize = PC1.length;
+      int numOfSubKeys = SHIFTS.length;
+      byte[] activeKey = selectBits(theKey,PC1);
+      int halfKeySize = activeKeySize/2;
+      byte[] c = selectBits(activeKey,0,halfKeySize);
+      byte[] d = selectBits(activeKey,halfKeySize,halfKeySize);
+      byte[][] subKeys = new byte[numOfSubKeys][];
+      for (int k=0; k&lt;numOfSubKeys; k++) {
+         c = rotateLeft(c,halfKeySize,SHIFTS[k]);
+         d = rotateLeft(d,halfKeySize,SHIFTS[k]);
+         byte[] cd = concatenateBits(c,halfKeySize,d,halfKeySize);
+         subKeys[k] = selectBits(cd,PC2);
+      }
+      return subKeys;
+   }
+   private static byte[] rotateLeft(byte[] in, int len, int step) {
+      int numOfBytes = (len-1)/8 + 1;
+      byte[] out = new byte[numOfBytes];
+      for (int i=0; i&lt;len; i++) {
+         int val = getBit(in,(i+step)%len);
+         setBit(out,i,val);
+      }
+      return out;
+   }
+   private static byte[] concatenateBits(byte[] a, int aLen, byte[] b, 
+      int bLen) {
+      int numOfBytes = (aLen+bLen-1)/8 + 1;
+      byte[] out = new byte[numOfBytes];
+      int j = 0;
+      for (int i=0; i&lt;aLen; i++) {
+         int val = getBit(a,i);
+         setBit(out,j,val);
+         j++;
+      }
+      for (int i=0; i&lt;bLen; i++) {
+         int val = getBit(b,i);
+         setBit(out,j,val);
+         j++;
+      }
+      return out;
+   }
+</pre>
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="des_implJava.html">1</a>&nbsp;
+<span class="part_list_curr">2</span>&nbsp;
+<a href="des_implJava_3.html">3</a>&nbsp;
+<a href="des_implJava_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "des_implJava.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - DES Algorithm - Java Implementation</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is PKCS#8? What is PKCS#18? Reading and writing private keys in PKCS#8 format with 'openssl pkcs8'; Reading and writing key and certificate combination in PKCS#12 format with 'openssl pkcs12'; Converting between PKCS#12 files and JKS files 'keytool -importkeystore'."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , OpenSSL, keytool, Keys, Migrating, keystore, PKCS#8, PKCS#12"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - Key Formats PKCS#8 and PKCS#12 and Migration</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="Key_Formats_PKCS8_PKCS12.html">
+Key Formats PKCS#8 and PKCS#12 and Migration
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="Key_Formats_PKCS8_PKCS12.html">1</a>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_4.html">4</a>&nbsp;
+</p>
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p>
+My command session was recorded as blow:
+</p>
+<pre class="block_source">
+>rem self-signed certificate in X509 format, PEM encoding
+>openssl req -new -x509 -key openssl_key.pem -keyform pem 
+-out openssl_crt.pem -outform pem -config openssl.cnf
+
+You are about to be asked to enter information that will be 
+incorporated into your certificate request.
+What you are about to enter is what is called a Distinguished 
+Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [CA]:
+State or Province Name (full name) [HY State]:
+Locality Name (eg, city) [HY City]:
+Organization Name (eg, company) [HY Company]:
+Organizational Unit Name (eg, section) [HY Unit]:
+Common Name (eg, YOUR name) [Herong Yang]:
+Email Address [herongyang.com]:
+
+>rem key and certificate merged in PKCS#12 format
+>openssl pkcs12 -export -inkey openssl_key.pem -in openssl_crt.pem
+-out openssl_key_crt.p12 -name openssl_key_crt
+
+Loading 'screen' into random state - done
+Enter Export Password: p12pass
+Verifying - Enter Export Password:
+
+>rem key and certificate merged in PKCS#12 format
+>openssl pkcs12 -in openssl_key_crt.p12 -out openssl_key_crt_enc.pem
+
+Enter Import Password: p12pass
+MAC verified OK
+Enter PEM pass phrase: keypass
+Verifying - Enter PEM pass phrase: keypass
+</pre>
+
+<p>
+Notes on the commands and options I used:
+</p>
+<ul>
+<li>"openssl req -new -x509" command generates a self-signed certificate based on the given private and public key pair.
+</li>
+<li>"openssl pkcs12 -export" command merges the private and public key pair with its self-signed certificate into a PKCS#12 file.
+</li>
+<li>"-inkey openssl_key.pem" option specifies the private and public key pair in PEM encoded file.
+</li>
+<li>"-in openssl_crt.pem" option specifies the self-signed certificate in PEM encoded file.
+</li>
+<li>"-out openssl_key_crt.p12" option specifies the output PKCS#12 file name.
+</li>
+<li>"-name openssl_key_crt" option specifies a name for the key pair and the certificate in the PKCS#12 file. 
+</li>
+<li>"openssl pkcs12" command without "-export" option parses a PKCS#12 file as input.
+</li>
+</ul>
+
+<p>
+The result is very nice. My private key and my self-signed certificate are stored in single files now:
+</p>
+<ul>
+<li>openssl_key_crt.p12 - PKCS#12 file, encrypted, binary form.
+</li>
+<li>openssl_key_crt_enc.pem - PEM encoded and encrypted private key and PEM encoded certificate in one file. 
+</li>
+</ul>
+
+<p>
+Want to see the file structure of openssl_key_crt_enc.pem? 
+Here it is:
+</p>
+<pre class="block_source">
+>type openssl_key_crt_enc.pem
+
+Bag Attributes
+    localKeyID: B5 BA 41 DE E6 FE 22 70 D7 C8 C8 55 76 E6 AF 92 6B...
+subject=/C=CA/ST=HY State/L=HY City/O=HY Company/OU=HY Unit/CN=Her...
+issuer=/C=CA/ST=HY State/L=HY City/O=HY Company/OU=HY Unit/CN=Hero...
+-----BEGIN CERTIFICATE-----
+MIIDgzCCAuygAwIBAgIBADANBgkqhkiG9w0BAQQFADCBjjELMAkGA1UEBhMCQ0Ex
+...
+joy2xMaAryTrfoyUyqL10TusG3MeoXnHl4u4F5mLbQgr13CYHjdp
+-----END CERTIFICATE-----
+Bag Attributes
+    localKeyID: B5 BA 41 DE E6 FE 22 70 D7 C8 C8 55 76 E6 AF 92 6B...
+Key Attributes: &lt;No Attributes&gt;
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: DES-EDE3-CBC,5845E016B16C7803
+
+xo6pJ9madEbOB9SAQgIGC3GeZ7xDqHZJm6RkquOju23dSxzzetR2u/PPtnQ82hK0
+...
+7DSeQRZg3a1TTwQXwYXCqHdc2qLzISH/C4ERqm7EqJ2PCsEe7GSfmA==
+-----END RSA PRIVATE KEY-----
+</pre>
+
+<p>
+openssl_key_crt_enc.pem looks like a concatenated file of the key PEM file and certificate PEM file.
+</p>
+
+<p>
+Now I have the final PKCS#12 file with my private key and certificate. 
+I can verify it with Java SE "keytool" command as described in the next section.
+</p>
+
+
+<p class="section_title">
+"keytool" Verifying PKCS#12 Files
+</p>
+
+<p>
+Since Java SE "keytool" command support PKCS#12 files, 
+I want to try it with my PKCS#12 file, openssl_key_crt.p12, created by "OpenSSL"
+with the following tests:
+</p>
+<ul>
+<li>Use "keytool -list" command to display what's in the PKCS#12 file.
+</li>
+<li>"keytool -exportcert" command only exports the self-signed certificate from a PrivateKeyEntry in a keystore.
+</li>
+</ul>
+
+<p>
+My command session was recorded as blow:
+</p>
+<pre class="block_source">
+>keytool -list -keystore openssl_key_crt.p12 -storetype pkcs12 
+-storepass p12pass
+
+Keystore type: PKCS12
+Keystore provider: SunJSSE
+
+Your keystore contains 1 entry
+
+openssl_key_crt, Jul 29, 2007, PrivateKeyEntry,
+Certificate fingerprint (MD5): 1D:D4:AC:96:53:25:9F:1A:D0:A7:46:6C...
+
+>keytool -exportcert -keystore openssl_key_crt.p12 -storetype pkcs12 
+-storepass p12pass -alias openssl_key_crt 
+-file keytool_openssl_crt.pem -rfc
+
+Certificate stored in file &lt;keytool_openssl_crt.pem&gt;
+</pre>
+
+
+<p><i>(Continued on next part...)</i></p>
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="Key_Formats_PKCS8_PKCS12.html">1</a>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+<a href="Key_Formats_PKCS8_PKCS12_4.html">4</a>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "Key_Formats_PKCS8_PKCS12.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - Key Formats PKCS#8 and PKCS#12 and Migration</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+

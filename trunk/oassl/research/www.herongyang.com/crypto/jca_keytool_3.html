@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html><head>
+<meta name="description" content="This cryptography tutorial helps you understand: What is a certificate and a certificate chain? What is keystore? What are the functions offered by keytool? Examples of using keytool."/> 
+<meta name="keywords" content="Cryptography, Digital Security, Free, Tutorial, Book, , keytool, keystore, Certificates"/>
+<title>Cryptography Tutorials - Herong's Tutorial Notes - keytool - JDK Tool to Manage Certificates Using 'keystore'</title>
+<script type="text/javascript" src="_head.js"></script>
+<link rel="stylesheet" type="text/css" href="book.css"/>
+</head><body>
+
+<div class="hy_body">
+<table class="frame" cellspacing="0" cellpadding="0">
+
+<tr><td class="frame_top" colspan="3">
+<script type="text/javascript">writeTop("Crypto");</script>
+</td></tr>
+
+<tr><td class="frame_left">
+<script type="text/javascript">writeLeft("Crypto");</script>
+</td>
+<td class="frame_center">
+
+<table class="page_border" cellspacing="0" cellpadding="0">
+<tr><td></td>
+<td>
+
+<table class="page" cellspacing="0" cellpadding="0">
+<tr><td>
+
+<table cellspacing="0" cellpadding="0" border="0">
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes</b></td></tr>
+<tr><td align="left">Dr. Herong Yang, Version 4.00</td>
+<td align="center"></td>
+<td align="right">
+<script type="text/javascript">writeMenu("Crypto");</script>
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td class="body" colspan="3">
+<!-- begin of body -->
+
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<table><tr><td class="page_sw">
+
+<script type="text/javascript">adsLeft();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+<script type="text/javascript">writePageLeft("http://www.herongyang.com/crypto");</script>
+
+</td><td class="page_se">
+
+<div class="gg_search"><p><form method="get" action="http://www.google.com/custom" target="_top">
+<input type="hidden" name="domains" value="www.herongyang.com"></input>
+<input type="hidden" name="client" value="pub-8765173615603734"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="cof" value="GALT:#008000;GL:1;DIV:#336699;VLC:663399;AH:center;BGC:FFFFFF;LBGC:336699;ALC:0000FF;LC:0000FF;T:000000;GFNT:0000FF;GIMP:0000FF;FORID:1;"></input>
+<input type="hidden" name="hl" value="en"></input>
+<input type="text" name="q" size="38" maxlength="255" value=""></input>
+<input type="submit" name="sa" value="Search"></input>
+<input type="radio" name="sitesearch" value="www.herongyang.com" checked="checked"></input>
+<font size="-1" color="#000000">This site</font>
+<input type="radio" name="sitesearch" value=""></input>
+<font size="-1" color="#000000">Web</font>
+<a href="http://www.google.com/">
+<img src="http://www.google.com/logos/Logo_25wht.gif"
+border="0" alt="Google" style="vertical-align: middle"/></a>
+</form><p></div>
+
+
+
+<p class="chapter_title" id="jca_keytool.html">
+keytool - JDK Tool to Manage Certificates Using 'keystore'
+</p>
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="jca_keytool.html">1</a>&nbsp;
+<a href="jca_keytool_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+</p>
+
+tool introduced in JDK 1.2 to manage keys and certificates 
+using "keystore". "keytool" 
+
+<p><i>(Continued from previous part...)</i></p>
+
+<p class="section_title">
+"keytool" Example - Exporting and Import Certificates
+</p>
+
+<p>
+In the second example, I want to export the certificate stored in the key entry
+to a certificate file, then import it back into the keystore as certificate entry:
+</p>
+<pre class="block_source">
+keytool -export -alias my_home -file my_home.crt -keystore herong.jks
+   -storepass HerongJKS
+Certificate stored in file &lt;my_home.crt>
+
+keytool -printcert -file my_home.crt
+Owner: CN=Herong Yang, OU=My Unit, O=My Home, L=My City, ST=My Sta...
+Issuer: CN=Herong Yang, OU=My Unit, O=My Home, L=My City, ST=My St...
+Serial number: 407928a4
+Valid from: Sat Jun 1 07:14:44 EDT 2002 until: Sat Aug 31 07:14:44...
+Certificate fingerprints:
+   MD5:  BE:D2:AF:4E:A7:44:13:08:16:4C:68:3B:D1:99:79:55
+   SHA1: AE:67:0C:C5:21:5C:F6:6F:45:33:9E:FB:8E:50:EA:32:32:D1:92:BB
+
+keytool -import -alias my_home_crt -file my_home.crt
+   -keystore herong.jks -storepass HerongJKS
+Certificate already exists in keystore under alias &lt;my_home>
+Do you still want to add it? [no]:  yes
+Certificate was added to keystore
+
+keytool -list -keystore herong.jks -storepass HerongJKS
+
+Keystore type: jks
+Keystore provider: SUN
+
+Your keystore contains 2 entries:
+
+my_home_crt, Sat Jun 1 12:25:46 EDT 2004, trustedCertEntry,
+Certificate fingerprint (MD5): BE:D2:AF:4E:A7:44:13:08:16:4C:68:3B...
+my_home, Sat Jun 1 07:15:16 EDT 2002, keyEntry,
+Certificate fingerprint (MD5): BE:D2:AF:4E:A7:44:13:08:16:4C:68:3B...
+</pre>
+
+<p>
+Looking good so far:
+</p>
+<ul>
+<li>The "-export" command option exports the self-signed certificate of my public key
+into a file, my_home.crt. 
+</li>
+<li>The "-printcert" command option prints out summary information of a certificate 
+stored in a file in X.509 format. As you can see from the print out, I am the issuer
+and the owner of this certificate.
+</li>
+<li>The "-import" command option imports the certificate from the certificate file
+back into the keystore under different alias, my_home_crt. 
+</li>
+</ul>
+
+<p>
+Certificates can also be exported in a printable format: based on RFC 1421
+specification, using the BASE64 encoding algorithm.
+</p>
+<pre class="block_source">
+keytool -export -alias my_home_crt -file my_home.rfc -rfc 
+   -keystore herong.jks -storepass HerongJKS
+Certificate stored in file &lt;my_home.rfc>
+
+type my_home.rfc
+-----BEGIN CERTIFICATE-----
+MIIDDTCCAssCBEB5KKQwCwYHKoZIzjgEAwUAMGwxCzAJBgNVBAYTAlVTMREwDwYDVQ...
+dGF0ZTEQMA4GA1UEBxMHTXkgQ2l0eTEQMA4GA1UEChMHTXkgSG9tZTEQMA4GA1UECx...
+dDEUMBIGA1UEAxMLSGVyb25nIFlhbmcwHhcNMDQwNDExMTExNDQ0WhcNMDQwNzEwMT...
+MQswCQYDVQQGEwJVUzERMA8GA1UECBMITXkgU3RhdGUxEDAOBgNVBAcTB015IENpdH...
+BAoTB015IEhvbWUxEDAOBgNVBAsTB015IFVuaXQxFDASBgNVBAMTC0hlcm9uZyBZYW...
+ASwGByqGSM44BAEwggEfAoGBAP1/U4EddRIpUt9KnC7s5Of2EbdSPO9EAMMeP4C2US...
+WT2NWPq/xfW6MPbLm1Vs14E7gB00b/JmYLdrmVClpJ+f6AR7ECLCT7up1/63xhv4O1...
++4P208UewwI1VBNaFpEy9nXzrith1yrv8iIDGZ3RSAHHAhUAl2BQjxUjC8yykrmCou...
+gYEA9+GghdabPd7LvKtcNrhXuXmUr7v6OuqC+VdMCz0HgmdRWVeOutRZT+ZxBxCBgL...
+FhO3zwkyjMim4TwWeotUfI0o4KOuHiuzpnWRbqN/C/ohNWLx+2J6ASQ7zKTxvqhRkI...
+BpKLZl6Ae1UlZAFMO/7PSSoDgYUAAoGBAJdQsMlIf1nh4T/HZvVeltsrTGED118CkG...
+ygy53OLwrSK+6ptJpXP8tPMn9YFVJ3eigJrMTaZvGyd40WRiYM6Woyj3T4H73LEKLD...
+QeNYOAm8cp3l9ZQkNnmIA1P6CRR43EeAmdTUlK8y6RWTsrOiJMdDMAsGByqGSM44BA...
+AhQ4zAUOPWe1wdiwye9XDsVPcKS1xwIUWTdok6RIeeCMRIytKwcTOo7/qpM=
+-----END CERTIFICATE-----
+</pre>
+
+
+<p class="section_title">
+"keytool" Example - Cloning Certificates with New Identities
+</p>
+
+<p>
+In the third example, I want to create a new key entry with the same key pair
+of an existing key entry, but change the identity information:
+</p>
+<pre class="block_source">
+keytool -keyclone -alias my_home -dest my_copy -keypass My1stKey 
+   -new My2ndKey -keystore herong.jks -storepass HerongJKS
+
+keytool -selfcert -alias my_copy -keypass My2ndKey 
+   -dname "cn=Herong Yang, ou=My Unit 2, o=My Organization 2, c=US" 
+   -keystore herong.jks -storepass HerongJKS
+
+keytool -export -alias my_copy -file my_copy.crt -keystore herong.jks
+   -storepass HerongJKS
+Certificate stored in file &lt;my_copy.crt>
+
+keytool -printcert -file my_copy.crt
+Owner: CN=Herong Yang, OU=My Unit 2, O=My Organization 2, C=US
+Issuer: CN=Herong Yang, OU=My Unit 2, O=My Organization 2, C=US
+Serial number: 40798b4f
+Valid from: Sat Jun 1 14:15:43 EDT 2002 until: Sat Aug 31 14:15:43...
+Certificate fingerprints:
+         MD5:  4A:E4:D9:BC:E9:8C:50:27:6C:00:59:76:D1:14:05:79
+         SHA1: FA:F5:30:78:22:3B:52:28:0D:41:24:0B:CA:CC:6F:D4:0E:...
+</pre>
+
+
+<p>
+<b>Conclusion</b>:
+</p>
+<ul>
+<li>A key entry in keystore contains a private key and a certificate of the public key. 
+</li>
+<li>Certificates can be exported into certificate files out of keystore.
+</li>
+<li>Certificates can be imported from certificate back into keystore.
+</li>
+<li>There seems be to no way to export private keys.
+</li>
+<li>There seems be to no way to generate a certificate of a given public key.
+</li>
+</ul>
+
+
+
+
+
+<p class="part_list">Part: &nbsp; 
+<a href="jca_keytool.html">1</a>&nbsp;
+<a href="jca_keytool_2.html">2</a>&nbsp;
+<span class="part_list_curr">3</span>&nbsp;
+</p>
+
+<script type="text/javascript">adsTop();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+<script type="text/javascript">showPageFooter("http://www.herongyang.com/crypto", "jca_keytool.html");</script>
+
+</td></tr></table>
+
+<!-- end of body -->
+<p></p>
+<script type="text/javascript">adsBottom();</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+
+</td></tr>
+<tr><td class="page_line" colspan="3"><img height="1" width="100%" src="dot.gif" alt=""/></td></tr>
+<tr><td align="left">Dr. Herong Yang, updated in 2007</td>
+<td align="center"></td>
+<td align="right"><script type="text/javascript">writeMenu("Crypto");</script></td>
+</tr>
+<tr><td align="left" colspan="3"><b>Cryptography Tutorials - Herong's Tutorial Notes - keytool - JDK Tool to Manage Certificates Using 'keystore'</b></td></tr>
+</table>
+
+</td></tr>
+</table>
+
+</td>
+<td rowspan="1"><img height="100%" width="1" src="dot.gif" alt=""/></td></tr>
+</table>
+
+</td>
+
+<td class="frame_right">
+<script type="text/javascript">writeRight("Crypto");</script>
+</td></tr>
+<tr><td class="frame_bottom" colspan="3">
+<script type="text/javascript">writeBottom("Crypto");</script>
+</td></tr>
+</table>
+</div>
+</body></html>
+
