@@ -1,0 +1,296 @@
+<HTML>
+<HEAD>
+<TITLE>Using stunnel With Bilateral Authentication</TITLE>
+</HEAD>
+<BODY>
+<FONT SIZE=+2>Using stunnel With Bilateral Authentication</FONT>
+<BR>
+<HR>
+<P>
+<B>BACKGROUND</B>
+<P>
+<A HREF="http://www.stunnel.org/">stunnel</A> provides "drop-in" 
+SSL-secured connectivity between two hosts.  It is most often used
+to retroactively secure an existing application when encryption and/or
+authentication were not part of the original design.
+<P>
+When neither the client nor the server support SSL encapsulation of
+a connection, stunnel can be used on both sides of the connection.
+<P>
+In its default configuration, stunnel does not perform authentication;
+it merely encrypts the channel without verifying the endpoints.
+<P>
+This document describes how to set up stunnel to use signed certificates 
+to perform bilateral authentication.  Under this scheme, both the client
+and the server provide sufficient credentials (in the form of SSL
+certificates signed by a mutually acceptable authority) to establish
+their identity.
+<P>
+
+<FONT SIZE=+1>DOCUMENT CONVENTIONS</FONT>
+<P>
+
+<TT>Black Text</TT> represents output from the software or prompts for 
+information that will appear.
+<P>
+<TT><FONT COLOR="#008000">Green Text</FONT></TT> represents commands or 
+information that (at least the first time) can be entered exactly as shown.
+<P>
+<TT><FONT COLOR="#ff0000">Red Text</FONT></TT> represents commands or 
+information that must be customized to the particular situation before 
+being entered.  For example, <TT><FONT COLOR="#ff0000">WWWI</FONT></TT> 
+should be changed to the name of your own organization.
+<P>
+
+
+<P>
+<B>STUNNEL SECURITY LIMITATIONS</B>
+<P>
+stunnel has two significant limitations that affect its ability to perform
+bilateral authentication.  The first is that there is no provision for 
+encrypted keys.  The second is that stunnel does not perform browser-style
+checking of the CN name field against the hostname of the connection.  In
+combination, these limitations mean that if someone can access an stunnel
+key, they will not need a passphrase to decode it and that they can use that
+key from any connected host without regard for its hostname or IP address.
+<P>
+<I>It is therefore vital to ensure that systems with stunnel keys 
+are carefully secured and that the keys are stored with the most restrictive
+possible permissions.</I>
+<P>
+This is not a strictly speaking a limitation of stunnel, but rather a 
+difficulty HTTP-over-SSL has traditionally worked around by allowing the 
+web server to prompt for a passphrase on startup, and by using browsers 
+that compare the common name (CN) of a server's certificate to the hostname.
+Perhaps a future version of stunnel will offer an option to enable similar
+functionality.
+<P>
+
+<B>CREATING CERTIFICATES</B>
+<P>
+<OL>
+<LI>Create a non-encrypted private key for the client:
+<P>
+<TT>
+YourPrompt> <FONT COLOR="#008000">openssl genrsa -out client.key 1024</FONT><BR>
+Generating RSA private key, 1024 bit long modulus<BR>
+......................++++++<BR>
+...........................................++++++<BR>
+e is 65537 (0x10001)<BR>
+YourPrompt></TT>
+<P>
+
+<LI>Create a certificate signature request for the new client key:
+<P>
+<TT>
+YourPrompt> <FONT COLOR="#008000">openssl req -new -key client.key -out 
+client.csr</FONT><BR>
+You are about to be asked to enter information that will be incorporated<BR>
+into your certificate request.<BR>
+What you are about to enter is what is called a Distinguished Name or a DN.<BR>
+There are quite a few fields but you can leave some blank<BR>
+For some fields there will be a default value,<BR>
+If you enter '.', the field will be left blank.<BR>
+-----<BR>
+Country Name (2 letter code) [AU]:<FONT COLOR="#ff0000">US</FONT><BR>
+State or Province Name (full name) [Some-State]:<FONT COLOR="#ff0000">Texas
+</FONT><BR>
+Locality Name (eg, city) []:<FONT COLOR="#ff0000">Montgomery</FONT><BR>
+Organization Name (eg, company) [Internet Widgits Pty 
+Ltd]:<FONT COLOR="#ff0000">WWWI</FONT><BR>
+Organizational Unit Name (eg, section) []:<FONT COLOR="#ff0000">WWWI Stunnel 
+Services</FONT><BR>
+Common Name (eg, YOUR name) []:<FONT COLOR="#ff0000">WWWI Client</FONT><BR>
+Email Address []:<FONT COLOR="#008000">.</FONT>
+<P>
+Please enter the following 'extra' attributes<BR>
+to be sent with your certificate request<BR>
+A challenge password []:<FONT COLOR="#008000">.</FONT><BR>
+An optional company name []:<FONT COLOR="#008000">.</FONT>
+</TT>
+<P>
+<LI>Get the client.csr signed by your certificate authority.  If you are
+self-signing certificates, the command would be similar to:
+<P>
+<TT>
+YourPrompt> <FONT COLOR="#ff0000">.../path/to/mod_ssl</FONT><FONT COLOR="#008000
+">/pkg.contrib/sign.sh 
+client.csr</FONT><BR>
+CA signing: client.csr -> client.crt:<BR>
+Using configuration from ca.config<BR>
+Enter PEM pass phrase:<FONT COLOR="#ff0000">CAKeyPassPhrase</FONT><BR>
+Check that the request matches the signature<BR>
+Signature ok<BR>
+The Subjects Distinguished Name is as follows<BR>
+countryName           :PRINTABLE:'US'<BR>
+stateOrProvinceName   :PRINTABLE:'Texas'<BR>
+localityName          :PRINTABLE:'Montgomery'<BR>
+organizationName      :PRINTABLE:'WWWI'<BR>
+organizationalUnitName:PRINTABLE:'WWWI Stunnel Services'<BR>
+commonName            :PRINTABLE:'WWWI Client'<BR>
+Certificate is to be certified until Feb 22 22:22:22 2003 GMT (365 days)<BR>
+Sign the certificate? [y/n]:<FONT COLOR="#008000">y</FONT><BR>
+<P>
+<BR>
+1 out of 1 certificate requests certified, commit? 
+[y/n]<FONT COLOR="#008000">y</FONT><BR>
+Write out database with 1 new entries<BR>
+Data Base Updated<BR>
+CA verifying: client.crt <-> CA cert<BR>
+client.crt: OK<BR>
+</TT>
+<P>
+
+<LI>Construct an stunnel-client.pem file from the key and certificate as 
+follows:
+<P>
+
+<TT>-----BEGIN RSA PRIVATE KEY-----</TT><BR>
+[encoded key]<BR>
+<TT>-----END RSA PRIVATE KEY-----</TT><BR>
+<TT>-----BEGIN CERTIFICATE-----</TT><BR>
+[encoded certificate]<BR>
+<TT>-----END CERTIFICATE-----</TT><BR>
+<P>
+There are no extra blank lines or extraneous text needed in this file.
+<P>
+
+<LI>Copy the CA certificate (ca.crt) to stunnel-auth.pem.
+<P>
+
+<LI>Install both stunnel-client.pem and stunnel-auth.pem on the client in
+the appropriate stunnel directory (the one specified by --with-pem-dir 
+during configure, where the default stunnel.pem is installed).
+<P>
+
+<LI>Repeat steps 1 through 5 for the server (server.key, server.csr, 
+server.crt, stunnel-server.pem).  The stunnel-auth.pem file will be the
+same for the server.
+<P>
+
+</OL>
+
+<B>RUNNING STUNNEL</B>
+<P>
+
+For this example, we will use mysql-3.23.X, which includes both client and
+server pieces and does not support native SSL connections.
+
+<OL>
+
+<LI>Start mysql on the server machine.
+<P>
+<TT>
+YourPrompt> <FONT COLOR="#008000">nohup mysqld --bind-address=127.0.0.1 
+--user=mysql &</FONT><BR>
+</TT>
+<P>
+
+Binding to the localhost IP address (127.0.0.1) ensures that other systems
+cannot gain unencrypted/unauthenticated access to MySQL.
+<P>
+
+<LI>Start stunnel on the server machine.
+<P>
+<TT>
+YourPrompt> <FONT COLOR="#008000">stunnel -A 
+<FONT COLOR="#ff0000">/usr/local/stunnel/</FONT>stunnel-auth.pem -v 2 -p 
+<FONT COLOR="#ff0000">/usr/local/stunnel/</FONT>stunnel-server.pem -d
+<FONT COLOR="#ff0000">server.example.com</FONT>:3307 -r localhost:3306</FONT>
+</TT>
+<P>
+
+<LI>Start stunnel on the client machine.
+<P>
+<TT>
+YourPrompt> <FONT COLOR="#008000">stunnel -A 
+<FONT COLOR="#ff0000">/usr/local/stunnel/</FONT>stunnel-auth.pem -v 2 -p 
+<FONT COLOR="#ff0000">/usr/local/stunnel/</FONT>stunnel-client.pem -c -d 
+localhost:3306 -r <FONT COLOR="#ff0000">server.example.com</FONT>:3307</FONT>
+</TT>
+<P>
+
+<LI>Test the mysql client on the client machine.
+<P>
+<TT>
+YourPrompt> <FONT COLOR="#008000">mysql -h 127.0.0.1</FONT><BR>
+Welcome to the MySQL monitor.  Commands end with ; or \g.<BR>
+Your MySQL connection id is 6615 to server version: 3.23.49<BR>
+<BR>
+Type 'help;' or '\h' for help. Type '\c' to clear the buffer.<BR>
+<BR>
+mysql> <FONT COLOR="#008000">\q</FONT><BR>
+Bye<BR>
+</TT>
+<P>
+
+If problems occur with the mysql connection, check the stunnel log files
+or use -f to run stunnel in the foreground on each machine.  It will
+provide information about any errors that occur in the certificate exchange
+process.
+<P>
+
+It is important to remember that from the MySQL server, all connections
+will appear to be originating from localhost.  MySQL's internal 
+user/host/password tables must be configured appropriately.  Also, the
+SSL certificate exchange process can be relatively time consuming compared
+to an SQL query.  Therefore, connection pooling becomes more important as
+a tool to improve performance when security is implemented in this fashion.
+
+</OL>
+
+<B>INCREASING SECURITY</B>
+<P>
+
+It is possible to further increase security by requiring stunnel to compare
+the certificate presented by its peer against a stored list of acceptable
+certificates.  To take advantage of this feature:
+
+<OL>
+
+<LI>Change the '-v 2' parameter of each stunnel command line to '-v 3'.
+<P>
+
+<LI>Add each system's certificate to the stunnel-auth.pem file of each 
+system it will connect to.
+<P>
+
+</OL>
+
+This is particularly appropriate if the certificate authority being used 
+also serves any other purpose that should not imply the ability to access 
+the resource being secured.
+<P>
+
+<B>THANKS</B>
+<P>
+
+Particular thanks go to the creators of 
+<A HREF="http://www.stunnel.org/">stunnel</A>,
+<A HREF="http://www.openssl.org/">OpenSSL</A> and
+<A HREF="http://www.mysql.com/">MySQL</A> for making such great products.
+<P>
+
+See also the general thanks and credits on the main page.
+<P>
+
+<B>AUTHOR</B>
+<P>
+
+This document was written by Jeffrey D. Wheelhouse
+(<A HREF="mailto:jdw@wheelhouse.org">jdw@wheelhouse.org</A>).  This is 
+version 1.0.2, created February 22, 2002 and last updated on 
+December 11, 2002.  Comments, suggestions, and corrections are 
+welcomed via email.  This document and its contents are placed into the
+public domain for unlimited use and distribution.
+<P>
+
+<HR>
+<A HREF="http://www.wheelhouse.org/">WWWI</A> |
+<A HREF="http://software.wheelhouse.org/">Software</A> |
+<A HREF="http://software.wheelhouse.org/ssl/">SSL</A> |
+Bilateral
+
+</BODY>
+</HTML>
+

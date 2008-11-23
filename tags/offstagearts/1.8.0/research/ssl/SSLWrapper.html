@@ -1,0 +1,805 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+ <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <META NAME="GENERATOR" CONTENT="lfparser_2.35">
+ <META NAME="LFCATEGORY" CONTENT="SystemAdministration">
+ <link rel="icon" href="../../common/images/lf-16.png" type="image/png">
+ <TITLE>lf285, SystemAdministration: Accessing PostgreSQL through JDBC via a Java SSL tunnel</TITLE>
+<style type="text/css">
+<!--
+ td.top {font-family: Arial,Geneva,Verdana,Helvetica,sans-serif; font-size:12 }
+ pre { font-family:monospace,Courier }
+ pre.code { font-family:monospace,Courier;background-color:#aedbe8; }
+ p.cl { color:#EE9500 }
+ a.nodec { text-decoration:none }
+ p.trans { font-size:8pt; text-align:right }
+ p.clbox { width:50%; alignment:center; background-color:#FFD700; 
+           border-style:none; border-width:medium; border-color:#FFD700; 
+           padding:0.5cm;  text-align:center }
+ p.code { width:80%; alignment:center; background-color:#aedbe8; 
+          border-style:none; border-width:medium; border-color:#aedbe8; 
+          padding:0.1cm;  text-align:left }
+ p.foot { background-color:#AAAAAA; color:#FFFFFF; border-style:none; 
+          border-width:medium; border-color:#AAAAAA; padding:0.5cm ; 
+          margin-top:0.1cm; margin-right:1cm; margin-left:1cm; 
+          text-align:center }
+ .mark  { background-color:#e6e6ff }
+-->
+</style>
+ 
+</HEAD>
+<BODY bgcolor="#ffffff" text="#000000">
+ <!-- this is generated html code. NEVER use this file for your
+ translation work. Instead get the file with the same article number
+ and .meta.shtml in its name. Translate this meta file and then
+ use lfparser program to generate the final article -->
+ <!-- lfparser can be obtained from http://www.linuxfocus.org/~guido/dev/lfparser.html -->
+
+<!-- this is used by a number of tools:
+ =LF=AUTHOR: Chianglin Ng
+ =LF=CAT___: SystemAdministration
+ =LF=TITLE_: Accessing PostgreSQL through JDBC via a Java SSL tunnel
+ =LF=NUMBER: 285
+ =LF=ANAME_: article285.shtml
+ -->
+
+<!-- 2pdaIgnoreStart -->
+
+<!-- start navegation bar -->
+ <!-- top navegation bar -->
+ <TABLE summary="topbar_1" cellspacing="0" cellpadding="0" border="0" align="center" width="90%">
+   <TR bgcolor="#2e2292">
+     <TD class="top"><TABLE summary="topbar_1_logo" cellspacing="0" cellpadding="0" border="0" width=
+       "100%">
+         <TR><TD width="319"><IMG src="../../common/images/logolftop_319x45.gif"
+           alt="[LinuxFocus-icon]" width="319" height="45" align="left" 
+           border="0"></TD>
+
+           <TD class="top">
+             <TABLE summary="topbar_1_links" width="100%">
+               <TR align="right">
+                 <TD class="top"><A class="nodec" href="../"><FONT color=
+                 "#DDDDDD" size="2">Home</FONT></A> &nbsp;|&nbsp; <A class=
+                 "nodec" href="../map.html"><FONT color=
+                 "#DDDDDD" size="2">Map</FONT></A> &nbsp;|&nbsp; <A class=
+                 "nodec" href="../indice.html"><FONT color=
+                 "#DDDDDD" size="2">Index</FONT></A> &nbsp;|&nbsp; <A class=
+                 "nodec" href="../Search/"><FONT color=
+                 "#DDDDDD" size="2">Search</FONT></A> </TD>
+               </TR>
+
+               <TR align="right">
+                 <TD class="top">
+                   <HR width="100%" noshade size="1">
+                 </TD>
+               </TR>
+             </TABLE>
+           </TD>
+         </TR>
+       </TABLE>
+     </TD>
+   </TR>
+ </TABLE>
+ <!-- end top navegation bar -->
+ <!-- blue bar -->
+ <TABLE summary="topbar_2" cellspacing="0" cellpadding="0" border="0" align="center"
+ width="90%">
+   <TR bgcolor="#00ffff">
+     <TD><IMG src="../../common/images/transpix.gif" width="1" height=
+     "2" alt=""></TD>
+   </TR>
+ </TABLE>
+ <!-- end blue bar -->
+ <!-- bottom navegation bar -->
+ <TABLE summary="topbar_3" cellspacing="0" cellpadding="0" border="0" align="center"
+ width="94%">
+   <TR bgcolor="#000000">
+     <TD>
+       <TABLE summary="topbar_3_links" cellspacing="0" cellpadding="1" border="0" width=
+       "100%">
+         <TR align="center">
+           <TD WIDTH="20%"><A class="nodec" href="../News/"><FONT color=
+           "#FFFFFF">News</FONT></A> </TD>
+           <TD WIDTH="5%"><FONT color="#FFFFFF">|</FONT> </TD>
+           <TD WIDTH="20%"><A class="nodec" href="../Archives/"><FONT color=
+           "#FFFFFF">Archives</FONT></A> </TD>
+           <TD WIDTH="5%"><FONT color="#FFFFFF">|</FONT> </TD>
+           <TD WIDTH="20%"><A class="nodec" href="../Links/"><FONT color=
+           "#FFFFFF">Links</FONT></A> </TD>
+           <TD WIDTH="5%"><FONT color="#FFFFFF">|</FONT> </TD>
+           <TD WIDTH="20%"><A class="nodec" href="../aboutus.html"><FONT color=
+           "#FFFFFF">About LF</FONT></A> </TD>
+         </TR>
+       </TABLE>
+     </TD>
+   </TR>
+ </TABLE>
+ <!-- end bottom navegation bar -->
+<!-- stop navegation bar -->
+
+<!-- SSI_INFO -->
+
+<!-- addedByLfdynahead ver 1.5 --><TABLE ALIGN="right" border=0><TR><TD ALIGN="right"><FONT SIZE="-1" FACE="Arial,Helvetica">This document is available in: <A href="../../English/March2003/article285.shtml">English</a> &nbsp;<A href="../../Castellano/March2003/article285.shtml">Castellano</a> &nbsp;<A href="../../Deutsch/March2003/article285.shtml">Deutsch</a> &nbsp;<A href="../../Francais/March2003/article285.shtml">Francais</a> &nbsp;<A href="../../Nederlands/March2003/article285.shtml">Nederlands</a> &nbsp;<A href="../../Russian/March2003/article285.shtml">Russian</a> &nbsp;<A href="../../Turkce/March2003/article285.shtml">Turkce</a> &nbsp;</FONT></TD></TR></TABLE><br>
+ 
+
+
+<!-- SSI_INFO STOP -->
+<!-- 2pdaIgnoreStop -->
+
+<!-- SHORT BIO ABOUT THE AUTHOR -->
+<TABLE ALIGN=LEFT BORDER=0  WIDTH="190" summary="about the author">
+<TR>
+<TD>
+
+<!-- 2pdaIgnoreStart -->
+<!-- PALM DOC -->
+<TABLE BORDER=0 hspace=4 vspace=4 summary="pda download"> <TR> <TD>
+<font size=1> <img src="../../common/images/2doc.gif" width=34 align=left border=0 height=22 alt="convert to palm"><a href="http://cgi.linuxfocus.org/cgi-bin/2ztxt">Convert to GutenPalm</a><br>or <a href="http://cgi.linuxfocus.org/cgi-bin/2pda">to PalmDoc</a></font>
+</TD> </TR> </TABLE>
+<!-- END PALM DOC -->
+<!-- 2pdaIgnoreStop -->
+<br>
+<img src="../../common/images/ChianglinNg.jpg" alt=
+    "[Photo of the Author]" width="180" height="124">
+<BR>by  Chianglin Ng <br> <small>&lt;chglin(at)singnet.com.sg&gt;</small>
+<BR><BR>
+<I>About the author:</I><BR>
+<!-- aboutauthor_start -->
+<p>I live in Singapore, a modern multiracial country located in
+    Southeast Asia. I have been using linux for the past 2 years or
+    so. The first distribution that I started out with was redhat
+    6.2. Today I am using redhat 8.0 at home. I also use debian
+    woody occassionally.</p>
+<!-- aboutauthor_stop -->
+<!-- TRANSLATED TO en -->
+<!-- TRANSLATED TO STOP -->
+<BR><i>Content</i>:
+<UL>
+  <LI><A HREF="#285lfindex0">Introduction
+    </A></LI>
+  <LI><A HREF="#285lfindex1">Setting up PostgreSQL for JDBC in redhat 8.0</A></LI>
+  <LI><A HREF="#285lfindex2">Designing the Java SSL Tunnel</A></LI>
+  <LI><A HREF="#285lfindex3">Creating the Keystores, keys and certificates</A></LI>
+  <LI><A HREF="#285lfindex4">Implementing the classes</A></LI>
+  <LI><A HREF="#285lfindex5">Running the proxies and testing</A></LI>
+  <LI><A HREF="#285lfindex6">A note on security</A></LI>
+  <LI><A HREF="#285lfindex7">Conclusion</A></LI>
+  <LI><A HREF="#285lfindex8">Useful links</A></LI>
+  <LI><A HREF="http://cgi.linuxfocus.org/cgi-bin/lftalkback?anum=285">Talkback form for this article</A></LI>
+</UL>
+
+</TD></TR></TABLE>
+<!-- HEAD OF THE ARTICLE -->
+<br>&nbsp;
+<table border="0"><tr><td>
+<H2>Accessing PostgreSQL through JDBC via a Java SSL tunnel</H2>
+ <img src="../../common/images/article285/HeaderImage.jpg" alt=
+    "[Illustration]" hspace="10" width="450" height="256">
+<!-- ABSTRACT OF THE ARTICLE -->
+<P><i>Abstract</i>:
+<P>
+<!-- articleabstract_start -->
+
+    This article shows how to set up JDBC access for PostgreSQL on
+    redhat 8.0 and how to create a SSL tunnel using Sun's Java
+    Secured Socket Extensions, to enable secured access to a remote
+    postgres database.
+
+    
+<!-- articleabstract_stop -->
+
+<br><!-- HR divider --><center><font color="#8282e0"><b>_________________ _________________ _________________</b></font></center><br>
+</td></tr></table>
+<!-- BODY OF THE ARTICLE -->
+
+
+    <A NAME="285lfindex0">&nbsp;</A>
+<H2>Introduction<br>
+    </H2>
+
+    While learning about postgres and JDBC, I came across the
+    problem of accessing a remote database securely via JDBC.
+    &nbsp; &nbsp;<br>
+    JDBC connections are unencrypted and a network sniffer can
+    easily pick out sensitive data. There are several ways to
+    prevent this. The postgres manual reveals that one can compile
+    postgres with SSL support or use&nbsp; SSH tunneling.<br>
+    <br>
+    Instead of using any of these methods, I would like to use java
+    itself. Sun's Java JDK 1.4.1 includes the java secured socket
+    extensions (JSSE) which can be used to create SSL connections.
+    The JDK also provides a keytool for the creation of
+    public/private keys, digital certificates and keystores. Hence,
+    it is relatively easy to build a pair of java-based proxies
+    that can securely relay network data.
+
+    <A NAME="285lfindex1">&nbsp;</A>
+<H2>Setting up PostgreSQL for JDBC in redhat 8.0</H2>
+
+
+    <p>The instructions provided here are for redhat 8.0 but the
+    general principles are applicable to other distributions. You
+    need to install PostgreSQL and the corresponding JDBC drivers
+    if you haven't done so. On redhat 8, you can use the rpm
+    command or the GUI package management tool. You also need to
+    download and install Sun's JDK 1.4.1. Sun's JDK comes with some
+    encryption restrictions due to US export regulations. To get
+    unlimited strength encryption, you can download the JCE (Java
+    Crytographic Extensions) policy files. Visit <a href=
+    "http://www.javasoft.com">Sun's Java website</a> for more
+    information.</p>
+
+    <p>I have installed JDK1.4.1 in /opt and set up JAVA_HOME
+    environment variable to point to my JDK directory. I have also
+    updated my PATH to include the directory containing the JDK
+    executables. The following shows the lines that are added to my
+    .bash_profile file.&nbsp;</p>
+
+    <p class="code">JAVA_HOME = /opt/j2sdk1.4.1_01<br>
+    PATH = /opt/j2sdk1.4.1_01/bin:$PATH<br>
+    export JAVA_HOME PATH</p>
+
+    <p>The limited encryption policy files that come with Sun JDK
+    have also been replaced with the unlimited ones in the JCE. To
+    enable java to find the JDBC drivers for postgres, I copy the
+    postgre-jdbc drivers into my Java extensions directory
+    (/opt/j2sdk1.4.1_01/jre/lib/ext). In redhat 8.0, the
+    postgres-jdbc drivers are located in /usr/share/pgsql.</p>
+
+    <p>If this is your first postgresql installation, you will have
+    to create a new database and a new postgresql user account.
+    First su to root and start the postgres service. Then change to
+    the default postgres administrator account.</p>
+
+    <p class="code">su root<br>
+    password:******<br>
+    [root#localhost]#/etc/init.d/postgresql start<br>
+    [root#localhost]# Starting postgresql service: [ OK ]<br>
+    [root#localhost]# su postgres<br>
+    [bash]$</p>
+
+    <p>Create a new postgres account and database.</p>
+
+    <p class="code">[bash]$:createuser<br>
+    Enter name of user to add: chianglin<br>
+    Shall the new user be allowed to create databases? (y/n) y<br>
+    Shall the new user be allowed to create more new users? (y/n)
+    y<br>
+    CREATE USER<br>
+    [bash]$createdb chianglin<br>
+    CREATE DATABASE</p>
+
+    <p>I have created a new postgres administrator account that
+    corresponds to my linux user account and a database of the same
+    name. By default when you run the psql tool, it will connect to
+    a database that corresponds to the current linux user
+    account.&nbsp; Refer to the postgres manual for more details on
+    administering accounts and database. To set a password for your
+    created account, you can run psql and issue ALTER USER command.
+    Log in using your normal user account and start up psql. Issue
+    the following&nbsp;</p>
+
+    <p class="code">ALTER USER chianglin WITH PASSWORD 'test1234'
+    ;</p>
+
+    <p>To allow for tcp/ip connections, you need to edit
+    postgresql.conf and set the tcpip_socket option to true. On
+    redhat 8, this file is located at /var/lib/pgsql/data. Change
+    to root and set the following</p>
+
+    <p class="code">tcpip_socket=true</p>
+
+    <p>The last step is to edit the pg_hba.conf file. It specifies
+    the hosts that can connect to the postgres database. I have
+    added a single new host entry specifying the loopback address
+    of my pc and that it is using password authentication. You need
+    to change to root inorder to edit this file.&nbsp;</p>
+
+    <p class="code">host sameuser 127.0.0.1 255.255.255.255
+    password</p>
+
+    <p>Restart postgres and all your new settings will take
+    effect.<br>
+    <br>
+    </p>
+
+    <A NAME="285lfindex2">&nbsp;</A>
+<H2>Designing the Java SSL Tunnel</H2>
+
+
+    <p>After the previous step, postgres is ready to accept
+    unsecured local JDBC connections.&nbsp; To access postgres
+    securely from a remote location, some form of relaying is
+    required.</p>
+
+    <p>The following diagram shows how this relaying should
+    work.</p>
+    <img src=
+    "../../common/images/article285/RelayServerClientFig1.jpg" alt=
+    "Figure one showing how the Java proxies should work" width=
+    "600" height="416">
+
+    <p>The JDBC application will connect to the client proxy which
+    will then relay all the data through a SSL connection to our
+    remote server proxy. The server proxy will simply forward all
+    packets to postgres and send replies via the SSL connection
+    back to the client proxy which will relay them to the JDBC
+    application. This entire process will be transparent to the
+    JDBC application.</p>
+
+    <p>From the diagram it can be seen that at the server end,
+    there will be a need to get the data from the incoming secured
+    stream and send it to the local outgoing stream that is
+    connected to the actual server. The reverse is also true, you
+    need to get the data from the local incoming stream connected
+    to the actual server and route it to the secured outgoing
+    stream. The same concept applies for the client. &nbsp;Threads
+    can be used to implement this. The following diagram shows
+    this<br>
+    </p>
+    <img src=
+    "../../common/images/article285/RelayServerClientFig2.jpg" alt=
+    "Diagram showing how the 4 relaying threads work" width="600"
+    height="416">
+
+    <A NAME="285lfindex3">&nbsp;</A>
+<H2>Creating the Keystores, keys and certificates</H2>
+
+
+    <p>A SSL connection usually requires server authentication.
+    Client authentication is optional. In this case, I prefer to
+    have both server and client authentication. This means that I
+    will have to create certificates and keys for both the client
+    and server. I do this by using the keytool provided by the Java
+    JDK. I will have a pair of keystores each at the client and
+    server. The first keystore is needed to store the private key
+    of the host and the second is to store the certificates that
+    the host trusts. &nbsp;<br>
+    <br>
+    The following shows the creation of a keystore, a private key
+    and a public self-signed certificate for the server.</p>
+
+    <p class="code">keytool -genkey -alias serverprivate -keystore
+    servestore -keyalg rsa -keysize 2048<br>
+    <br>
+    Enter keystore password: storepass1<br>
+    What is your first and last name?<br>
+    [Unknown]: ServerMachine<br>
+    What is the name of your organizational unit?<br>
+    [Unknown]: ServerOrg<br>
+    What is the name of your organization?<br>
+    [Unknown]: ServerOrg<br>
+    What is the name of your City or Locality?<br>
+    [Unknown]: Singapore<br>
+    What is the name of your State or Province?<br>
+    [Unknown]: Singapore<br>
+    What is the two-letter country code for this unit?<br>
+    [Unknown]: SG<br>
+    Is CN=ServerMachine, OU=ServerOrg, O=ServerOrg, L=Singapore,
+    ST=Singapore, C= [no]: yes<br>
+    Enter key password for &lt;serverprivate&gt;<br>
+    (RETURN if same as keystore password): prikeypass0
+    &lt;/serverprivate&gt;</p>
+
+    <p>Notice that passwords are requested twice. The first one is
+    for the keystore and the second is for the private key. Once
+    this has been done, export the server public certificate, which
+    the client will use to authenticate the server, to a file.</p>
+
+    <p class="code">keytool -export -alias serverprivate -keystore
+    -rfc servestore -file server.cer</p>
+
+    <p>The above will export the server self-signed public
+    certificate into the file server.cer. At the client end import
+    this file into a keystore that stores all the public
+    certificates which the client trusts.</p>
+
+    <p class="code">keytool -import -alias trustservercert -file
+    server.cer -keystore clienttruststore</p>
+
+    <p>The above command will import the server public certificate
+    into a keystore called clientruststore. If this store doesn't
+    yet exist, it will be created and you will be prompted to enter
+    a password for the store.&nbsp;</p>
+
+    <p>At this stage, your system will be able to faciliate a SSL
+    connection which provides for server authentication.<br>
+    Since I also want to authenticate the client, I will need to
+    create a private/public key for the client in a new client
+    keystore, export out the client public certificate and import
+    it into a new server keystore at the server end.</p>
+
+    <p>At the end of this process, there should be two keystores in
+    the server, one for holding its private key and the other for
+    holding the certificates it trust. It is the same for the
+    client.<br>
+    </p>
+
+    <p>In order to run the example code which I provide later, it
+    is essential that you set the same password for each keystore
+    that you create on a particular machine. This means that the
+    two keystores in the server should have the same password. The
+    same goes to the 2 keystores in the client.&nbsp;</p>
+    You can refer to <a href=
+    "http://java.sun.com/j2se/1.4/docs/tooldocs/solaris/keytool.html">
+    Sun's documentation</a> to learn more about using keytool.
+
+    <A NAME="285lfindex4">&nbsp;</A>
+<H2>Implementing the classes</H2>
+
+
+    <p>My classes will make use of the Sun's Java Secured Socket
+    extensions. The Sun JSSE reference guide is available <a href=
+    "http://java.sun.com/j2se/1.4.1/docs/guide/security/jsse/JSSERefGuide.html">
+    at
+    http://java.sun.com/j2se/1.4.1/docs/guide/security/jsse/JSSERefGuide.html</a>.
+    For a ssl connection, you need to get an instance of a
+    SSLContext object provided by JSSE. Initialize this SSLContext
+    with the settings you want and obtain a Secured SocketFactory
+    class from it. The socketfactory can be used to create the ssl
+    sockets.</p>
+
+    <p>For my implementation, there will be a client and a server
+    proxy class to construct the SSL tunnel. Since they will both
+    be using a SSL connection, they shall inherit from a base
+    SSLConnection class. This class will be responsible for setting
+    up the initial SSLContext that will be used by both the client
+    and server proxies. Finally, we need another class to implement
+    the relaying threads. A total of 4 classes in all.<br>
+    The following shows the code snippet from SSLConnection
+    class<br>
+    </p>
+
+    <p><b>Snippet from SSLConnection class</b><br>
+    </p>
+
+    <p class="code">/* initKeyStore method to load the keystores
+    which contain the private key and the trusted certificates
+    */<br>
+    <br>
+    public void initKeyStores(String key , String trust , char[]
+    storepass)<br>
+    {<br>
+    &nbsp; &nbsp; &nbsp; // mykey holding my own certificate and
+    private key, mytrust holding all the certificates that I
+    trust<br>
+    &nbsp; try {<br>
+    &nbsp; &nbsp; &nbsp; //get instances of the Sun JKS
+    keystore<br>
+    &nbsp; &nbsp; &nbsp;mykey = KeyStore.getInstance("JKS" ,
+    "SUN");<br>
+    &nbsp; &nbsp; &nbsp;mytrust = KeyStore.getInstance("JKS",
+    "SUN");<br>
+    <br>
+    &nbsp; &nbsp; //load the keystores<br>
+    &nbsp; &nbsp;mykey.load(new
+    FileInputStream(key)&nbsp;&nbsp;,storepass);<br>
+    &nbsp; &nbsp;mytrust.load(new FileInputStream(trust) ,storepass
+    );<br>
+    &nbsp; &nbsp; }<br>
+    &nbsp;catch(Exception e) {<br>
+    &nbsp; &nbsp; System.err.println(e.getMessage());<br>
+    &nbsp; &nbsp; System.exit(1);<br>
+    &nbsp; &nbsp; }<br>
+    }<br>
+    <br>
+    /* initSSLContext method to obtain a &nbsp;SSLContext and
+    initialize it with the SSL protocol and data from the keystores
+    */<br>
+    public void initSSLContext(char[] storepass , char[] keypass)
+    {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;try{<br>
+    &nbsp; &nbsp; //get a SSLContext from Sun JSSE<br>
+    &nbsp; &nbsp; ctx = SSLContext.getInstance("TLSv1" , "SunJSSE")
+    ;<br>
+    &nbsp; &nbsp; //initializes the keystores<br>
+    &nbsp;&nbsp;&nbsp; initKeyStores(key , trust , storepass) ;<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;//Create the key and trust manager
+    factories for handing the cerficates<br>
+     &nbsp;&nbsp;&nbsp;&nbsp;//in the key and trust stores<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;TrustManagerFactory tmf =
+    TrustManagerFactory.getInstance("SunX509" ,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"SunJSSE");<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;tmf.init(mytrust);<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;KeyManagerFactory kmf =
+    KeyManagerFactory.getInstance("SunX509" ,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;"SunJSSE");<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;kmf.init(mykey , keypass);<br>
+    <br>
+    &nbsp; &nbsp; //initialize the SSLContext with the data from
+    the keystores<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;ctx.init(kmf.getKeyManagers() ,
+    tmf.getTrustManagers() ,null) ;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;catch(Exception e) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;System.err.println(e.getMessage());<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;System.exit(1);<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+    <br>
+    }<br>
+    <br>
+    </p>
+
+    <p>The initSSLContext method creates a SSLContext from Sun
+    JSSE. During the creation, you can specify the SSL protocol to
+    use. In this case, I have chosen to use TLS (Transport Layer
+    Security) version 1. Once an instance of the SSLContext is
+    obtained, it is initialzed with the data from the
+    keystores.<br>
+    </p>
+
+    <p><br>
+    The following code snippet is from the SSLRelayServer class
+    which will run on the same machine as the postgres database. It
+    will relay all client data coming from the SSL connection to
+    postgres and vice versa.<br>
+    <br>
+    <b>SSLRelayServer class</b><br>
+    </p>
+
+    <p class="code">/* initSSLServerSocket method will get the
+    SSLContext via its super class SSLConnection. It will then
+    create a &nbsp;SSLServerSocketFactory object that will be used
+    to create a SSLServerSocket. */<br>
+    <br>
+    public void initSSLServerSocket(int localport) {<br>
+    &nbsp; &nbsp; &nbsp; try{<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//get
+    the ssl socket factory<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SSLServerSocketFactory
+    ssf = (getMySSLContext()).getServerSocketFactory();<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    //create the ssl socket<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;ss
+    = ssf.createServerSocket(localport);<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;
+    ((SSLServerSocket)ss).setNeedClientAuth(true);<br>
+    &nbsp; &nbsp; &nbsp; }<br>
+    &nbsp; &nbsp;catch(Exception e) {<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;
+    System.err.println(e.getMessage());<br>
+    &nbsp;&nbsp; &nbsp;&nbsp; System.exit(1);<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+    &nbsp;}<br>
+    <br>
+     // begin listening on SSLServerSocket and wait for incoming
+    client connections<br>
+    public void startListen(int localport , int destport) {<br>
+    <br>
+    &nbsp;&nbsp;&nbsp; System.out.println("SSLRelay server started
+    at " + (new Date()) + "&nbsp;&nbsp;" +<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"listening
+    on port " + localport + "&nbsp;&nbsp;" +&nbsp; "relaying to
+    port " + destport );<br>
+    <br>
+    &nbsp;while(true) {<br>
+    &nbsp;&nbsp;&nbsp; &nbsp; try {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; SSLSocket incoming
+    = (SSLSocket) ss.accept();<br>
+    &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp;incoming.setSoTimeout(10*60*1000); // set 10 minutes time
+    out<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+    System.out.println((new Date() ) + " connection from " +
+    incoming );<br>
+    &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; createHandlers(incoming,
+    destport); // create 2 new threads to handle the incoming
+    connection<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;catch(IOException e ) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.err.println(e);<br>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+    &nbsp; &nbsp; }<br>
+    }<br>
+    </p>
+
+    <p><br>
+    RelayApp class, the client proxy, is similar to SSLRelayServer.
+    It inherits from SSLConnection and uses 2 threads to do the
+    actual relaying. The difference is that it creates a SSLSocket
+    to connect to the remote host rather than a&nbsp;
+    SSLServerSocket for listening to incoming connections. The last
+    class that we need is the thread that does the actual relaying.
+    It simply read data from a inputstream and write them out to a
+    outputstream.&nbsp;</p>
+    The full example code for the four classes are available <a
+    href="../../common/src/article285/example285-0.1.tar.gz">here
+    (example285-0.1.tar.gz).</a> &nbsp;
+
+    <A NAME="285lfindex5">&nbsp;</A>
+<H2>Running the proxies and testing</H2>
+
+
+    <p>On the client, you will need these files SSLConnection.java,
+    RelayIntoOut.java and RelayApp.java. On the server side, you
+    need SSLRelayServer.java, RelayIntoOut.java and
+    SSLConnection.java. Put them together in a directory. To
+    compile the client proxy, issue the following command.</p>
+
+    <p class="code">javac RelayApp.java</p>
+
+    <p>To compile the server proxy, issue the following</p>
+
+    <p class="code">javac SSLRelayServer.java</p>
+
+    <p>On your server machine running postgres, you can fire up
+    SSLRelayServer with 6 command line arguments. They are</p>
+
+    <ol>
+      <li>Full path to the keystore holding the server private key
+      that you created earlier with keytool</li>
+
+      <li>Full path to your server's keystore holding the trusted
+      client certificate</li>
+
+      <li>Password of your keystores</li>
+
+      <li>Password of your server private key</li>
+
+      <li>Port that this relay server will listen on</li>
+
+      <li>Port which to forward data to( port of the actual server
+      ,in this case postgresql which has a default of 5432)</li>
+    </ol>
+
+    <p class="code">java SSLRelayServer servestore trustclientcert
+    storepass1 prikeypass0 2001 5432</p>
+
+    <p>Once the server proxy is running, you can start the client
+    proxy. The client proxy will take in 7 arguments, the
+    additional being the hostname or IP address of the server you
+    are connecting to. The arguments are</p>
+
+    <ol>
+      <li>Full path to the keystore holding the client private
+      key</li>
+
+      <li>Full path to the client's keystore holding the trusted
+      server certificate</li>
+
+      <li>Password of your keystore</li>
+
+      <li>Password of your client private key</li>
+
+      <li>Hostname or IP address of the server</li>
+
+      <li>Port number of the destination relay server ( in the
+      above example , it is 2001)</li>
+
+      <li>Port number of application that you are relaying for , in
+      this case postgresql , so you should set it to 5432</li>
+    </ol>
+
+    <p class="code">java RelayApp clientstore trustservercert
+    clistorepass1 cliprikeypass0 localhost 2001 5432</p>
+
+    <p>Once the SSL tunnel is established. You can start up your
+    JDBC application and connect to postgres in the usual way. The
+    entire relaying process will be transparent to your JDBC
+    application. This article is already too long and I shall not
+    provide examples for a JDBC application here. The postgres
+    manual and sun tutorial contains many examples on JDBC.</p>
+
+    <p>If you want to run everything on a single machine during
+    testing, you can do so too. There are two ways to do this,
+    &nbsp;either set your postgres database to listen on a
+    different port, or you can set the port number that RelayApp is
+    relaying for to another port. I shall use the latter to
+    illustrate a simple test. First, quit RelayApp, you will have
+    to send it the kill signal by pressing [ctrl] c. You also use
+    the same method to stop the SSLRelayServer proxy.</p>
+
+    <p>Fire up RelayApp again with the following command. The only
+    change is the last port number, it is 2002 now.</p>
+
+    <p class="code">java RelayApp clientstore trustservercert
+    clistorepass1 cliprikeypass0 localhost 2001 2002</p>
+
+    <p>The best application to use for testing will be psql itself.
+    We will be relaying all psql traffic to postgres through our
+    tunnel. Issue the following command to start psql for
+    testing.</p>
+
+    <p class="code">psql -h localhost -p 2002</p>
+
+    <p>The command directs psql to connect to localhost at port
+    2002 which our RelayApp is listening. After entering your
+    postgres password, you can start executing SQL commands as
+    usual and test the SSL connection that is now doing the
+    relaying.</p>
+
+    <A NAME="285lfindex6">&nbsp;</A>
+<H3>A note on security</H3>
+
+
+    <p>It isn't a good idea to specify passwords as command line
+    argument if you are sharing a pc. This is because someone
+    executing the command ps -auxww will be able to see the full
+    command string of your process, including the passwords. It is
+    better to store the passwords in an encrypted form on another
+    file and let your java app read from there. Alternatively you
+    can use Java Swing to create a dialog box that prompts for
+    password.</p>
+
+    <A NAME="285lfindex7">&nbsp;</A>
+<H2>Conclusion</H2>
+
+
+    <p>It is simple to use Sun JSSE for the creation of a&nbsp;
+    SSLtunnel that can be used by postgres. In fact, any other
+    applications that require a secured connection can probably use
+    this SSL tunnel.&nbsp; There are so many ways to add encryption
+    to your connection, just fire up your favourite linux editor
+    and start coding. Have fun !<br>
+    </p>
+
+    <A NAME="285lfindex8">&nbsp;</A>
+<H2>Useful links</H2>
+
+
+    <ul>
+      <li><a href="../../common/src/article285/">Source code for
+      this article</a></li>
+
+      <li><a href="http://www.postgresql.org/idocs/">PostgreSQL
+      documentation</a><br>
+      </li>
+
+      <li><a href=
+      "http://java.sun.com/j2se/1.4.1/docs/guide/security/jsse/JSSERefGuide.html">
+      Sun JSSE Specifications</a><br>
+      </li>
+
+      <li><a href=
+      "http://java.sun.com/j2se/1.4/docs/guide/security/CryptoSpec.html">
+      Sun JCA specifications</a><br>
+      </li>
+
+      <li><a href=
+      "http://java.sun.com/docs/books/tutorial/security1.2/index.html">
+      Java security tutorial</a><br>
+      </li>
+    </ul>
+    <!-- vim: set sw=2 ts=2 et tw=74: -->
+  
+
+
+
+<!-- 2pdaIgnoreStart -->
+<A NAME="talkback">&nbsp;</a>
+<h2>Talkback form for this article</h2>
+Every article has its own talkback page. On this page you can submit a comment or look at comments from other readers:
+<center>
+<table border="0"  CELLSPACING="2" CELLPADDING="1" summary="tb-button-outerpart">
+ <tr BGCOLOR="#C2C2C2"><td align=center>
+  <table border="3"  CELLSPACING="2" CELLPADDING="1" summary="tb-button">
+   <tr BGCOLOR="#C2C2C2"><td align=center>
+    <A href="http://cgi.linuxfocus.org/cgi-bin/lftalkback?anum=285"><b>&nbsp;talkback page&nbsp;</b></a>
+   </td></tr></table>
+</td></tr></table>
+</center>
+
+<HR size="2" noshade>
+<!-- ARTICLE FOOT -->
+<CENTER><TABLE WIDTH="98%" summary="footer">
+<TR><TD ALIGN=CENTER BGCOLOR="#9999AA" WIDTH="50%">
+<A HREF="../../common/lfteam.html">Webpages maintained by the LinuxFocus Editor team</A>
+<BR><FONT COLOR="#FFFFFF">&copy; Chianglin Ng, <a href="../../common/copy.html">FDL</a> <BR><a href="http://www.linuxfocus.org">LinuxFocus.org</a></FONT>
+</TD>
+<TD BGCOLOR="#9999AA">
+<!-- TRANSLATION INFO -->
+<font size=2>Translation information:</font>
+<TABLE summary="translators">
+  <tr><td><font size="2">en --&gt; -- : Chianglin Ng <small>&lt;chglin(at)singnet.com.sg&gt;</small></font></td></tr>
+</TABLE>
+</TD>
+</TR></TABLE></CENTER>
+<p><font size=1>2003-02-17, generated by lfparser version 2.35</font></p>
+<!-- 2pdaIgnoreStop -->
+</BODY>
+</HTML>

@@ -1,0 +1,155 @@
+\documentclass[11pt]{article}
+
+\setlength{\topmargin}{-.5in}
+\setlength{\textheight}{9in}    % 9 inch page
+\setlength{\textwidth}{5.5in}     % 5 3/4 inch line 
+\setlength{\oddsidemargin}{36pt}  % 1/4 inch (yields 1 1/4 inch left margin)
+\setlength{\evensidemargin}{36pt} % 1/4 inch
+
+\title{OffstageArts User Manual (draft)}
+
+\author{Robert Fischer}
+\usepackage{float,graphics,url,times,listings}
+
+%\define{\emph{OffstageArts}}{\emph{OffstageArts}}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Queries}
+
+OA provides a powerful query system that allows users to describe a set of people in the database in specific ways --- for example, "give me all the people who have donated at least twice in the last three fiscal years and have a last name starting with F."  Because users need to query the database in a potentially infinite number of ways, it takes some time to learn to use queries.  However, once mastered successfully, queries allow one to truly be master over the data.
+
+Queries are structured as a list of \emph{clauses}; each clause contains a list of \emph{elements}.  Elements are built up into clasues, and clauses are built up into a finished query.  We will therefore describe how elements work, how elements combine to form clauses, and finally, how clauses combine to form queries.
+
+\subsection{Elements}
+
+An element is the simplest kind of query; it is a description of a set of records one is talking about.  An element is said to \emph{match} certain records in the database, and to not match other records.  An example of an element might be "lastname = Fischer."  This element will match the records belonging to Bobby Fischer, Jason Fischer, but not Fish T. Jones.
+
+As shown in the above example, an element consists of three parts: a \emph{column}, a \emph{comparator} and a \emph{value}.  The OA query editor provides drop-downs to make it easy for users to select these three parts appropriately.
+
+\subsubsection{Column}
+
+The \emph{column} part of an element describes which part of a record is being matched.  The element ``lastname = Dwight" will match people whose last name is Dwight; the element ``firstname = Dwight'' will match people whose first name is Dwight.  The OA query editor provides a drop-down that lists all the available columns by which one can search.  Almost all columns in the main Development screen or its tabs may be searched.
+
+\subsubsection{Comparator}
+
+The comparator part of an element specifies how an element is matched to its value.  Available comparators depend on the column selected, and are listed in the drop-down menu.  Comparators include:
+
+\begin{description}
+
+\item{{\bf =}} Matches if the column equals the value.  For example, ``lastname = Fischer''.  This comparator is \emph{case sensitive}: ``lastname = Fischer'' will mathc Robert Fischer, but ``lastname = fischer'' will not.
+
+\item{{\bf $<>$}} This is the opposite of {\tt =}.  It matches only if the column does \emph{not} equal the value.  For example, ``lastname $<>$ Fischer'' matches everyone whose last name is \emph{not} Fischer.
+
+\item{{\bf in}} Matches if the column is in a set of values specified in the value column.  For example, ``lastname in Fischer,Jones,Smith'' would match everyone whose last name is Fischer, Jones or Smith.  Similarly, ``term in Fall 2008, Spring 2009'' matches everyone who was enrolled in the Fall 2008 or Spring 2009 terms.  The {\tt in} comparator can be powerful when assembling marketing mailing lists.
+
+\item{{\bf $>$}} For numerical and date column, this comparator matches if the value is greater than the column.  For example ``dob $>$ 4/1/2008'' maches everyone born AFTER April 1, 2008.  NOTE: It does \emph{not} match people born \emph{on} April 1.
+
+\item{{\bf $>=$}} This comparator is like $>$, except it also matches if the column \emph{equals} the value.  For example, ``dob $>=$ 4/1/2008'' matches everyone born \emph{on or after} April 1, 2008.
+
+\item{{\bf $<$}}
+
+\item{{\bf $lt=$}}
+
+\item{{\bf ilike}}
+
+\item{{\bf not ilike}}
+
+\item{{\bf similar to}}
+\item{{\bf not similar to}}
+
+\end{description}
+
+\subsection{Clasues}
+
+A clause is made up of a number of elements.  A clause matches a given record if all its elements match the record.  As elements are added to a clause, one can think of the clause as becoming \emph{increasingly specific} --- i.e. matching fewer and fewer records.
+
+\subsection{Multi-Clause Queries}
+
+Queries can have more than one clause.  Each clause either \emph{adds} or \emph{subtracts} from the set of records matched by the query -- based on whether the `+' or `-' sign is selected in the clauses' left-most column.
+
+\subsection{Query Type}
+
+A query composed of elements and clauses is used to select a set of records from the database.  The \emph{query type} allows that set of records to be modified.  There are four query types, and they work as follows:
+
+\begin{description}
+
+\item{{\bf Main Person}} No modification is performed.  The query returned is the query specified.
+
+\item{{\bf Head of Household}} The query returns the head of household for each record specified.  If two records were specified from the same household, only one head of household record is returned for them.  This option is commonly used for SnailMail marketing campaigns.  Not only does it ensure that no more than one mailing is sent to each household, it also ensures that parents are contacted, rather than their children.
+
+\item{{\bf parent}} The query returns the parent of each record specified (parent is set up in the School Registration screen).  This option is used when making school-related general mailings.
+
+\item{{\bf payer}} The query returns the payer of each record specified (payer is set up on a per-term basis in the School Registratio nscreen).  Since payers are set up per-term, the query must make sense for a particular term.   In particular, the query must include an element of the form ``terms = xxxxx.''
+
+\end{description}
+
+\subsection{Querying All Records}
+
+There is currently no easy way to query all records of the database.  This will be fixed.
+
+\subsubsection{Nulls}
+
+Comparators NEVER match a null field (except for $=$ null or $<>$ null).
+
+\subsubsection{Missing Tabs}
+
+Use subtraction clause instead...
+An element will ONLY match tab columns if that record has a value for that tab.
+
+\subsubsection{Ranges}
+
+In some cases, a record might match a clause more than once.  For example, suppose we have a clause ``lastname ilike 'F%' and interests in (beads, dog training, windsurfing).''  Suppose that Robert Fischer is listed in the \emph{Interests} tab as being interested in beads and dog traning.  In this case, Mr. Fischer will match the clause twice.  Robert Bender will not match the clause at all, since his last name does not start with an F.
+
+Normally, a record matches a clause overall if it matches the clause at least once.  However, if a range $(m,m)$ is specified, it will only match the clause overall if it matches the clause at least $n$ and no more than $m$ times.  If one of $n$ or $m$ is not specified, then the range will be open-ended.
+
+Ranges can be very powerful for certain types of marketing decisions.  For example, they can be used to find people who have attended at least three of the last five shows (in this case, $n=3$ and $m$ is not specified).
+
+\subsubsection{In File Comparator}
+
+\subsection{Future Work}
+
+Future work on the query system includes:
+
+\begin{itemize}
+
+\item Use the new \emph{StyledTable} class to improve the look and feel of the query editor.
+\item Add more helpful tooltips, etc. to aid in building queries and in understanding the meaning of a query on-screen.
+
+ \item Make an easy way to query all records
+\end{itemize}
+
+\section{Example: Annual Appeal}
+
+We will describe now how to generate an annual appeal mailing.  This consists of a few steps and decisions:
+ \begin{enumerate}
+ \item How will you decide which people will receive the annual appeal?
+ \item Do you wish to export the mailing to a spreadsheet, or are you printing labels directly?
+ \end{enumerate}
+
+\subsection{The Query}
+
+The first step is to decide who should receive this appeal.  That is done by creating a query to choose the appropriate list of people.
+
+For small organizations, one might wish to send to all (valid) addresses.  This can be done (for example) by a simple query of ``city $<>$ $<$blank$>$.''
+
+Larger or older organizations need to be more selective.  It is common for an older organization to accumulate many inactive records.  The query needed to determine active records will vary by situation.
+
+\subsection{Mailing Labels}
+
+If mailing labels are desired, click on ``mailing labels'' under the ``Action'' tab of the Development window.  Note that mailing labels will only print for records that seem to have a valid name and address.  Incomplete records will be ignored, even if they were selected from the query.
+
+\subsection{Spreadsheet}
+
+Alternately, one might wish to build a spreadsheet of recipients.  It will later be used to drive a mailing, either through an Office mail merge operation, or through a commercial mail house.  
+
+To make a spreadsheet, click on ``Clause Report'' under the ``Action'' tab of the Development window.  Choose the query you wish to use, and then the CSV file to which you wish to export.
+
+\subsection{Email}
+
+Email blasts are accomplished in a similar manner.  We are still working on that feature.
+
+\end{document}

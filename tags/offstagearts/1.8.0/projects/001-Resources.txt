@@ -1,0 +1,6 @@
+Resources stuff needs to be totally rewritten.
+
+Goal: Have one ResSet for OffstageArts, and another associated with Sitecode.  Each one can be upgraded / applied independently.  The sitecode will work off a different sysVersion than the main Resset --- it uses sysVersion as set by the sitecode developer, rather than the OffstageArts release cycle.
+
+That way, the Sitecode ResSet can add its own changes to the database independently of the main ResSet.
+

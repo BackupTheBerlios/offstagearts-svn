@@ -1,0 +1,866 @@
+
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>JasperForge: iReport: Forums for iReport</title>
+	<!--<script type="text/javascript" src="../js/registration.js"></script>-->
+	<script type="text/javascript" src="/themes/gforge/js/esp.js"></script>
+	<script type="text/javascript" src="/themes/gforge/js/calendar.js"></script>
+	<script type="text/javascript" src="/themes/gforge/js/registration.js"></script>
+	<script type="text/javascript" src="/themes/gforge/js/tooltip.js"></script>
+	<link type="text/css" rel="stylesheet" href="/themes/gforge/style/tools/calendar.css?random=20051112" media="screen"></LINK>
+	<link type="text/css" rel="stylesheet" href="/themes/gforge/style/tools/dhtmlcombosmall.css" media="screen"></LINK>
+	<link type="text/css" rel="stylesheet" href="/themes/gforge/style/tools/chromestyle2.css" media="screen"></LINK>
+	<script type="text/javascript" src="/themes/gforge/js/chrome.js"></script>
+	<script type="text/javascript" src="/themes/gforge/js/dhtmlcombosmall.js"></script>
+	<script>
+function getXMLHTTP() { //fuction to return the xml http object
+		var xmlhttp=false;	
+		try{
+			xmlhttp=new XMLHttpRequest();
+		}
+		catch(e)	{		
+			try{			
+				xmlhttp= new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			catch(e){
+				try{
+				req = new ActiveXObject("Msxml2.XMLHTTP");
+				}
+				catch(e1){
+					xmlhttp=false;
+				}
+			}
+		}
+		 	
+		return xmlhttp;
+	}
+	
+	
+	
+	function getCity(strURL) {		
+		
+		var req = getXMLHTTP();
+		
+		if (req) {
+			
+			req.onreadystatechange = function() {
+				if (req.readyState == 4) {
+					// only if "OK"
+					if (req.status == 200) {						
+						document.getElementById('citydiv').innerHTML=req.responseText;						
+					} else {
+						alert("There was a problem while using XMLHTTP:\n" + req.statusText);
+					}
+				}				
+			}			
+			req.open("GET", strURL, true);
+			req.send(null);
+		}
+				
+	}
+
+</script>
+<script type="text/javascript">
+
+var iframeids=["myframe"]
+
+//Should script hide iframe from browsers that don't support this script (non IE5+/NS6+ browsers. Recommended):
+var iframehide="yes"
+
+var getFFVersion=navigator.userAgent.substring(navigator.userAgent.indexOf("Firefox")).split("/")[1]
+var FFextraHeight=parseFloat(getFFVersion)>=0.1? 16 : 0 //extra height in px to add to iframe in FireFox 1.0+ browsers
+
+function resizeCaller() {
+    var dyniframe=new Array()
+    for (i=0; i<iframeids.length; i++){
+
+        if (document.getElementById)
+            resizeIframe(iframeids[i])
+
+        //reveal iframe for lower end browsers? (see var above):
+        if ((document.all || document.getElementById) && iframehide=="no"){
+            var tempobj=document.all? document.all[iframeids[i]] : document.getElementById(iframeids[i])
+            tempobj.style.display="block"
+        }
+    }
+}
+
+function resizeIframe(frameid){
+    var currentfr=document.getElementById(frameid)
+    if (currentfr && !window.opera){
+        currentfr.style.display="block"
+
+        if (currentfr.contentDocument && currentfr.contentDocument.body.offsetHeight) //ns6 syntax
+            currentfr.height = currentfr.contentDocument.body.offsetHeight+FFextraHeight; 
+        else if (currentfr.Document && currentfr.Document.body.scrollHeight) //ie5+ syntax
+            currentfr.height = currentfr.Document.body.scrollHeight;
+
+        if (currentfr.addEventListener)
+            currentfr.addEventListener("load", readjustIframe, false)
+        else if (currentfr.attachEvent){
+            currentfr.detachEvent("onload", readjustIframe) // Bug fix line
+            currentfr.attachEvent("onload", readjustIframe)
+        }
+    }
+}
+
+function readjustIframe(loadevt) {
+    var crossevt=(window.event)? event : loadevt
+    var iframeroot=(crossevt.currentTarget)? crossevt.currentTarget : crossevt.srcElement
+    if (iframeroot)
+        resizeIframe(iframeroot.id);
+}
+
+function loadintoIframe(iframeid, url){
+    if (document.getElementById)
+        document.getElementById(iframeid).src=url
+}
+
+if (window.addEventListener)
+    window.addEventListener("load", resizeCaller, false)
+else if (window.attachEvent)
+    window.attachEvent("onload", resizeCaller)
+else
+    window.onload=resizeCaller
+
+</script>
+
+<style type="text/css">
+<!--
+@import url("/themes/gforge/style/tools/css.css");
+@import url("/themes/gforge/style/tools/button.css");
+-->
+</style></head>
+<body>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="center" valign="top"><div class="pagebodywidth" align="center">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td class="headerheight"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td align="right" valign="middle" class="headerlogopart"><div class="logopart"><a href="/"><img src="/themes/gforge/images/tools/logo.gif" border="0" alt="" width="176" height="27" /></a></div>
+                
+
+<div class="dlinks"><a href="http://www.jaspersoft.com" target="_blank" class="dlinktext">JASPERSOFT.COM</a></div>
+                
+<div class="dlinks2"><a href="http://www.jaspersoft.com/JasperShop.html" target="_blank" class="dlinktext">STORE</a></div>
+                
+<div class="dlinks3">
+		<!--		<a  href="http://jasperforge.org/?return_to=%2Fplugins%2Fespforum%2Fview.php%3Fgroup_id%3D83%26forumid%3D101%26topicid%3D15031" class="dlinktext2">LOGIN</a> -->
+<a  href="http://jasperforge.org/?return_to=%2Fplugins%2Fespforum%2Fview.php%3Fgroup_id%3D83%26forumid%3D101%26topicid%3D15031" class="dlinktext2" onClick="var s=s_gi('jscjasperforge'); s.linkTrackVars='eVar6,events'; s.linkTrackEvents='event5'; s.events='event5'; s.eVar6='User Login'; s.tl(this,'o','User Login');">LOGIN</a>
+				</div></td></tr><tr><td align="right" valign="top">
+               <div class="topclicklink">Register to contribute.<a href="/account/register.php" class="dlinktext2" class="dlinktext2" onClick="var s=s_gi('jscjasperforge'); s.linkTrackVars='eVar2,events'; s.linkTrackEvents='event1'; s.events='event1'; s.eVar2='User Registration Complete'; s.tl(this,'o','User Registration Complete');"> Click here.</a></div> </td></tr>
+            </tr><!-- Super Nav part ends here -->
+	       <td valign="top">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+               	 <tr>
+                  	<td>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    		<tr>
+                      			<td width="13"><img src="/themes/gforge/images//tools/buttonleftcon.gif" width="13" height="33" /></td>
+			                    <td background="/themes/gforge/images//tools/buttonbg.gif">
+			        		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+<tr>
+                          	<td ><div class="buttonlinks1"><a href="http://jasperforge.org/topmenu_displaypage.php?topactd=37" class="mainbutlink">ABOUT</a></div><div class="buttonspace" align="center">|</div><div class="buttonlinks1"><a href="http://jasperforge.org/public.php" class="mainbutlink">PROJECTS</a></div><div class="buttonspace" align="center">|</div><div class="buttonlinks1"><a href="http://jasperforge.org/jasperlyc/src/lyceum/bloggers_from_userlist.php" class="mainbutlink">BLOGS</a></div><div class="buttonspace" align="center">|</div><div class="buttonlinks1"><a href="http://jasperforge.org/sitenews" class="mainbutlink">NEWS</a></div>
+</td>
+<td><div class="mtlink2">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+	  <td width="11"><img src="/themes/gforge/images/tools/butinerbox.png" width="11" height="22" /></td>
+<td align="left"  background="/themes/gforge/images//tools/butinerboxbg.png"><div align="center"><span class="butinertext">iReport</span> </div></td><td width="11"><img src="/themes/gforge/images//tools/butinerboxright.png" width="11" height="22" /></td>
+                                      		</tr>
+                                    		</table></div></td></tr>
+</table></td>
+                      <td width="19"><img src="/themes/gforge/images//tools/buttonrightcon.gif" width="19" height="33" /></td>
+                      </tr>
+                  </table></td><!-- L1 Ends Here -->
+                </tr><!-- L2 Starts Here --><tr>
+                  <td height="13" valign="top"><img src="/themes/gforge/images//tools/buttonsho.gif" width="900" height="8" /></td>
+                </tr><!-- L2 Starts Here -->
+ 
+                         <tr><!-- L2 Starts Here -->
+                  <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td width="16"><img src="/themes/gforge/images//tools/l2buttonleft.gif" width="16" height="32" /></td><td width="100%" background="/themes/gforge/images//tools/l2buttonleftbg.gif" align="left"><a href="/plugins/project/project_home.php?group_id=83" class="l2buttontext">Project Home</a><span class="linestyforl2">|</span><a href="http://jasperforge.org/plugins/espforum/browse.php?group_id=83&forumid=101" class="stylo21" >Forums</a><span class="linestyforl2">|</span><a href="/plugins/mwiki/index.php/Main_Page?group_id=83" class="l2buttontext">Wiki</a><span class="linestyforl2">|</span><a href="/espdocs/?group_id=83" class="l2buttontext">Docs</a><span class="linestyforl2">|</span><a href="/plugins/espnews/?group_id=83" class="l2buttontext">News</a><span class="linestyforl2">|</span><a href="http://sourceforge.net/project/showfiles.php?group_id=64348" class="l2buttontext" >Release</a><span class="linestyforl2">|</span><a href="/tracker/?group_id=83" class="l2buttontext">Tracker</a><span class="linestyforl2">|</span><a href="/scm/?group_id=83" class="l2buttontext">Source</a><span class="linestyforl2">|</span><a href="/plugins/esplist/?order=asc&type=id&group_id=83" class="l2buttontext">Lists</a></td>
+                          <td background="/themes/gforge/images/tools/l2buttonleftbg.gif" align="right" width="50"></td>
+                          <td width="16"><img src="/themes/gforge/images//l2buttonright2.gif" width="16" height="32" /></td>
+                                       </tr>
+                      </table></td>
+                    </tr><!-- L2 ends here -->
+<tr>
+                      <td align="center" valign="top" colspan="3"><img src="/themes/gforge/images//tools/buttonsho.gif" width="900" height="8" /></td>
+                    </tr>
+                  </table></td>
+                </tr>
+<tr>
+<td valign="top">
+
+
+<table cellpadding="0" cellspacing="0" border="0"  width="100%">
+<tr>
+<!-- Outer body row -->
+	<td bgcolor="#ffffff" width="100%" height="450" valign="top">
+	<noscript>
+<span id="error_message">Javascript is disabled in your browser. Some components wont work as expected.</span>
+</noscript><div id="error_message"></div><table class="fb_profilebox" border="0" cellpadding="0" cellspacing="0" width="100%"><td><table width="664" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td colspan="2"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="17"><img src="/themes/gforge/images//tools/subtoprightimg.gif" width="17" height="22" /></td>
+            <td bgcolor="#f2f2f2"><span class="botboxnumbersel"><strong>
+   <a href="/plugins/espforum/?group_id=83" class="imlinks">Forums</a>&nbsp;&gt;&nbsp;  <a href="/plugins/espforum/browse.php?group_id=83&forumid=101" class="imlinks">iReport Discussion/Help</a>&nbsp;&gt;&nbsp;  JNLP - Web Start - example</strong>
+  </span><span class="forumtitle"> &gt;</span></td><td width="6"><img src="/themes/gforge/images//tools/subtopleftimg.gif" width="6" height="22" /></td>
+          </tr>
+        </table></td>
+        </tr>
+      <tr>
+        <td width="15">&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+</table></td><td valign="top"><div id="fb_searchbox"><form method="post" action="/plugins/espforum/search.php" name="search">
+		   <input name="type_of_search" value="forums" type="hidden">
+		    <input name="group_id" value="83" type="hidden">
+
+		    <input name="Search" value="Search" type="hidden"><input class="fb_search_inputbox fbs" name="words" size="15" value="Search Forum" onblur="if(this.value=='') this.value="Search Forum';" onfocus="if(this.value=='Search Forum') this.value='';" type="text"> <input onclick="submitForm()" value="Go" name="submit" class="fb_search_button fbs" type="submit"></form></div><div align="right" style="margin-right:70px"><a href="/plugins/espforum/advance_search.php?group_id=83" class="imlinks">Advanced Search</a></div></td></tr></table><link type="text/css" rel="stylesheet" href="/themes/gforge/style/tools/forum.css"><link type="text/css" rel="stylesheet" href="/themes/gforge/style/tools/forumdhtmlcombosmall.css"><script type="text/javascript" src="/themes/gforge/js/forumdhtmlcombosmall.js"></script><div id="container">
+<div class="clr"></div>
+<div id="maincolumn">
+<!-- closed in footer.html -->
+<div id="fireboard"><table class="jr-topnav" border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tbody><tr><td><a name="forumtop"> </a><a href="#forumbottom"><img src="/themes/gforge/images//tools/forum/bottom_arrow.gif" alt="Go to bottom" title="Go to bottom" border="0"></a></td>
+                <td class="jr-topnav-left">
+                    <form method="post" action="/plugins/espforum/post.php?group_id=83&forumid=101&topicid=15031">
+			<input type="hidden" name="post_changes" value="y" />
+		      <table cellspacing="0" cellpadding="0" border="0"  align="left" width="100%"><tR><TD></td></tR></table> </form>
+                </td>
+
+                <td class="jr-topnav-right" >
+                    
+                        <div class="jr-pagenav">
+                            <ul>
+                                <li class="jr-pagenav-text">Page: </li><span class="pagenav">&nbsp;1&nbsp;</span>   </ul>
+                        </div>
+
+                                    </td>
+            </tr>
+        </tbody></table>
+<table class="fb_blocktable" id="fb_views" border="0" cellpadding="0" cellspacing="0" width="900">
+                <thead>
+                    <tr>
+                        <td align="left">
+                             <div class="fb_title_cover fbm">
+                                <span class="style45"><b>iReport Discussion/Help Topic: </b> </span>
+                            </div>
+<div id="fb_ft-cover">
+    <div id="forumtools_control">
+        <div id="test">
+
+  <!-- 1st example -->
+  <select name="select" id="webmaster" style="display: none;" title="Forum Tools" >
+    <option value="/plugins/espforum/thread.php?group_id=83&forumid=101&topicid=15031&action=view">Threaded view</option>
+    <option value="/plugins/espforum/mark_read.php?group_id=83&forumid=101&topicid=15031">Mark as Read</option>
+  </select>
+			</div>
+			
+			
+            <script type="text/javascript">
+//dhtmlselect("id_of_select_menu", "optional_width_of_select_box_px", "optional_width_of_drop_down_menu_px")
+dhtmlselect("webmaster","123px","123px")
+
+</script>
+</div>                        <!-- /FORUM TOOLS -->
+                        </td>
+                    </tr>
+                </thead><tbody><tr>
+                    <td>
+<table border="0" cellpadding="0" cellspacing="0" width="900">
+    <caption>
+        <a name="15031">
+    </a></caption>
+
+    <tbody>
+        <tr class="fb_sth">
+            <th colspan="2" class="view-th fb_sectiontableheader">
+               <a href="#15031">#15031</a>
+            </th>
+        </tr>
+
+        <tr> <!-- -->
+
+        <td class="fb-msgview-right">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tbody><tr>
+                        <td align="left">
+                                                        <span class="msgtitle">JNLP - Web Start - example </span> <span class="msgdate" title="09/13/2006 03:33">09/13/2006 03:33</span>
+                        </td>
+			
+                        <td align="right">
+                            <span class="msgkarma">
+				
+                            &nbsp;
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" valign="top">
+                            <div class="msgtext">I've browsed through the documentation and searched but I haven't found an example on how to execute ireports from JAWS.  <br />
+<br />
+If anyone out there has a sample configuration that they can share, I'm sure a lot of people would appreciate it.<br />
+<br />
+Otherwise I'll plow through it and once I have it configured I'll share as well as try to get it added to the FAQ/Wiki.<br />
+<br />
+<br />
+Thanks  </div>
+ 							
+                            
+                                <div id="sc15031" class="switchcontent">
+                                    <!-- make this div distinct from others on this page -->
+                                    
+                            <form action="/plugins/espforum/post.php" method="post" name="postform" enctype="multipart/form-data">
+                                <input name="group_id" value="83" type="hidden">
+
+                                <input name="forumid" value="101" type="hidden">
+
+                                <input name="topicid" value="15031" type="hidden">
+
+                                <input name="topid" value="" type="hidden">
+
+                                <input name="reply_topic" value="y" type="hidden">
+				<input name="changes_post" value="y" type="hidden">
+				<input type="hidden" name="form_key" value="ba91540905934a03e08197c4c1d454f9"/>
+                                <input name="subject" size="35" class="inputbox" maxlength="50" value="JNLP - Web Start - example" type="hidden">
+
+                                <textarea class="inputbox" name="details" id="details" style="overflow: auto; height: 100px; width: 100%; "></textarea>
+                                <input class="but_submit" name="submit" value="   " type="submit">
+                                <input class="butcan" id="cancel__1518" name="cancel" value="   "  type="button" onclick="textarea_hide('sc15031')">
+
+                           </form>
+                                </div>
+                       </td>
+                    </tr>
+                </tbody></table>
+            </td>
+              <td class="fb-msgview-left">
+                <div class="fb-msgview-l-cover">
+                    <span class="view-username"><a href="/my/personal.php?userid=11544">sthomps</a> </span> <span class="msgusertype"></span>
+
+                    <br>
+
+                    <a href="/my/personal.php?userid=11544"><span class="fb_avatar"><img src="/uploads/users/noimg2.gif" alt="user photo" border="0"></span></a>
+                   <div class="viewcover">Project Roles</div>
+                   <div class="viewcover"></div>
+                <!---<div class="viewcover"><img src="/themes/gforge/images//tools/forum/rankmod.gif" alt=""></div>--->
+                   <div class="viewcover"><strong>Posts: 1</strong></div>
+		<div class="viewcover"><table align="center" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="100"><img src="/themes/gforge/images//tools/col9m.png" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="0"><img src="/themes/gforge/images//tools/graph.gif" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="100"></td></tr></tbody></table></div>
+               
+		<div class="viewcover"><strong>Karma: 0</strong></div>
+		<div class="viewcover"><table align="center" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="100"><img src="/themes/gforge/images//tools/col9moran.png" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="0"><img src="/themes/gforge/images//tools/graph.gif" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="100"></td></tr></tbody></table></div></div>
+            </td>
+<!-- -->
+        </tr>
+        <tr><td class="fb-msgview-right-c">
+	<div class="msgsignature"></div>
+       </td>
+            <td class="fb-msgview-left-c">&nbsp;
+            </td>
+        </tr>
+
+        <tr><td class="fb-msgview-right-b" align="right">
+                <span id="fb_qr_sc__1518" class="fb_qr_fire" style="cursor: pointer;">
+
+<form method="post" action="/plugins/espforum/post.php?group_id=83&forumid=101&topicid=15031&topid=15031">
+
+			<input type="hidden" name="post_changes" value="y" /></form> </span>
+            </td>
+            <td class="fb-msgview-left-b">&nbsp;</td>
+        </tr>
+    </tbody>
+</table><tbody><tr>
+                    <td>
+<table border="0" cellpadding="0" cellspacing="0" width="900">
+    <caption>
+        <a name="15093">
+    </a></caption>
+
+    <tbody>
+        <tr class="fb_sth">
+            <th colspan="2" class="view-th fb_sectiontableheader">
+               <a href="#15093">#15093</a>
+            </th>
+        </tr>
+
+        <tr> <!-- -->
+
+        <td class="fb-msgview-right">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tbody><tr>
+                        <td align="left">
+                                                        <span class="msgtitle">Re:JNLP - Web Start - example </span> <span class="msgdate" title="09/13/2006 23:49">09/13/2006 23:49</span>
+                        </td>
+			
+                        <td align="right">
+                            <span class="msgkarma">
+				<img src=/themes/gforge/images//tools/forum/attachment.gif width="32" height="32">
+                            &nbsp;
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" valign="top">
+                            <div class="msgtext">Hi sthomps,<br />
+<br />
+I read your message yesterday, and I said: it's a while I don't try to run iReport using JWS... why don't try now?<br />
+<br />
+It was a pain, but finally with some modifications, I was able to succesfully run the last version of iR using JWS. Basically there are some problems related to the custom class loader used by iReport. To succesfully use JWS, you have to put in your user home directory a .java.policy file with the following content:<br />
+<br />
+<table align="center" border="0" cellpadding="3" cellspacing="1" width="90%"><tbody><tr><td><b>Code:</b></td></tr><tr><td><pre><br />
+// this policy file should only be used for testing and not deployed<br />
+grant {<br />
+    permission java.security.AllPermission;<br />
+};<br />
+</td></tr></tbody></table><br />
+<br />
+<br />
+Really you can limit these permissions to all the applications started from a particular site.<br />
+<br />
+Then you have to sign all the jars used by iReport (including ireport-1.2.6.jar). <br />
+<br />
+I have attached a working jnlp.<br />
+<br />
+This is fine to run iReport, but we have to solve 3 other problems:<br />
+1. in this way iReport is not able to find jars to compile reports (this problem is now fixed in the repository, I added a special argument &quot;webstart&quot; to activate a special classpath management when iReport is started using JWS<br />
+2. you have to &quot;jarize&quot; the templates (usually located in the templates directory) as described in the iReport manual<br />
+3. you have to &quot;jarize&quot; the plugins (usually located in the plugin directory) as described in the iReport manual<br />
+<br />
+that's all<br />
+<br />
+Giulio [file name=ireport.zip size=911]http://www.jasperforge.org/components/com_joomlaboard/uploaded/files/ireport.zip[/file]<br>Post edited by: giulio, at: 2006/09/13 16:50  </div>
+ 							
+                            
+                                <div id="sc15093" class="switchcontent">
+                                    <!-- make this div distinct from others on this page -->
+                                    
+                            <form action="/plugins/espforum/post.php" method="post" name="postform" enctype="multipart/form-data">
+                                <input name="group_id" value="83" type="hidden">
+
+                                <input name="forumid" value="101" type="hidden">
+
+                                <input name="topicid" value="15031" type="hidden">
+
+                                <input name="topid" value="" type="hidden">
+
+                                <input name="reply_topic" value="y" type="hidden">
+				<input name="changes_post" value="y" type="hidden">
+				<input type="hidden" name="form_key" value="1341d7eafe496bb0ec5652a03ae5d0f6"/>
+                                <input name="subject" size="35" class="inputbox" maxlength="50" value="Re:JNLP - Web Start - example" type="hidden">
+
+                                <textarea class="inputbox" name="details" id="details" style="overflow: auto; height: 100px; width: 100%; "></textarea>
+                                <input class="but_submit" name="submit" value="   " type="submit">
+                                <input class="butcan" id="cancel__1518" name="cancel" value="   "  type="button" onclick="textarea_hide('sc15093')">
+
+                           </form>
+                                </div>
+                       </td>
+                    </tr>
+                </tbody></table>
+            </td>
+              <td class="fb-msgview-left">
+                <div class="fb-msgview-l-cover">
+                    <span class="view-username"><a href="/my/personal.php?userid=8303">giulio</a> </span> <span class="msgusertype"></span>
+
+                    <br>
+
+                    <a href="/my/personal.php?userid=8303"><span class="fb_avatar"><img src="http://jasperforge.org/uploads/users/forum_8303_118_44bb8409e65c3.jpg" alt="user photo" border="0"></span></a>
+                   <div class="viewcover">Project Roles</div>
+                   <div class="viewcover">Project Owner</div>
+                <!---<div class="viewcover"><img src="/themes/gforge/images//tools/forum/rankmod.gif" alt=""></div>--->
+                   <div class="viewcover"><strong>Posts: 401</strong></div>
+		<div class="viewcover"><table align="center" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="100"><img src="/themes/gforge/images//tools/col9m.png" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="1"><img src="/themes/gforge/images//tools/graph.gif" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="99"></td></tr></tbody></table></div>
+               
+		<div class="viewcover"><strong>Karma: 30</strong></div>
+		<div class="viewcover"><table align="center" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="100"><img src="/themes/gforge/images//tools/col9moran.png" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="30"><img src="/themes/gforge/images//tools/graph.gif" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="70"></td></tr></tbody></table></div></div>
+            </td>
+<!-- -->
+        </tr>
+        <tr><td class="fb-msgview-right-c">
+	<div class="msgsignature">Attachments:&nbsp;<span style="float:left;margin-left:20px"><a href="/uploads/forum/101/15093/ireport.zip" target="_blank"><img src="/themes/gforge/images//tools/forum/attach/zip.png" width=48 height=48 border="0"></a><div>ireport.zip</div></span></div>
+       </td>
+            <td class="fb-msgview-left-c">&nbsp;
+            </td>
+        </tr>
+
+        <tr><td class="fb-msgview-right-b" align="right">
+                <span id="fb_qr_sc__1518" class="fb_qr_fire" style="cursor: pointer;">
+
+<form method="post" action="/plugins/espforum/post.php?group_id=83&forumid=101&topicid=15031&topid=15093">
+
+			<input type="hidden" name="post_changes" value="y" /></form> </span>
+            </td>
+            <td class="fb-msgview-left-b">&nbsp;</td>
+        </tr>
+    </tbody>
+</table><tbody><tr>
+                    <td>
+<table border="0" cellpadding="0" cellspacing="0" width="900">
+    <caption>
+        <a name="15972">
+    </a></caption>
+
+    <tbody>
+        <tr class="fb_sth">
+            <th colspan="2" class="view-th fb_sectiontableheader">
+               <a href="#15972">#15972</a>
+            </th>
+        </tr>
+
+        <tr> <!-- -->
+
+        <td class="fb-msgview-right">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tbody><tr>
+                        <td align="left">
+                                                        <span class="msgtitle">Re:JNLP - Web Start - example </span> <span class="msgdate" title="10/04/2006 22:49">10/04/2006 22:49</span>
+                        </td>
+			
+                        <td align="right">
+                            <span class="msgkarma">
+				
+                            &nbsp;
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" valign="top">
+                            <div class="msgtext">Ciao Giulio.<br />
+You said:<br />
+&gt;&gt; 1. in this way iReport is not able to find jars to compile reports (this problem is now fixed in the repository, I added a special argument &quot;webstart&quot; to activate a special classpath management when iReport is started using JWS<br />
+<br />
+We have exactly the same problem, what has been your workaround? In which class on the source can I find it?<br />
+<br />
+Thanks!<br />
+Francesco  </div>
+ 							
+                            
+                                <div id="sc15972" class="switchcontent">
+                                    <!-- make this div distinct from others on this page -->
+                                    
+                            <form action="/plugins/espforum/post.php" method="post" name="postform" enctype="multipart/form-data">
+                                <input name="group_id" value="83" type="hidden">
+
+                                <input name="forumid" value="101" type="hidden">
+
+                                <input name="topicid" value="15031" type="hidden">
+
+                                <input name="topid" value="" type="hidden">
+
+                                <input name="reply_topic" value="y" type="hidden">
+				<input name="changes_post" value="y" type="hidden">
+				<input type="hidden" name="form_key" value="379ab01bb57829699d501c0abb07aa5f"/>
+                                <input name="subject" size="35" class="inputbox" maxlength="50" value="Re:JNLP - Web Start - example" type="hidden">
+
+                                <textarea class="inputbox" name="details" id="details" style="overflow: auto; height: 100px; width: 100%; "></textarea>
+                                <input class="but_submit" name="submit" value="   " type="submit">
+                                <input class="butcan" id="cancel__1518" name="cancel" value="   "  type="button" onclick="textarea_hide('sc15972')">
+
+                           </form>
+                                </div>
+                       </td>
+                    </tr>
+                </tbody></table>
+            </td>
+              <td class="fb-msgview-left">
+                <div class="fb-msgview-l-cover">
+                    <span class="view-username"><a href="/my/personal.php?userid=12071">gianferr</a> </span> <span class="msgusertype"></span>
+
+                    <br>
+
+                    <a href="/my/personal.php?userid=12071"><span class="fb_avatar"><img src="/uploads/users/noimg2.gif" alt="user photo" border="0"></span></a>
+                   <div class="viewcover">Project Roles</div>
+                   <div class="viewcover"></div>
+                <!---<div class="viewcover"><img src="/themes/gforge/images//tools/forum/rankmod.gif" alt=""></div>--->
+                   <div class="viewcover"><strong>Posts: 1</strong></div>
+		<div class="viewcover"><table align="center" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="100"><img src="/themes/gforge/images//tools/col9m.png" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="0"><img src="/themes/gforge/images//tools/graph.gif" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="100"></td></tr></tbody></table></div>
+               
+		<div class="viewcover"><strong>Karma: 0</strong></div>
+		<div class="viewcover"><table align="center" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="100"><img src="/themes/gforge/images//tools/col9moran.png" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="0"><img src="/themes/gforge/images//tools/graph.gif" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="100"></td></tr></tbody></table></div></div>
+            </td>
+<!-- -->
+        </tr>
+        <tr><td class="fb-msgview-right-c">
+	<div class="msgsignature"></div>
+       </td>
+            <td class="fb-msgview-left-c">&nbsp;
+            </td>
+        </tr>
+
+        <tr><td class="fb-msgview-right-b" align="right">
+                <span id="fb_qr_sc__1518" class="fb_qr_fire" style="cursor: pointer;">
+
+<form method="post" action="/plugins/espforum/post.php?group_id=83&forumid=101&topicid=15031&topid=15972">
+
+			<input type="hidden" name="post_changes" value="y" /></form> </span>
+            </td>
+            <td class="fb-msgview-left-b">&nbsp;</td>
+        </tr>
+    </tbody>
+</table><tbody><tr>
+                    <td>
+<table border="0" cellpadding="0" cellspacing="0" width="900">
+    <caption>
+        <a name="45078">
+    </a></caption>
+
+    <tbody>
+        <tr class="fb_sth">
+            <th colspan="2" class="view-th fb_sectiontableheader">
+               <a href="#45078">#45078</a>
+            </th>
+        </tr>
+
+        <tr> <!-- -->
+
+        <td class="fb-msgview-right">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tbody><tr>
+                        <td align="left">
+                                                        <span class="msgtitle">RE:JNLP - Web Start - example </span> <span class="msgdate" title="09/02/2008 09:00">09/02/2008 09:00</span>
+                        </td>
+			
+                        <td align="right">
+                            <span class="msgkarma">
+				
+                            &nbsp;
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" valign="top">
+                            <div class="msgtext"><p>I'm trying to get iReport 3.0.0 with java webstart. I took inspiration from the Giulio's file jnlp, updating the libraries. <br />
+The problem is that when I go to sign libraries, and I launch java webstart I got this error: &quot;The resources JAR file JNLP are not signed by the same certificate.&quot; <br />
+I then tried to sign libraries one by one as was required and the error occurred after signing the library iReport.jar.</p>
+<p><br />
+Do you have any suggestions? <br />
+Thank you</p>
+<p>Fabio</p>
+<p>&nbsp;</p>  </div>
+ 							
+                            
+                                <div id="sc45078" class="switchcontent">
+                                    <!-- make this div distinct from others on this page -->
+                                    
+                            <form action="/plugins/espforum/post.php" method="post" name="postform" enctype="multipart/form-data">
+                                <input name="group_id" value="83" type="hidden">
+
+                                <input name="forumid" value="101" type="hidden">
+
+                                <input name="topicid" value="15031" type="hidden">
+
+                                <input name="topid" value="" type="hidden">
+
+                                <input name="reply_topic" value="y" type="hidden">
+				<input name="changes_post" value="y" type="hidden">
+				<input type="hidden" name="form_key" value="3a548bddfb025e8887ab025109e635b9"/>
+                                <input name="subject" size="35" class="inputbox" maxlength="50" value="RE:JNLP - Web Start - example" type="hidden">
+
+                                <textarea class="inputbox" name="details" id="details" style="overflow: auto; height: 100px; width: 100%; "></textarea>
+                                <input class="but_submit" name="submit" value="   " type="submit">
+                                <input class="butcan" id="cancel__1518" name="cancel" value="   "  type="button" onclick="textarea_hide('sc45078')">
+
+                           </form>
+                                </div>
+                       </td>
+                    </tr>
+                </tbody></table>
+            </td>
+              <td class="fb-msgview-left">
+                <div class="fb-msgview-l-cover">
+                    <span class="view-username"><a href="/my/personal.php?userid=87930">tamazero</a> </span> <span class="msgusertype"></span>
+
+                    <br>
+
+                    <a href="/my/personal.php?userid=87930"><span class="fb_avatar"><img src="/uploads/users/noimg2.gif" alt="user photo" border="0"></span></a>
+                   <div class="viewcover">Project Roles</div>
+                   <div class="viewcover"></div>
+                <!---<div class="viewcover"><img src="/themes/gforge/images//tools/forum/rankmod.gif" alt=""></div>--->
+                   <div class="viewcover"><strong>Posts: 1</strong></div>
+		<div class="viewcover"><table align="center" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="100"><img src="/themes/gforge/images//tools/col9m.png" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="0"><img src="/themes/gforge/images//tools/graph.gif" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="100"></td></tr></tbody></table></div>
+               
+		<div class="viewcover"><strong>Karma: 0</strong></div>
+		<div class="viewcover"><table align="center" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="100"><img src="/themes/gforge/images//tools/col9moran.png" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="0"><img src="/themes/gforge/images//tools/graph.gif" alt="graph" style="border: 0px solid rgb(51, 51, 51);" height="4" width="100"></td></tr></tbody></table></div></div>
+            </td>
+<!-- -->
+        </tr>
+        <tr><td class="fb-msgview-right-c">
+	<div class="msgsignature"></div>
+       </td>
+            <td class="fb-msgview-left-c">&nbsp;
+            </td>
+        </tr>
+
+        <tr><td class="fb-msgview-right-b" align="right">
+                <span id="fb_qr_sc__1518" class="fb_qr_fire" style="cursor: pointer;">
+
+<form method="post" action="/plugins/espforum/post.php?group_id=83&forumid=101&topicid=15031&topid=45078">
+
+			<input type="hidden" name="post_changes" value="y" /></form> </span>
+            </td>
+            <td class="fb-msgview-left-b">&nbsp;</td>
+        </tr>
+    </tbody>
+</table> </tbody>
+        </table>
+
+    <!-- bottom nav -->
+            <table class="jr-bottomnav" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td>
+                <a name="forumbottom"></a><a href="#forumtop"><img src="/themes/gforge/images//tools/forum/top_arrow.gif" alt="Go to top" title="Go to top" border="0"></a><td class="jr-topnav-left"></td><td class="jr-topnav-right"><div class="jr-pagenav"><ul><li class="jr-pagenav-text">Page: </li><span class="jr-pagenav-nb-act">1</span></ul></div>            </td>
+        </tr>
+    </tbody></table>
+    <!-- /top nav -->
+</center></div>
+</div></div></td></tr></table><!--- footer section --->
+
+ <tr>
+          <td><table width="900" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td bgcolor="#005b9e" height="1"></td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr>
+              <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>                  <td width="491"><table width="491" border="0" cellspacing="0" cellpadding="0">
+			
+                    <tr>
+                      <td width="4"><img src="/themes/gforge/images//tools/footboxtopl1.gif" width="5" height="5" /></td>
+                      <td width="474" class="footboxtopcenterbg"><img src="/themes/gforge/images//tools/footboxtopl2.gif" width="1" height="5" /></td>
+                      <td width="5"><img src="/themes/gforge/images//tools/footboxtopr3.gif" width="5" height="5" /></td>
+                      <td width="9" align="left"><img src="/themes/gforge/images//tools/footboxtopr4.gif" width="4" height="5" /></td>
+                    </tr>
+                    <tr>
+                      <td colspan="3" class="footboxcenterbg"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td width="4" valign="top"><img src="/themes/gforge/images//tools/footboxcenter1.gif" width="4" height="44" /></td>
+                            <td width="473" align="left" valign="top" class="footboxcenterinbg"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                              <tr>
+                                <td><div class="fotterboxtitle">JasperForge Quotes</div></td>
+                              </tr>
+                              <tr>
+                                <td><div class="fotterboxtext">&quot;iReport is a very good tool, easy to use, rich with a variety of charts, and with JasperReports I can generate cross tabs.  &quot;</div></td>
+                              </tr>
+                            </table></td>
+                            <td width="5" valign="top" class="footboxcenterrightbg"><img src="/themes/gforge/images//tools/footboxcenter3.gif" width="5" height="44" /></td>
+                          </tr>
+                      </table></td>
+                      <td align="left" valign="bottom"><img src="/themes/gforge/images//tools/footboxcenter4.gif" width="4" height="44" /></td>
+                    </tr>
+                    <tr>
+                      <td valign="top"><img src="/themes/gforge/images//tools/footboxbot1.gif" width="5" height="13" /></td>
+                      <td width="473" class="footboxdonecenterbg">&nbsp;</td>
+                      <td valign="top"><img src="/themes/gforge/images//tools/footboxbot3.gif" width="5" height="13" /></td>
+                      <td><img src="/themes/gforge/images//tools/footboxbot4.gif" width="4" height="13" /></td>
+                    </tr>
+                  </table></td>                  <td align="center" valign="middle"><a href="http://www.opensolutionsalliance.org/" title="Founding Member, Open Solutions Alliance"><img src="/themes/gforge/images//tools/img_osam.gif" width="89" height="37" border="0" alt="Founding Member, Open Solutions Alliance" /></a></td>
+                  <td align="center" valign="middle"><a href="http://sourceforge.net/" title="Hot Jasper Projects on SOURCEFORGE.NET"><img src="/themes/gforge/images//tools/img_sf.gif" width="91" height="37" border="0" alt="Hot Jasper Projects on SOURCEFORGE.NET"/></a></td>
+                  <td align="center" valign="middle"><a href="http://essentiaesp.com" title="Powered by EssentiaESP"><img src="/themes/gforge/images/tools/img_pwdby.gif" width="91" height="37" border="0" alt="Powered by EssentiaESP"/></a></td>                  </tr>
+              </table></td>
+            </tr>
+            <tr>
+              <td><div class="fotterlinks">Copyright © 2000 - 2008 Jaspersoft Corporation 
+	<!--Begin Manticore Technology Code-->
+<!--Copyright 2000-2008, Manticore Technology Corporation.  All rights reserved.  Patent pending.--> 
+<!--Consumer Privacy Statement available at www.ManticoreTechnology.com/ConsumerPrivacy.asp-->
+<!--www.ManticoreTechnology.com-->
+<script language="JavaScript">
+//<!--
+	var MTC_GROUP="362";
+	var MTC_ID="5426";
+	var MTC_Key="BF094D4C-EB28-46E4-B398-6C96701A8707";
+//-->
+</script>
+
+<script language="JavaScript">var MTCjsv;</script>
+<script language="JavaScript1.0">MTCjsv="1.0";</script>
+<script language="JavaScript1.1">MTCjsv="1.1";</script>
+<script language="JavaScript1.2">MTCjsv="1.2";</script>
+<script language="JavaScript1.3">MTCjsv="1.3";</script>
+<script language="JavaScript1.4">MTCjsv="1.4";</script>
+<script language="JavaScript1.5">MTCjsv="1.5";</script>
+<script language="JavaScript1.6">MTCjsv="1.6";</script>
+<script language="JavaScript1.7">MTCjsv="1.7";</script>
+
+<script language="JavaScript" src="/uploads/js/mtcJSAPI.js"></script>
+<!--Begin Optional Configuration-->
+<script language="JavaScript">
+//<!--
+	//Todo:	Implement site specific functionality here.
+	//mtcSetServerGroup("");
+	//mtcSetContentCategory("");
+	
+//-->
+</script>
+<!--End Optional Configuration-->
+<script language="JavaScript">
+//<!--
+	mtcGO();
+//-->
+</script>
+<!--End Manticore Technology Code-->
+<!-- SiteCatalyst code version: H.9. Copyright 1997-2007 Omniture, Inc. More info available at http://www.omniture.com --> 
+<script language="JavaScript" src="/uploads/js/s_code.js"></script> 
+<script language="JavaScript">
+//<!--
+/* You may give each page an identifying name, server, and channel on the next lines. */ 
+s.pageName=document.title 
+/************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/ 
+var s_code=s.t();
+if(s_code)
+document.write(s_code)
+//-->
+</script> 
+
+<!--/DO NOT REMOVE/--> <!-- End SiteCatalyst code version: H.9. --> 
+
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-399158-2");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>| <a href=http://jasperforge.org/displaypage.php?act=1 class='fotlink'>&nbsp;Terms of Use</a> | <a href=http://jasperforge.org/displaypage.php?act=2 class='fotlink'>&nbsp;Legal Notices</a> | <a href=http://jasperforge.org//feedback.php class='fotlink'>&nbsp;Feedback</a> | <a href=http://jasperforge.org/displaypage.php?act=4 class='fotlink'>&nbsp;Privacy Policy</a> | <a href=http://jasperforge.org/displaypage.php?act=13 class='fotlink'>&nbsp;Site Map</a> | <a href=http://jasperforge.org//contactus.php class='fotlink'>&nbsp;Contact Us </a> | <a href=http://jasperforge.org/displaypage.php?act=15 class='fotlink'>&nbsp;About Essentia</a>  </div></td>            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+          </table></td>
+        </tr>
+      </table>
+    </div></td>
+  </tr>
+</table>
+</body>
+</html>
+
+
+
