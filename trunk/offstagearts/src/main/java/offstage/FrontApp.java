@@ -416,7 +416,9 @@ if ("".equals(configName)) configName = "<blank>";
 	try {
 	
 		// Set up database connections, etc.
-		this.pool = new RealConnPool(new OffstageConnFactory(props));
+		OffstageConnFactory connFactory = new OffstageConnFactory(props, expHandler);
+		this.pool = new RealConnPool(connFactory);
+		connFactory.setConnPool(this.pool);
 		this.sqlRun = new BatchSqlRun(pool, expHandler);
 
 //		// Load the crypto keys

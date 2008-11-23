@@ -261,8 +261,8 @@ public static void main(String[] args) throws Exception
 	app.initWithDatabase();
 	File dir = ClassPathUtils.getMavenProjectRoot();
 	Writer out = new FileWriter(new File(dir, "dups.sql"));
-//	new MergePurge(app).findDups(app.sqlRun(), 1, 0, .95, out);
-	new MergePurge(app).findDups(app.sqlRun(), 0, 0, .95, out);
+	new MergePurge(app).findDups(app.sqlRun(), 1, 0, .95, out);
+//	new MergePurge(app).findDups(app.sqlRun(), 0, 0, .95, out);
 	app.sqlRun().flush();
 	out.close();
 }
