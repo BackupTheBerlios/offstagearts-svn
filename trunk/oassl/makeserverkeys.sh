@@ -36,7 +36,7 @@ keytool -export -rfc -alias serverprivate -keystore $SERVERSTORE -file $SERVERDI
 
 # Export the private key
 # Usage: DumpKey jks storepass alias keypass out
-java -cp target/oassl-*.jar DumpKey $SERVERSTORE $STOREPASS serverprivate $KEYPASS $SERVERSSLDIR/server-private-bin.key
+java -cp oassl-*.jar DumpKey $SERVERSTORE $STOREPASS serverprivate $KEYPASS $SERVERSSLDIR/server-private-bin.key
 
 # Convert the key from binary to PEM format
 PEM=$SERVERSSLDIR/server.pem
