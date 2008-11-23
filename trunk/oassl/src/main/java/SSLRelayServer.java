@@ -10,6 +10,7 @@ Chianglin Jan 2003
 
 ********************************************************************** */
 
+import citibob.reflect.ClassPathUtils;
 import java.net.*;
 import javax.net.ssl.*;
 import java.util.Date ;
@@ -104,25 +105,26 @@ public void startListen(int localport , int destport)
      
      
 
-     public static void main(String[] args) throws Exception
-	 {
-     
-	 
-			
+public static void main(String[] args) throws Exception
+{
+
+	File root = ClassPathUtils.getMavenProjectRoot();
+	File serverKeys = new File(root, "keys/server");
+	
 	// Keystore with the certificate in it
-	File storeFile = new File("/Users/citibob/mvn/oassl/keys/server-store.jks");
-	
+	File storeFile = new File(serverKeys, "server-store.jks");
+
 	// Keystore with the private key in it.
-	File trustFile = new File("/Users/citibob/mvn/oassl/keys/server-trust.jks");
-	
+	File trustFile = new File(serverKeys, "server-trust.jks");
+
 	String serverStorepass = "keyst0re";
-	
+
 	SSLRelayServer relays = new SSLRelayServer(
 		storeFile, trustFile,
 		serverStorepass.toCharArray(), serverStorepass.toCharArray(),
 		5433,5432);
-	 
-	  }
+	
+}
          
      
      
