@@ -25,10 +25,12 @@ package offstage.licensor;
 import citibob.reflect.ClassPathUtils;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.util.Properties;
 import offstage.crypt.PBECrypt;
 import org.apache.commons.io.FileUtils;
 
@@ -39,11 +41,22 @@ import org.apache.commons.io.FileUtils;
  */
 public class MakeLauncher {
 
-public static void makeLauncher(String version, File configDir, File outJar, String spassword)
+/**
+ * 
+ * @param version
+ * @param configDir
+ * @param outJar
+ * @param spassword
+ * @throws java.lang.Exception
+ */
+public static void makeLauncher(String version,
+File configDir, File outJar, String spassword)
 throws Exception
 {
 	File oaDir = ClassPathUtils.getMavenProjectRoot();
 	File oalaunchDir = new File(oaDir, "../oalaunch");
+	File oasslDir = new File(oaDir, "../oassl");
+	File keyDir = new File(oasslDir, "keys/client");
 	File tmpDir = new File(".", "tmp");
 	FileUtils.deleteDirectory(tmpDir);
 	tmpDir.mkdirs();
@@ -65,6 +78,12 @@ throws Exception
 	File tmpOalaunchDir = new File(tmpDir, "oalaunch");
 	File tmpConfigDir = new File(tmpOalaunchDir, "config");
 	
+	// Read app.properties
+	Properties props = new Properties();
+	InputStream in = new FileInputStream(new File(configDir, "app.properties"));
+	props.load(in);
+	in.close();
+	
 	// Re-do the config dir
 	FileUtils.deleteDirectory(tmpConfigDir);
 	FileFilter ff = new FileFilter() {
@@ -75,15 +94,40 @@ throws Exception
 	}};
 	FileUtils.copyDirectory(configDir, tmpConfigDir, ff);
 
+
+	// Set up to encrypt
+	char[] password = null;
+	PBECrypt pbe = new PBECrypt();
+	if (spassword != null) password = spassword.toCharArray();
+	
 	// Encrypt .properties files if needed
-	if (spassword != null) {
-		PBECrypt pbe = new PBECrypt();
-		char[] password = spassword.toCharArray();
+	if (password != null) {
 		for (File fin : configDir.listFiles()) {
-			if (fin.getName().endsWith(".properties")) {
+			if (fin.getName().endsWith(".properties") || fin.getName().endsWith(".jks")) {
 				File fout = new File(tmpConfigDir, fin.getName());
 				pbe.encrypt(fin, fout, password);
 			}
+		}
+	}
+
+	// Copy the appropriate key and certificate files
+	String dbUserName = props.getProperty("db.user", null);
+	File[] jksFiles = new File[] {
+		new File(keyDir, dbUserName + "-store.jks"),
+		new File(keyDir, dbUserName + "-trust.jks")
+	};
+	for (File fin : jksFiles) {
+		if (!fin.exists()) {
+			System.out.println("Missing jks file: " + fin.getName());
+			continue;
+		}
+		File fout = new File(tmpConfigDir, fin.getName());
+		if (password != null) {
+			System.out.println("Encrypting " + fin.getName());
+			pbe.encrypt(fin, fout, password);
+		} else {
+			System.out.println("Copying " + fin.getName());
+			FileUtils.copyFile(fin, fout);
 		}
 	}
 	

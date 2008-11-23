@@ -207,8 +207,71 @@ public static Map<String,String> readBasePrefs() throws IOException
 }
 
 // -------------------------------------------------------
+PasswordDialog passwordDialog;
+public byte[] decryptURL(URL url) throws IOException
+{
+	// Load the (possibly encrypted) contents of the file
+	byte[] contents;
+	try {
+		InputStream in = url.openStream();
+		contents = StreamUtils.getBytes(in);
+		in.close();
+	} catch(Exception e) {
+		// It didn't exit!
+		return null;
+	}
+	
+	return decryptContents(contents);
+}
 
-void loadPropFile(Properties props, String name, PasswordDialog dialog) throws IOException
+/** Given the URL of a (possibly encrypted) resource, returns the
+ * decrypted version of it.
+ * @param url
+ */
+public byte[] decryptContents(byte[] contents) throws IOException
+{	
+	// Read the first line of the contents for encryption header
+	BufferedReader reader =
+		new BufferedReader(
+		new InputStreamReader(
+		new ByteArrayInputStream(contents)));
+	String firstLine = reader.readLine();
+	int encrypt = firstLine.indexOf(PBECrypt.BEGIN_ENCRYPTED);
+	
+	// Decrypt if necessary
+	if (encrypt < 0) {
+		// Not encrypted, just read normally
+		return contents;
+	} else {
+		boolean showDialog = true;
+		if (passwordDialog.getHasShown()) showDialog = false;
+		passwordDialog.setAlert("");
+		
+		// It is encrypted; find the password, etc.
+		PBECrypt pbe = new PBECrypt();
+		for (;;) {
+			if (showDialog) {
+				passwordDialog.setVisible(true);
+				if (!passwordDialog.getOK()) System.exit(0);
+			}
+			
+			char[] password = passwordDialog.getPassword();
+			boolean goodPassword = true;
+			try {
+				contents = pbe.decrypt(new String(contents), password);
+				return contents;
+			} catch(Exception e) {
+				goodPassword = false;
+			}
+
+			// Decrypted file didn't load; bad password
+			passwordDialog.setAlert("Bad password; try again!");
+			showDialog = true;
+		}
+	}
+	
+}
+void loadPropFile(Properties props, String name) throws IOException
 {
 	InputStream in;
 	
@@ -220,64 +283,25 @@ System.out.println("loadPropFile: " + url);
 	props.load(in);
 	in.close();
 
-
+	
 	// Next: Override with anything in user-created overrides
-	String contents;
-	try {
-		url = new URL(configURL, name);
-		in = url.openStream();
-		contents = new String(StreamUtils.getBytes(in));
-		in.close();
-	} catch(Exception e) {
-		// It didn't exit!
-		return;
-	}
-		
-	// Decrypt the contents if needed
-	int encrypt = contents.indexOf(PBECrypt.BEGIN_ENCRYPTED);
-	if (encrypt < 0) {
-		// Not encrypted, just read normally
-		props.load(new ByteArrayInputStream(contents.getBytes()));
-	} else {
-		boolean showDialog = true;
-		if (dialog.getHasShown()) showDialog = false;
-		dialog.setAlert("");
-		
-		// It is encrypted; find the password, etc.
-		PBECrypt pbe = new PBECrypt();
-		for (;;) {
-			if (showDialog) {
-				dialog.setVisible(true);
-				if (!dialog.getOK()) System.exit(0);
-			}
-			
-			char[] password = dialog.getPassword();
-			boolean goodPassword = true;
-			try {
-				contents = pbe.decrypt(contents, password);
-			} catch(Exception e) {
-				goodPassword = false;
-//				IOException ioe = new IOException(e.getMessage());
-//				ioe.initCause(e);
-//				throw ioe;
-			}
-			
-			if (goodPassword) try {
-				Properties nprops = new Properties();
-				nprops.load(new ByteArrayInputStream(contents.getBytes()));
-				
-				// They loaded just fine; now load into real properties
-				props.load(new ByteArrayInputStream(contents.getBytes()));
-				break;
-			} catch(Exception e) { goodPassword = false; }
+	// Get the contents of the file
+	url = new URL(configURL, name);
+	byte[] bcontents = decryptURL(url);
+	if (bcontents == null) return;		// Doesn't exist
 
-			// Decrypted file didn't load; bad password
-			dialog.setAlert("Bad password; try again!");
-			showDialog = true;
-		}
-		
-		// Load into real properties
-		props.load(new ByteArrayInputStream(contents.getBytes()));
+	
+	// Interpret the contents
+	try {
+		Properties nprops = new Properties();
+		nprops.load(new ByteArrayInputStream(bcontents));
+
+		// They loaded just fine; now load into real properties
+		props.load(new ByteArrayInputStream(bcontents));
+	} catch(Exception e) {
+		IOException ioe = new IOException("Bad properties file: " + url);
+		ioe.initCause(e);
+		throw ioe;
 	}
 }
 
@@ -285,13 +309,12 @@ Properties loadProps() throws IOException
 {
 	Properties props = new Properties();
 
-	PasswordDialog dialog = new PasswordDialog(null);
-	loadPropFile(props, "app.properties", dialog);
+	loadPropFile(props, "app.properties");
 	String os = System.getProperty("os.name");
         int space = os.indexOf(' ');
         if (space >= 0) os = os.substring(0,space);
-	loadPropFile(props, os + ".properties", dialog);
-	dialog.clear();
+	loadPropFile(props, os + ".properties");
+//	dialog.clear();
 	//if (inn != null) props.load(inn);
 
 //try {
@@ -383,6 +406,7 @@ if ("".equals(configName)) configName = "<blank>";
 //configURL = getClass().getClassLoader().getResource("offstage/config/");
 	
 	// Load up properties from the configuration
+	passwordDialog = new PasswordDialog(null);
 	props = loadProps();
 	
 	// Set up connection to JangoMail

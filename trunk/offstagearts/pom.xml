@@ -212,7 +212,7 @@ lib/xstream-1.2.2.jar
     <dependency>
             <groupId>org.citibob</groupId>
             <artifactId>stringtemplate</artifactId>
-            <version>3.1-MODIFIED</version>
+            <version>3.1-MODIFIED-2</version>
             <scope>compile</scope>
         </dependency>
     <dependency>

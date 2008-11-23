@@ -28,7 +28,7 @@ import citibob.sql.ConnFactory;
 import citibob.sql.JDBCConnFactory;
 import citibob.sql.SSLConnFactory;
 import citibob.sql.WrapConnFactory;
-import citibob.task.ExpHandler;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,6 +37,7 @@ import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
+import offstage.FrontApp;
 
 /**
  *
@@ -59,10 +60,9 @@ public class OffstageConnFactory extends WrapConnFactory
 //	}
 //	
 //}
-
 	
-private static ConnFactory newSSLSub(App app)
-throws ClassNotFoundException, UnknownHostException, MalformedURLException
+private static ConnFactory newSSLSub(FrontApp app)
+throws ClassNotFoundException, UnknownHostException, MalformedURLException, IOException
 {
 	Properties props = app.props();
 	
@@ -86,9 +86,10 @@ throws ClassNotFoundException, UnknownHostException, MalformedURLException
 	SSLRelayClient.Params prm = new SSLRelayClient.Params();
 //		prm.storeURL = getResourceOrURL(props, "db.store");
 //		prm.trustURL = getResourceOrURL(props, "db.trust");
-		String dbName = props.getProperty("db.database", null);
-		prm.storeURL = new URL(app.configURL(), dbName + "-store.jks");
-		prm.trustURL = new URL(app.configURL(), dbName + "-trust.jks");
+		String dbUserName = props.getProperty("db.user", null);
+		
+		prm.storeBytes = app.decryptURL(new URL(app.configURL(), dbUserName + "-store.jks"));
+		prm.trustBytes = app.decryptURL(new URL(app.configURL(), dbUserName + "-trust.jks"));
 
 		prm.dest = InetAddress.getByName(props.getProperty("db.host", null));
 		prm.destPort = Integer.parseInt(props.getProperty("db.port", null));
@@ -146,8 +147,8 @@ public Connection create() throws SQLException
 }
 
 
-public OffstageConnFactory(App app)
-throws ClassNotFoundException, UnknownHostException, MalformedURLException
+public OffstageConnFactory(FrontApp app)
+throws ClassNotFoundException, UnknownHostException, MalformedURLException, IOException
 {
 	Properties props = app.props();
 	

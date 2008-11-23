@@ -102,12 +102,12 @@ InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingExcepti
 public static final String BEGIN_ENCRYPTED = "--- BEGIN ENCRYPTED ---";
 public static final String END_ENCRYPTED = "--- END ENCRYPTED ---";
 
-public String encrypt(String clearText, char[] password)
+public String encrypt(byte[] clearBytes, char[] password)
 throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException,
 InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
 UnsupportedEncodingException
 {
-	byte[] clearBytes = clearText.getBytes("UTF8");
+//	byte[] clearBytes = clearText.getBytes("UTF8");
 	byte[] cipherBytes = crypt(clearBytes, password, Cipher.ENCRYPT_MODE);
 	String cipherText =
 		BEGIN_ENCRYPTED + "\n" +
@@ -115,7 +115,7 @@ UnsupportedEncodingException
 		"\n" + END_ENCRYPTED + "\n";
 	return cipherText;
 }
-public String decrypt(String cipherText, char[] password)
+public byte[] decrypt(String cipherText, char[] password)
 throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException,
 InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException,
 UnsupportedEncodingException
@@ -125,14 +125,16 @@ UnsupportedEncodingException
 	byte[] cipherBytes = pubdomain.Base64.decode(
 		cipherText.substring(begin+BEGIN_ENCRYPTED.length(), end));
 	byte[] clearBytes = crypt(cipherBytes, password, Cipher.DECRYPT_MODE);
-	String clearText = new String(clearBytes, "UTF8");
-	return clearText;
+	return clearBytes;
+//	String clearText = new String(clearBytes, "UTF8");
+//	return clearText;
 }
 
 public void encrypt(File fin, File fout, char[] password)
 throws Exception
 {
-	String plain = FileUtils.readFileToString(fin);
+//	String plain = FileUtils.readFileToString(fin);
+	byte[] plain = FileUtils.readFileToByteArray(fin);
 	String cipher = encrypt(plain, password);
 	FileUtils.writeStringToFile(fout, cipher);
 }
@@ -141,13 +143,15 @@ public static void main(String[] args) throws Exception
 {
 	PBECrypt pbe = new PBECrypt();
 	char[] password = "password".toCharArray();
-	File inDir = new File("/Users/citibob//offstagearts/configs/test_ballettheatre_nocrypt");
-	File outDir = new File("/Users/citibob//offstagearts/configs/test_ballettheatre");
+	File inDir = new File("/export/home/citibob/mvn/oamisc/ballettheatre/config_dirk_ssl");
+	File outDir = new File("/export/home/citibob/mvn/oamisc/ballettheatre/config_dirk_ssl_crypt");
 	outDir.mkdirs();
 	for (File fin : inDir.listFiles()) {
-		if (!fin.getName().endsWith(".properties")) continue;
-		File fout = new File(outDir, fin.getName());
-		pbe.encrypt(fin, fout, password);
+		String name = fin.getName();
+		if (name.endsWith(".properties") || name.endsWith(".jks")) {
+			File fout = new File(outDir, fin.getName());
+			pbe.encrypt(fin, fout, password);
+		}
 	}
 	
 	
