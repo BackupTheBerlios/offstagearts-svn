@@ -1,3 +1,17 @@
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Date;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
+
 /**  ********************************************************************
 Disclaimer
 This example code is provided "AS IS" without warranties of any kind.
@@ -10,11 +24,6 @@ Chianglin Jan 2003
 
 ********************************************************************** */
 
-import citibob.reflect.ClassPathUtils;
-import java.net.*;
-import javax.net.ssl.*;
-import java.util.Date ;
-import java.io.*;
 
 public class SSLRelayServer extends SSLConnection {
 
@@ -107,15 +116,22 @@ public void startListen(int localport , int destport)
 
 public static void main(String[] args) throws Exception
 {
+	if (args.length == 0) {
+		System.out.println(
+			"Usage: SSLRelayServer <serverDir>\n" +
+			"    <serverDir> = $SERVERDIR from makeserverkeys.sh\n");
+		System.exit(-1);
+	}
+//	File root = ClassPathUtils.getMavenProjectRoot();
+//	File serverDir = new File(root, "keys/server");
 
-	File root = ClassPathUtils.getMavenProjectRoot();
-	File serverKeys = new File(root, "keys/server");
+	File serverDir = new File(args[0]);
 	
 	// Keystore with the certificate in it
-	File storeFile = new File(serverKeys, "server-store.jks");
+	File storeFile = new File(serverDir, "server-store.jks");
 
 	// Keystore with the private key in it.
-	File trustFile = new File(serverKeys, "server-trust.jks");
+	File trustFile = new File(serverDir, "server-trust.jks");
 
 	String serverStorepass = "keyst0re";
 
