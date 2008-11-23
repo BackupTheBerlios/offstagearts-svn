@@ -131,7 +131,17 @@ public InputStream getSiteResourceAsStream(String name)
 	if (in != null) return in;
 	return siteCode().getResourceAsStream(name);
 }
-		
+
+
+///** Retrieves a file from the config directory --- whether it's on disk
+// * or inside a JAR file.
+// * @param name
+// * @return
+// */
+//private static URL getConfigResource(String name)
+//{
+//	new URL(configURL(), name);
+//}
 
 
 int loginID;
@@ -303,7 +313,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {	
 	// Make sure we have the right version
-	version = new Version("1.7.3");
+	version = new Version("1.8.0");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
@@ -416,7 +426,7 @@ if ("".equals(configName)) configName = "<blank>";
 	try {
 	
 		// Set up database connections, etc.
-		OffstageConnFactory connFactory = new OffstageConnFactory(props, expHandler);
+		OffstageConnFactory connFactory = new OffstageConnFactory(this); //props, expHandler);
 		this.pool = new RealConnPool(connFactory);
 		connFactory.setConnPool(this.pool);
 		this.sqlRun = new BatchSqlRun(pool, expHandler);

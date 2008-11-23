@@ -22,9 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.db;
 
+import citibob.app.App;
 import citibob.io.sslrelay.SSLRelayClient;
 import citibob.sql.ConnFactory;
-import citibob.sql.ConnPool;
 import citibob.sql.JDBCConnFactory;
 import citibob.sql.SSLConnFactory;
 import citibob.sql.WrapConnFactory;
@@ -45,24 +45,27 @@ import java.util.Properties;
 public class OffstageConnFactory extends WrapConnFactory
 {
 
-private static URL getResourceOrURL(Properties props, String propName)
-throws MalformedURLException
-{
-	String surl;
-	surl = props.getProperty(propName, "");
-	if (surl.contains("://")) {
-		// Interpret as URL
-		return new URL(surl);
-	} else {
-		// Interpret as the name of a resource
-		return OffstageConnFactory.class.getClassLoader().getResource(surl);
-	}
+//private static URL getResourceOrURL(Properties props, String propName)
+//throws MalformedURLException
+//{
+//	String surl;
+//	surl = props.getProperty(propName, "");
+//	if (surl.contains("://")) {
+//		// Interpret as URL
+//		return new URL(surl);
+//	} else {
+//		// Interpret as the name of a resource
+//		return OffstageConnFactory.class.getClassLoader().getResource(surl);
+//	}
+//	
+//}
+
 	
-}
-	
-private static ConnFactory newSSLSub(Properties props, ExpHandler expHandler)
+private static ConnFactory newSSLSub(App app)
 throws ClassNotFoundException, UnknownHostException, MalformedURLException
 {
+	Properties props = app.props();
+	
 	final Properties p2 = new Properties();
 	final String url;
 
@@ -74,14 +77,18 @@ throws ClassNotFoundException, UnknownHostException, MalformedURLException
 	// Put together as URL
 	Class.forName(props.getProperty("db.driverclass", null));
 	url = "jdbc:" + props.getProperty("db.drivertype", null) + "://" +
-		props.getProperty("db.host", null) +
+		"127.0.0.1" +
+//		props.getProperty("db.host", null) +
 		":%port%/" + props.getProperty("db.database", null);
 	
 	// Set the SSL tunnel parameters
 	String defaultPass = "keyst0re";
 	SSLRelayClient.Params prm = new SSLRelayClient.Params();
-		prm.storeURL = getResourceOrURL(props, "db.store");
-		prm.trustURL = getResourceOrURL(props, "db.trust");
+//		prm.storeURL = getResourceOrURL(props, "db.store");
+//		prm.trustURL = getResourceOrURL(props, "db.trust");
+		String dbName = props.getProperty("db.database", null);
+		prm.storeURL = new URL(app.configURL(), dbName + "-store.jks");
+		prm.trustURL = new URL(app.configURL(), dbName + "-trust.jks");
 
 		prm.dest = InetAddress.getByName(props.getProperty("db.host", null));
 		prm.destPort = Integer.parseInt(props.getProperty("db.port", null));
@@ -92,13 +99,14 @@ throws ClassNotFoundException, UnknownHostException, MalformedURLException
 		prm.storeKeyPass = storeKeyPass.toCharArray();
 		String trustPass = (String)props.getProperty("db.trustPass", storePass);
 		prm.trustPass = trustPass.toCharArray();
-	return new SSLConnFactory(url, prm, p2, expHandler);
+	return new SSLConnFactory(url, prm, p2, app.expHandler());
 }
 	
-private static ConnFactory newPlainSub(Properties props)
+private static ConnFactory newPlainSub(App app)
 throws ClassNotFoundException
 //throws java.util.prefs.BackingStoreException, java.sql.SQLException, ClassNotFoundException
 {
+	Properties props = app.props();
 	final Properties p2 = new Properties();
 	final String url;
 
@@ -123,18 +131,6 @@ System.out.println("db.driverclass = " + props.getProperty("db.driverclass", nul
 	return new JDBCConnFactory(url, p2);
 }
 
-private static ConnFactory newSub(Properties props, ExpHandler expHandler)
-throws ClassNotFoundException, UnknownHostException, MalformedURLException
-{
-	String sssl = props.getProperty("db.ssl", "false");
-	boolean ssl = (sssl.toLowerCase().equals("true"));
-	if (ssl) {
-		return newSSLSub(props, expHandler);
-	} else {
-		return newPlainSub(props);
-	}
-}
-
 public Connection create() throws SQLException
 {
 	Connection dbb = super.create();
@@ -150,10 +146,18 @@ public Connection create() throws SQLException
 }
 
 
-public OffstageConnFactory(Properties props, ExpHandler expHandler)
+public OffstageConnFactory(App app)
 throws ClassNotFoundException, UnknownHostException, MalformedURLException
 {
-	super(newSub(props, expHandler));
+	Properties props = app.props();
+	
+	String sssl = props.getProperty("db.ssl", "false");
+	boolean ssl = (sssl.toLowerCase().equals("true"));
+	if (ssl) {
+		init(newSSLSub(app));
+	} else {
+		init(newPlainSub(app));
+	}
 }
 	
 }
