@@ -336,7 +336,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {	
 	// Make sure we have the right version
-	version = new Version("1.8.0");
+	version = new Version("1.8.1");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
