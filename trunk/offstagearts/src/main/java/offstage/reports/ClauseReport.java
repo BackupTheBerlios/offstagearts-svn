@@ -35,6 +35,7 @@ import citibob.sql.ConsSqlQuery.TableJoin;
 import citibob.text.SFormat;
 import citibob.types.JType;
 import citibob.types.JavaJType;
+import citibob.types.KeyedModel;
 import java.io.*;
 import offstage.equery.*;
 import offstage.types.PhoneSFormat;
@@ -74,7 +75,7 @@ public JTypeTableModel model;
  * the parent phones; otherwise, set to EQuery.DISTINCT_PRIMARYENTITYID
  */
 public ClauseReport(FrontApp fapp, SqlRun str, final SqlTypeSet tset, EQuery equery,
-String[] cols, TableJoin[] joins, boolean parentPhones)
+String[] cols, TableJoin[] joins, String orderBy, boolean parentPhones)
 //int phoneDistinctType, String phoneJoin)
 throws IOException
 {
@@ -88,27 +89,40 @@ throws IOException
 	// Create temp table for phones
 	PhoneJoin pu = new PhoneJoin(3);
 	if (parentPhones) {
-		str.execSql(pu.pphonesSql(
-			"select parent.entityid as id" +
-			" from _ids, persons e, persons parent" +
+		str.execSql(pu.pphonesSql("pph1",
+			"select distinct parent1.entityid as id" +
+			" from _ids, persons e, persons parent1" +
 			" where _ids.id = e.entityid" +
-			" and e.parent1id = parent.entityid"));
+			" and e.parent1id = parent1.entityid"));
+		str.execSql(pu.pphonesSql("pph2",
+			"select distinct parent2.entityid as id" +
+			" from _ids, persons e, persons parent2" +
+			" where _ids.id = e.entityid" +
+			" and e.parent2id = parent2.entityid"));
 	} else {
-		str.execSql(pu.pphonesSql("select id from _ids"));
+		str.execSql(pu.pphonesSql("pphones", "select id from _ids"));
 	}
 	
 	// Create the main query
 	ConsSqlQuery csql = new ConsSqlQuery(ConsSqlQuery.SELECT);
 	csql.addTable("_ids xx");
 	
+	if (orderBy != null) csql.addOrderClause(orderBy);
+	
 	// Joins
 	for (TableJoin tj : joins) csql.addTable(tj);
-	String phoneJoin = parentPhones ?
-		"pphones.id = parent.entityid" :
-		"pphones.id = xx.id";
-	csql.addTable("(" + pu.pphonesTable() + ")", "pphones",
-		SqlQuery.JT_LEFT_OUTER, phoneJoin);
-	
+	if (parentPhones) {
+		csql.addTable("(" + pu.pphonesTable("pph1") + ")", "pph1",
+			SqlQuery.JT_LEFT_OUTER, "pph1.id = parent1.entityid");
+		csql.addTable("(" + pu.pphonesTable("pph2") + ")", "pph2",
+			SqlQuery.JT_LEFT_OUTER, "pph2.id = parent2.entityid");
+		
+	} else {
+		csql.addTable("(" + pu.pphonesTable("pphones") + ")", "pphones",
+			SqlQuery.JT_LEFT_OUTER, "pphone.id = xx.id");
+		
+	}
+
 	// Columns
 	for (String col : cols) csql.addColumn(col);
 	StringBuffer sql = new StringBuffer(csql.getSql());
@@ -195,11 +209,11 @@ EQuery equery, final File outFile) throws Exception
 		fapp.sqlTypeSet(), equery, new String[] {
 			"e.entityid","customaddressto","salutation","firstname",
 			"lastname",
-			"phonename1","phone1","phonename2","phone2",
+			"pphones_phonename1","pphones_phone1","pphones_phonename2","pphones_phone2",
 			"address1","address2","city","state","zip"
 		}, new TableJoin[] {
 			new TableJoin("persons", "e", SqlQuery.JT_INNER, "e.entityid = xx.id")
-		}, false
+		}, "lastname, firstname", false
 	);
 	str.execSql("drop table pphones");
 	
@@ -213,6 +227,58 @@ EQuery equery, final File outFile) throws Exception
 		rr.writeCSV(stm, outFile);
 	}});
 }
+//public static void writeCastingCSV(final FrontApp fapp, SqlRun str,
+//EQuery equery, final File outFile) throws Exception
+//{
+//	// Figure out which show the main query is for, by digging through
+//	// the query.  The query must have a "showid = xxx" somewhere
+//	// in it.
+//	Integer xshowid = null;
+//	outer : for (EClause clause : equery.getClauses()) {
+//		for (Element el : clause.getElements()) {
+//			ColName cn = el.getColName();
+//			if (cn.getTable().equals("shows")
+//				&& cn.getSCol().equals("groupid")
+//				&& el.getComparator().getDisplayName().equals("=")) {
+//				xshowid = (Integer)el.value;
+//				break outer;
+//			}
+//		}
+//	}
+//	final Integer showid = xshowid;
+//	
+//	final ClauseReport report = new ClauseReport(fapp, str,
+//		fapp.sqlTypeSet(), equery, new String[] {
+//			"e.entityid", "e.firstname", "e.lastname",
+//			"shows.castno", "shows.showroleid", "shows.partno",
+//			"parent.firstname as parent_firstname", "parent.lastname as parent_lastname",
+//			"phonename1","phone1","phonename2","phone2",
+//			"parent.address1","parent.address2","parent.city","parent.state","parent.zip"
+//		}, new TableJoin[] {
+//			new TableJoin("persons", "e", SqlQuery.JT_INNER,
+//				"e.entityid = xx.id"),
+//			new TableJoin("persons", "parent", SqlQuery.JT_LEFT_OUTER,
+//				"e.parent1id = parent.entityid"),
+//			new TableJoin("shows", null, SqlQuery.JT_LEFT_OUTER,
+//				"shows.groupid = " + showid + " and shows.entityid = e.entityid")
+//		}, true
+//	);
+//	str.execSql("drop table pphones");
+//	
+//	
+//	str.execUpdate(new UpdTasklet2() {
+//	public void run(SqlRun str) throws Exception {
+//				Reports rr = fapp.reports();
+//		StringTableModel stm = rr.format(report.model);
+//		SFormat phoneSF = new PhoneSFormat();
+//		stm.setFormatU("phone1", phoneSF);
+//		stm.setFormatU("phone2", phoneSF);
+//		stm.setFormatU("castno", fapp.schemaSet().getKeyedModel("shows", "castno"));
+//		stm.setFormatU("showroleid", fapp.schemaSet().getKeyedModel("shows", "showroleid"));
+////		stm.setFormatU("castno", fapp.schemaSet().getJType("shows", "castno"));
+//		rr.writeCSV(stm, outFile);
+//	}});
+//}
 public static void writeCastingCSV(final FrontApp fapp, SqlRun str,
 EQuery equery, final File outFile) throws Exception
 {
@@ -233,34 +299,69 @@ EQuery equery, final File outFile) throws Exception
 	}
 	final Integer showid = xshowid;
 	
+	final KeyedModel gradesKm = new DbKeyedModel(str, null,
+		"gradelevels", "ngrade", "name", "ngrade", null);
 	final ClauseReport report = new ClauseReport(fapp, str,
 		fapp.sqlTypeSet(), equery, new String[] {
-			"e.entityid", "e.firstname", "e.lastname",
+			"e.entityid", "e.firstname", "e.lastname", "e.dob",
 			"shows.castno", "shows.showroleid", "shows.partno",
-			"parent.firstname as parent_firstname", "parent.lastname as parent_lastname",
-			"phonename1","phone1","phonename2","phone2",
-			"parent.address1","parent.address2","parent.city","parent.state","parent.zip"
+			"parent1.firstname as parent1_firstname", "parent1.lastname as parent1_lastname", "parent1.orgname as parent1_orgname",
+			"parent2.firstname as parent2_firstname", "parent2.lastname as parent2_lastname", "parent2.orgname as parent2_orgname",
+			"pph1_phonename1","pph1_phone1","pph1_phonename2","pph1_phone2","pph1_phonename3","pph1_phone3",
+			"pph2_phonename1","pph2_phone1","pph2_phonename2","pph2_phone2","pph2_phonename3","pph2_phone3",
+			"parent1.address1","parent1.address2","parent1.city","parent1.state","parent1.zip",
+			"tr.emer_rel", "tr.emer_name", "tr.emer_addr", "tr.emer_city", "tr.emer_state",
+			"tr.emer_home", "tr.emer_work", "tr.emer_cell", "tr.emer_doctorname", "tr.emer_healthins",
+			"tr.emer_healthinsno", "tr.med_pasttreatment", "tr.med_curcondition",
+			"tr.med_allergies", "tr.med_allergymeds", "tr.med_tetboosterdate",
+			"auditions.grade", "auditions.schoolid",
+//			"auditions.howheardid1", "auditions.howheardid2",
+			"auditions.numsiblings", "auditions.incarpool",
+			"auditions.shoulderfloor_in", "auditions.waistfloor_in", "auditions.photo"
 		}, new TableJoin[] {
 			new TableJoin("persons", "e", SqlQuery.JT_INNER,
 				"e.entityid = xx.id"),
-			new TableJoin("persons", "parent", SqlQuery.JT_LEFT_OUTER,
-				"e.parent1id = parent.entityid"),
+			new TableJoin("persons", "parent1", SqlQuery.JT_LEFT_OUTER,
+				"e.parent1id = parent1.entityid"),
+			new TableJoin("persons", "parent2", SqlQuery.JT_LEFT_OUTER,
+				"e.parent2id = parent2.entityid"),
 			new TableJoin("shows", null, SqlQuery.JT_LEFT_OUTER,
-				"shows.groupid = " + showid + " and shows.entityid = e.entityid")
-		}, true
+				"shows.groupid = " + showid + " and shows.entityid = e.entityid"),
+			new TableJoin("showids", null, SqlQuery.JT_INNER,
+				"showids.groupid = " + showid),
+			new TableJoin("termregs", "tr", SqlQuery.JT_LEFT_OUTER,
+				"tr.groupid = showids.termid and tr.entityid = e.entityid"),
+			new TableJoin("auditionids", null, SqlQuery.JT_INNER,
+				"auditionids.showid = " + showid),
+			new TableJoin("auditions", null, SqlQuery.JT_LEFT_OUTER,
+				"auditions.groupid = auditionids.groupid  and auditions.entityid = e.entityid")
+//			new TableJoin("")
+		}, "lastname,firstname,showroleid,castno,partno", true
 	);
-	str.execSql("drop table pphones");
+	str.execSql("drop table pph1");
+	str.execSql("drop table pph2");
 	
 	
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 				Reports rr = fapp.reports();
 		StringTableModel stm = rr.format(report.model);
+			stm.setNullValue("");
 		SFormat phoneSF = new PhoneSFormat();
-		stm.setFormatU("phone1", phoneSF);
-		stm.setFormatU("phone2", phoneSF);
+		final String[] ppht = {"pph1", "pph2"};
+		for (String pph : ppht) {
+			for (int i=1; i<=3; ++i) {
+				stm.setFormatU(pph + "_phone" + i, phoneSF);
+			}
+		}
+		stm.setFormatU("emer_home", phoneSF);
+		stm.setFormatU("emer_work", phoneSF);
+		stm.setFormatU("emer_cell", phoneSF);
+		stm.setFormatU("grade", fapp.schemaSet().getKeyedModel("shows", "castno"));
 		stm.setFormatU("castno", fapp.schemaSet().getKeyedModel("shows", "castno"));
 		stm.setFormatU("showroleid", fapp.schemaSet().getKeyedModel("shows", "showroleid"));
+		stm.setFormatU("grade", gradesKm);
+		stm.setFormatU("schoolid", fapp.schemaSet().getKeyedModel("auditions", "schoolid"));
 //		stm.setFormatU("castno", fapp.schemaSet().getJType("shows", "castno"));
 		rr.writeCSV(stm, outFile);
 	}});

@@ -45,33 +45,33 @@ public PhoneJoin(int nphones)
  * @param idSql
  * @see dropPphones()
  */
-public String pphonesSql(String idSql)
+public String pphonesSql(String tableName, String idSql)
 {
 	StringBuffer sql = new StringBuffer();
-	sql.append(" create temporary table pphones\n" +
+	sql.append(" create temporary table " + tableName + "\n" +
 		" (id int primary key");
 	for (int i=1; i<=nphones; ++i) {
 		sql.append(", priority"+i+" int");
 	}
 	sql.append(");\n" +
 		" \n" +
-		" insert into pphones (id)\n" +
+		" insert into " + tableName + " (id)\n" +
 		" select id from (\n" + idSql + ") xx;\n" +
 		" \n");
 	int min = 0;
 	for (int i=1; i<=nphones; ++i) {
 		sql.append(
-			" update pphones\n" +
+			" update " + tableName + "\n" +
 			" set priority"+i+" = xx.priority\n" +
 			" from (\n" +
 			" 	select pp.id, min(pid.priority) as priority\n" +
-			" 	from pphones pp, phones p, phoneids pid\n" +
+			" 	from " + tableName + " pp, phones p, phoneids pid\n" +
 			" 	where pp.id = p.entityid\n" +
 			" 	and p.groupid = pid.groupid\n" +
 			(min == 0 ? "" : "   and pid.priority > priority" + min + "\n") +
 			" 	group by pp.id\n" +
 			" ) xx\n" +
-			" where pphones.id = xx.id;\n");
+			" where " + tableName + ".id = xx.id;\n");
 		min = i;
 	}
 	return sql.toString();
@@ -82,34 +82,34 @@ public String pphonesSql(String idSql)
  * @return SQL with column phoneid1,phonetype1,phone1, pid2,pidname2,phone2, pid3,pidname3,phone3
  * @param idTable name of table and col we're joining to (eg: "xx.id" or "persons.entityid")
  */
-public void joinPphones(ConsSqlQuery sql, String idTableCol)
+public void joinPphones(ConsSqlQuery sql, String tableName, String idTableCol)
 {
 	if (idTableCol == null) {
-		sql.addTable("pphones");
+		sql.addTable(tableName);
 	} else {
-		sql.addTable("pphones", null, SqlQuery.JT_LEFT_OUTER,
+		sql.addTable(tableName, null, SqlQuery.JT_LEFT_OUTER,
 			idTableCol == null ? null : "pphones.id = " + idTableCol);
 	}
 	for (int i=1; i<=nphones; ++i) {
 		sql.addTable("phoneids", "phoneid"+i, SqlQuery.JT_LEFT_OUTER,
-			"phoneid"+i+".priority = pphones.priority"+i);
+			"phoneid"+i+".priority = " + tableName + ".priority"+i);
 		sql.addTable("phones", "phone"+i, SqlQuery.JT_LEFT_OUTER,
 			"phone"+i+".groupid = phoneid"+i+".groupid" +
-			" and phone"+i+".entityid = pphones.id");
+			" and phone"+i+".entityid = " + tableName + ".id");
 	}
 	
 }
 
-public String pphonesTable()
+public String pphonesTable(String tableName)
 {
 	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
-	sql.addColumn("pphones.id");
+	sql.addColumn(tableName + ".id");
 	for (int i=1; i<=nphones; ++i) {
-		sql.addColumn("phoneid"+i+".groupid as phoneid"+i);
-		sql.addColumn("phoneid"+i+".name as phonename"+i);
-		sql.addColumn("phone"+i+".phone as phone"+i);
+		sql.addColumn("phoneid"+i+".groupid as " + tableName + "_phoneid"+i);
+		sql.addColumn("phoneid"+i+".name as " + tableName + "_phonename"+i);
+		sql.addColumn("phone"+i+".phone as " + tableName + "_phone"+i);
 	}
-	joinPphones(sql, null);
+	joinPphones(sql, tableName, null);
 	return sql.getSql();
 }
 
@@ -117,9 +117,9 @@ public static void main(String[] args)
 {
 	PhoneJoin pu = new PhoneJoin(3);
 	String sql =
-		pu.pphonesSql("select entityid as id from persons where lastname = 'Fischer'") +
+		pu.pphonesSql("pphones", "select entityid as id from persons where lastname = 'Fischer'") +
 		";\n" +
-		pu.pphonesTable();
+		pu.pphonesTable("pphones");
 	System.out.println(sql);
 }
 
