@@ -365,6 +365,11 @@ throws Exception
 	// initPrefs();
 	userRoot = Preferences.userRoot().node("offstagearts/gui");
 
+	// Load GUI Preferences
+	Map<String,String> basePrefs = readBasePrefs();
+	swingPrefs = new SwingPrefs(basePrefs);
+
+
 	// Choose the configuration directory, so we can get the rest of
 	// the configuration
 	switch(ctType) {
@@ -433,10 +438,6 @@ if ("".equals(configName)) configName = "<blank>";
 			
 		} break;
 	}
-
-	// Load GUI Preferences
-	Map<String,String> basePrefs = readBasePrefs();
-	swingPrefs = new SwingPrefs(basePrefs);
 
 	//	if (configDir == null) System.exit(0);
 //configURL = getClass().getClassLoader().getResource("offstage/config/");
