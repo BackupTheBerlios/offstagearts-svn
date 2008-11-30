@@ -486,7 +486,11 @@ protected static String simpleSearchSql(String text, Integer prefDbid, String jo
 	}
 	
 	String whereDbid = (prefDbid == null ? " " : " and persons.dbid = " + prefDbid + " ");
-	if (numeric) {
+
+	if ("*".equals(text)) {
+		return "select entityid from persons where not obsolete " + whereDbid;
+
+	} else if (numeric) {
 		// entityid
 		return "select persons.entityid from persons" + join +
 			" where persons.entityid = " + text;

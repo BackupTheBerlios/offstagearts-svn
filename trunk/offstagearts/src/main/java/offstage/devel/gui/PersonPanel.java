@@ -236,7 +236,7 @@ extends javax.swing.JPanel {
         lastupdated = new citibob.swing.typed.JTypedTextField();
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
-        relprimarytypeid = new citibob.swing.typed.JKeyedComboBox();
+        dbid = new citibob.swing.typed.JTypedLabel();
         PhonePane = new javax.swing.JPanel();
         phonePanel = new offstage.gui.GroupPanel();
         lPhoneNumbers = new javax.swing.JLabel();
@@ -688,19 +688,19 @@ extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         AddrPanel.add(jPanel3, gridBagConstraints);
 
-        jPanel4.setLayout(new java.awt.GridLayout(2, 0));
+        jPanel4.setLayout(new java.awt.GridBagLayout());
 
-        jLabel15.setText("Relationship to Primary");
-        jPanel4.add(jLabel15);
+        jLabel15.setText("Database: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        jPanel4.add(jLabel15, gridBagConstraints);
 
-        relprimarytypeid.setColName("relprimarytypeid");
-        relprimarytypeid.setPreferredSize(new java.awt.Dimension(32, 19));
-        relprimarytypeid.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                relprimarytypeidActionPerformed(evt);
-            }
-        });
-        jPanel4.add(relprimarytypeid);
+        dbid.setText("jTypedLabel1");
+        dbid.setColName("dbid");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        jPanel4.add(dbid, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -760,10 +760,6 @@ extends javax.swing.JPanel {
         add(MiddleXPane, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
-private void relprimarytypeidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relprimarytypeidActionPerformed
-// TODO add your handling code here:
-}//GEN-LAST:event_relprimarytypeidActionPerformed
-
 	private void bLaunchEmailActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bLaunchEmailActionPerformed
 	{//GEN-HEADEREND:event_bLaunchEmailActionPerformed
 		citibob.gui.BareBonesMailto.mailto((String)email1.getValue());
@@ -800,6 +796,7 @@ private void relprimarytypeidActionPerformed(java.awt.event.ActionEvent evt) {//
     private javax.swing.JButton bLaunchEmail;
     private citibob.swing.typed.JTypedTextField city;
     private citibob.swing.typed.JTypedTextField customaddressto;
+    private citibob.swing.typed.JTypedLabel dbid;
     private citibob.swing.typed.JTypedDateChooser dob;
     private citibob.swing.typed.JTypedTextField email1;
     private citibob.swing.typed.JTypedTextField entityid;
@@ -836,7 +833,6 @@ private void relprimarytypeidActionPerformed(java.awt.event.ActionEvent evt) {//
     private citibob.swing.typed.JTypedTextField occupation;
     private citibob.swing.typed.JTypedTextField orgname;
     private offstage.gui.GroupPanel phonePanel;
-    private citibob.swing.typed.JKeyedComboBox relprimarytypeid;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField state;
     private citibob.swing.typed.JTypedTextField title;

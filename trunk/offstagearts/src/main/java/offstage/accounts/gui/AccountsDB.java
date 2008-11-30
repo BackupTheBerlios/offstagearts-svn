@@ -29,6 +29,7 @@ package offstage.accounts.gui;
 import citibob.app.App;
 import citibob.sql.ConsSqlQuery;
 import citibob.sql.SQL;
+import citibob.sql.SqlRun;
 import citibob.sql.pgsql.SqlDate;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.sql.pgsql.SqlString;
@@ -101,6 +102,22 @@ public static String w_tmp_acct_balance_sql(String idSql, final int actypeid, fi
 	return sql;
 }
 
+
+public static void w_accounts_move(SqlRun str, int fromID, int toID,
+int actypeid)
+{
+	str.execSql(
+		" update actrans2 set cr_entityid = " + toID + "\n" +
+		" where cr_entityid = " + fromID + "\n" +
+		" and cr_actypeid = " + actypeid + ";\n" +
+		
+		" update actrans2 set db_entityid = " + toID + "\n" +
+		" where db_entityid = " + fromID + "\n" +
+		" and db_actypeid = " + actypeid + ";\n" +
+		
+		" delete from acbal2 where entityid in (" + fromID + ", " + toID + ")" +
+		" and actypeid = " + actypeid);
+}
 
 /** Creates the proper double-entry accounting record.  Seeks to always make USD be 0
  * @param sinkName Name of the "sink" account for one of the entries; see acsinks table.

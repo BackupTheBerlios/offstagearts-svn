@@ -34,14 +34,19 @@ import citibob.sql.ConsSqlQuery;
 import citibob.sql.SqlRun;
 import citibob.sql.UpdTasklet2;
 import citibob.sql.pgsql.SqlInteger;
+import citibob.swing.table.DelegateStyledTM;
 import citibob.task.SqlTask;
+import citibob.text.SFormat;
+import citibob.types.KeyedModel;
 import citibob.wizard.Wizard;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Set;
 import java.util.TreeSet;
 import offstage.FrontApp;
+import offstage.reports.PhoneJoin;
 import offstage.school.tuition.TuitionCalc;
+import offstage.types.PhoneSFormat;
 
 /**
  *
@@ -129,36 +134,113 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 		null,
 		new String[] {"enrollments"}) {
 	public String getSelectSql(boolean proto) {
-		return
+		StringBuffer sql = new StringBuffer();
+		
+		String studentIdSql =
+			" select e.entityid as id" +
+			" from courseids c\n" +
+			" inner join enrollments e on (c.courseid = e.courseid)\n" +
+			" where c.courseid = " + SqlInteger.sql(courseid);
+		sql.append(
+			" create temporary table _sids (id int);\n" +
+			" insert into _sids " + studentIdSql + ";\n");
+		String parentIdSql =
+			" select distinct p.parent1id as id\n" +
+			" from _sids\n" +
+			" inner join persons p on (_sids.id = p.entityid)\n";
+		sql.append(
+			" create temporary table _pids (id int);\n" +
+			" insert into _pids " + parentIdSql + ";\n");
+
+		PhoneJoin pj = new PhoneJoin(2);
+		sql.append(pj.pphonesSql("_pph", parentIdSql) + ";\n");
+		
+		sql.append(
 			" select e.courserole,e.dstart,e.dend,\n" +
 			" (case when st.firstname is null then '' else st.firstname || ' ' end ||\n" +
 			"  case when st.lastname is null then '' else st.lastname end) as st_name,\n" +
 			" (case when p1.firstname is null then '' else p1.firstname || ' ' end ||\n" +
 			"  case when p1.lastname is null then '' else p1.lastname end) as p1_name,\n" +
-			" e.entityid, e.courseid, st.parent1id, tr.payerid\n" +
-//			" from courseids c, enrollments e, persons st\n" + //, entities_school st_s\n" +
-			" from courseids c\n" + //, entities_school st_s\n" +
+			" e.entityid, e.courseid, st.parent1id, tr.payerid,\n" +
+			" _pph_phoneid1,_pph_phone1,_pph_phoneid2,_pph_phone2\n" +
+			" from courseids c\n" +
 			" left outer join enrollments e on (c.courseid = e.courseid)\n" +
 			" left outer join persons st on (e.entityid = st.entityid)\n" +
 			" left outer join persons p1 on (st.parent1id = p1.entityid)\n" +
 			" left outer join termregs tr on (tr.groupid = c.termid and tr.entityid = st.entityid)\n" +
-//			" where e.courseid = c.courseid\n" +
-//			" and e.entityid = st.entityid\n" +
-//			" and st_s.entityid = st.entityid\n" +
+			" left outer join (" + pj.pphonesTable("_pph") + ") pph on (pph.id = p1.entityid)" +
 			" where c.courseid = " + SqlInteger.sql(courseid) +
-			" order by e.courserole,st.lastname,st.firstname\n";
+			" order by e.courserole,st.lastname,st.firstname;\n");
+		sql.append(
+			" drop table _pph;\n" +
+			" drop table _sids;\n");
+
+		return sql.toString();
+		
+		
+//		sql.append(
+//			" select e.courserole,e.dstart,e.dend,\n" +
+//			" (case when st.firstname is null then '' else st.firstname || ' ' end ||\n" +
+//			"  case when st.lastname is null then '' else st.lastname end) as st_name,\n" +
+//			" (case when p1.firstname is null then '' else p1.firstname || ' ' end ||\n" +
+//			"  case when p1.lastname is null then '' else p1.lastname end) as p1_name,\n" +
+//			" e.entityid, e.courseid, st.parent1id, tr.payerid\n" +
+////			" from courseids c, enrollments e, persons st\n" + //, entities_school st_s\n" +
+//			" from courseids c\n" + //, entities_school st_s\n" +
+//			" left outer join enrollments e on (c.courseid = e.courseid)\n" +
+//			" left outer join persons st on (e.entityid = st.entityid)\n" +
+//			" left outer join persons p1 on (st.parent1id = p1.entityid)\n" +
+//			" left outer join termregs tr on (tr.groupid = c.termid and tr.entityid = st.entityid)\n" +
+////			" where e.courseid = c.courseid\n" +
+////			" and e.entityid = st.entityid\n" +
+////			" and st_s.entityid = st.entityid\n" +
+//			" where c.courseid = " + SqlInteger.sql(courseid) +
+//			" order by e.courserole,st.lastname,st.firstname\n");
 	}};
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) {
 		RSSchema schema = (RSSchema)enrolledDb.getSchemaBuf().getSchema();
-		enrollments.setModelU(enrolledDb.getTableModel(),
-			new String[] {"Status", "#", "Name", "Custom Start", "Custom End",
-				"Role", "Parent Name"},
-			new String[] {"__status__", "__rowno__", "st_name", "dstart", "dend",
-				"courserole", "p1_name"},
-			new boolean[] {false, false, false, true, true, true, false},
-			fapp.swingerMap());
-//		enrollments.setRenderEditU("dayofweek", new DayOfWeekKeyedModel());
+
+		SFormat phoneFmt = new PhoneSFormat();
+		
+		DelegateStyledTM stm = new DelegateStyledTM(enrolledDb.getTableModel());
+		stm.setColumns(fapp.swingerMap(),
+			"__status__", "Status", false, null,
+			"__rowno__", "#", false, null,
+			"st_name", "Name", false, null,
+			"dstart", "Custom Start", true, null,
+			"dend", "Custom End", true, null,
+			"courserole", "Role", true, null,
+			"p1_name", "Parent Name", false, null,
+			"_pph_phone1", "Phone1", false, phoneFmt,
+			"_pph_phone2", "Phone2", false, phoneFmt);
+		KeyedModel phoneidsKm = fapp.schemaSet().getKeyedModel("phones", "groupid");
+		stm.setTooltips(fapp.swingerMap(),
+			null, null,
+			null, null,
+			null, null,
+			null, null,
+			null, null,
+			null, null,
+			null, null,
+			"_pph_phoneid1", phoneidsKm,
+			"_pph_phoneid2", phoneidsKm);
+		enrollments.setStyledTM(stm);
+		
+//			
+//		stm.setEditable(false, false, false, true, true, true, false, false, false);
+//		
+//		enrollments.setModelU(enrolledDb.getTableModel(),
+//			new String[] {"Status", "#", "Name", "Custom Start", "Custom End",
+//				"Role", "Parent Name", "Phone1", "Phone2"},
+//			new String[] {"__status__", "__rowno__", "st_name", "dstart", "dend",
+//				"courserole", "p1_name", "_pph_phone1", "_pph_phone2"},
+//			new String[] {null, null, null, null, null,
+//				null, null, "_pph_phoneids1", "_pph_phoneids2"},
+//			new boolean[] {false, false, false, true, true, true, false},
+//			fapp.swingerMap());
+//		enrollments.setT`
+////		enrollments.setRenderEditU("dayofweek", new DayOfWeekKeyedModel());
 
 
 	}});

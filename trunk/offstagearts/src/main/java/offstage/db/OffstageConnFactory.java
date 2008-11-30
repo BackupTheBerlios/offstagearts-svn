@@ -31,11 +31,11 @@ import citibob.sql.WrapConnFactory;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.Properties;
 import offstage.FrontApp;
 
@@ -88,8 +88,8 @@ throws ClassNotFoundException, UnknownHostException, MalformedURLException, IOEx
 //		prm.trustURL = getResourceOrURL(props, "db.trust");
 		String dbUserName = props.getProperty("db.user", null);
 		
-		prm.storeBytes = app.decryptURL(new URL(app.configURL(), dbUserName + "-store.jks"));
-		prm.trustBytes = app.decryptURL(new URL(app.configURL(), dbUserName + "-trust.jks"));
+		prm.storeBytes = app.decryptURL(app.getConfigResource(dbUserName + "-store.jks"));
+		prm.trustBytes = app.decryptURL(app.getConfigResource(dbUserName + "-trust.jks"));
 
 		prm.dest = InetAddress.getByName(props.getProperty("db.host", null));
 		prm.destPort = Integer.parseInt(props.getProperty("db.port", null));
@@ -111,7 +111,11 @@ throws ClassNotFoundException
 	final Properties p2 = new Properties();
 	final String url;
 
-System.out.println("db.driverclass = " + props.getProperty("db.driverclass", null));
+//for (Enumeration en = props.keys(); en.hasMoreElements();) {
+//	Object key = en.nextElement();
+//	System.out.println(key + " = " + props.get(key));
+//}
+//System.out.println("db.driverclass = " + props.getProperty("db.driverclass", null));
 	Class.forName(props.getProperty("db.driverclass", null));
 	p2.setProperty("user", props.getProperty("db.user", null));
 

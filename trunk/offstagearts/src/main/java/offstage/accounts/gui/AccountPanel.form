@@ -227,6 +227,9 @@
                               <Insets value="[2, 2, 2, 2]"/>
                             </Property>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bCashActionPerformed"/>
+                          </Events>
                         </Component>
                         <Component class="javax.swing.JButton" name="bCheck">
                           <Properties>
@@ -414,6 +417,29 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bRefreshActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel7">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="         Move Transactions to:"/>
+          </Properties>
+        </Component>
+        <Component class="offstage.swing.typed.EntityIDDropdown" name="destEntityID">
+          <Properties>
+            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[170, 2147483647]"/>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="bMoveTrans">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Go!"/>
+            <Property name="focusable" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bMoveTransActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

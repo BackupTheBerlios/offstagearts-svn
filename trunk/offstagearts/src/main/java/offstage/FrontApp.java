@@ -45,6 +45,7 @@ import citibob.swingers.JavaSwingerMap;
 import citibob.version.SvnVersion;
 import citibob.version.Version;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Policy;
@@ -187,11 +188,13 @@ public DataTabSet dataTabSet() { return dataTabSet; }
 //}
 
 /** Read our base preferences from the JAR file */
-public static Map<String,String> readBasePrefs() throws IOException
+public Map<String,String> readBasePrefs() throws IOException
 {
 	Map<String,String> map = new TreeMap();
 	
-	URL url = FrontApp.class.getClassLoader().getResource("offstage/config/prefs.txt");
+	URL url = FrontApp.class.getClassLoader().getResource("offstage/defaultconfig/prefs.txt");
+//	URL url = getConfigResource("prefs.txt");
+//System.out.println("BasePrefsURL = " + url);
 	BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 	String line;
 	while ((line = in.readLine()) != null) {
@@ -276,7 +279,7 @@ void loadPropFile(Properties props, String name) throws IOException
 	InputStream in;
 	
 	// First: load JAR-based (default) properties
-	URL url = getClass().getClassLoader().getResource("offstage/config/" + name);
+	URL url = getClass().getClassLoader().getResource("offstage/defaultconfig/" + name);
 System.out.println("loadPropFile: " + url);
 //	in = getClass().getClassLoader().getResourceAsStream("offstage/config/" + name);
 	in = url.openStream();
@@ -286,8 +289,10 @@ System.out.println("loadPropFile: " + url);
 	
 	// Next: Override with anything in user-created overrides
 	// Get the contents of the file
-	url = new URL(configURL, name);
+	url = getConfigResource(name);
+System.out.println("Loading config resource for " + name + ": " + url);
 	byte[] bcontents = decryptURL(url);
+System.out.println("    bcontents = " + new String(bcontents));
 	if (bcontents == null) return;		// Doesn't exist
 
 	
@@ -324,6 +329,19 @@ Properties loadProps() throws IOException
 	return props;
 }
 // -------------------------------------------------------
+/** Retrieves a resource from the config/ directory, whether it's
+ * located on disk or in the classpath
+ */
+public URL getConfigResource(String name) throws MalformedURLException
+{
+System.out.println("getConfigResource: " + name);
+System.out.println("    configURL = " + configURL);
+System.out.println("    configResourceFolder = " + configResourceFolder);
+	if (configURL != null) return new URL(configURL, name);
+	return getClass().getClassLoader().getResource(configResourceFolder + name);
+}
+
+// -------------------------------------------------------
 public static final int CT_CONFIGCHOOSE = 0;	// Connect via configuration directory
 public static final int CT_CONFIGSET = 1;		// Connect to pre-specified configuration directory
 public static final int CT_DEMO = 2;	// Use internal demo configuration
@@ -346,9 +364,7 @@ throws Exception
 	// Set up Swing GUI preferences, so we can display stuff
 	// initPrefs();
 	userRoot = Preferences.userRoot().node("offstagearts/gui");
-	Map<String,String> basePrefs = readBasePrefs();
-	swingPrefs = new SwingPrefs(basePrefs);
-	
+
 	// Choose the configuration directory, so we can get the rest of
 	// the configuration
 	switch(ctType) {
@@ -372,12 +388,27 @@ throws Exception
 			}
 		} break;
 		case CT_DEMO : {
-			configURL = getClass().getClassLoader().getResource("offstage/demo/");
+			configURL = null;
+			configResourceFolder = "offstage/demo/";
+//			configURL = getClass().getClassLoader().getResource("offstage/demo/");
 			configName = "Demo";
 		} break;
 		case CT_OALAUNCH : {
-			configURL = getClass().getClassLoader().getResource("oalaunch/config/");
+			configURL = null;
+			configResourceFolder = "oalaunch/config/";
+//			configURL = getClass().getClassLoader().getResource("oalaunch/config/");
 			
+
+////List<JarURL> jurls = ClassPathUtils.getClassPath();
+////for (JarURL jurl : jurls) System.out.println(jurl.getUrl());
+//System.out.println(getClass());
+//System.out.println(getClass().getClassLoader());
+//System.out.println(getClass().getClassLoader().getResource("oalaunch/config/app.properties"));
+//System.out.println(getClass().getClassLoader().getResource("oalaunch/config/"));
+//
+//System.out.println("in1 = " + getClass().getClassLoader().getResource("oalaunch/config/app.properties").openStream());
+//System.out.println("in2 = " + getConfigResource("app.properties").openStream());
+
 			// Load up our OALaunch configuration properties
 			Properties oalaunch = new Properties();
 			ClassLoader clr = getClass().getClassLoader();
@@ -385,6 +416,7 @@ throws Exception
 			InputStream in = url.openStream();
 			oalaunch.load(in);
 			in.close();
+//Thread.currentThread().sleep(20000*1000L);
 
 			configName = oalaunch.getProperty("config.name", "OALaunch");
 if (configName == null) configName = "<null>";
@@ -402,7 +434,11 @@ if ("".equals(configName)) configName = "<blank>";
 		} break;
 	}
 
-//	if (configDir == null) System.exit(0);
+	// Load GUI Preferences
+	Map<String,String> basePrefs = readBasePrefs();
+	swingPrefs = new SwingPrefs(basePrefs);
+
+	//	if (configDir == null) System.exit(0);
 //configURL = getClass().getClassLoader().getResource("offstage/config/");
 	
 	// Load up properties from the configuration
