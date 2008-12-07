@@ -119,7 +119,7 @@ throws IOException
 		
 	} else {
 		csql.addTable("(" + pu.pphonesTable("pphones") + ")", "pphones",
-			SqlQuery.JT_LEFT_OUTER, "pphone.id = xx.id");
+			SqlQuery.JT_LEFT_OUTER, "pphones.id = xx.id");
 		
 	}
 

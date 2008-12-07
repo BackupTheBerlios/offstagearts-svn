@@ -292,8 +292,8 @@ System.out.println("loadPropFile: " + url);
 	url = getConfigResource(name);
 System.out.println("Loading config resource for " + name + ": " + url);
 	byte[] bcontents = decryptURL(url);
-System.out.println("    bcontents = " + new String(bcontents));
 	if (bcontents == null) return;		// Doesn't exist
+System.out.println("    bcontents = " + new String(bcontents));
 
 	
 	// Interpret the contents
@@ -354,7 +354,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {	
 	// Make sure we have the right version
-	version = new Version("1.8.1");
+	version = new Version("1.8.2");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	

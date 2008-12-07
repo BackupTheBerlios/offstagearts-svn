@@ -173,7 +173,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 			" order by e.courserole,st.lastname,st.firstname;\n");
 		sql.append(
 			" drop table _pph;\n" +
-			" drop table _sids;\n");
+			" drop table _sids;\n" +
+			" drop table _pids;\n");
 
 		return sql.toString();
 		
