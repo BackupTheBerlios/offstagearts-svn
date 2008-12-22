@@ -188,7 +188,7 @@ public DataTabSet dataTabSet() { return dataTabSet; }
 //}
 
 /** Read our base preferences from the JAR file */
-public Map<String,String> readBasePrefs() throws IOException
+static public Map<String,String> readBasePrefs() throws IOException
 {
 	Map<String,String> map = new TreeMap();
 	
@@ -354,7 +354,7 @@ throws Exception
 //java.security.GeneralSecurityException
 {	
 	// Make sure we have the right version
-	version = new Version("1.8.2");
+	version = new Version("1.8.4");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	

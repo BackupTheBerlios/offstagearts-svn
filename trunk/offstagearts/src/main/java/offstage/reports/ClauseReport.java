@@ -222,8 +222,8 @@ EQuery equery, final File outFile) throws Exception
 		Reports rr = fapp.reports();
 		StringTableModel stm = rr.format(report.model);
 		SFormat phoneSF = new PhoneSFormat();
-		stm.setFormatU("phone1", phoneSF);
-		stm.setFormatU("phone2", phoneSF);
+		stm.setFormatU("pphones_phone1", phoneSF);
+		stm.setFormatU("pphones_phone2", phoneSF);
 		rr.writeCSV(stm, outFile);
 	}});
 }
