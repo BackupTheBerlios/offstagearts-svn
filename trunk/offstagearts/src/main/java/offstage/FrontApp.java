@@ -188,7 +188,7 @@ public DataTabSet dataTabSet() { return dataTabSet; }
 //}
 
 /** Read our base preferences from the JAR file */
-static public Map<String,String> readBasePrefs() throws IOException
+public static Map<String,String> readBasePrefs() throws IOException
 {
 	Map<String,String> map = new TreeMap();
 	

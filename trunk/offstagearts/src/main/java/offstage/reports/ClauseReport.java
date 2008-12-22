@@ -208,7 +208,7 @@ EQuery equery, final File outFile) throws Exception
 	final ClauseReport report = new ClauseReport(fapp, str,
 		fapp.sqlTypeSet(), equery, new String[] {
 			"e.entityid","customaddressto","salutation","firstname",
-			"lastname",
+			"lastname","email",
 			"pphones_phonename1","pphones_phone1","pphones_phonename2","pphones_phone2",
 			"address1","address2","city","state","zip"
 		}, new TableJoin[] {

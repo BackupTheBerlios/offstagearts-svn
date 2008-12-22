@@ -322,7 +322,10 @@ System.out.println("importGroupMembersFromData return: " + ret);
 
 		if (true || emailType == ET_CUSTOMER) {
 			// Work around JangoMail bug for some messages
-			byte[] msgBytes2 = wrapMultipartAlternative(msgBytes);
+//			byte[] msgBytes2 = wrapMultipartAlternative(msgBytes);
+// Doesn't work yet for regular text emails.
+			
+			byte[] msgBytes2 = msgBytes;
 			
 			// Parse our final message
 			MimeMessage msg = new MimeMessage(null, new ByteArrayInputStream(msgBytes2));
