@@ -210,7 +210,8 @@ EQuery equery, final File outFile) throws Exception
 			"e.entityid","customaddressto","salutation","firstname",
 			"lastname","email",
 			"pphones_phonename1","pphones_phone1","pphones_phonename2","pphones_phone2",
-			"address1","address2","city","state","zip"
+			"address1","address2","city","state","zip",
+			" orgname","isorg","title","occupation","email"
 		}, new TableJoin[] {
 			new TableJoin("persons", "e", SqlQuery.JT_INNER, "e.entityid = xx.id")
 		}, "lastname, firstname", false

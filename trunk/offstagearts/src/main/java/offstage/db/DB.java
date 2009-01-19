@@ -23,13 +23,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.db;
 
-import java.sql.*;
-import citibob.sql.*;
-import java.util.*;
-import citibob.sql.pgsql.*;
+import citibob.sql.RsTasklet2;
+import citibob.sql.SqlRun;
+import citibob.sql.pgsql.SqlInteger;
+import citibob.sql.pgsql.SqlString;
 import citibob.util.IntVal;
-import java.util.prefs.*;
-import offstage.config.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 
 /**
  * A bunch of "stored procedures" for the JMBT database.  This is because

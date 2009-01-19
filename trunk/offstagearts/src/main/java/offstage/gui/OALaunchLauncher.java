@@ -39,7 +39,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 import offstage.FrontApp;
-import offstage.config.*;
 //import com.jgoodies.looks.plastic.theme.*;
 
 /**
@@ -62,7 +61,7 @@ public class OALaunchLauncher {
 //		String configName = oalaunch.getProperty("config.name", "OALaunch");
 		int ctType = FrontApp.CT_OALAUNCH;
 		String configName = null;
-		MainLauncher.launch(ctType, configName);
+//		MainLauncher.launch(ctType, configName);
     }
 
 }

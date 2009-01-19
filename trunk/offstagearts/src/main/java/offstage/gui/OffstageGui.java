@@ -55,7 +55,7 @@ FrontApp fapp;
 		this.oaDatabase.setText(fapp.configName());
 		
 		// Mess with preferences
-		Preferences prefs = fapp.userRoot().node("OffstageGui");
+		Preferences prefs = fapp.guiRoot().node("OffstageGui");
 		fapp.swingPrefs().setPrefs(this, prefs);
 	}
 
@@ -227,7 +227,7 @@ final JPanel panel, final String frameTitle, final String frameName)
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(panel);
-			fapp.swingPrefs().setPrefs(frame, fapp.userRoot().node(frameName));
+			fapp.swingPrefs().setPrefs(frame, fapp.guiRoot().node(frameName));
 
 		frame.setVisible(true);
 	}});

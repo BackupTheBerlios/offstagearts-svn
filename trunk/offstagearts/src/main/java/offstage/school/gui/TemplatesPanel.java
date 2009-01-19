@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.school.gui;
 
-import offstage.config.*;
 import citibob.resource.ResModels;
 import citibob.app.App;
 import citibob.resource.ResData;
@@ -36,8 +35,6 @@ import citibob.resource.RtVers;
 import citibob.resource.UpgradePlan;
 import citibob.sql.SqlRun;
 import citibob.task.SqlTask;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  

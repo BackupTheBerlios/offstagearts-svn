@@ -16,6 +16,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package offstage;
+import citibob.config.Config;
+import citibob.config.ConfigMaker;
+import citibob.config.MultiConfig;
+import citibob.config.PBEConfig;
+import citibob.config.ResourceConfig;
 import java.sql.*;
 import java.util.*;
 import offstage.equery.*;
@@ -41,21 +46,17 @@ import citibob.resource.ResData;
 import citibob.resource.ResResult;
 import citibob.resource.UpgradePlan;
 import citibob.resource.UpgradePlanSet;
-import citibob.swingers.JavaSwingerMap;
 import citibob.version.SvnVersion;
 import citibob.version.Version;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Policy;
 import javax.swing.JOptionPane;
-import offstage.config.ConfigChooser;
-import offstage.config.UpgradesDialog;
-import offstage.crypt.PBECrypt;
+import citibob.config.dialog.UpgradesDialog;
+import citibob.crypt.DialogPBEAuth;
 import offstage.datatab.DataTabSet;
 import offstage.resource.OffstageResSet;
-import org.apache.log4j.lf5.util.StreamUtils;
 
 public class FrontApp extends ReportsApp
 {
@@ -192,7 +193,7 @@ public static Map<String,String> readBasePrefs() throws IOException
 {
 	Map<String,String> map = new TreeMap();
 	
-	URL url = FrontApp.class.getClassLoader().getResource("offstage/defaultconfig/prefs.txt");
+	URL url = FrontApp.class.getClassLoader().getResource("offstage/baseprefs.txt");
 //	URL url = getConfigResource("prefs.txt");
 //System.out.println("BasePrefsURL = " + url);
 	BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -210,136 +211,136 @@ public static Map<String,String> readBasePrefs() throws IOException
 }
 
 // -------------------------------------------------------
-PasswordDialog passwordDialog;
-public byte[] decryptURL(URL url) throws IOException
-{
-	// Load the (possibly encrypted) contents of the file
-	byte[] contents;
-	try {
-		InputStream in = url.openStream();
-		contents = StreamUtils.getBytes(in);
-		in.close();
-	} catch(Exception e) {
-		// It didn't exit!
-		return null;
-	}
-	
-	return decryptContents(contents);
-}
-
-/** Given the URL of a (possibly encrypted) resource, returns the
- * decrypted version of it.
- * @param url
- */
-public byte[] decryptContents(byte[] contents) throws IOException
-{	
-	// Read the first line of the contents for encryption header
-	BufferedReader reader =
-		new BufferedReader(
-		new InputStreamReader(
-		new ByteArrayInputStream(contents)));
-	String firstLine = reader.readLine();
-	int encrypt = firstLine.indexOf(PBECrypt.BEGIN_ENCRYPTED);
-	
-	// Decrypt if necessary
-	if (encrypt < 0) {
-		// Not encrypted, just read normally
-		return contents;
-	} else {
-		boolean showDialog = true;
-		if (passwordDialog.getHasShown()) showDialog = false;
-		passwordDialog.setAlert("");
-		
-		// It is encrypted; find the password, etc.
-		PBECrypt pbe = new PBECrypt();
-		for (;;) {
-			if (showDialog) {
-				passwordDialog.setVisible(true);
-				if (!passwordDialog.getOK()) System.exit(0);
-			}
-			
-			char[] password = passwordDialog.getPassword();
-			boolean goodPassword = true;
-			try {
-				contents = pbe.decrypt(new String(contents), password);
-				return contents;
-			} catch(Exception e) {
-				goodPassword = false;
-			}
-
-			// Decrypted file didn't load; bad password
-			passwordDialog.setAlert("Bad password; try again!");
-			showDialog = true;
-		}
-	}
-	
-}
-void loadPropFile(Properties props, String name) throws IOException
-{
-	InputStream in;
-	
-	// First: load JAR-based (default) properties
-	URL url = getClass().getClassLoader().getResource("offstage/defaultconfig/" + name);
-System.out.println("loadPropFile: " + url);
-//	in = getClass().getClassLoader().getResourceAsStream("offstage/config/" + name);
-	in = url.openStream();
-	props.load(in);
-	in.close();
-
-	
-	// Next: Override with anything in user-created overrides
-	// Get the contents of the file
-	url = getConfigResource(name);
-System.out.println("Loading config resource for " + name + ": " + url);
-	byte[] bcontents = decryptURL(url);
-	if (bcontents == null) return;		// Doesn't exist
-System.out.println("    bcontents = " + new String(bcontents));
-
-	
-	// Interpret the contents
-	try {
-		Properties nprops = new Properties();
-		nprops.load(new ByteArrayInputStream(bcontents));
-
-		// They loaded just fine; now load into real properties
-		props.load(new ByteArrayInputStream(bcontents));
-	} catch(Exception e) {
-		IOException ioe = new IOException("Bad properties file: " + url);
-		ioe.initCause(e);
-		throw ioe;
-	}
-}
-
-Properties loadProps() throws IOException
-{
-	Properties props = new Properties();
-
-	loadPropFile(props, "app.properties");
-	String os = System.getProperty("os.name");
-        int space = os.indexOf(' ');
-        if (space >= 0) os = os.substring(0,space);
-	loadPropFile(props, os + ".properties");
-//	dialog.clear();
-	//if (inn != null) props.load(inn);
-
-//try {
-//	Thread.currentThread().sleep(100000);
-//} catch(InterruptedException e) {}
-	
-	return props;
-}
+//PasswordDialog passwordDialog;
+//public byte[] decryptURL(URL url) throws IOException
+//{
+//	// Load the (possibly encrypted) contents of the file
+//	byte[] contents;
+//	try {
+//		InputStream in = url.openStream();
+//		contents = StreamUtils.getBytes(in);
+//		in.close();
+//	} catch(Exception e) {
+//		// It didn't exit!
+//		return null;
+//	}
+//	
+//	return decryptContents(contents);
+//}
+//
+///** Given the URL of a (possibly encrypted) resource, returns the
+// * decrypted version of it.
+// * @param url
+// */
+//public byte[] decryptContents(byte[] contents) throws IOException
+//{	
+//	// Read the first line of the contents for encryption header
+//	BufferedReader reader =
+//		new BufferedReader(
+//		new InputStreamReader(
+//		new ByteArrayInputStream(contents)));
+//	String firstLine = reader.readLine();
+//	int encrypt = firstLine.indexOf(PBECrypt.BEGIN_ENCRYPTED);
+//	
+//	// Decrypt if necessary
+//	if (encrypt < 0) {
+//		// Not encrypted, just read normally
+//		return contents;
+//	} else {
+//		boolean showDialog = true;
+//		if (passwordDialog.getHasShown()) showDialog = false;
+//		passwordDialog.setAlert("");
+//		
+//		// It is encrypted; find the password, etc.
+//		PBECrypt pbe = new PBECrypt();
+//		for (;;) {
+//			if (showDialog) {
+//				passwordDialog.setVisible(true);
+//				if (!passwordDialog.getOK()) System.exit(0);
+//			}
+//			
+//			char[] password = passwordDialog.getPassword();
+//			boolean goodPassword = true;
+//			try {
+//				contents = pbe.decrypt(new String(contents), password);
+//				return contents;
+//			} catch(Exception e) {
+//				goodPassword = false;
+//			}
+//
+//			// Decrypted file didn't load; bad password
+//			passwordDialog.setAlert("Bad password; try again!");
+//			showDialog = true;
+//		}
+//	}
+//	
+//}
+//void loadPropFile(Properties props, String name) throws IOException
+//{
+//	InputStream in;
+//	
+//	// First: load JAR-based (default) properties
+//	URL url = getClass().getClassLoader().getResource("offstage/defaultconfig/" + name);
+//System.out.println("loadPropFile: " + url);
+////	in = getClass().getClassLoader().getResourceAsStream("offstage/config/" + name);
+//	in = url.openStream();
+//	props.load(in);
+//	in.close();
+//
+//	
+//	// Next: Override with anything in user-created overrides
+//	// Get the contents of the file
+//	url = getConfigResource(name);
+//System.out.println("Loading config resource for " + name + ": " + url);
+//	byte[] bcontents = decryptURL(url);
+//	if (bcontents == null) return;		// Doesn't exist
+//System.out.println("    bcontents = " + new String(bcontents));
+//
+//	
+//	// Interpret the contents
+//	try {
+//		Properties nprops = new Properties();
+//		nprops.load(new ByteArrayInputStream(bcontents));
+//
+//		// They loaded just fine; now load into real properties
+//		props.load(new ByteArrayInputStream(bcontents));
+//	} catch(Exception e) {
+//		IOException ioe = new IOException("Bad properties file: " + url);
+//		ioe.initCause(e);
+//		throw ioe;
+//	}
+//}
+//
+//Properties loadProps() throws IOException
+//{
+//	Properties props = new Properties();
+//
+//	loadPropFile(props, "app.properties");
+//	String os = System.getProperty("os.name");
+//        int space = os.indexOf(' ');
+//        if (space >= 0) os = os.substring(0,space);
+//	loadPropFile(props, os + ".properties");
+////	dialog.clear();
+//	//if (inn != null) props.load(inn);
+//
+////try {
+////	Thread.currentThread().sleep(100000);
+////} catch(InterruptedException e) {}
+//	
+//	return props;
+//}
 // -------------------------------------------------------
-/** Retrieves a resource from the config/ directory, whether it's
- * located on disk or in the classpath
- */
-public URL getConfigResource(String name) throws MalformedURLException
-{
-System.out.println("getConfigResource: " + name);
-System.out.println("    configURL = " + configURL);
-System.out.println("    configResourceFolder = " + configResourceFolder);
-	if (configURL != null) return new URL(configURL, name);
-	return getClass().getClassLoader().getResource(configResourceFolder + name);
-}
+///** Retrieves a resource from the config/ directory, whether it's
+// * located on disk or in the classpath
+// */
+//public URL getConfigResource(String name) throws MalformedURLException
+//{
+//System.out.println("getConfigResource: " + name);
+////System.out.println("    configURL = " + configURL);
+////System.out.println("    configResourceFolder = " + configResourceFolder);
+////	if (configURL != null) return new URL(configURL, name);
+////	return getClass().getClassLoader().getResource(configResourceFolder + name);
+//}
 
 // -------------------------------------------------------
 public static final int CT_CONFIGCHOOSE = 0;	// Connect via configuration directory
@@ -347,14 +348,22 @@ public static final int CT_CONFIGSET = 1;		// Connect to pre-specified configura
 public static final int CT_DEMO = 2;	// Use internal demo configuration
 public static final int CT_OALAUNCH = 3;	// Use "internal" oalaunch configuration
 
-public FrontApp(int ctType, String xconfigName)
+/**
+ * 
+ * @param ctType
+ * @param mainConfig The user-selected configuration
+ * @throws java.lang.Exception
+ */
+public FrontApp(ConfigMaker configMaker)
 //public FrontApp(String xconfigName, int ctType)
 throws Exception
 //SQLException, java.io.IOException, javax.mail.internet.AddressException,
 //java.security.GeneralSecurityException
 {	
+	name = "OffstageArts";
+	
 	// Make sure we have the right version
-	version = new Version("1.8.4");
+	version = new Version("1.9.0");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
@@ -363,88 +372,95 @@ throws Exception
 
 	// Set up Swing GUI preferences, so we can display stuff
 	// initPrefs();
-	userRoot = Preferences.userRoot().node("offstagearts/gui");
+	userRoot = Preferences.userRoot().node("offstagearts");
 
 	// Load GUI Preferences
 	Map<String,String> basePrefs = readBasePrefs();
 	swingPrefs = new SwingPrefs(basePrefs);
 
 
-	// Choose the configuration directory, so we can get the rest of
-	// the configuration
-	switch(ctType) {
-		case CT_CONFIGSET : {
-			Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
-			String sdir = configPrefs.get(xconfigName, null);
-			configURL = new File(sdir).toURL();
-			configName = xconfigName;
-		} break;
-		case CT_CONFIGCHOOSE : {
-			Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
-			ConfigChooser dialog = new ConfigChooser(configPrefs,
-				new JavaSwingerMap(TimeZone.getDefault()), swingPrefs, userRoot(), version.toString());
-			dialog.setVisible(true);
-			if (dialog.isDemo()) {
-				configURL = null;
-				configName = "Demo";
-			} else {
-				configURL = dialog.getConfigFile().toURL();
-				configName = dialog.getConfigName();
-			}
-		} break;
-		case CT_DEMO : {
-			configURL = null;
-			configResourceFolder = "offstage/demo/";
-//			configURL = getClass().getClassLoader().getResource("offstage/demo/");
-			configName = "Demo";
-		} break;
-		case CT_OALAUNCH : {
-			configURL = null;
-			configResourceFolder = "oalaunch/config/";
-//			configURL = getClass().getClassLoader().getResource("oalaunch/config/");
-			
-
-////List<JarURL> jurls = ClassPathUtils.getClassPath();
-////for (JarURL jurl : jurls) System.out.println(jurl.getUrl());
-//System.out.println(getClass());
-//System.out.println(getClass().getClassLoader());
-//System.out.println(getClass().getClassLoader().getResource("oalaunch/config/app.properties"));
-//System.out.println(getClass().getClassLoader().getResource("oalaunch/config/"));
+	// Get the configuration
+	Config mainConfig = configMaker.newConfig(this);
+	if (mainConfig == null) System.exit(-1);
+	config = new MultiConfig(
+		new PBEConfig(mainConfig, new DialogPBEAuth(null, "Please enter configuration password.")),
+		new ResourceConfig("offstage/defaultconfig"));
+	
+//	// Choose the configuration directory, so we can get the rest of
+//	// the configuration
+//	switch(ctType) {
+//		case CT_CONFIGSET : {
+//			Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
+//			String sdir = configPrefs.get(xconfigName, null);
+//			configURL = new File(sdir).toURL();
+//			configName = xconfigName;
+//		} break;
+//		case CT_CONFIGCHOOSE : {
+//			Preferences configPrefs = Preferences.userRoot().node("offstagearts").node("config");
+//			ConfigDialog dialog = new ConfigDialog(configPrefs,
+//				new JavaSwingerMap(TimeZone.getDefault()), swingPrefs, guiRoot(), version.toString());
+//			dialog.setVisible(true);
+//			if (dialog.isDemo()) {
+//				configURL = null;
+//				configName = "Demo";
+//			} else {
+//				configURL = dialog.getConfigFile().toURL();
+//				configName = dialog.getConfigName();
+//			}
+//		} break;
+//		case CT_DEMO : {
+//			configURL = null;
+//			configResourceFolder = "offstage/demo/";
+////			configURL = getClass().getClassLoader().getResource("offstage/demo/");
+//			configName = "Demo";
+//		} break;
+//		case CT_OALAUNCH : {
+//			configURL = null;
+//			configResourceFolder = "oalaunch/config/";
+////			configURL = getClass().getClassLoader().getResource("oalaunch/config/");
+//			
 //
-//System.out.println("in1 = " + getClass().getClassLoader().getResource("oalaunch/config/app.properties").openStream());
-//System.out.println("in2 = " + getConfigResource("app.properties").openStream());
-
-			// Load up our OALaunch configuration properties
-			Properties oalaunch = new Properties();
-			ClassLoader clr = getClass().getClassLoader();
-			URL url = clr.getResource("oalaunch/oalaunch.properties");
-			InputStream in = url.openStream();
-			oalaunch.load(in);
-			in.close();
-//Thread.currentThread().sleep(20000*1000L);
-
-			configName = oalaunch.getProperty("config.name", "OALaunch");
-if (configName == null) configName = "<null>";
-if ("".equals(configName)) configName = "<blank>";
-			
-			// Strip off slashes and stuff
-			int slash = configName.lastIndexOf('/');
-			if (slash >= 0) configName = configName.substring(slash+1);
-			slash = configName.lastIndexOf('\\');
-			if (slash >= 0) configName = configName.substring(slash+1);
-			slash = configName.lastIndexOf(".jar");
-			if (slash >= 0) configName = configName.substring(0, slash);
-			
-			
-		} break;
-	}
+//////List<JarURL> jurls = ClassPathUtils.getClassPath();
+//////for (JarURL jurl : jurls) System.out.println(jurl.getUrl());
+////System.out.println(getClass());
+////System.out.println(getClass().getClassLoader());
+////System.out.println(getClass().getClassLoader().getResource("oalaunch/config/app.properties"));
+////System.out.println(getClass().getClassLoader().getResource("oalaunch/config/"));
+////
+////System.out.println("in1 = " + getClass().getClassLoader().getResource("oalaunch/config/app.properties").openStream());
+////System.out.println("in2 = " + getConfigResource("app.properties").openStream());
+//
+//			// Load up our OALaunch configuration properties
+//			Properties oalaunch = new Properties();
+//			ClassLoader clr = getClass().getClassLoader();
+//			URL url = clr.getResource("oalaunch/oalaunch.properties");
+//			InputStream in = url.openStream();
+//			oalaunch.load(in);
+//			in.close();
+////Thread.currentThread().sleep(20000*1000L);
+//
+//			configName = oalaunch.getProperty("config.name", "OALaunch");
+//if (configName == null) configName = "<null>";
+//if ("".equals(configName)) configName = "<blank>";
+//			
+//			// Strip off slashes and stuff
+//			int slash = configName.lastIndexOf('/');
+//			if (slash >= 0) configName = configName.substring(slash+1);
+//			slash = configName.lastIndexOf('\\');
+//			if (slash >= 0) configName = configName.substring(slash+1);
+//			slash = configName.lastIndexOf(".jar");
+//			if (slash >= 0) configName = configName.substring(0, slash);
+//			
+//			
+//		} break;
+//	}
 
 	//	if (configDir == null) System.exit(0);
 //configURL = getClass().getClassLoader().getResource("offstage/config/");
 	
 	// Load up properties from the configuration
-	passwordDialog = new PasswordDialog(null);
-	props = loadProps();
+//	passwordDialog = new PasswordDialog(null);
+	props = config.loadAppProperties();
 	
 	// Set up connection to JangoMail
 	jango = new Jango(props);
@@ -496,8 +512,9 @@ if ("".equals(configName)) configName = "<blank>";
 //		// These must be loaded from a directory on disk, since they
 //		// can be saved as well.  Unlike the stuff packaged in the jar
 //		// file, they are NOT read-only.
+// ... well, maybe have an external program read and write these.
 		// We need a way to specify where the crypto keys
-		if (configURL != null) {
+//		if (configURL != null) {
 			File pubDir = new File(props.getProperty("crypt.pubdir"));
 			File privDir = new File(props.getProperty("crypt.privdir"));
 			keyRing = new KeyRing(pubDir, privDir);
@@ -507,7 +524,7 @@ if ("".equals(configName)) configName = "<blank>";
 				//				"The public key failed to load.\n" +
 				//				"You will be unable to enter credit card details.");
 			}
-		}
+//		}
 		
 		this.mailSender = new citibob.mail.ConstMailSender(props);
 		this.sqlTypeSet = new citibob.sql.pgsql.PgsqlTypeSet();
@@ -532,6 +549,7 @@ throws Exception
 		str.flush();
 }
 
+/** Upgrade resources if needed */
 public boolean checkResources()  throws Exception
 {
 	boolean ret = true;

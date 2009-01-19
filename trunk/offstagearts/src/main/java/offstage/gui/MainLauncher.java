@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.gui;
 
+import citibob.config.ConfigMaker;
+import citibob.config.DialogConfigMaker;
 import java.sql.*;
 import javax.swing.*;
 import java.util.prefs.*;
@@ -34,14 +36,8 @@ import citibob.swing.prefs.*;
 import citibob.jschema.swing.*;
 import citibob.gui.*;
 import citibob.mail.MailExpDialog;
-import citibob.resource.ResData;
-import citibob.resource.UpgradePlan;
-import citibob.resource.UpgradePlanSet;
 import citibob.sql.*;
-import citibob.task.SqlTask;
-import java.io.IOException;
 import offstage.FrontApp;
-import offstage.config.*;
 //import com.jgoodies.looks.plastic.theme.*;
 
 /**
@@ -56,10 +52,8 @@ public class MainLauncher {
 
 
 
-/** Creates a new instance of FrameSetX
- @param ctType How to find the configuration files (see FrontApp.CT_* 
- @configName Dependingon the ctType, the name of the configuration. */
-public static void launch(int ctType, String configName) throws Exception {
+/** Creates a new instance of FrameSetX */
+public static void launch(ConfigMaker configMaker) throws Exception {
 	/* see:
 	http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6604109
 	http://www.jasperforge.org/sf/go/artf2423
@@ -71,7 +65,7 @@ public static void launch(int ctType, String configName) throws Exception {
 
 
 	try {
-		final FrontApp app = new FrontApp(ctType, configName); //new File("/export/home/citibob/svn/offstage/config"));
+		final FrontApp app = new FrontApp(configMaker); //new File("/export/home/citibob/svn/offstage/config"));
 		boolean resGood = app.checkResources();
 		app.initWithDatabase();
 
@@ -93,25 +87,29 @@ public static void launch(int ctType, String configName) throws Exception {
 	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
-		int ctType;
-		String configName;
-		if (args.length == 0) {
-			ctType = FrontApp.CT_CONFIGCHOOSE;
-			configName = null;
-		} else {
-			if ("--demo".equals(args[0])) {
-				ctType = FrontApp.CT_DEMO;
-				configName = null;		// Means use default
-			} else if ("--oalaunch".equals(args[0])) {
-				ctType = FrontApp.CT_OALAUNCH;
-				configName = args[1];
-			} else {
-				ctType = FrontApp.CT_CONFIGSET;
-				configName = args[0];
-			}
-		}
-		
-		launch(ctType, configName);
+		ConfigMaker cmaker = new DialogConfigMaker("offstage/demo");
+		launch(cmaker);
+//		int ctType;
+//		String configName;
+//		
+//		
+//		if (args.length == 0) {
+//			ctType = FrontApp.CT_CONFIGCHOOSE;
+//			configName = null;
+//		} else {
+//			if ("--demo".equals(args[0])) {
+//				ctType = FrontApp.CT_DEMO;
+//				configName = null;		// Means use default
+//			} else if ("--oalaunch".equals(args[0])) {
+//				ctType = FrontApp.CT_OALAUNCH;
+//				configName = args[1];
+//			} else {
+//				ctType = FrontApp.CT_CONFIGSET;
+//				configName = args[0];
+//			}
+//		}
+//		
+//		launch(ctType, configName);
     }
 
 }

@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.gui;
 
+import citibob.config.ConfigMaker;
+import citibob.config.MultiConfigMaker;
 import java.sql.*;
 import javax.swing.*;
 import java.util.prefs.*;
@@ -34,9 +36,6 @@ import citibob.swing.prefs.*;
 import citibob.jschema.swing.*;
 import citibob.gui.*;
 import citibob.sql.*;
-import offstage.FrontApp;
-import offstage.config.*;
-//import com.jgoodies.looks.plastic.theme.*;
 
 /**
  *
@@ -47,8 +46,11 @@ public class DemoLauncher {
 	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
-		System.out.println("DemoLauncher running!");
-		MainLauncher.launch(FrontApp.CT_DEMO, null);
+		ConfigMaker cmaker = new MultiConfigMaker("offstage/demo");
+		MainLauncher.launch(cmaker);
+		
+//		System.out.println("DemoLauncher running!");
+//		MainLauncher.launch(FrontApp.CT_DEMO, null);
     }
 
 }

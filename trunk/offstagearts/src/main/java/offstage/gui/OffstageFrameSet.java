@@ -33,7 +33,7 @@ import citibob.sql.SqlRun;
 import offstage.accounts.gui.AccountFrame;
 import offstage.cleanse.CleanseFrame;
 import offstage.cleanse.CleansePanel;
-import offstage.config.ResourcesFrame;
+import citibob.config.dialog.ResourcesFrame;
 import offstage.devel.gui.DevelFrame;
 import offstage.frontdesk.FrontDeskFrame;
 import offstage.school.gui.SchoolRegFrame;
@@ -64,7 +64,7 @@ public JFrame newFrame(FrameRec rec) throws Exception
 
 /** Creates a new instance of OffstageFrameSet */
 public OffstageFrameSet(FrontApp xfapp) {
-	super(xfapp.swingPrefs(), xfapp.userRoot());
+	super(xfapp.swingPrefs(), xfapp.guiRoot());
 	wmenu = new WindowMenu(xfapp);
 	this.fapp = xfapp;
 
@@ -140,7 +140,7 @@ addMaker("console", new FrameMaker() {
 public JFrame newFrame() {
 	ConsoleFrame consoleFrame = new ConsoleFrame();
 	consoleFrame.initRuntime("Java Console",
-		fapp.swingPrefs(), fapp.userRoot().node("ConsoleFrame"));
+		fapp.swingPrefs(), fapp.guiRoot().node("ConsoleFrame"));
 	return consoleFrame;
 }});
 addMaker("maintenance", new FrameMaker() {

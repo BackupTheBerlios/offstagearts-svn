@@ -88,8 +88,10 @@ throws ClassNotFoundException, UnknownHostException, MalformedURLException, IOEx
 //		prm.trustURL = getResourceOrURL(props, "db.trust");
 		String dbUserName = props.getProperty("db.user", null);
 		
-		prm.storeBytes = app.decryptURL(app.getConfigResource(dbUserName + "-store.jks"));
-		prm.trustBytes = app.decryptURL(app.getConfigResource(dbUserName + "-trust.jks"));
+		prm.storeBytes = app.config().getStreamBytes(dbUserName + "-store.jks");
+		prm.trustBytes = app.config().getStreamBytes(dbUserName + "-trust.jks");
+//		prm.storeBytes = app.decryptURL(app.getConfigResource(dbUserName + "-store.jks"));
+//		prm.trustBytes = app.decryptURL(app.getConfigResource(dbUserName + "-trust.jks"));
 
 		prm.dest = InetAddress.getByName(props.getProperty("db.host", null));
 		prm.destPort = Integer.parseInt(props.getProperty("db.port", null));
