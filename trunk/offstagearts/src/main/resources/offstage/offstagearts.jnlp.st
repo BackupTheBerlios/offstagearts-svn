@@ -3,9 +3,7 @@
 
 <jnlp spec="1.0+"
       codebase="http://offstagearts.org/releases/offstagearts"
-$if(oalaunch)$>$else$
       href="offstagearts_$launchType$-$releaseVersion$.jnlp">
-$endif$
 
    <information>
       <title>OffstageArts $launchType$ $releaseVersion$</title>
@@ -21,8 +19,6 @@ $endif$
    <resources>     
 	<j2se version="1.5+"
 	      href="http://java.sun.com/products/autodl/j2se"/>
-$if(oalaunch)$<jar href="%oalaunch.jar%" />
-$endif$
 $jars:{<jar href="$jarBase$$it.jar$" download="$it.downloadType$"/>
 }$
 

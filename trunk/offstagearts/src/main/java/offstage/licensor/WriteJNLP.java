@@ -64,8 +64,8 @@ public static String getReleaseVersion2()
 
 
 // The three JNLP files we write
-static final int JNLP_MAIN = 0;
-static final int JNLP_OALAUNCH = 1;
+static final int JNLP_CHOOSE = 0;
+static final int JNLP_LAUNCH = 1;
 static final int JNLP_DEMO = 2;
 
 static class JarAndType {
@@ -92,25 +92,22 @@ public static void writeJNLP(VersionMap vm, int jnlpType) throws Exception
 		
 	String outFileName = null;
 	switch(jnlpType) {
-		case JNLP_MAIN :
-			outFileName = "offstagearts_main-" + fileVersion + ".jnlp";
-			template.setAttribute("mainClass", "offstage.gui.MainLauncher");
-			template.setAttribute("launchType", "main");
+		case JNLP_CHOOSE :
+			template.setAttribute("mainClass", "offstage.launch.Dialog");
+			template.setAttribute("launchType", "choose");
 		break;
-		case JNLP_OALAUNCH :
-			outFileName = "offstagearts_oalaunch-" + fileVersion + ".jnlp.template";
-			template.setAttribute("mainClass", "oalaunch.Launch1");// "offstage.gui.OALaunchLauncher");
-			template.setAttribute("launchType", "oalaunch");
-			template.setAttribute("oalaunch", true);
+		case JNLP_LAUNCH :
+			template.setAttribute("mainClass", "offstage.launch.ConfigsFile");// "offstage.gui.OALaunchLauncher");
+			template.setAttribute("launchType", "launch");
 		break;
 		case JNLP_DEMO :
-			outFileName = "offstagearts_demo-" + fileVersion + ".jnlp";
 			template.setAttribute("launchType", "demo");
 			template.setAttribute("mainClass", "offstage.gui.DemoLauncher");
 		break;
 	}
-//		for (String arg : args) template.setAttribute("args", arg);
-//		if (demo) template.setAttribute("args", "--demo");
+		
+	outFileName = "offstagearts_" + template.getAttribute("launchType") +
+		"-" + fileVersion + ".jnlp";
 		
 	// Add jars to the file
 	List<JarURL> jurls = ClassPathUtils.getClassPath();
@@ -151,8 +148,8 @@ public static VersionMap newVersionMap(String arg)
 public static void main(String[] args) throws Exception
 {
 	VersionMap vm = newVersionMap(args[0]);
-	writeJNLP(vm, JNLP_MAIN);
-	writeJNLP(vm, JNLP_OALAUNCH);
+	writeJNLP(vm, JNLP_CHOOSE);
+	writeJNLP(vm, JNLP_LAUNCH);
 	writeJNLP(vm, JNLP_DEMO);
 }
 

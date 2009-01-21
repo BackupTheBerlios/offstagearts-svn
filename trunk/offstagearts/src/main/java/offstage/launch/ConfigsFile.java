@@ -25,19 +25,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-package offstage.gui;
+package offstage.launch;
 
+import citibob.config.Config;
+import citibob.config.ConfigMaker;
+import citibob.config.MultiConfig;
+import citibob.config.MultiConfigMaker;
 import java.sql.*;
 import javax.swing.*;
 import java.util.prefs.*;
 import citibob.swing.prefs.*;
 import citibob.jschema.swing.*;
 import citibob.gui.*;
-import citibob.mail.MailExpDialog;
 import citibob.sql.*;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Properties;
+import java.io.File;
 import offstage.FrontApp;
 //import com.jgoodies.looks.plastic.theme.*;
 
@@ -45,23 +46,41 @@ import offstage.FrontApp;
  *
  * @author citibob
  */
-public class OALaunchLauncher {
+public class ConfigsFile {
 
+	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
-		System.out.println("OALaunchLauncher Started");
-//		// Load up our configuration properties
-//		Properties oalaunch = new Properties();
-//		ClassLoader clr = OALaunchLauncher.class.getClassLoader();
-//		URL url = clr.getResource("oalaunch/oalaunch.properties");
-//		InputStream in = url.openStream();
-//		oalaunch.load(in);
-//		in.close();
-//		
-//		String configName = oalaunch.getProperty("config.name", "OALaunch");
-		int ctType = FrontApp.CT_OALAUNCH;
-		String configName = null;
-//		MainLauncher.launch(ctType, configName);
+		// Find the zip file to read for the configuration
+		File configsFile;
+		boolean delete;
+		if (args.length > 0) {
+			configsFile = new File(args[0]);
+			delete = false;
+		} else {
+			configsFile = new File(System.getProperty("user.home"), "offstagearts.zips");
+			delete = true;
+
+////configsFile = new File("/export/home/citibob/mvn/oamisc/ballettheatre/config_lan.zips");
+//configsFile = new File("/export/home/citibob/offstagearts/configs/test_ballettheatre.zips");
+//delete = false;
+		}
+//		long modified = configsFile.lastModified();
+		
+		// Read the configuration
+		System.out.println("configsFile: " + configsFile);
+		if (!configsFile.exists()) {
+			System.out.println("Configs file does not exist: " + configsFile);
+			System.exit(-1);
+		}
+		Config config = MultiConfig.loadFromFile(configsFile);
+		
+		// Delete the file, now that we've read it
+		if (delete) configsFile.delete();
+		
+		// Launch the program!
+		ConfigMaker cmaker = new MultiConfigMaker(config);
+		FrontApp.launch(cmaker);
     }
 
 }

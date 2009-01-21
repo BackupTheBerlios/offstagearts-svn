@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-package offstage.gui;
+package offstage.launch;
 
 import citibob.config.ConfigMaker;
 import citibob.config.DialogConfigMaker;
@@ -44,51 +44,13 @@ import offstage.FrontApp;
  *
  * @author citibob
  */
-public class MainLauncher {
-
-//protected OffstageGui offstageGui;
-//protected ConsoleFrame consoleFrame;
-
-
-
-
-/** Creates a new instance of FrameSetX */
-public static void launch(ConfigMaker configMaker) throws Exception {
-	/* see:
-	http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6604109
-	http://www.jasperforge.org/sf/go/artf2423
-	*/
-	System.setProperty("sun.java2d.print.polling", "false");
-
-	System.setProperty("swing.metalTheme", "ocean");
-	UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-
-
-	try {
-		final FrontApp app = new FrontApp(configMaker); //new File("/export/home/citibob/svn/offstage/config"));
-		boolean resGood = app.checkResources();
-		app.initWithDatabase();
-
-		if (resGood) {
-			app.frameSet().openFrame("maintenance");
-		} else {
-			app.frameSet().openFrame("config");
-		}
-		app.sqlRun().flush();
-	} catch(Exception e) {
-		e.printStackTrace();
-		MailExpDialog dialog = new MailExpDialog(null, "OffstageArts", e);
-		dialog.setVisible(true);
-		System.exit(-1);
-	}
-}
-
+public class Dialog {
 
 	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
 		ConfigMaker cmaker = new DialogConfigMaker("offstage/demo");
-		launch(cmaker);
+		FrontApp.launch(cmaker);
 //		int ctType;
 //		String configName;
 //		

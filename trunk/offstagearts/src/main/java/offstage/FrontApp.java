@@ -55,6 +55,7 @@ import java.security.Policy;
 import javax.swing.JOptionPane;
 import citibob.config.dialog.UpgradesDialog;
 import citibob.crypt.DialogPBEAuth;
+import javax.swing.UIManager;
 import offstage.datatab.DataTabSet;
 import offstage.resource.OffstageResSet;
 
@@ -66,10 +67,10 @@ KeyRing keyRing;
 /** Encryption and decryption keys for CC #s */
 public KeyRing keyRing() { return keyRing; }
 
-String configName;
-/** Name of Offstage configuration directory used to connect to
- a specific OffstageArts database. */
-public String configName() { return configName; }
+//String configName;
+///** Name of Offstage configuration directory used to connect to
+// a specific OffstageArts database. */
+//public String configName() { return configName; }
 
 ClassLoader siteCode;
 public ClassLoader siteCode() { return siteCode; }
@@ -385,7 +386,6 @@ throws Exception
 	config = new MultiConfig(
 		new PBEConfig(mainConfig, new DialogPBEAuth(null, "Please enter configuration password.")),
 		new ResourceConfig("offstage/defaultconfig"));
-	
 //	// Choose the configuration directory, so we can get the rest of
 //	// the configuration
 //	switch(ctType) {
@@ -720,4 +720,37 @@ public void initWithDatabase()
 		System.exit(-1);
 	}
 }
+
+// =================================================================
+/** Creates a new instance of FrameSetX */
+public static void launch(ConfigMaker configMaker) throws Exception {
+	/* see:
+	http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6604109
+	http://www.jasperforge.org/sf/go/artf2423
+	*/
+	System.setProperty("sun.java2d.print.polling", "false");
+
+	System.setProperty("swing.metalTheme", "ocean");
+	UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+
+
+	try {
+		final FrontApp app = new FrontApp(configMaker); //new File("/export/home/citibob/svn/offstage/config"));
+		boolean resGood = app.checkResources();
+		app.initWithDatabase();
+
+		if (resGood) {
+			app.frameSet().openFrame("maintenance");
+		} else {
+			app.frameSet().openFrame("config");
+		}
+		app.sqlRun().flush();
+	} catch(Exception e) {
+		e.printStackTrace();
+		MailExpDialog dialog = new MailExpDialog(null, "OffstageArts", e);
+		dialog.setVisible(true);
+		System.exit(-1);
+	}
+}
+
 }

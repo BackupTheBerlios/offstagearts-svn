@@ -52,7 +52,7 @@ FrontApp fapp;
 		actions.initRuntime(fapp);
 		welcome.initRuntime(fapp);
 		
-		this.oaDatabase.setText(fapp.configName());
+		this.oaDatabase.setText(fapp.config().getName());
 		
 		// Mess with preferences
 		Preferences prefs = fapp.guiRoot().node("OffstageGui");
@@ -232,5 +232,8 @@ final JPanel panel, final String frameTitle, final String frameName)
 		frame.setVisible(true);
 	}});
 }
+
+
+
 
 }
