@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * and open the template in the editor.
  */
 
-package offstage.licensor;
+package citibob.licensor;
 
 import citibob.reflect.ClassPathUtils;
 import java.io.File;

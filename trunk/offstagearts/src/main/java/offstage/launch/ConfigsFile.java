@@ -39,6 +39,9 @@ import citibob.jschema.swing.*;
 import citibob.gui.*;
 import citibob.sql.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
 import offstage.FrontApp;
 //import com.jgoodies.looks.plastic.theme.*;
 
@@ -53,19 +56,15 @@ public class ConfigsFile {
     {
 		// Find the zip file to read for the configuration
 		File configsFile;
+		File propsFile = null;
 		boolean delete;
 		if (args.length > 0) {
 			configsFile = new File(args[0]);
 			delete = false;
 		} else {
-			configsFile = new File(System.getProperty("user.home"), "offstagearts.zips");
+			configsFile = new File(System.getProperty("user.home"), "offstagearts_config.zips");
 			delete = true;
-
-////configsFile = new File("/export/home/citibob/mvn/oamisc/ballettheatre/config_lan.zips");
-//configsFile = new File("/export/home/citibob/offstagearts/configs/test_ballettheatre.zips");
-//delete = false;
 		}
-//		long modified = configsFile.lastModified();
 		
 		// Read the configuration
 		System.out.println("configsFile: " + configsFile);
@@ -75,8 +74,30 @@ public class ConfigsFile {
 		}
 		Config config = MultiConfig.loadFromFile(configsFile);
 		
+		// Load the props file to maybe set the name
+		String fileName = configsFile.getPath();
+		int dot = fileName.lastIndexOf('.');
+		if (dot >= 0) {
+			propsFile = new File(fileName.substring(0,dot) + ".properties");
+			if (propsFile.exists()) {
+				Properties props = new Properties();
+				InputStream in = new FileInputStream(propsFile);
+				props.load(in);
+				in.close();
+				
+				String configName = props.getProperty("config.name");
+				config.setName(configName);
+			}
+		}
+		
+
+		
+		
 		// Delete the file, now that we've read it
-		if (delete) configsFile.delete();
+		if (delete) {
+			configsFile.delete();
+			propsFile.delete();
+		}
 		
 		// Launch the program!
 		ConfigMaker cmaker = new MultiConfigMaker(config);

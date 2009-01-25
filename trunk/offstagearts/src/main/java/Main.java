@@ -6,7 +6,7 @@ import offstage.launch.ConfigsFile;
 import offstage.launch.Demo;
 import offstage.launch.Dialog;
 import offstage.licensor.Licensor;
-import offstage.licensor.MakeLauncher;
+import citibob.licensor.MakeLauncher;
 import offstage.licensor.WriteJarList;
 
 

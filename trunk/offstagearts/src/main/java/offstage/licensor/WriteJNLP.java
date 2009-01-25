@@ -102,7 +102,7 @@ public static void writeJNLP(VersionMap vm, int jnlpType) throws Exception
 		break;
 		case JNLP_DEMO :
 			template.setAttribute("launchType", "demo");
-			template.setAttribute("mainClass", "offstage.gui.DemoLauncher");
+			template.setAttribute("mainClass", "offstage.launch.Demo");
 		break;
 	}
 		
