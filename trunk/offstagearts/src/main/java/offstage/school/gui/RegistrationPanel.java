@@ -482,10 +482,13 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 	// Display names of related entities
 	vParent1ID.initRuntime(fapp);
 		new TypedWidgetBinder().bind(vParent1ID, smod.studentRm, smap);
+	new TypedWidgetBinder().bind(lParent1ID, smod.studentRm, smap);
 	vParent2ID.initRuntime(fapp);
 		new TypedWidgetBinder().bind(vParent2ID, smod.studentRm, smap);
+	new TypedWidgetBinder().bind(lParent2ID, smod.studentRm, smap);
 	vPayerID.initRuntime(fapp);
 		new TypedWidgetBinder().bind(vPayerID, smod.termregsRm, smap);
+	new TypedWidgetBinder().bind(lPayerID, smod.termregsRm, smap);
 
 	// ================================================================
 	// Payer
@@ -863,6 +866,9 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         jLabel21 = new javax.swing.JLabel();
         vParent2ID = new offstage.swing.typed.EntityIDDropdown();
         bNewParent2 = new javax.swing.JButton();
+        lPayerID = new citibob.swing.typed.JTypedLabel();
+        lParent1ID = new citibob.swing.typed.JTypedLabel();
+        lParent2ID = new citibob.swing.typed.JTypedLabel();
         TermRegPanel = new javax.swing.JPanel();
         jLabel30 = new javax.swing.JLabel();
         lDtregistered = new citibob.swing.typed.JTypedLabel();
@@ -2426,7 +2432,6 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
@@ -2494,6 +2499,8 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
         PeopleHeader1.add(bNewStudent, gridBagConstraints);
 
@@ -2523,7 +2530,6 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
@@ -2556,7 +2562,6 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 0.5;
@@ -2575,6 +2580,30 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.gridy = 3;
         gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 0);
         PeopleHeader1.add(bNewParent2, gridBagConstraints);
+
+        lPayerID.setText("jTypedLabel1"); // NOI18N
+        lPayerID.setColName("payerid"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        PeopleHeader1.add(lPayerID, gridBagConstraints);
+
+        lParent1ID.setText("jTypedLabel1"); // NOI18N
+        lParent1ID.setColName("parent1id"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        PeopleHeader1.add(lParent1ID, gridBagConstraints);
+
+        lParent2ID.setText("jTypedLabel1"); // NOI18N
+        lParent2ID.setColName("parent2id"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        PeopleHeader1.add(lParent2ID, gridBagConstraints);
 
         PeopleHeader.add(PeopleHeader1);
 
@@ -3120,6 +3149,9 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JLabel lMiddle1;
     private javax.swing.JLabel lMiddle3;
     private javax.swing.JLabel lMiddle4;
+    private citibob.swing.typed.JTypedLabel lParent1ID;
+    private citibob.swing.typed.JTypedLabel lParent2ID;
+    private citibob.swing.typed.JTypedLabel lPayerID;
     private citibob.swing.typed.JTypedLabel lTuition1;
     private citibob.swing.typed.JTypedTextField lastname;
     private citibob.swing.typed.JTypedTextField lastname1;

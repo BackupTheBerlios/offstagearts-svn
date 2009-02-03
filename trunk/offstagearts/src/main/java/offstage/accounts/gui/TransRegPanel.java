@@ -66,7 +66,7 @@ class Actrans2DbModel extends SqlBufDbModel
 			" from actrans2 ac, actrans2amt amt" +
 			" where ac.cr_entityid = " + entityid + " and ac.cr_actypeid = " + actypeid +
 			" and ac.actransid = amt.actransid and amt.assetid = " + assetid +
-			" and now()-ac.date < '450 days'" +
+			" and now()-ac.date < '850 days'" +
 			(proto ? " and 1=0" : "") +
 			"      UNION" +
 			" select ac.actransid, ac.actranstypeid, ac.date, ac.datecreated," +
@@ -74,7 +74,7 @@ class Actrans2DbModel extends SqlBufDbModel
 			" from actrans2 ac, actrans2amt amt" +
 			" where ac.db_entityid = " + entityid + " and ac.db_actypeid = " + actypeid +
 			" and ac.actransid = amt.actransid and amt.assetid = " + assetid +
-			" and now()-ac.date < '450 days'" +
+			" and now()-ac.date < '850 days'" +
 			(proto ? " and 1=0" : "") +
 			" order by date desc, actransid desc";
 	}

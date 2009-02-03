@@ -4,7 +4,7 @@
   <groupId>org.citibob</groupId>
   <artifactId>offstagearts</artifactId>
   <packaging>jar</packaging>
-  <version>1.9.0</version>
+  <version>1.9.1</version>
   <name>offstagearts</name>
   <url>http://maven.apache.org</url>
   <build>
@@ -200,6 +200,14 @@ lib/xstream-1.2.2.jar
       <scope>compile</scope>
     </dependency>
 
+
+	
+	
+	
+	
+	
+	
+	
 	<!-- CSV Parser -->
     <dependency>
       <groupId>org.citibob.jar</groupId>
@@ -230,28 +238,6 @@ lib/xstream-1.2.2.jar
             <scope>compile</scope>
         </dependency>
 	
-	
-	
-<!--	<dependency>
-      <groupId>org.citibob.jar</groupId>
-      <artifactId>TableLayout</artifactId>
-      <version>0</version>
-      <scope>compile</scope>
-    </dependency> -->
-
-		
-<!--    <dependency>
-            <groupId>jasperreports</groupId>
-            <artifactId>jasperreports</artifactId>
-            <version>1.3.4</version>
-            <scope>compile</scope>
-        </dependency> -->
-<!--    <dependency>
-      <groupId>org.citibob.jar</groupId>
-      <artifactId>jooreports</artifactId>
-      <version>2.0.0</version>
-      <scope>compile</scope>
-    </dependency> -->
 
 
 </dependencies>
