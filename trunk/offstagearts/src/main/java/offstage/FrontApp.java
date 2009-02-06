@@ -730,10 +730,9 @@ public static void launch(ConfigMaker configMaker) throws Exception {
 	*/
 	System.setProperty("sun.java2d.print.polling", "false");
 
-//	http://mail-archives.apache.org/mod_mbox/maven-users/200601.mbox/%3C92c218d10601171038kdccb3fbua7f97454adaebace@mail.gmail.com%3E
-	
-//	System.setProperty("javax.xml.parsers.SAXParserFactory",
-//		"com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
+//	http://mail-archives.apache.org/mod_mbox/maven-users/200601.mbox/%3C92c218d10601171038kdccb3fbua7f97454adaebace@mail.gmail.com%3E	
+	System.setProperty("javax.xml.parsers.SAXParserFactory",
+		"com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
 	
 	System.setProperty("swing.metalTheme", "ocean");
 	UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
