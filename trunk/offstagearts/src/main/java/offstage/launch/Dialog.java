@@ -29,14 +29,9 @@ package offstage.launch;
 
 import citibob.config.ConfigMaker;
 import citibob.config.DialogConfigMaker;
-import java.sql.*;
-import javax.swing.*;
-import java.util.prefs.*;
-import citibob.swing.prefs.*;
-import citibob.jschema.swing.*;
-import citibob.gui.*;
-import citibob.mail.MailExpDialog;
-import citibob.sql.*;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import offstage.FrontApp;
 //import com.jgoodies.looks.plastic.theme.*;
 
@@ -50,6 +45,11 @@ public class Dialog {
 	public static void main(String[] args) throws Exception
     {
 		ConfigMaker cmaker = new DialogConfigMaker("offstage/demo");
+
+OutputStream out = new FileOutputStream("oa.log");
+PrintStream pout = new PrintStream(out);
+System.setOut(pout);
+System.setErr(pout);
 		FrontApp.launch(cmaker);
 //		int ctType;
 //		String configName;
