@@ -364,7 +364,7 @@ throws Exception
 	name = "OffstageArts";
 	
 	// Make sure we have the right version
-	version = new Version("1.9.1");
+	version = new Version("1.9.2");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
@@ -730,6 +730,11 @@ public static void launch(ConfigMaker configMaker) throws Exception {
 	*/
 	System.setProperty("sun.java2d.print.polling", "false");
 
+//	http://mail-archives.apache.org/mod_mbox/maven-users/200601.mbox/%3C92c218d10601171038kdccb3fbua7f97454adaebace@mail.gmail.com%3E
+	
+//	System.setProperty("javax.xml.parsers.SAXParserFactory",
+//		"com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
+	
 	System.setProperty("swing.metalTheme", "ocean");
 	UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 
