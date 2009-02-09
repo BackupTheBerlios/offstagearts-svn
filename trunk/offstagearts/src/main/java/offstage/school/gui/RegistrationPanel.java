@@ -235,13 +235,13 @@ class AllRecDbModel extends MultiDbModel
 		if (!valueChanged()) return;
 		forceUpdate(str);
 	}
-	public void forceUpdate(SqlRun str) {
+	public boolean forceUpdate(SqlRun str) {
 //		if (!valueChanged()) return;
 
 		if (!recordValid()) {
 			JOptionPane.showMessageDialog(RegistrationPanel.this,
 				"Cannot save record.  You must have a payer\nand parent in order to save.");
-			return;
+			return false;
 		}
 
 		// Make sure payer has record in school system
@@ -261,6 +261,8 @@ class AllRecDbModel extends MultiDbModel
 
 			calcTuition(str);
 		}});
+		
+		return true;
 	}
 }
 
@@ -2862,6 +2864,7 @@ void newPayerAction(final SchemaBufRowModel rm, final String colName)
 			str.execSql("delete from enrollments" +
 				" where courseid = " + SqlInteger.sql(courseid) +
 				" and entityid = " + SqlInteger.sql(entityid));
+			calcTuition(str);	// Re-calc, but do not display unless user hits "Save" or "Undo"
 			enrolledDb.doSelect(str);
 		}});
 		
@@ -2892,6 +2895,7 @@ void newPayerAction(final SchemaBufRowModel rm, final String colName)
 //		"courseroles", "courseroleid", "name", "orderid")));
 
 			wizard.runWizard("add");
+			calcTuition(str);	// Re-calc, but do not display unless user hits "Save" or "Undo"
 			enrolledDb.doSelect(str);
 		}});
 // TODO add your handling code here:
