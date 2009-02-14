@@ -151,9 +151,9 @@ throws Exception
 	exec(tmpDir, "jar", "cvfm", outJar.getAbsolutePath(),
 		"META-INF/MANIFEST.MF", ".");
 	
-	// Sign it
-	exec(null, "jarsigner", "-storepass", "keyst0re", outJar.getAbsolutePath(),
-			"offstagearts");
+//	// Sign it
+//	exec(null, "jarsigner", "-storepass", "keyst0re", outJar.getAbsolutePath(),
+//			"offstagearts");
 	
 	// Remove the tmp directory
 	FileUtils.deleteDirectory(tmpDir);

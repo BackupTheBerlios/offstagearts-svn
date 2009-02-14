@@ -31,16 +31,12 @@ import citibob.config.Config;
 import citibob.config.ConfigMaker;
 import citibob.config.MultiConfig;
 import citibob.config.MultiConfigMaker;
-import java.sql.*;
-import javax.swing.*;
-import java.util.prefs.*;
-import citibob.swing.prefs.*;
-import citibob.jschema.swing.*;
-import citibob.gui.*;
-import citibob.sql.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Properties;
 import offstage.FrontApp;
 //import com.jgoodies.looks.plastic.theme.*;
@@ -54,6 +50,11 @@ public class ConfigsFile {
 	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
+OutputStream out = new FileOutputStream("oa.log");
+PrintStream pout = new PrintStream(out);
+System.setOut(pout);
+System.setErr(pout);
+
 		// Find the zip file to read for the configuration
 		File configsFile;
 		File propsFile = null;
