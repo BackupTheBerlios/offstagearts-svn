@@ -3,6 +3,7 @@
 # Usage:
 #   deploy.sh release
 #   deploy.sh latest
+#   deploy.sh test
 
 # Sign all the jarfiles
 java -cp target/executable-netbeans.dir/offstagearts-*.jar offstage.licensor.SignJars $1

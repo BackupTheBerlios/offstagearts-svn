@@ -286,7 +286,7 @@ public void removeExcept(File dir, Set<File> keep)
 
 public static void main(String[] args) throws Exception
 {
-	
+	System.out.println("SignJars type is " + args[0]);
 	VersionMap vm = WriteJNLP.newVersionMap(args[0]);
 	
 //	if (args.length == 0) {

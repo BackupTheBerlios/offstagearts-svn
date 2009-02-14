@@ -50,10 +50,10 @@ public class ConfigsFile {
 	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
-OutputStream out = new FileOutputStream("oa.log");
-PrintStream pout = new PrintStream(out);
-System.setOut(pout);
-System.setErr(pout);
+//OutputStream out = new FileOutputStream("oa.log");
+//PrintStream pout = new PrintStream(out);
+//System.setOut(pout);
+//System.setErr(pout);
 
 		// Find the zip file to read for the configuration
 		File configsFile;

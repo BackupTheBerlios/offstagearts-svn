@@ -364,7 +364,7 @@ throws Exception
 	name = "OffstageArts";
 	
 	// Make sure we have the right version
-	version = new Version("1.9.2");
+	version = new Version("1.9.3");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
@@ -503,7 +503,8 @@ throws Exception
 	try {
 	
 		// Set up database connections, etc.
-		OffstageConnFactory connFactory = new OffstageConnFactory(this); //props, expHandler);
+//		OffstageConnFactory connFactory = new OffstageConnFactory(this); //props, expHandler);
+		ConfigConnFactory connFactory = new ConfigConnFactory(config(), props(), expHandler());
 		this.pool = new RealConnPool(connFactory);
 		connFactory.setConnPool(this.pool);
 		this.sqlRun = new BatchSqlRun(pool, expHandler);

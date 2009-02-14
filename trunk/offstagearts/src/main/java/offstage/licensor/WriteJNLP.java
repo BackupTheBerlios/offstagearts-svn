@@ -139,9 +139,12 @@ public static VersionMap newVersionMap(String arg)
 {
 	if (arg.equals("release")) {
 		return new ReleaseVersionMap();
-	} else {
-		return new LatestVersionMap();
+	} else if (arg.equals("latest")) {
+		return new LatestVersionMap("LATEST");
+	} else if (arg.equals("test")) {
+		return new LatestVersionMap("TEST");
 	}
+	return null;
 	
 }
 

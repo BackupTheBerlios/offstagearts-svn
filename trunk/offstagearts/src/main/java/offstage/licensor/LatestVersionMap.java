@@ -22,8 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.licensor;
 
-import citibob.version.Version;
-
 
 /**
  *
@@ -32,12 +30,18 @@ import citibob.version.Version;
 public class LatestVersionMap implements VersionMap
 {
 
+String fileVersion;
+public LatestVersionMap(String fileVersion)
+{
+	this.fileVersion = fileVersion;
+}
 
 /** Returns the version of the system as a whole --- given the version of
  * the main offstagearts.jar file */
 public String getFileVersion(String releaseVersion)
 {
-	return "LATEST";
+	return fileVersion;
+//	return "LATEST";
 }
 
 	
@@ -55,7 +59,7 @@ public String getJawsName(String mavenName)
 System.out.println(mavenName);
 		int dash = mavenName.indexOf('-');
 		int ldot = mavenName.lastIndexOf('.');
-		destName = mavenName.substring(0, dash+1) + "LATEST" + mavenName.substring(ldot);
+		destName = mavenName.substring(0, dash+1) + fileVersion + mavenName.substring(ldot);
 	}
 	
 	return destName;
