@@ -29,6 +29,7 @@ import citibob.sql.DbKeyedModel;
 import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
 import citibob.sql.UpdTasklet2;
+import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.table.JTypeTableModel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -148,6 +149,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
         miAccountStatements = new javax.swing.JMenuItem();
         miPayerLabels = new javax.swing.JMenuItem();
         miRollBooks = new javax.swing.JMenuItem();
+        miTermSpreadsheet = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JSeparator();
         miStudentAccounts = new javax.swing.JMenuItem();
         mWindow = new javax.swing.JMenu();
@@ -290,6 +292,14 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
             }
         });
         mReports.add(miRollBooks);
+
+        miTermSpreadsheet.setText("Term Spreadsheet");
+        miTermSpreadsheet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miTermSpreadsheetActionPerformed(evt);
+            }
+        });
+        mReports.add(miTermSpreadsheet);
         mReports.add(jSeparator1);
 
         miStudentAccounts.setText("School Accounts Summary");
@@ -532,6 +542,31 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 		// TODO add your handling code here:
 	}//GEN-LAST:event_miSchoolEmailActionPerformed
 
+	private void miTermSpreadsheetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miTermSpreadsheetActionPerformed
+		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
+			int termid = schoolModel.getTermID();
+			String sql =
+				" select e.entityid,e.firstname, e.lastname, e.dob,\n" +
+				" prg.name as program, te.ncourses,\n" +
+				" p1.firstname as parent1_firstname, p1.lastname as parent1_lastname\n" +
+				" from persons e\n" +
+				" left outer join termenrolls te on e.entityid = te.entityid\n" +
+				" left outer join termregs tr on tr.entityid = te.entityid and tr.groupid = te.groupid\n" +
+				" left outer join entities p1 on p1.entityid = e.parent1id\n" +
+				" left outer join programids prg on prg.programid = tr.programid\n" +
+				" where te.groupid = " + SqlInteger.sql(termid) +
+				" order by tr.programid";
+
+			str.execSql(sql, new RsTasklet2() {
+			public void run(SqlRun str, ResultSet rs) throws Exception {
+				Reports rr = fapp.reports();
+				rr.writeCSV(rr.format(rr.toTableModel(rs)),
+					null, "Term Report");
+			}});		// TODO add your handling code here:
+		}});
+}//GEN-LAST:event_miTermSpreadsheetActionPerformed
+
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private offstage.school.gui.CourseListPanel courseListPanel;
@@ -557,6 +592,7 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
     private javax.swing.JMenuItem miSchoolEmail;
     private javax.swing.JMenuItem miStudentAccounts;
     private javax.swing.JMenuItem miStudentSchedules;
+    private javax.swing.JMenuItem miTermSpreadsheet;
     private offstage.school.gui.RegistrationPanel regPanel;
     private javax.swing.JTabbedPane tabs;
     private offstage.openclass.TeacherPanel teacherPanel1;

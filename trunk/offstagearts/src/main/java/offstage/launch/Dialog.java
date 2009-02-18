@@ -46,10 +46,10 @@ public class Dialog {
     {
 		ConfigMaker cmaker = new DialogConfigMaker("offstage/demo");
 
-OutputStream out = new FileOutputStream("oa.log");
-PrintStream pout = new PrintStream(out);
-System.setOut(pout);
-System.setErr(pout);
+//OutputStream out = new FileOutputStream("oa.log");
+//PrintStream pout = new PrintStream(out);
+//System.setOut(pout);
+//System.setErr(pout);
 		FrontApp.launch(cmaker);
 //		int ctType;
 //		String configName;
