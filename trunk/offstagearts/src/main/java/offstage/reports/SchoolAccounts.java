@@ -303,7 +303,12 @@ java.util.Date xasOfDate, int lateDays)
 		while (rs.next()) {
 //System.out.println("payerid = " + rs.getInt("payerid"));
 //System.out.println("tuition = " + rs.getDouble("tuition"));
-			acct = acctMap.get(rs.getInt("payerid"));
+			int payerid = rs.getInt("payerid");
+			acct = acctMap.get(payerid);
+			if (acct == null) {
+				System.out.println("SchoolAccounts: no Account for payerid = " + payerid);
+				System.out.println("Please run Recalc All Tuition and try again.");
+			}
 			acct.tuition_fullterm = rs.getDouble("tuition");
 			acct.scholarship_fullterm = rs.getDouble("scholarship");
 		}
