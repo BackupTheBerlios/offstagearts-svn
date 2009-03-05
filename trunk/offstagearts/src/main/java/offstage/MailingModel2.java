@@ -113,21 +113,21 @@ public MailingModel2(final SqlRun str, ReportsApp app) //OffstageSchemaSet sset)
 //	}});
 }
 
-public void makeReport(SqlRun str) throws SQLException, JRException
-{
-	DB.w_mailings_makereport(str, mailings.getIntKey());
-
-	String sql =
-		"select * from mailings" +
-		" where groupid=" + mailings.getIntKey() +
-		" and isgood" +
-		" order by country, zip";
-	str.execSql(sql, new RsTasklet2() {
-	public void run(SqlRun str, ResultSet rs) throws Exception {
-		Reports rr = app.reports();
-		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml", 0);
-	}});
-}
+//public void makeReport(SqlRun str) throws SQLException, JRException
+//{
+//	DB.w_mailings_makereport(str, mailings.getIntKey());
+//
+//	String sql =
+//		"select * from mailings" +
+//		" where groupid=" + mailings.getIntKey() +
+//		" and isgood" +
+//		" order by country, zip";
+//	str.execSql(sql, new RsTasklet2() {
+//	public void run(SqlRun str, ResultSet rs) throws Exception {
+//		Reports rr = app.reports();
+//		rr.viewJasper(rr.toJasper(rs), null, "AddressLabels.jrxml", 0);
+//	}});
+//}
 
 //public void makeReport() throws SQLException, JRException
 //{

@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.devel.gui;
 
-import citibob.jschema.SchemaBufRowModel;
+import citibob.jschema.SchemaRowModel;
 import citibob.swing.typed.TypedWidgetBinder;
 
 /**
@@ -40,7 +40,7 @@ public class MiddlePane extends javax.swing.JPanel {
 		genderButtonGroup.add(null, unknownGenderButton);
 	}
 
-	void initRuntime(SchemaBufRowModel xmodel)
+	void initRuntime(SchemaRowModel xmodel)
 	{
 			new TypedWidgetBinder().bind(genderButtonGroup, xmodel);
 //		new IsPrimaryBinder().bind(cbIsPrimary, model);	// Should just do a regular listener as above; this is read-only

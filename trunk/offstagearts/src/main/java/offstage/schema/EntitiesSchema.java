@@ -40,11 +40,11 @@ throws SQLException
 {
 	table = "entities";
 
-	DbKeyedModel kmodel = new DbKeyedModel(str, change,
-		"relprimarytypes", "relprimarytypeid", "name", "name", "");
+//	DbKeyedModel kmodel = new DbKeyedModel(str, change,
+//		"relprimarytypes", "relprimarytypeid", "name", "name", "");
 	cols = new SqlCol[] {
 			new SqlCol(new SqlInteger(false), "entityid", true),
-			new SqlCol(new SqlInteger(), "primaryentityid", false),
+//			new SqlCol(new SqlInteger(), "primaryentityid", false),
 			new SqlCol(new SqlInteger(), "parent1id", false),
 			new SqlCol(new SqlInteger(), "parent2id", false),
 			new SqlCol(new SqlString(100), "address1", false),
@@ -57,7 +57,7 @@ throws SQLException
 			new SqlCol(new SqlInteger(), "sourcekey", false),
 			//new Column(new SqlInteger(), "ipeopleid", false),
 			new SqlCol(new SqlTimestamp("GMT",true), "lastupdated", false),
-			new citibob.jschema.SqlCol(new SqlEnum(kmodel), "relprimarytypeid", false),
+//			new citibob.jschema.SqlCol(new SqlEnum(kmodel), "relprimarytypeid", false),
 			//new citibob.jschema.Column(new SqlBool(), "isquery", false),
 			new SqlCol(new SqlBool(), "sendmail", false),
 			new SqlCol(new SqlBool(), "obsolete", false),

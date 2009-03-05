@@ -21,8 +21,6 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
-import offstage.FrontApp;
-import offstage.devel.gui.DevelModel;
 import offstage.db.*;
 import java.awt.event.*;
 import citibob.swing.typed.*;
@@ -75,13 +73,20 @@ public void setValue(final Object o)
 public void setPrimaryEntityID(SqlRun str, int primaryEntityID)
 //throws SQLException
 {
-//int primaryEntityID;
-	executeQuery(str,
-		" select pe.entityid from entities pe, entities pq" +
-		" where pq.entityid = " + SqlInteger.sql(primaryEntityID) +
-		" and pe.primaryentityid = pq.primaryentityid" +
-		" and not pe.obsolete",
-		"isprimary desc, name");
+	SqlSet groups = DB.listRelGroupSql("headof", -1, primaryEntityID);
+	SqlSet ssql = new SqlSet(groups,
+		" select xx.entityid1 as id," +
+		" case when head then 0 else 1 end as sort" +
+		" from (" + groups.getSql() + ") xx\n");
+	executeQuery(str, ssql, true, "sort, name");
+	
+////int primaryEntityID;
+//	executeQuery(str,
+//		" select pe.entityid from entities pe, entities pq" +
+//		" where pq.entityid = " + SqlInteger.sql(primaryEntityID) +
+//		" and pe.primaryentityid = pq.primaryentityid" +
+//		" and not pe.obsolete",
+//		"isprimary desc, name");
 }
 // ===========================================================
 //

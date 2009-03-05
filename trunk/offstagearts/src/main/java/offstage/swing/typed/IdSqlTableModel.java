@@ -61,50 +61,45 @@ public IdSqlTableModel()
 //public void executeQuery(SqlRun str, String idSql) throws SQLException {
 //	executeQuery(st, idSql, "name");
 //}
-public void executeQuery(SqlRun str, String idSql, String orderBy)
-//throws SQLException
+
+public void executeQuery(SqlRun str, SqlSet idSsql, String orderBy)
+{
+	executeQuery(str, idSsql, false, orderBy);
+}
+public void executeQuery(SqlRun str, SqlSet idSsql, boolean hasSortCol, String orderBy)
 {
 	// Convert text to a search query for entityid's
-	if (idSql == null) return;		// no query
+	if (idSsql == null) return;		// no query
 	if (orderBy == null) orderBy = "name";
 	
 	// Search for appropriate set of columns, given that list of IDs.
-	String sql =
-		" create temporary table _ids (id int); delete from _ids;\n" +
-
-		" delete from _ids;\n" +
-
-		" insert into _ids (id) " + idSql + ";\n" +
-
+	SqlSet ssql = new SqlSet(idSsql,
+		(hasSortCol ?
+			" create temporary table _ids (id int, sort int);\n" +
+			" insert into _ids (id, sort) " + idSsql.getSql() + ";\n"
+			:
+			" create temporary table _ids (id int);\n" +
+			" insert into _ids (id) " + idSsql.getSql() + ";\n"),
+			
 		" select p.entityid," +
 		" (case when lastname is null then '' else lastname || ', ' end ||" +
 		" case when firstname is null then '' else firstname || ' ' end ||" +
 		" case when middlename is null then '' else middlename end ||" +
 		" case when orgname is null then '' else ' (' || orgname || ')' end" +
 		" ) as name," +
-//			" city as tooltip," +
 		" ('<html>' ||" +
 		" case when city is null then '' else city || ', ' end ||" +
 		" case when state is null then '' else state end || '<br>' ||" +
 		" case when occupation is null then '' else occupation || '<br>' end ||" +
 		" case when email is null then '' else email || '' end ||" +
-		" '</html>') as tooltip," +
-		" p.entityid = p.primaryentityid as isprimary" +
+		" '</html>') as tooltip" +
+//		" p.entityid = p.primaryentityid as isprimary" +
 		" from persons p, _ids" +
 		" where p.entityid = _ids.id" +
-		" order by " + orderBy + ";" +
+		" order by " + orderBy + ";",
 
-		" drop table _ids";
-	super.executeQuery(str, sql);
-//System.out.println(sql);
-//	str.execSql(sql, new RsTasklet2() {
-//	public void run(SqlRun str, ResultSet rs) throws SQLException {
-//		setRowsAndCols(rs);
-////		clear();
-////		setNumRows(0);
-////		addAllRows(rs);
-//		rs.close();
-//	}});
+		" drop table _ids");
+	super.executeQuery(str, ssql);
 }
 
 }

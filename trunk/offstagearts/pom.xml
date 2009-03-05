@@ -63,7 +63,7 @@ lib/commons-logging-1.1.jar
 lib/dom-0.jar
 lib/dom4j-1.6.1.jar
 lib/freemarker-2.3.9.jar
-lib/holyokefw-1.0-SNAPSHOT.jar
+lib1.0-SNAPSHOT.jar
 lib/holyokereports-1.0-SNAPSHOT.jar
 lib/holyokewiz-1.0-SNAPSHOT.jar
 lib/iReport-2.0.0.jar
@@ -141,7 +141,7 @@ lib/xstream-1.2.2.jar
     <dependency>
             <groupId>org.citibob</groupId>
             <artifactId>holyokefw</artifactId>
-            <version>1.2.2</version>
+            <version>1.2.3</version>
             <scope>compile</scope>
     </dependency>
     <dependency>

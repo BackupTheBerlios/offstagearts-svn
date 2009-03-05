@@ -544,7 +544,7 @@ private void createResSet(SqlRun str)
 throws Exception
 {
 		// Set up resource set and read from database
-		resSet = new OffstageResSet(str, dbChange);
+		resSet = new OffstageResSet(str, sysVersion(), dbChange);
 		str.flush();
 		resSet.createAllResourceIDs(str);
 		str.flush();

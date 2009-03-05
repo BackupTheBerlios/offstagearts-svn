@@ -67,7 +67,7 @@ public class EntityPanel extends javax.swing.JPanel {
 		mainPanel.initRuntime(str, fapp, dm);
 		
 		// Init the credit card panel
-		TypedWidgetBinder.bindRecursive(this, mainPanel.model, app.swingerMap());
+		TypedWidgetBinder.bindRecursive(this, mainPanel.mainRm, app.swingerMap());
 		cryptCCInfo.initRuntime(fapp.keyRing());
 		
 		

@@ -61,7 +61,15 @@ public void initRuntime(citibob.app.App app) //SqlRun str, FullEntityDbModel dm)
 /** Re-query */
 public void executeQuery(SqlRun str, final String idSql, String orderBy)// throws SQLException
 {
+	executeQuery(str, new SqlSet(idSql), orderBy);
+}
+public void executeQuery(SqlRun str, final SqlSet idSql, String orderBy)// throws SQLException
+{
 	((IdSqlTableModel)getStyledTM().getModelU()).executeQuery(str, idSql, orderBy);
+}
+public void executeQuery(SqlRun str, final SqlSet idSql, boolean hasSortCol, String orderBy)// throws SQLException
+{
+	((IdSqlTableModel)getStyledTM().getModelU()).executeQuery(str, idSql, hasSortCol, orderBy);
 }
 
 // ----------------------------------------------------------------------

@@ -46,18 +46,18 @@ public class EntityDbModel extends IntKeyedDbModel
 		setDoInsertKeys(false);
 	}
 
-	/** Override insert stuff */
-	public void doInsert(SqlRun str)
-	{
-		SchemaBuf sb = this.getSchemaBuf();
-		Integer Entityid = (Integer)sb.getValueAt(0, "entityid");
-	
-		// Set family to self if user hasn't set the family otherwise already.
-		int pei = sb.findColumn("primaryentityid");
-		if (sb.getValueAt(0, pei) == null) sb.setValueAt(Entityid, 0, pei);
-		
-		// Now do the insert query!
-		super.doInsert(str);
-	}
+//	/** Override insert stuff */
+//	public void doInsert(SqlRun str)
+//	{
+//		SchemaBuf sb = this.getSchemaBuf();
+//		Integer Entityid = (Integer)sb.getValueAt(0, "entityid");
+//	
+//		// Set family to self if user hasn't set the family otherwise already.
+//		int pei = sb.findColumn("primaryentityid");
+//		if (sb.getValueAt(0, pei) == null) sb.setValueAt(Entityid, 0, pei);
+//		
+//		// Now do the insert query!
+//		super.doInsert(str);
+//	}
 
 }

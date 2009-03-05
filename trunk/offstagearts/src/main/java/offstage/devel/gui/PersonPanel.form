@@ -398,7 +398,7 @@
         </Component>
         <Component class="offstage.swing.typed.HouseholdIDDropdown" name="vHouseholdID">
           <Properties>
-            <Property name="colName" type="java.lang.String" value="primaryentityid"/>
+            <Property name="colName" type="java.lang.String" value="entityid0_notnull"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

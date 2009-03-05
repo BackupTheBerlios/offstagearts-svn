@@ -47,7 +47,9 @@ import citibob.sql.*;
 public class PersonPanel 
 extends javax.swing.JPanel {
     
-    SchemaRowModel model;	// The RowModel (which uses the schema)
+    SchemaRowModel mainRm;	// The RowModel (which uses the schema)
+	SchemaRowModel headofRm;
+	
 	//SchemaBuf phonesSb;
 	//TableModel family;
 	DevelModel dmod;
@@ -100,47 +102,47 @@ extends javax.swing.JPanel {
 
 	}
 	
-	public void initRuntime(SqlRun str, FrontApp xfapp, DevelModel dm)
+	public void initRuntime(SqlRun str, FrontApp xfapp, final DevelModel dm)
 	//throws java.sql.SQLException
 	{
 		this.app = xfapp;
 		this.dmod = dm;
-		//SchemaBufRowModel model = dm.getPersonRm();
-		SchemaBufRowModel xmodel = new SchemaBufRowModel(dm.getPersonSb());
-		//SchemaBuf phonesSb = dm.getPhonesSb();
-
-		//this.phonesSb = phonesSb;
-		this.model = xmodel;
+		mainRm = new SchemaBufRowModel(dm.getPersonSb());
+		str.execUpdate(new UpdTasklet() {
+		public void run() {
+			headofRm = new SchemaBufRowModel(dm.getHeadofSb());
+			
+			// Change family table contents when user re-reads from db
+			headofRm.addColListener(headofRm.findColumn("entityid0"), new RowModel.ColAdapter() {
+			public void curRowChanged(final int col) {
+				SqlRun str = app.sqlRun();
+				str.pushFlush();
+					if (headofRm.getCurRow() < 0) return;
+					Integer OrigEntityID = (Integer)headofRm.getOrigValue(col);
+					Integer EntityID = (Integer)headofRm.get(col);
+					if (EntityID == null) return;
+					if (OrigEntityID != null && OrigEntityID.intValue() == EntityID.intValue()) {
+						// Orig == Value --- greater class probably just re-read from DB.
+						// So now we need to re-read too.  This problem should REALLY be
+						// solved by adding events to DbModel.
+						familyTable.setPrimaryEntityID(str, EntityID);
+					}
+				str.popFlush();
+			}});
+		}});
 		this.vHouseholdID.initRuntime(xfapp);
 		
 		// Bind the Family Table thingy (it's special)
 		familyTable.initRuntime(app);
 		
-		// Change family table contents when user re-reads from db
-		model.addColListener(model.findColumn("primaryentityid"), new RowModel.ColAdapter() {
-		public void curRowChanged(final int col) {
-			SqlRun str = app.sqlRun();
-			str.pushFlush();
-				if (model.getCurRow() < 0) return;
-				Integer OrigEntityID = (Integer)model.getOrigValue(col);
-				Integer EntityID = (Integer)model.get(col);
-				if (EntityID == null) return;
-				if (OrigEntityID != null && OrigEntityID.intValue() == EntityID.intValue()) {
-					// Orig == Value --- greater class probably just re-read from DB.
-					// So now we need to re-read too.  This problem should REALLY be
-					// solved by adding events to DbModel.
-					familyTable.setPrimaryEntityID(str, EntityID);
-				}
-			str.popFlush();
-		}});
 
-		model.addColListener(model.findColumn("entityid"), new RowModel.ColAdapter() {
+		mainRm.addColListener(mainRm.findColumn("entityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
 			SqlRun str = app.sqlRun();
 			str.pushFlush();
-				if (model.getCurRow() < 0) return;
-				Integer OrigEntityID = (Integer)model.getOrigValue(col);
-				Integer EntityID = (Integer)model.get(col);
+				if (mainRm.getCurRow() < 0) return;
+				Integer OrigEntityID = (Integer)mainRm.getOrigValue(col);
+				Integer EntityID = (Integer)mainRm.get(col);
 				if (EntityID == null) return;
 				if (OrigEntityID != null && OrigEntityID.intValue() == EntityID.intValue()) {
 					// Orig == Value --- greater class probably just re-read from DB.
@@ -149,18 +151,16 @@ extends javax.swing.JPanel {
 					vHouseholdID.setEntityID(EntityID);
 				}
 			str.popFlush();
+			TypedWidgetBinder.bindRecursive(vHouseholdID, headofRm, app.swingerMap());
 		}});
 
 		middlePane = (MiddlePane)xfapp.newSiteInstance(MiddlePane.class);
 		MiddleXPane.removeAll();
 		MiddleXPane.add(middlePane);
-		middlePane.initRuntime(xmodel);
+		middlePane.initRuntime(mainRm);
 		
-		TypedWidgetBinder.bindRecursive(this, model, app.swingerMap());
-//		new TypedWidgetBinder().bind(genderButtonGroup, xmodel);
-//		new IsPrimaryBinder().bind(cbIsPrimary, model);	// Should just do a regular listener as above; this is read-only
-
-//		this.entitySubPanel1.initRuntime(app);
+		TypedWidgetBinder.bindRecursive(this, mainRm, app.swingerMap());
+		TypedWidgetBinder.bindRecursive(this, mainRm, app.swingerMap());
 		
 		phonePanel.initRuntime(str, dm.getPhonesSb(),
 			new String[] {"Type", "Number"},
@@ -545,7 +545,7 @@ extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
         FamilyPane.add(jLabel12, gridBagConstraints);
 
-        vHouseholdID.setColName("primaryentityid");
+        vHouseholdID.setColName("entityid0_notnull");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -769,7 +769,7 @@ extends javax.swing.JPanel {
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
 		app.guiRun().run(PersonPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-				model.set("primaryentityid", dmod.getPersonSb().getValueAt(0, "entityid"));
+				mainRm.set("primaryentityid", dmod.getPersonSb().getValueAt(0, "entityid"));
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bEmancipateActionPerformed

@@ -28,8 +28,9 @@ import citibob.jschema.log.*;
 import offstage.FrontApp;
 import offstage.datatab.DataTab;
 
-/** Query one person record and all the stuff related to it. */
-
+/** Query one person record and all the stuff related to it.
+ Users of this class should use the setKey(Object) method, where the key is
+ an entityid. */
 public class DevelModel extends MultiDbModel
 {
 
@@ -41,6 +42,7 @@ private int entityID;
 
 QueryLogger logger;
 EntityDbModel onePerson;
+RelO2mDbModel headofDm;				// The person who is head of our household.
 IntKeyedDbModel phones;
 //IntKeyedDbModel donations;
 //IntKeyedDbModel flags;
@@ -79,6 +81,8 @@ public int getEntityId()
 
 public EntityBuf getPersonSb()
 	{ return (EntityBuf)onePerson.getSchemaBuf(); }
+public SchemaBuf getHeadofSb()
+	{ return headofDm.getSchemaBuf(); }
 public EntityDbModel getPersonDb()
 	{ return onePerson; }
 public EntityBuf getEntitySb()
@@ -92,22 +96,6 @@ public IntKeyedDbModel getTabDm(String name)
 	{ return tabsDm.get(name); }
 public SchemaBuf getTabSb(String name)
 	{ return getTabDm(name).getSchemaBuf(); }
-//public SchemaBuf getDonationSb()
-//	{ return donations.getSchemaBuf(); }
-//public SchemaBuf getFlagSb()
-//	{ return flags.getSchemaBuf(); }
-//public SchemaBuf getEventsSb()
-//	{ return events.getSchemaBuf(); }
-////public SchemaBuf getClassesSb()
-////	{ return classes.getSchemaBuf(); }
-//public SchemaBuf getTermsSb()
-//	{ return terms.getSchemaBuf(); }
-//public SchemaBuf getInterestsSb()
-//	{ return interests.getSchemaBuf(); }
-//public SchemaBuf getNotesSb()
-//	{ return notes.getSchemaBuf(); }
-//public SchemaBuf getTicketsSb()
-//	{ return tickets.getSchemaBuf(); }
 
 void logadd(SchemaBufDbModel m)
 {
@@ -119,23 +107,13 @@ public DevelModel(FrontApp app)
 	logger = app.queryLogger();
 	SchemaSet osset = app.schemaSet();
 	logadd(onePerson = new EntityDbModel(osset.get("persons"), app));
+	add(headofDm = new RelO2mDbModel(app.sqlRun(), app) {
+		public void setKey(Object key) {
+			super.entityid1 = (Integer)key;
+		}});
+	headofDm.setKeys("headof", -1, null);
+	
 	logadd(phones = new IntKeyedDbModel(osset.get("phones"), "entityid"));
-//	logadd(donations = new IntKeyedDbModel(osset.get("donations"), "entityid"));
-//		donations.setOrderClause("date desc");
-//	logadd(flags = new IntKeyedDbModel(osset.get("flags"), "entityid"));
-//		flags.setOrderClause("groupid");
-//	logadd(notes = new IntKeyedDbModel(osset.get("notes"), "entityid"));
-//		notes.setOrderClause("date desc");
-//	logadd(tickets = new IntKeyedDbModel(osset.get("tickets"), "entityid"));
-//		tickets.setOrderClause("date desc");
-//	logadd(events = new IntKeyedDbModel(osset.get("events"), "entityid"));
-//		events.setOrderClause("groupid");
-////	logadd(classes = new IntKeyedDbModel(osset.classes, "entityid"));
-////		classes.setOrderClause("groupid");
-//	logadd(terms = new IntKeyedDbModel(osset.get("termenrolls"), "entityid"));
-//		terms.setOrderClause("firstdate desc,name");
-//	logadd(interests = new IntKeyedDbModel(osset.get("interests"), "entityid"));
-//		interests.setOrderClause("groupid");
 		
 	for (DataTab tab : app.dataTabSet().allTabs()) {
 		IntKeyedDbModel dm = tab.newDbModel(logger);

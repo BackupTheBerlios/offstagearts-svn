@@ -76,10 +76,10 @@ static class UVersion {
 List<UVersion> terms = new ArrayList();
 //List<UVersion> shows;
 
-public OffstageResSet(SqlRun str, DbChangeModel dbChange)
+public OffstageResSet(SqlRun str, int sysVersion, DbChangeModel dbChange)
 throws SQLException
 {
-	super(str, 17, OffstageResSet.class.getClassLoader(),  "offstage/resource/");
+	super(str, sysVersion, OffstageResSet.class.getClassLoader(),  "offstage/resource/");
 
 	dbChange.addListener("termids", new DbChangeModel.Listener() {
     public void tableWillChange(SqlRun str, String table) {

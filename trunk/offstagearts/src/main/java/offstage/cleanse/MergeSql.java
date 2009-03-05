@@ -100,7 +100,8 @@ void mergeDOB(Integer entityid0, Integer entityid1)
 		";\n");	
 }
 
-/** Merges data FROM dm0 TO dm1 */
+/** Merges data FROM dm0 TO dm1.  NOTE: When changing this, also change
+ the changeEntityID() method below. */
 public void mergeEntities(Integer entityid0, Integer entityid1)
 {
 // ONE MORE THING: need to tell mergeOneRow() about columns that default to entityid.
@@ -113,7 +114,8 @@ public void mergeEntities(Integer entityid0, Integer entityid1)
 	// =================== Main Data
 	mergeOneRow(sset.get("persons"), "entityid", entityid0, entityid1, noDOB);
 		mergeDOB(entityid0, entityid1);		// Special treatment for the DOB entry.
-	mergeOneRowEntityID(sset.get("persons"), "entityid", new String[] {"primaryentityid"}, entityid0, entityid1);
+		// Merges the primaryentityid column specially
+		mergeOneRowEntityID(sset.get("persons"), "entityid", new String[] {"primaryentityid"}, entityid0, entityid1);
 	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
 	searchAndReplace(sset.get("persons"), "parent1id", entityid0, entityid1);
 	searchAndReplace(sset.get("persons"), "parent2id", entityid0, entityid1);
@@ -137,8 +139,18 @@ public void mergeEntities(Integer entityid0, Integer entityid1)
 	sql.append("update entities set obsolete=true where entityid=" + entityid0 + ";\n");
 
 	// Accounting
-	moveRows(sset.get("actrans2"), "cr_entityid", entityid0, entityid1);
-	moveRows(sset.get("actrans2"), "db_entityid", entityid0, entityid1);
+//	moveRows(sset.get("actrans2"), "cr_entityid", entityid0, entityid1);
+//	moveRows(sset.get("actrans2"), "db_entityid", entityid0, entityid1);
+	// searchAndReplace() does the same thing here (degenerate case).
+	searchAndReplace(sset.get("actrans2"), "cr_entityid", entityid0, entityid1);
+	searchAndReplace(sset.get("actrans2"), "db_entityid", entityid0, entityid1);
+
+// Actually, we cannot just transfer over the balances; we need to recompute them all!
+// This could be a real mess, when merging records causes books to become un-closed.
+// Or: Develop an algorithm to compute the sume of the balances at the correct points
+// in time.  We only have to open the books back to the min of the most recent balance
+// on both accounts.
+	//	searchAndReplace(sset.get("acbal2"), "entityid", entityid0, entityid1);
 
 	// School
 //	moveRows(sset.get("entities_school"), "entityid", entityid0, entityid1);
@@ -154,6 +166,10 @@ public void mergeEntities(Integer entityid0, Integer entityid1)
 	moveRows(sset.get("enrollments"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("subs"), "entityid", entityid0, entityid1);
 
+	// Now make sure we re-use the lowest-valued entityid
+	if (entityid1 > entityid0) swapEntityID(entityid0, entityid1);
+	
+	
 //Main Record
 //===========
 //entities:
@@ -185,6 +201,46 @@ public void mergeEntities(Integer entityid0, Integer entityid1)
 
 
 }
+
+public void swapEntityID(Integer entityid0, Integer entityid1)
+{
+	Integer neg = new Integer(-entityid0.intValue());
+	changeEntityID(entityid0, neg);
+	changeEntityID(entityid1, entityid0);
+	changeEntityID(neg, entityid1);
+}
+public void changeEntityID(Integer entityid0, Integer entityid1)
+{
+	DataTabSet tabs = app.dataTabSet();
+	SchemaSet sset = app.schemaSet();
+
+	// =================== Main Data
+	searchAndReplace(sset.get("persons"), "entityid", entityid0, entityid1);
+	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
+	searchAndReplace(sset.get("persons"), "parent1id", entityid0, entityid1);
+	searchAndReplace(sset.get("persons"), "parent2id", entityid0, entityid1);
+	searchAndReplace(sset.get("phones"), "entityid", entityid0, entityid1);
+
+	for (DataTab tab : tabs.allTabs()) {
+		if (tab.getSchema().getType() == SqlSchema.ST_VIEW) continue;
+		searchAndReplace(tab.getSchema(), "entityid", entityid0, entityid1);
+	}
+	
+	// Accounting
+	// searchAndReplace() does the same thing here (degenerate case).
+	searchAndReplace(sset.get("actrans2"), "cr_entityid", entityid0, entityid1);
+	searchAndReplace(sset.get("actrans2"), "db_entityid", entityid0, entityid1);
+	searchAndReplace(sset.get("acbal2"), "entityid", entityid0, entityid1);
+
+	// School
+	searchAndReplace(sset.get("termregs"), "entityid", entityid0, entityid1);
+	searchAndReplace(sset.get("termregs"), "payerid", entityid0, entityid1);
+	searchAndReplace(sset.get("payertermregs"), "entityid", entityid0, entityid1);
+	searchAndReplace(sset.get("enrollments"), "entityid", entityid0, entityid1);
+	searchAndReplace(sset.get("subs"), "entityid", entityid0, entityid1);
+}
+
+
 
 ///** Merge main part of the record.. */
 //public void mergePersons(SchemaBuf sb0, SchemaBuf sb1)
@@ -365,7 +421,12 @@ public static int[] getKeyCols(SqlSchema schema, int entityColIx)
 //	System.out.println(sql);
 //}
 // -------------------------------------------------------------------
-/** Moves rows from keyCol=entityid0 to keyCol=entityid1 -- in which there are no other key columns */
+/** Moves rows from keyCol=entityid0 to keyCol=entityid1.  Takes into account
+ * all the other key columns.
+ 
+<p><b>NOTE:</b> searchAndReplace() will do the same thing as moveRows() in the
+degenerate case where the sEntityCol is not a key field.<p>
+ */
 public void moveRows(SqlSchema schema, String sEntityCol, Object entityid0, Object entityid1)
 {
 	int entityColIx = schema.findCol(sEntityCol);
