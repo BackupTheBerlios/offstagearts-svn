@@ -113,7 +113,7 @@ extends javax.swing.JPanel {
 			headofRm = new SchemaBufRowModel(dm.getHeadofSb());
 			
 			// Change family table contents when user re-reads from db
-			headofRm.addColListener(headofRm.findColumn("entityid0"), new RowModel.ColAdapter() {
+			headofRm.addColListener(headofRm.findColumn("entityid0_notnull"), new RowModel.ColAdapter() {
 			public void curRowChanged(final int col) {
 				SqlRun str = app.sqlRun();
 				str.pushFlush();
@@ -769,7 +769,8 @@ extends javax.swing.JPanel {
 	{//GEN-HEADEREND:event_bEmancipateActionPerformed
 		app.guiRun().run(PersonPanel.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-				mainRm.set("primaryentityid", dmod.getPersonSb().getValueAt(0, "entityid"));
+			headofRm.set("entityid0_notnull", dmod.getPersonSb().getValueAt(0, "entityid"));
+//				mainRm.set("primaryentityid", dmod.getPersonSb().getValueAt(0, "entityid"));
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_bEmancipateActionPerformed

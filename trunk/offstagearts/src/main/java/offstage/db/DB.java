@@ -38,20 +38,6 @@ import java.sql.Statement;
 public class DB {
 
 // -------------------------------------------------------------------------------
-//public static IntVal getPrimaryEntityID(SqlRun str, int eid)
-//// throws SQLException
-//{
-//	final IntVal ival = new IntVal();
-//	String sql =
-//		"select primaryentityid from entities where entityid = " + eid;
-//	str.execSql(sql, new RsTasklet2() {
-//	public void run(SqlRun str, ResultSet rs) throws Exception {
-//		rs.next();
-//		ival.val = rs.getInt(1);
-//	}});
-//	return ival;
-//}
-// -------------------------------------------------------------------------------
 /** Creates a temporary table full of entity id's from an SQL query designed
  to select those IDs. */
 public static void createIDList(SqlRun str, String idSql, String idTable)
@@ -203,7 +189,7 @@ protected static String simpleSearchSql(String text, Integer prefDbid, String jo
 }
 // --------------------------------------------------
 /** Convenience method for compatibility */
-public static IntVal getPrimaryEntityID(SqlRun str, int eid)
+public static IntVal getHeadOf(SqlRun str, int eid)
 {
 	return getOneOf(str, "headof", -1, eid);
 }

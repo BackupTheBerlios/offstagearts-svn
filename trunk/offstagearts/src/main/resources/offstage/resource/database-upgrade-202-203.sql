@@ -108,35 +108,35 @@ END
 
 -- NOTE: This is slow.  We really need to convert our relationships
 -- to all be the explicit form
-CREATE OR REPLACE VIEW allrels AS
-select relid,temporalid,entityid0,entityid1, true as inrels
-from rels
-	UNION
-select relids.relid, -1, e.primaryentityid, e.entityid, false
-from entities e, relids
-where relids.name='headof'
-and e.primaryentityid is not null
-    UNION
-select relids.relid, -1, e.parent1id, e.entityid, false
-from entities e, relids
-where relids.name='parent1of'
-and e.parent1id is not null
-    UNION
-select relids.relid, -1, e.parent2id, e.entityid, false
-from entities e, relids
-where relids.name='parent2of'
-and e.parent2id is not null
-	UNION
-select relids.relid, tr.groupid as temporalid,tr.payerid as entityid0,tr.entityid as entityid1, false
-from termregs tr, relids
-where relids.name='payerof'
-and tr.payerid is not null
-;
+--CREATE OR REPLACE VIEW allrels AS
+--select relid,temporalid,entityid0,entityid1, true as inrels
+--from rels
+--	UNION
+--select relids.relid, -1, e.primaryentityid, e.entityid, false
+--from entities e, relids
+--where relids.name='headof'
+--and e.primaryentityid is not null
+--    UNION
+--select relids.relid, -1, e.parent1id, e.entityid, false
+--from entities e, relids
+--where relids.name='parent1of'
+--and e.parent1id is not null
+--    UNION
+--select relids.relid, -1, e.parent2id, e.entityid, false
+--from entities e, relids
+--where relids.name='parent2of'
+--and e.parent2id is not null
+--	UNION
+--select relids.relid, tr.groupid as temporalid,tr.payerid as entityid0,tr.entityid as entityid1, false
+--from termregs tr, relids
+--where relids.name='payerof'
+--and tr.payerid is not null
+--;
 
 -- Orphan Relationships
 CREATE OR REPLACE VIEW orphanrels AS
 select rid.name,rid.reltype,ar.*,e0.obsolete as obsolete0, e1.obsolete as obsolete1
-from allrels ar, entities e0, entities e1, relids rid
+from rels ar, entities e0, entities e1, relids rid
 where ar.relid = rid.relid
 and ar.entityid0 = e0.entityid and ar.entityid1 = e1.entityid
 and (
@@ -148,13 +148,13 @@ and (
 -- and ar.entityid0 <> ar.entityid1
 ;
 
-CREATE OR REPLACE VIEW orphanrels AS
-select relids.name,ar.*,e0.obsolete as obsolete0, e1.obsolete as obsolete1
-from arels ar, entities e0, entities e1, relids
-where ar.relid = relids.relid
-and ar.entityid0 = e0.entityid and ar.entityid1 = e1.entityid
-and ((e0.obsolete and not e1.obsolete) or (e1.obsolete and not e0.obsolete))
-;
+--CREATE OR REPLACE VIEW orphanrels AS
+--select relids.name,ar.*,e0.obsolete as obsolete0, e1.obsolete as obsolete1
+--from rels ar, entities e0, entities e1, relids
+--where ar.relid = relids.relid
+--and ar.entityid0 = e0.entityid and ar.entityid1 = e1.entityid
+--and ((e0.obsolete and not e1.obsolete) or (e1.obsolete and not e0.obsolete))
+--;
 
 -- Merges that have been executed;
 -- These are dug out of the mergelog
@@ -182,7 +182,7 @@ drop function w_persons_new(integer);
 drop function w_queries_new_entities(character varying, character varying);
 drop function w_queries_new_organizations(character varying, character varying);
 drop function w_queries_new_persons(character varying, character varying);
-drop function w_student_create();
+--drop function w_student_create();
 
 ALTER TABLE entities DROP COLUMN primaryentityid;
 ALTER TABLE entities DROP COLUMN relprimarytypeid;
@@ -206,7 +206,7 @@ insert into rels_o2m values (
 
 -- Find all relationships for entityid=12633
 select relids.name,ar.*
-from allrels ar, relids
+from rels ar, relids
 where ar.temporalid=-1
 and (ar.entityid0=12633 or ar.entityid1=12633)
 and ar.relid = relids.relid;
@@ -215,7 +215,7 @@ and ar.relid = relids.relid;
 -- Find others with same relationship as 12633
 -- Used for "household" or "payer group" type of box
 -- as a detail for one row of above query
-select * from allrels where entityid0=12633 and relid=3;
+select * from rels where entityid0=12633 and relid=3;
 
 -- Suggest changes to un-orphan currently-orphaned relationships
 

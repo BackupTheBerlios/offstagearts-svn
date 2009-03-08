@@ -52,23 +52,25 @@ public void setIdSql(String idSql, String orderBy)
 {
 	if (orderBy == null) orderBy = "relation, name";
 	sql =
-		" create temporary table _ids (id int); delete from _ids;\n" +
+		" create temporary table _ids (id int, headid int); delete from _ids;\n" +
 
 		" delete from _ids;\n" +
 
 		" insert into _ids (id) " + idSql + ";\n" +
-		
-//		" (select o.entityid, 'organizations' as relation, name as name" +
-//		" , o.entityid = o.primaryentityid as isprimary" +
-//		" from organizations o, _ids" +
-//		" where o.entityid = _ids.id\n" +
-//		"   union\n" +
+
+		" update _ids set headid = rels.entityid0\n" +
+		" from rels\n" +
+		" where rels.relid = (select relid from relids where name='headof')" +
+		" and rels.entityid1 = _ids.id;\n" +
+		" update _ids set headid = id where headid is null;\n" +
+
+
 		" select p.entityid, 'persons' as relation," +
 		" (case when lastname is null then '' else lastname || ', ' end ||" +
 		" case when firstname is null then '' else firstname || ' ' end ||" +
 		" case when middlename is null then '' else middlename end ||" +
 		" case when orgname is null then '' else ' (' || orgname || ')' end) as name" +
-		" , p.entityid = p.primaryentityid as isprimary" +
+		" , _ids.headid = _ids.id as isprimary" +
 		" from persons p, _ids" +
 		" where p.entityid = _ids.id" +
 		" order by " + orderBy + ";\n" +

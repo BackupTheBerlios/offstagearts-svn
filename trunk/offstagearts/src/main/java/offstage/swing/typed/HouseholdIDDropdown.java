@@ -88,7 +88,7 @@ public void setValue(Object o)
 	// Make sure we're only pointing to a head of household.
 	SqlRun str = app.sqlRun();
 	str.pushFlush();
-	final IntVal ival = offstage.db.DB.getPrimaryEntityID(str, ID);
+	final IntVal ival = offstage.db.DB.getHeadOf(str, ID);
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 		HouseholdIDDropdown.super.setValue((Integer)ival.val);

@@ -73,6 +73,7 @@ public void setValue(final Object o)
 public void setPrimaryEntityID(SqlRun str, int primaryEntityID)
 //throws SQLException
 {
+//System.out.println("***** FamilySelectorTable.setPrimaryEntityID(" + primaryEntityID + ")");
 	SqlSet groups = DB.listRelGroupSql("headof", -1, primaryEntityID);
 	SqlSet ssql = new SqlSet(groups,
 		" select xx.entityid1 as id," +

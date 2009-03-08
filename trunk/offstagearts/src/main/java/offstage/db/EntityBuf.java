@@ -51,22 +51,5 @@ public void getInsertCols(int row, ConsSqlQuery q, boolean insertUnchanged, SqlS
 	q.addColumn("created", "now()");
 }
 
-///** Changes primary entity id to be the same as the primaryentityid of someone else. */
-//public void setPrimaryEntityID(SqlRun str, int entityid)
-//throws SQLException
-//{
-//	final IntVal ival = DB.getPrimaryEntityID(str, entityid);
-//	str.execUpdate(new UpdTasklet2() {
-//	public void run(SqlRun str) throws Exception {
-//		setValueAt(ival.val, 0, findColumn("primaryentityid"));
-//	}});
-//}
-// ==================================================================
-// Custom edits to data in the buffer...
-		
-public void clearFamily()
-{
-	setValueAt(getValueAt(0, "entityid"), 0, findColumn("primaryentityid"));
-}
 
 }
