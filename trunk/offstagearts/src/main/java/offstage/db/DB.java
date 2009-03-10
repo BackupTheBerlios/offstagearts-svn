@@ -226,6 +226,26 @@ public static IntVal getOneOf(SqlRun str, String relName, int temporalid, int en
 }
 
 /**
+ * Given a temporary table called <tmpTable>(id int, <tmpCol> int), fills in headid
+ * @param relName The relationship from rels to use
+ * @param idCol Column that represents entityid of records
+ * @param headCol Column representing entityid of parent record
+ * @return The SQL to fill in the table.
+ */
+public static String updateOneOf(String relName, String tmpTable, String idCol, String headCol)
+{
+	return
+		// Figure out which ones are head of household
+		" update " + tmpTable + " set " + headCol + " = rels.entityid0\n" +
+		" from rels\n" +
+		" where rels.relid = (select relid from relids" +
+			" where name=" + SqlString.sql(relName) + ")\n" +
+		" and rels.entityid1 = " + tmpTable + "." + idCol + ";\n" +
+		" update " + tmpTable + " set " + headCol + " = " + idCol +
+			" where " + headCol + " is null;\n";
+}
+
+/**
  * <p>Produces the set of IDs e1 such that (e0, e1) is a valid relationship
  * in relName (with temporalid), and (e0, entityid1) is also a valid relationship.
  * If (e0,entityid1) does not exist, then (entityid1, entityid1) is assumed.</p>

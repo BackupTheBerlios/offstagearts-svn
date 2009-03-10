@@ -38,7 +38,8 @@ import citibob.sql.pgsql.*;
  */
 public class EntityListTableModel extends SqlTableModel {
 
-
+String relName = "headof";		// A one-to-many relationship
+	
 public EntityListTableModel(SqlTypeSet tset)
 {
 	super(tset);
@@ -58,11 +59,13 @@ public void setIdSql(String idSql, String orderBy)
 
 		" insert into _ids (id) " + idSql + ";\n" +
 
-		" update _ids set headid = rels.entityid0\n" +
-		" from rels\n" +
-		" where rels.relid = (select relid from relids where name='headof')" +
-		" and rels.entityid1 = _ids.id;\n" +
-		" update _ids set headid = id where headid is null;\n" +
+		DB.updateOneOf("headof", "_ids", "id", "headid") +
+//		// Figure out which ones are head of household
+//		" update _ids set headid = rels.entityid0\n" +
+//		" from rels\n" +
+//		" where rels.relid = (select relid from relids where name=" + SqlString.sql(relName) + ")" +
+//		" and rels.entityid1 = _ids.id;\n" +
+//		" update _ids set headid = id where headid is null;\n" +
 
 
 		" select p.entityid, 'persons' as relation," +

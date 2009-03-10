@@ -142,9 +142,10 @@ public void doDelete(SqlRun str)
 	sb.setValueAt(Boolean.TRUE, 0, sb.findColumn("obsolete"));
 	dm.doUpdate(str);
 
-	// Reassign any other family members
-	str.execSql("update entities set primaryentityid=entityid" +
-		" where primaryentityid = " + SqlInteger.sql(this.getEntityId()));	
+// Do not reassign relationships; this is for a later cleansing step.
+//	// Reassign any other family members
+//	str.execSql("update entities set primaryentityid=entityid" +
+//		" where primaryentityid = " + SqlInteger.sql(this.getEntityId()));	
 }
 
 

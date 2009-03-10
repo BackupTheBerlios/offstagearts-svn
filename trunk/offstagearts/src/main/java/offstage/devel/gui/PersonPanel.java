@@ -125,7 +125,7 @@ extends javax.swing.JPanel {
 						// Orig == Value --- greater class probably just re-read from DB.
 						// So now we need to re-read too.  This problem should REALLY be
 						// solved by adding events to DbModel.
-						familyTable.setPrimaryEntityID(str, EntityID);
+						familyTable.setHeadofID(str, EntityID);
 					}
 				str.popFlush();
 			}});

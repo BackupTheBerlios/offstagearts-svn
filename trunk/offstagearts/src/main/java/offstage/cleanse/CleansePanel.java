@@ -43,7 +43,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.Date;
 import javax.swing.*;
 import javax.swing.event.*;
 import offstage.reports.SummaryReport;
@@ -244,7 +243,7 @@ displayTabs.remove(editTab);
 		str.execUpdate(new UpdTasklet2() {
 		public void run(SqlRun str) {
 			dupDm.setIdSql(null);
-			dupDm.doSelect(str);
+//			dupDm.doSelect(str);		// Taken care of below in setDbids()
 			
 			dupTable.setModelU(new SortedTableModel(dupDm.getSchemaBuf()),
 				new String[] {"#", "Score", "Action", "ID-0", "Name-0", "ID-1", "Name-1"},
@@ -640,35 +639,36 @@ displayTabs.remove(editTab);
 // TODO add your handling code here:
 	}//GEN-LAST:event_bDupOKActionPerformed
 
-	
-	private void subordinateAction(final int eix)
-	{
-		app.guiRun().run(CleansePanel.this, new SqlTask() {
-		public void run(SqlRun str) throws Exception {
-//			dm[0].getEntity().getSchemaBuf().setValueAt(dm[1].getIntKey(), 0, "primaryentityid");
-			allDm.doUpdate(str);
-			
-			// Change around household...
-			MergeSql merge = new MergeSql(app);
-			Integer pid = (Integer)dm[1-eix].getEntitySb().getValueAt(0, "primaryentityid");
-			merge.subordinateEntities(dm[eix].getKey(), pid); //dm[1-eix].getIntKey());
-			String sql = merge.toSql();
-			str.execSql(sql);
-
-			
-			refresh(str);
-		}});
-	}
+//	// This is for assigning records to the same household because they
+//	// have the same address.  It will be moved to a separate screen.
+//	private void subordinateAction(final int eix)
+//	{
+//		app.guiRun().run(CleansePanel.this, new SqlTask() {
+//		public void run(SqlRun str) throws Exception {
+////			dm[0].getEntity().getSchemaBuf().setValueAt(dm[1].getIntKey(), 0, "primaryentityid");
+//			allDm.doUpdate(str);
+//			
+//			// Change around household...
+//			MergeSql merge = new MergeSql(app);
+//			Integer pid = (Integer)dm[1-eix].getEntitySb().getValueAt(0, "primaryentityid");
+//			merge.subordinateEntities(dm[eix].getKey(), pid); //dm[1-eix].getIntKey());
+//			String sql = merge.toSql();
+//			str.execSql(sql);
+//
+//			
+//			refresh(str);
+//		}});
+//	}
 	
 	private void bSubordinate1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSubordinate1ActionPerformed
 	{//GEN-HEADEREND:event_bSubordinate1ActionPerformed
-		subordinateAction(1);
+//		subordinateAction(1);
 // TODO add your handling code here:
 	}//GEN-LAST:event_bSubordinate1ActionPerformed
 
 	private void bSubordinate0ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bSubordinate0ActionPerformed
 	{//GEN-HEADEREND:event_bSubordinate0ActionPerformed
-		subordinateAction(0);
+//		subordinateAction(0);
 // TODO add your handling code here:
 	}//GEN-LAST:event_bSubordinate0ActionPerformed
 //
@@ -1069,96 +1069,106 @@ private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 	
 // ==========================================================
 class DupDbModel extends SqlBufDbModel {
-String idSql;
+SqlSet idSql;
 
 public DupDbModel() { super(app, new String[] {}); }
 
-public void setIdSql(String idSql) { this.idSql = idSql; }
-public String getSelectSql(boolean proto) {
-	if (proto) {
-		return
-			" select dups.*,e0.lastupdated as lastupdated0,e1.lastupdated as lastupdated1, ml.action" +
+public void setIdSql(SqlSet idSql) { this.idSql = idSql; }
+public SqlSet getSelectSql(boolean proto)
+{
+	if (proto) return new SqlSet(
+		" select dups.*,e0.lastupdated as lastupdated0,e1.lastupdated as lastupdated1, ml.action" +
+		" from dups, entities e0, entities e1, mergelog ml\n" +
+		" where false");
+	
+	// Do the real query
+	StringBuffer preSql = new StringBuffer();
+	StringBuffer sql = new StringBuffer();
+	StringBuffer postSql = new StringBuffer();
+
+	if (idSql != null) {
+		preSql.append(
+			" create temporary table _ids_dups (id integer);\n");
+		preSql.append(
+			" insert into _ids_dups (id) " + idSql + ";\n");
+		postSql.append("drop table _ids_dups");
+	}
+
+	preSql.append(
+		" create temporary table _d (" +
+			" eid0 int, headid0 int," +
+			" eid1 int, headid1 int," +
+			" action integer);\n");
+	postSql.append("drop table _d;\n");
+//	preSql.append(
+//		" insert into _d (eid0, eid1)" +
+//		" select dups.entityid0, dups.entityid1" +
+//		" from dups, entities e0, entities e1, mergelog ml\n" +
+//		(idSql == null ? "" : ", _ids_dups as ids0, _ids_dups as ids1\n") +
+//		" where dups.entityid0 = e0.entityid\n" +
+//		" and dups.entityid1 = e1.entityid\n" +
+//		" and e0.dbid = " + SqlInteger.sql(dbid0) + " and e1.dbid = " + SqlInteger.sql(dbid1) +
+//		" and ((dups.entityid0 = ml.entityid0 and dups.entityid1 = ml.entityid1)\n" +
+//		"    or (dups.entityid0 = ml.entityid1 and dups.entityid1 = ml.entityid0))\n" +
+//		(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid;\n\n"));
+
+	if (cleanseMode == M_APPROVE) {
+		preSql.append(
+			" insert into _d (eid0, eid1, action)" +
+			" select dups.entityid0, dups.entityid1, ml.action" +
 			" from dups, entities e0, entities e1, mergelog ml\n" +
-			" where false";
+			(idSql == null ? "" : ", _ids_dups as ids0, _ids_dups as ids1\n") +
+			" where dups.entityid0 = e0.entityid\n" +
+			" and dups.entityid1 = e1.entityid\n" +
+			" and e0.dbid = " + SqlInteger.sql(dbid0) + " and e1.dbid = " + SqlInteger.sql(dbid1) +
+			" and ((dups.entityid0 = ml.entityid0 and dups.entityid1 = ml.entityid1)\n" +
+			"    or (dups.entityid0 = ml.entityid1 and dups.entityid1 = ml.entityid0))\n" +
+			" and ml.provisional\n" +
+			(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid") +
+			";\n");
 	} else {
-		StringBuffer sql = new StringBuffer();
-		
-		if (idSql != null) sql.append(
-			" create temporary table _ids (id integer);\n" +
-			" insert into _ids " + idSql + ";\n");
-
-		if (cleanseMode == M_APPROVE) {
-			sql.append(
-				" select dups.*,e0.lastupdated as lastupdated0,e1.lastupdated as lastupdated1, ml.action" +
-				" from dups, entities e0, entities e1, mergelog ml\n" +
-				(idSql == null ? "" : ", _ids as ids0, _ids as ids1\n") +
-				" where dups.entityid0 = e0.entityid\n" +
-				" and dups.entityid1 = e1.entityid\n" +
-				" and e0.dbid = " + SqlInteger.sql(dbid0) + " and e1.dbid = " + SqlInteger.sql(dbid1) +
-				" and ((dups.entityid0 = ml.entityid0 and dups.entityid1 = ml.entityid1)\n" +
-				"    or (dups.entityid0 = ml.entityid1 and dups.entityid1 = ml.entityid0))\n" +
-				" and ml.provisional\n" +
-				(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid\n") +
-				" order by dtime");
-		} else {
-			sql.append(
-			" select dups.*,e0.lastupdated as lastupdated0,e1.lastupdated as lastupdated1, null as action" +
+		// Add all dups in our (dbid0, dbid1) category
+		preSql.append(
+			" insert into _d (eid0, eid1)" +
+			" select dups.entityid0, dups.entityid1" +
 			" from dups, entities e0, entities e1" +
-// TODO: This line (below) is the problem.  Search only works if BOTH names
-// match the search.  It should work when only ONE name matches the search.
-			
-// Solution: use the basic SQL below...			
-//select entityid0,entityid1
-//from dups, _ids
-//where (dups.entityid0 = _ids.id or dups.entityid1 = _ids.id)
-//   EXCEPT
-//select entityid0,entityid1
-//from mergelog ml, _ids
-//where (ml.entityid0 = _ids.id or ml.entityid1 = _ids.id)
-
-			(idSql == null ? "" : ", _ids as ids0, _ids as ids1") +
+			(idSql == null ? "" : ", _ids_dups as ids0, _ids_dups as ids1") +
 			" where dups.entityid0 = e0.entityid" +
 			" and dups.entityid1 = e1.entityid" +
 			" and e0.dbid = " + SqlInteger.sql(dbid0) + " and e1.dbid = " + SqlInteger.sql(dbid1) +
-//			" and dups.dupid = " + SqlInteger.sql(dupid) +
-//			" and dups.type=" + SqlString.sql(dupType) +
 			" and not e0.obsolete and not e1.obsolete" +
 			" and score <= 1.0" +
-			(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid\n") +
-// Eliminate children from different households.  Should really be done in original dup finding.
-" and ((e0.entityid = e0.primaryentityid or e1.entityid = e1.primaryentityid)" +
-" or e0.primaryentityid = e1.primaryentityid)\n" +
-			"    EXCEPT" +
-			" select dups.*,e0.lastupdated as lastupdated0,e1.lastupdated as lastupdated1, null as action" +
-			" from dups, mergelog ml, entities e0, entities e1" +
-//			(idSql == null ? "" : ", _ids") +
-			" where dups.entityid0 = e0.entityid" +
-			" and dups.entityid1 = e1.entityid" +
-			" and e0.dbid = " + SqlInteger.sql(dbid0) + " and e1.dbid = " + SqlInteger.sql(dbid1) +
-//			" and ml.action = " + MC_DUPOK +
-//			" and dups.dupid = " + SqlInteger.sql(dupid) +
-//			" and dups.type=" + SqlString.sql(dupType) +
-			" and ((dups.entityid0 = ml.entityid0 and dups.entityid1 = ml.entityid1)\n" +
-			"   or (dups.entityid0 = ml.entityid1 and dups.entityid1 = ml.entityid0))\n" +
-//			(idSql == null ? "" : " and (_ids.id = e0.entityid or _ids.id = e1.entityid)") +
-//			"    EXCEPT" +
-//			" select dups.*,e0.lastupdated as lastupdated0,e1.lastupdated as lastupdated1, null as action" +
-//			" from dups, mergelog ml, entities e0, entities e1" +
-////			(idSql == null ? "" : ", _ids") +
-//			" where dups.entityid0 = e0.entityid" +
-//			" and dups.entityid1 = e1.entityid" +
-////			" and ml.action = " + MC_DUPOK +
-//			" and dups.dbid0 = " + SqlInteger.sql(dbid0) + " and dups.dbid1 = " + SqlInteger.sql(dbid1) +
-////			" and dups.dupid = " + SqlInteger.sql(dupid) +
-////			" and dups.type=" + SqlString.sql(dupType) +
-//			" and dups.entityid0 = ml.entityid1" +
-//			" and dups.entityid1 = ml.entityid0" +
-////			(idSql == null ? "" : " and (_ids.id = e0.entityid or _ids.id = e1.entityid)") +
-			" order by score desc,string0,string1,entityid0,entityid1;\n" +
-			(idSql == null ? "" : " drop table _ids;\n"));
-		}
-		return sql.toString();
+			(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid") +
+			";\n");
+
+		// Remove items already merged
+		preSql.append(
+			" delete from _d\n" +
+			" using mergelog ml\n" + 
+			" where (_d.eid0 = ml.entityid0 and _d.eid1 = ml.entityid1)\n" +
+			" or (_d.eid1 = ml.entityid0 and _d.eid0 = ml.entityid1);\n");
+
+		// Eliminate children from different households.  Should really be done in original dup finding.
+		preSql.append(
+			DB.updateOneOf("headof", "_d", "eid0", "headid0") +
+			DB.updateOneOf("headof", "_d", "eid0", "headid0"));
+		preSql.append(
+			" delete from _d where not\n" +
+			" ((eid0 = headid0 or eid1 = headid1)" +
+			" or headid0 = headid1);\n");
 	}
+
+	// Do our final select
+	sql.append(
+		" select dups.*," +
+			" e0.lastupdated as lastupdated0," +
+			" e1.lastupdated as lastupdated1," +
+			" _d.action\n" +
+		" from _d,dups, entities e0, entities e1" +
+		" where _d.eid0 = dups.entityid0 and _d.eid1 = dups.entityid1" +
+		" and _d.eid0 = e0.entityid and _d.eid1 = e1.entityid");
+
+	return new SqlSet(preSql, sql, postSql);
 }}
 // ==========================================================
 	

@@ -25,6 +25,7 @@ package offstage.school.gui;
 import citibob.app.App;
 import citibob.jschema.SqlBufDbModel;
 import citibob.sql.SqlRun;
+import citibob.sql.SqlSet;
 import citibob.sql.pgsql.SqlInteger;
 
 /**
@@ -64,15 +65,15 @@ public class EnrolledDbModel extends SqlBufDbModel
 		this.role = (courseroleName == null ? null :
 			app.schemaSet().getEnumInt("enrollments", "courserole", courseroleName));
 	}
-	public String getSelectSql(boolean proto) {
-		return
+	public SqlSet getSelectSql(boolean proto) {
+		return new SqlSet(
 			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
 			" from " + enrollTable + " e, courseids c" +
 			" where e.courseid = c.courseid" +
 			" and c.termid = " + SqlInteger.sql(termid) + //smod.getTermID()) +
 			(role == null ? "" : " and courserole = " + SqlInteger.sql(role)) +
 			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(entityid)) + //smod.getStudentID())) +
-			" order by dayofweek, tstart, name";
+			" order by dayofweek, tstart, name");
 	}
 // =====================================================================
 public void removeEnrollment(SqlRun str, int entityid, int courseid)

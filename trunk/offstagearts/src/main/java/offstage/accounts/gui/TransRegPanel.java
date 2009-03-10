@@ -27,6 +27,7 @@ import citibob.jschema.SchemaBuf;
 import citibob.jschema.SqlBufDbModel;
 import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
+import citibob.sql.SqlSet;
 import citibob.sql.UpdTasklet2;
 import citibob.sql.pgsql.*;
 import citibob.swing.table.JTypeTableModel;
@@ -59,8 +60,8 @@ class Actrans2DbModel extends SqlBufDbModel
 			null,
 			new String[] {"actrans2", "actrans2amt"});
 	}
-	public String getSelectSql(boolean proto) {
-		return
+	public SqlSet getSelectSql(boolean proto) {
+		return new SqlSet(
 			" select ac.actransid, ac.actranstypeid, ac.date, ac.datecreated," +
 			" 1 as multiplier, amt.amount as amount, ac.description" +
 			" from actrans2 ac, actrans2amt amt" +
@@ -76,7 +77,7 @@ class Actrans2DbModel extends SqlBufDbModel
 			" and ac.actransid = amt.actransid and amt.assetid = " + assetid +
 			" and now()-ac.date < '850 days'" +
 			(proto ? " and 1=0" : "") +
-			" order by date desc, actransid desc";
+			" order by date desc, actransid desc");
 	}
 }
 // =====================================================

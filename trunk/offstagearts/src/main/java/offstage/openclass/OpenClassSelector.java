@@ -28,6 +28,7 @@ import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.SchemaBufDbModel;
 import citibob.jschema.SqlBufDbModel;
 import citibob.sql.SqlRun;
+import citibob.sql.SqlSet;
 import citibob.sql.UpdTasklet;
 import citibob.swing.typed.JTypedPanel;
 import java.beans.PropertyChangeEvent;
@@ -60,11 +61,11 @@ int courserole;
 		// ================================================
 		// Days of Week
 		daysDm = new SqlBufDbModel(app) {
-		public String getSelectSql(boolean proto) {
-			return
+		public SqlSet getSelectSql(boolean proto) {
+			return new SqlSet(
 				" select *" +
 				" from daysofweek" +
-				" order by javaid";
+				" order by javaid");
 		}};
 		str.execUpdate(new UpdTasklet() {
 		public void run() {
@@ -111,13 +112,13 @@ int courserole;
 		// ================================================
 		// Display teachers for that class
 		teachersDm = new SqlBufDbModel(app, "enrollments") {
-		public String getSelectSql(boolean proto) {
-			return
+		public SqlSet getSelectSql(boolean proto) {
+			return new SqlSet(
 				" select p.firstname || ' ' || p.lastname as teachername, e.*" +
 				" from enrollments e, entities p" +
 				" where e.entityid = p.entityid" +
 				" and courseid = " + ClassesTable.getValue() +
-				" and courserole = " + courserole;
+				" and courserole = " + courserole);
 		}};
 		str.execUpdate(new UpdTasklet() {
 		public void run() {

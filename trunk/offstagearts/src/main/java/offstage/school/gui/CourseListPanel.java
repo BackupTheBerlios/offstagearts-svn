@@ -32,6 +32,8 @@ import citibob.jschema.SqlBufDbModel;
 import citibob.task.ETask;
 import citibob.sql.ConsSqlQuery;
 import citibob.sql.SqlRun;
+import citibob.sql.SqlSet;
+import citibob.sql.SqlSetBuffer;
 import citibob.sql.UpdTasklet2;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.table.DelegateStyledTM;
@@ -133,28 +135,36 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 		new String[] {"enrollments"},
 		null,
 		new String[] {"enrollments"}) {
-	public String getSelectSql(boolean proto) {
-		StringBuffer sql = new StringBuffer();
-		
+	public SqlSet getSelectSql(boolean proto) {
+		SqlSetBuffer sql = new SqlSetBuffer();
+
+		// Set up students
 		String studentIdSql =
 			" select e.entityid as id" +
 			" from courseids c\n" +
 			" inner join enrollments e on (c.courseid = e.courseid)\n" +
 			" where c.courseid = " + SqlInteger.sql(courseid);
-		sql.append(
+		sql.appendPre(
 			" create temporary table _sids (id int);\n" +
 			" insert into _sids " + studentIdSql + ";\n");
+		sql.appendPost("drop table _sids;\n");
+
+		// Set up parents
 		String parentIdSql =
 			" select distinct p.parent1id as id\n" +
 			" from _sids\n" +
 			" inner join persons p on (_sids.id = p.entityid)\n";
-		sql.append(
+		sql.appendPre(
 			" create temporary table _pids (id int);\n" +
 			" insert into _pids " + parentIdSql + ";\n");
+		sql.appendPost("drop table _pids;\n");
 
+		// Set up phone numbers
 		PhoneJoin pj = new PhoneJoin(2);
-		sql.append(pj.pphonesSql("_pph", parentIdSql) + ";\n");
-		
+		sql.appendPre(pj.pphonesSql("_pph", parentIdSql) + ";\n");
+		sql.appendPost("drop table _pph;\n");
+
+		// The final select
 		sql.append(
 			" select e.courserole,e.dstart,e.dend,\n" +
 			" (case when st.firstname is null then '' else st.firstname || ' ' end ||\n" +
@@ -171,12 +181,8 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 			" left outer join (" + pj.pphonesTable("_pph") + ") pph on (pph.id = p1.entityid)" +
 			" where c.courseid = " + SqlInteger.sql(courseid) +
 			" order by e.courserole,st.lastname,st.firstname;\n");
-		sql.append(
-			" drop table _pph;\n" +
-			" drop table _sids;\n" +
-			" drop table _pids;\n");
 
-		return sql.toString();
+		return sql.toSqlSet();
 		
 		
 //		sql.append(

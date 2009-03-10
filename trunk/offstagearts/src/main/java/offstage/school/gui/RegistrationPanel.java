@@ -131,7 +131,7 @@ class AllPayerDbModel extends MultiDbModel
 	public void doSelect(SqlRun str)
 	{
 		super.doSelect(str);
-		familyTable.setPrimaryEntityID(str, getPayerID());
+		familyTable.setPayerID(str, getPayerID());
 		transRegister.refresh(str);
 	}
 	public void doUpdate(SqlRun str)
@@ -149,7 +149,7 @@ class AllPayerDbModel extends MultiDbModel
 		smod.payertermregsDm.setKey("entityid", payerid);
 //		transRegister.getDbModel().setKey("entityid", payerid);
 		transRegister.setEntityID(payerid);
-		familyTable.setPrimaryEntityID(fapp.sqlRun(), payerid);
+		familyTable.setPayerID(fapp.sqlRun(), payerid);
 	}
 	public Integer getPayerID()
 		{ return (Integer)smod.payerDm.getKey(); }
@@ -250,11 +250,11 @@ class AllRecDbModel extends MultiDbModel
 
 		// Transfer main parent over as primary entity id (family relationships)
 		// Get household from parent1
-		final IntVal primaryentityid = offstage.db.DB.getHeadOf(str, (Integer)smod.studentRm.get("parent1id"));
+		final IntVal parent1id = offstage.db.DB.getHeadOf(str, (Integer)smod.studentRm.get("parent1id"));
 		str.execUpdate(new UpdTasklet2() {
 		public void run(SqlRun str) throws Exception {
 			// Setting parent results in setting household info.
-			smod.studentRm.set("primaryentityid", primaryentityid.val);
+			smod.studentRm.set("primaryentityid", parent1id.val);
 
 			// Do the rest
 			superDoUpdate(str);

@@ -27,13 +27,13 @@ import offstage.swing.typed.FamilySelectorTable;
 public class SchoolFamilySelectorTable extends FamilySelectorTable
 {
 Integer termid;
-Integer primaryEntityID;
+Integer payerID;
 
 public void setTermID(Integer termid) { this.termid = termid; }
 	
-public void setPrimaryEntityID(SqlRun str, Integer primaryEntityID)
+public void setPayerID(SqlRun str, Integer payerID)
 {
-	this.primaryEntityID = primaryEntityID;
+	this.payerID = payerID;
 	requery(str);
 }
 
@@ -41,7 +41,7 @@ public void requery(SqlRun str)
 {
 	executeQuery(str,
 		" select e.entityid from entities e, termregs tr" +
-		" where tr.payerid = " + SqlInteger.sql(primaryEntityID) +
+		" where tr.payerid = " + SqlInteger.sql(payerID) +
 		" and e.entityid = tr.entityid and tr.groupid = " + SqlInteger.sql(termid) +
 		" and not e.obsolete",
 //		" select pe.entityid from entities_school pe, entities ee, entities_school pq" +

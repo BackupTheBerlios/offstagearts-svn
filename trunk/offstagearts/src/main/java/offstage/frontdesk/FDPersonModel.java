@@ -71,8 +71,12 @@ public void doDelete(SqlRun str)
 	dm.doUpdate(str);
 
 	// Reassign any other family members
-	str.execSql("update entities set primaryentityid=entityid" +
-		" where primaryentityid = " + SqlInteger.sql((Integer)this.getKey()));	
+	str.execSql(
+		" delete from rels" +
+		" where relid = (select relid from relids where name='headof')\n" +
+		" and entityid0 = " + SqlInteger.sql((Integer)this.getKey()));
+//	str.execSql("update entities set primaryentityid=entityid" 
+//		" where primaryentityid = " + SqlInteger.sql((Integer)this.getKey()));	
 }
 
 

@@ -28,6 +28,7 @@ import citibob.sql.RsTasklet2;
 import citibob.sql.SqlRun;
 import citibob.sql.SqlRun;
 import citibob.sql.SqlRun;
+import citibob.sql.SqlSet;
 import citibob.sql.UpdTasklet;
 import citibob.sql.UpdTasklet2;
 import citibob.sql.pgsql.SqlDate;
@@ -145,7 +146,7 @@ int openclassAssetID;
 			new String[] {"meetings", "courseids", "termids"},
 			null,
 			null) {
-		public String getSelectSql(boolean proto) {
+		public SqlSet getSelectSql(boolean proto) {
 			Date dt0 = (Date)chDate.getValue();
 			Date dt1 = new Date(dt0.getTime() + 86400*1000L);	// DST not a problem, it's middle of the night
 			
@@ -162,10 +163,12 @@ int openclassAssetID;
                 " and tt.name = 'openclass'\n" +
 				(proto ? " and false" : "");
 
-			return
+			return new SqlSet(
+				// SqlSet
 				OpenClassDB.classLeadersSql(meetingIdSql,
-					"select courseroleid as id from courseroles where name='teacher'") +
-	
+					"select courseroleid as id from courseroles where name='teacher'"),
+					
+				// Sql
 				" select m.meetingid,m.courseid,m.dtstart,m.dtnext," +
 				" c.name as coursename,\n" +
 				" _c.mainid as mainid, _c.subid as subid," +
@@ -184,9 +187,7 @@ int openclassAssetID;
 //				" left outer join entities eteacher on (teacher.entityid = eteacher.entityid)" +
 //				" left outer join teachers sub on (sub.entityid = _c.subid)" +
 //				" left outer join entities esub on (sub.entityid = esub.entityid)" +
-				" order by m.dtstart, c.name;\n" +
-				
-				OpenClassDB.classLeadersDropSql();
+				" order by m.dtstart, c.name;\n");
 		}};
 //		meetingsDm.getSchemaBuf().
 		
@@ -223,7 +224,7 @@ int openclassAssetID;
 			new String[] {"entities"},
 			null,
 			null) {
-		public String getSelectSql(boolean proto) {
+		public SqlSet getSelectSql(boolean proto) {
 			Integer meetingID = (Integer)tMeetings.getValue();
 			String sql =
 				// Main Enrollment
@@ -262,7 +263,7 @@ int openclassAssetID;
 				" inner join courseroles cr on (cr.courseroleid = xx.courserole)\n" +
 				" inner join entities e on (xx.entityid = e.entityid)\n" +
 				" order by cr.orderid, e.lastname, e.firstname\n";
-			return sql;
+			return new SqlSet(sql);
 		}};
 		
 		// Set up in the table

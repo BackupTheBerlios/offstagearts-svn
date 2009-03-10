@@ -38,7 +38,7 @@ ArrayList<EClause> clauses = new ArrayList();
 java.util.Date lastUpdatedFirst;
 java.util.Date lastUpdatedNext;
 Integer dbid = 0;			// Database to search in; default to main (default) database
-int distinctType = Query.DISTINCT_PRIMARYENTITYID;
+int distinctType = Query.DISTINCT_HEADID;
 // ============================================
 /** The database we should be searching in.  null for all databases. */
 public Integer getDbid() { return dbid;}
@@ -201,9 +201,14 @@ throws IOException
 	
 	//	sql.setDistinct(true);			// Seems like a good idea whether or not we reduce by household/etc
 	switch(distinctType) {
-		case DISTINCT_PRIMARYENTITYID :
-			sql.addColumn("main.primaryentityid as id");
-			sql.addWhereClause("main.primaryentityid is not null");
+		case DISTINCT_HEADID :
+			sql.addTable("rels_o2m", "heads", sql.JT_LEFT_OUTER,
+				" heads.relid = (select relid from relids where name = 'headof')\n" +
+				" and heads.entityid1 = main.entityid");
+			sql.addColumn(
+				"(case when heads.entityid0 is null then main.entityid else heads.entityid0 end) as id");
+//			sql.addColumn("main.primaryentityid as id");
+//			sql.addWhereClause("main.primaryentityid is not null");
 		break;
 		case DISTINCT_PARENT1ID :
 			sql.addColumn("main.parent1id as id");

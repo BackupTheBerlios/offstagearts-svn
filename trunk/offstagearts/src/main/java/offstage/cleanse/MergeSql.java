@@ -62,14 +62,14 @@ public String toSql()
 //	return sql;
 //}
 
-public void subordinateEntities(Object entityid0, Object entityid1)
-{
-	// Move the main record
-	sql.append("update entities set primaryentityid=" + entityid1 + " where entityid=" + entityid0 + ";\n");
-
-	// Move the rest of the household (if we were head of household)
-	searchAndReplace(app.schemaSet().get("persons"), "primaryentityid", entityid0, entityid1);
-}
+//public void subordinateEntities(Object entityid0, Object entityid1)
+//{
+//	// Move the main record
+//	sql.append("update entities set primaryentityid=" + entityid1 + " where entityid=" + entityid0 + ";\n");
+//
+//	// Move the rest of the household (if we were head of household)
+//	searchAndReplace(app.schemaSet().get("persons"), "primaryentityid", entityid0, entityid1);
+//}
 
 // These columns should NOT be auto-merged.
 static final Set<String> noDOB = new TreeSet();
@@ -114,11 +114,11 @@ public void mergeEntities(Integer entityid0, Integer entityid1)
 	// =================== Main Data
 	mergeOneRow(sset.get("persons"), "entityid", entityid0, entityid1, noDOB);
 		mergeDOB(entityid0, entityid1);		// Special treatment for the DOB entry.
-		// Merges the primaryentityid column specially
-		mergeOneRowEntityID(sset.get("persons"), "entityid", new String[] {"primaryentityid"}, entityid0, entityid1);
-	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
-	searchAndReplace(sset.get("persons"), "parent1id", entityid0, entityid1);
-	searchAndReplace(sset.get("persons"), "parent2id", entityid0, entityid1);
+//		// Merges the primaryentityid column specially
+//		mergeOneRowEntityID(sset.get("persons"), "entityid", new String[] {"primaryentityid"}, entityid0, entityid1);
+//	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
+//	searchAndReplace(sset.get("persons"), "parent1id", entityid0, entityid1);
+//	searchAndReplace(sset.get("persons"), "parent2id", entityid0, entityid1);
 	moveRows(sset.get("phones"), "entityid", entityid0, entityid1);
 	
 //	moveRows(sset.get("classes"), "entityid", entityid0, entityid1);
@@ -165,41 +165,17 @@ public void mergeEntities(Integer entityid0, Integer entityid1)
 	moveRows(sset.get("payertermregs"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("enrollments"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("subs"), "entityid", entityid0, entityid1);
+	
+	// Move both sides of the relationships
+	searchAndReplace(sset.get("rels_o2m"), "entityid0", entityid0, entityid1);
+	moveRows(sset.get("rels_o2m"), "entityid1", entityid0, entityid1);
 
 	// Now make sure we re-use the lowest-valued entityid
 	if (entityid1 > entityid0) swapEntityID(entityid0, entityid1);
 	
-	
-//Main Record
-//===========
-//entities:
-//	primaryentityid
-//classes,entityid
-//donations,entityid
-//events,entityid
-//flags,entityid
-//interests,entityid
-//notes,entityid
-//phones,entityid
-//ticketevents,entityid
-//XXmailings,entityid  (don't do mailings)
-//
-//Accounting
-//==========
-//actrans,entityid
-//	(Really: adjpayments,cashpayments,ccpayments,checkpayments,tuitiontrans)
-//
-//School
-//======
-//entities_school:
-//	(entityid)
-//	adultid
-//	parentid
-//	parent2id
-//termregs,entityid
-//enrollments,entityid
 
-
+// TODO: Merge relationships!
+throw new NullPointerException();
 }
 
 public void swapEntityID(Integer entityid0, Integer entityid1)
@@ -216,9 +192,9 @@ public void changeEntityID(Integer entityid0, Integer entityid1)
 
 	// =================== Main Data
 	searchAndReplace(sset.get("persons"), "entityid", entityid0, entityid1);
-	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
-	searchAndReplace(sset.get("persons"), "parent1id", entityid0, entityid1);
-	searchAndReplace(sset.get("persons"), "parent2id", entityid0, entityid1);
+//	searchAndReplace(sset.get("persons"), "primaryentityid", entityid0, entityid1);
+//	searchAndReplace(sset.get("persons"), "parent1id", entityid0, entityid1);
+//	searchAndReplace(sset.get("persons"), "parent2id", entityid0, entityid1);
 	searchAndReplace(sset.get("phones"), "entityid", entityid0, entityid1);
 
 	for (DataTab tab : tabs.allTabs()) {
@@ -234,10 +210,13 @@ public void changeEntityID(Integer entityid0, Integer entityid1)
 
 	// School
 	searchAndReplace(sset.get("termregs"), "entityid", entityid0, entityid1);
-	searchAndReplace(sset.get("termregs"), "payerid", entityid0, entityid1);
+//	searchAndReplace(sset.get("termregs"), "payerid", entityid0, entityid1);
 	searchAndReplace(sset.get("payertermregs"), "entityid", entityid0, entityid1);
 	searchAndReplace(sset.get("enrollments"), "entityid", entityid0, entityid1);
 	searchAndReplace(sset.get("subs"), "entityid", entityid0, entityid1);
+	
+	searchAndReplace(sset.get("rels_o2m"), "entityid0", entityid0, entityid1);
+	searchAndReplace(sset.get("rels_o2m"), "entityid1", entityid0, entityid1);	
 }
 
 
@@ -270,7 +249,7 @@ Object entityid0, Object entityid1)
 	int entityColIx = schema.findCol(sEntityCol);
 	SqlCol entityCol = (SqlCol)schema.getCol(entityColIx);
 	String table = schema.getDefaultTable();
-	int[] keyCols = getKeyCols(schema, entityColIx);
+//	int[] keyCols = getKeyCols(schema, entityColIx);
 //	StringBuffer sql = new StringBuffer();
 
 	sql.append(" update " + table);

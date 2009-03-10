@@ -43,7 +43,7 @@ import com.thoughtworks.xstream.*;
 public abstract class Query {
 
 public static final int DISTINCT_ENTITYID = 0;
-public static final int DISTINCT_PRIMARYENTITYID = 1;
+public static final int DISTINCT_HEADID = 1;
 public static final int DISTINCT_PARENT1ID = 2;
 public static final int DISTINCT_PAYERID = 3;
 public static final KeyedModel distinctKmodel = KeyedModel.intKeys(

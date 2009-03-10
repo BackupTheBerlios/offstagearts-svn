@@ -191,7 +191,7 @@ void createPerson(SqlRun str, final boolean isorg) throws SQLException
 		v.put("entityid", new Integer(iid.val));
 		ConsSqlQuery q = new ConsSqlQuery("persons", ConsSqlQuery.INSERT);
 		q.addColumn("entityid", SqlInteger.sql(iid.val));
-		q.addColumn("primaryentityid", SqlInteger.sql(iid.val));
+//		q.addColumn("primaryentityid", SqlInteger.sql(iid.val));
 		addSCol(q, "lastname");
 		addSCol(q, "middlename");
 		addSCol(q, "firstname");

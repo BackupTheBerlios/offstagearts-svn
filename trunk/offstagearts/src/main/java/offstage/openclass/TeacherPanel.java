@@ -94,17 +94,17 @@ public void initRuntime(SqlRun str, FrontApp xapp, SchoolModel xsmod)
 	// Other Teachers
 	otherTeachersDm = new SqlBufDbModel(str, app,
 		new String[] {"enrollments"}, null, new String[] {"enrollments"}) {
-	public String getSelectSql(boolean proto) {
+	public SqlSet getSelectSql(boolean proto) {
 //			int row = enrollments.getSelectedRow();
 //			Integer courseid = null;
 //			if (row >= 0) courseid = (Integer)teacherDm.enrolled.getSchemaBuf().getValueAt(row, "courseid");
-		return
+		return new SqlSet(
 			" select p.firstname || ' ' || p.lastname as teachername, e.*" +
 			" from enrollments e, entities p" +
 			" where e.entityid = p.entityid" +
 			" and e.entityid <> " + teacherList.getValue() +
 			" and courseid = " + enrollments.getValue() +
-			" and courserole = " + app.schemaSet().getEnumInt("enrollments", "courserole", "teacher");
+			" and courserole = " + app.schemaSet().getEnumInt("enrollments", "courserole", "teacher"));
 	}};
 	
 	// ================================================

@@ -24,6 +24,7 @@ package offstage.openclass;
 
 import citibob.sql.RsTasklet;
 import citibob.sql.SqlRun;
+import citibob.sql.SqlSet;
 import citibob.sql.ansi.SqlInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,22 +35,6 @@ import java.util.TreeMap;
  * @author citibob
  */
 public class OpenClassDB {
-public static String classLeadersDropSql()
-{
-	return " drop table _c;";
-		
-}
-
-//" 	select m.meetingid as id\n" +
-//" 	from meetings m\n" +
-//" 	inner join courseids c on (m.courseid = c.courseid)\n" +
-//" 	inner join termids t on (c.termid = t.groupid)\n" +
-//" 	where m.dtstart >= '2008-06-09' and m.dtstart < '2008-06-10'\n" +
-//" 	and c.dayofweek >= 0\n" +
-//" 	and t.termtypeid = 2\n" +
-
-//		" (select courseroleid as courserole from courseroles\n" +
-//		" where courseroleid in (2,3)) cc\n"
 
 
 static String updateEntSql(String scol, String sncol)
@@ -72,10 +57,10 @@ static String updateEntSql(String scol, String sncol)
 
 /** Figure out who is teacher and pianist for a class meeting.
  * SQL will create the table _c. */
-public static String classLeadersSql(String meetingIdSql, String courseroleIdSql)
+public static SqlSet classLeadersSql(String meetingIdSql, String courseroleIdSql)
  {
 
-	return
+	return new SqlSet(
 		// Create temporary tables
 		" create temporary table _c (meetingid int, courserole int,\n" +
 		" mainid int, nmain int,\n" +
@@ -139,8 +124,13 @@ public static String classLeadersSql(String meetingIdSql, String courseroleIdSql
 		
 		" update _c set subname = lastname\n" +
 		" from entities t" +
-		" where _c.subid = t.entityid and _c.subname is null;\n";
-	
+		" where _c.subid = t.entityid and _c.subname is null;\n",
+		
+		// sql
+		"",
+		
+		// postSql
+		" drop table _c;");	
 }
 
 /** Calculates the price of an open class.  Assumes table _c (classLeaderSql) exists.

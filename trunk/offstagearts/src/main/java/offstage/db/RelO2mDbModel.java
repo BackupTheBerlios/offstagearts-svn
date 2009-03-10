@@ -26,9 +26,9 @@ import offstage.school.gui.*;
 import citibob.app.App;
 import citibob.jschema.SchemaBuf;
 import citibob.jschema.SqlBufDbModel;
-import citibob.jschema.SqlSchema;
 import citibob.jschema.SqlSchemaInfo;
 import citibob.sql.SqlRun;
+import citibob.sql.SqlSet;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.sql.pgsql.SqlString;
 
@@ -59,8 +59,8 @@ public class RelO2mDbModel extends SqlBufDbModel
 	static final int COL_ENTITYID0_NOTNULL = 1;
 	static final int COL_ENTITYID1 = 2;
 	static final int[] editableCols = {COL_ENTITYID0_NOTNULL};
-	public String getSelectSql(boolean proto) {
-		return 
+	public SqlSet getSelectSql(boolean proto) {
+		return new SqlSet(
 			" select\n" +
 			" rels.entityid0,\n" +
 			" case when rels.entityid0 is null then e.entityid else rels.entityid0 end as entityid0_notnull,\n" +
@@ -71,7 +71,7 @@ public class RelO2mDbModel extends SqlBufDbModel
 				" and rels.temporalid=" + temporalid + ")\n" +
 			" left outer join relids on (rels.relid = relids.relid " +
 				" and relids.name=" + SqlString.sql(relName) + ")\n" +
-			" where e.entityid=" + SqlInteger.sql(entityid1);
+			" where e.entityid=" + SqlInteger.sql(entityid1));
 	}
 
 	protected boolean doSimpleUpdate(int row, SqlRun str, SqlSchemaInfo qs)
