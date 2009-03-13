@@ -131,7 +131,7 @@ int openclassAssetID;
 //		}};
 		openclassAcTypeID = app.schemaSet().getEnumInt("actrans2", "cr_actypeid", "openclass");
 		openclassAssetID = app.schemaSet().getEnumInt("actrans2amt", "assetid", "openclass");
-		transRegister.initRuntime(app, TransRegPanel.EM_NONE, openclassAcTypeID, openclassAssetID);
+		transRegister.initRuntime(str, app, TransRegPanel.EM_NONE, openclassAcTypeID, openclassAssetID);
 		// ========================================================
 		// ========================================================
 		// tMeetings...

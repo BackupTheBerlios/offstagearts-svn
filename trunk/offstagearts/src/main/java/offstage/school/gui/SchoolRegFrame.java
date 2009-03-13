@@ -72,21 +72,14 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 {
 	this.fapp = xfapp;
 
-	this.schoolModel = new SchoolModel(fapp);
-	
-//	coursesPanel.initRuntime(fapp, schoolModel, str);
-//	schedulePanel.initRuntime(fapp, schoolModel, str);
-//	termsAddPanel.initRuntime(fapp, schoolModel, str);
+	this.schoolModel = new SchoolModel(str, fapp);
+//str.flush();
+
 	this.courseListPanel.initRuntime(fapp, schoolModel, str);
 	teacherPanel1.initRuntime(str, fapp, schoolModel);
 
 	// Set up terms selector
-//setKeyedModel selects the term --- but the KeyedModel is not getting filled in till afterwards
-//TODO: Use segments for current term
 	final DbKeyedModel tkmodel = ((TermidsSchema)fapp.getSchema("termids")).currentTermsKmodel;
-//	KeyedModel tkmodel = fapp.schemaSet().getKeyedModel("termids", colName)
-//			new DbKeyedModel(str, fapp.dbChange(), "termids",
-//		"select groupid, name, null from termids where iscurrent order by firstdate desc");
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) throws Exception {
 		vTermID.addPropertyChangeListener("value", new PropertyChangeListener() {
@@ -96,17 +89,11 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 			fapp.sqlRun().popFlush();		// Flush, conditional on no other items around us.
 		}});
 		vTermID.setKeyedModel(tkmodel, null);
-//		if (tkmodel.size() > 0) vTermID.setSelectedIndex(0);
 	}});
 
-	regPanel.initRuntime(str, xfapp, schoolModel);
+str.flush();
+	regPanel.initRuntime(str, fapp, schoolModel);
 	
-//	str.execUpdate(new UpdTasklet2() {
-//	public void run(SqlRun str) throws Exception {
-//		// Also set up frame preferences
-//		new citibob.swing.prefs.SwingPrefs().setPrefs(SchoolFrame.this, "", fapp.userRoot().node("SchoolFrame"));
-//	}});
-
 	pack();
 }
 

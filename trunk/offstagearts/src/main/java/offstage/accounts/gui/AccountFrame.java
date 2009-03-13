@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.accounts.gui;
 
+import citibob.sql.SqlRun;
 import offstage.FrontApp;
 
 /**
@@ -37,9 +38,9 @@ public class AccountFrame extends javax.swing.JFrame
 	{
 		initComponents();
 	}
-	public void initRuntime(FrontApp fapp)
+	public void initRuntime(SqlRun str, FrontApp fapp)
 	{
-		this.accountPanel1.initRuntime(fapp);
+		this.accountPanel1.initRuntime(str, fapp);
 	}
 	/** This method is called from within the constructor to
 	 initialize the form.

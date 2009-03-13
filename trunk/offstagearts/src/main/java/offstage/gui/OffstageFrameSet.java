@@ -152,7 +152,9 @@ public JFrame newFrame() throws Exception {
 addMaker("accounting", new FrameMaker() {
 public JFrame newFrame() throws Exception {
 	AccountFrame frame = new AccountFrame();
-	frame.initRuntime(fapp);
+	SqlRun str = fapp.sqlRun();
+	frame.initRuntime(str, fapp);
+	str.flush();
 	return frame;
 }});
 addMaker("resources", new FrameMaker() {

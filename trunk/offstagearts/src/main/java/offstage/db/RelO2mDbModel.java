@@ -47,7 +47,8 @@ public class RelO2mDbModel extends SqlBufDbModel
 		this.temporalid = temporalid;
 		this.entityid1 = entityid1;
 	}
-
+	public void setTemporalID(Integer temporalid)
+		{ this.temporalid = temporalid; }
 	public static int getCourseRoleID(App app, String name)
 	{
 		return app.schemaSet().getEnumInt("enrollments", "courserole", name);

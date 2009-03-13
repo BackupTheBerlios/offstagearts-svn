@@ -53,7 +53,7 @@ public void initRuntime(SqlRun str, FrontApp xfapp)
 {
 	this.fapp = xfapp;
 
-	this.schoolModel = new SchoolModel(fapp);
+	this.schoolModel = new SchoolModel(str, fapp);
 	
 	coursesPanel.initRuntime(fapp, schoolModel, str);
 	schedulePanel.initRuntime(fapp, schoolModel, str);

@@ -23,12 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.school.gui;
 
-import citibob.app.App;
 import citibob.jschema.*;
 import citibob.swing.table.*;
 import citibob.swing.typed.*;
 import citibob.task.*;
-import javax.swing.JOptionPane;
 import offstage.*;
 import citibob.sql.pgsql.*;
 import citibob.sql.*;
@@ -39,8 +37,6 @@ import javax.swing.*;
 import citibob.swing.*;
 import offstage.accounts.gui.*;
 import java.awt.*;
-import offstage.db.*;
-import offstage.reports.*;
 import citibob.types.*;
 //import citibob.swingers.*;
 import citibob.util.IntVal;
@@ -92,10 +88,17 @@ public RegistrationPanel()
 class AllStudentDbModel extends MultiDbModel
 {
 	public AllStudentDbModel()
-		{ super(smod.studentDm, smod.termregsDm, enrolledDb); }
+	{
+		super(smod.studentDm,
+			  smod.parent1ofDm, smod.parent2ofDm, smod.payerofDm,
+			  smod.termregsDm, enrolledDb);
+	}
 	public void setStudentID(Integer studentid)
 	{
 		smod.studentDm.setKey(studentid);
+		smod.parent1ofDm.setKey(studentid);
+		smod.parent2ofDm.setKey(studentid);
+		smod.payerofDm.setKey(studentid);
 		smod.termregsDm.setKey("entityid", studentid);
 		enrolledDb.setEntityID(studentid);
 	}
@@ -103,7 +106,8 @@ class AllStudentDbModel extends MultiDbModel
 		{ return (Integer)smod.studentDm.getKey(); }
 	public void setTermID(Integer termid)
 	{
-		smod.termregsDm.setKey("groupid", termid);	
+		smod.termregsDm.setKey("groupid", termid);
+		smod.payerofDm.setTemporalID(termid);
 		enrolledDb.setTermID(termid);
 	}
 	public void resetStudentID(SqlRun str, Integer studentid)
@@ -353,7 +357,8 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 //		java.util.Date now = new java.util.Date();
 //		return (now.getTime() - created.getTime() < 86400 * 1000L);
 //	}};
-	transRegister.initRuntime(fapp, TransRegPanel.EM_RECENT, schoolid, 0);
+	transRegister.initRuntime(str, fapp, TransRegPanel.EM_RECENT, schoolid, 0);
+str.flush();
 
 	// =====================================================================
 	// Enrollments
@@ -431,13 +436,13 @@ public void initRuntime(SqlRun str, FrontApp xfapp, SchoolModel xschoolModel)
 	// ================================================================
 	// Student
 	// Display student info from persons table
-	smod.termregsRm = new SchemaBufRowModel(smod.termregsDm.getSchemaBuf());
-	smod.payertermregsRm = new SchemaBufRowModel(smod.payertermregsDm.getSchemaBuf());
+//	smod.termregsRm = new SchemaBufRowModel(smod.termregsDm.getSchemaBuf());
+//	smod.payertermregsRm = new SchemaBufRowModel(smod.payertermregsDm.getSchemaBuf());
 	TypedWidgetBinder.bindRecursive(this.TermRegPanel, smod.termregsRm, smap);
 	TypedWidgetBinder.bindRecursive(this.MedPanel, smod.termregsRm, smap);
 	TypedWidgetBinder.bindRecursive(this.TermRegPanel, smod.payertermregsRm, smap);
 
-	smod.studentRm = new SchemaBufRowModel(smod.studentDm.personDb.getSchemaBuf());
+//	smod.studentRm = new SchemaBufRowModel(smod.studentDm.personDb.getSchemaBuf());
 	new TypedWidgetBinder().bind(lEntityID, smod.studentRm, smap);
 //	vHouseholdID.initRuntime(fapp);
 //		new TypedWidgetBinder().bind(vHouseholdID, smod.studentRm, smap);

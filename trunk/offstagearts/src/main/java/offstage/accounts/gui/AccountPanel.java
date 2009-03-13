@@ -52,13 +52,13 @@ public AccountPanel()
 {
 	initComponents();
 }
-public void initRuntime(FrontApp fapp)
+public void initRuntime(SqlRun str, FrontApp fapp)
 {
 	this.app = fapp;
 	
 
 //	SchemaBuf actransSb = new SchemaBuf(fapp.getSchema("actrans"));
-	transRegister.initRuntime(fapp, TransRegPanel.EM_ALL, 1, 0);
+	transRegister.initRuntime(str, fapp, TransRegPanel.EM_ALL, 1, 0);
 	
 	// Bind our account actions
 	ActionJobBinder tbinder = new ActionJobBinder(this, fapp.guiRun(),

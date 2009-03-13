@@ -31,7 +31,8 @@ import citibob.jschema.IntKeyedDbModel;
 import citibob.jschema.IntsKeyedDbModel;
 import citibob.jschema.SchemaBufRowModel;
 import citibob.sql.SqlRun;
-import offstage.school.tuition.RBPlanSet;
+import citibob.sql.UpdTasklet;
+import offstage.db.RelO2mDbModel;
 
 /**
  *
@@ -44,6 +45,13 @@ int termID;
 
 public StudentDbModel studentDm;
 	public SchemaBufRowModel studentRm;
+RelO2mDbModel parent1ofDm;
+	public SchemaBufRowModel parent1ofRm;
+RelO2mDbModel parent2ofDm;
+	public SchemaBufRowModel parent2ofRm;
+RelO2mDbModel payerofDm;
+	public SchemaBufRowModel payerofRm;
+
 //	public SchemaBufRowModel schoolRm;
 IntKeyedDbModel oneTermDm;
 	public SchemaBufRowModel oneTermRm;
@@ -62,11 +70,38 @@ public ParentDbModel parent2Dm;
 
 // -------------------------------------------------------------
 App app;
-public SchoolModel(App fapp)
+public SchoolModel(SqlRun str, App fapp)
 {
 	this.app = fapp;
 	studentDm = new StudentDbModel(fapp);
 		studentRm = new SchemaBufRowModel(studentDm.personDb.getSchemaBuf());
+
+	parent1ofDm = new RelO2mDbModel(str, app) {
+		public void setKey(Object key) {
+			super.entityid1 = (Integer)key;
+		}};
+	parent1ofDm.setKeys("parent1of", -1, null);
+
+	parent2ofDm = new RelO2mDbModel(str, app) {
+		public void setKey(Object key) {
+			super.entityid1 = (Integer)key;
+		}};
+	parent2ofDm.setKeys("parent2of", -1, null);
+
+	payerofDm = new RelO2mDbModel(str, app) {
+		public void setKey(Object key) {
+			super.entityid1 = (Integer)key;
+		}};
+	payerofDm.setKeys("payerof", -1, null);
+
+	str.execUpdate(new UpdTasklet() {
+	public void run() {
+		parent1ofRm = new SchemaBufRowModel(parent1ofDm.getSchemaBuf());
+		parent2ofRm = new SchemaBufRowModel(parent2ofDm.getSchemaBuf());
+		payerofRm = new SchemaBufRowModel(payerofDm.getSchemaBuf());
+
+	}});
+
 	payerDm = new PayerDbModel(fapp);
 		payerRm = new SchemaBufRowModel(payerDm.personDb.getSchemaBuf());
 	parent1Dm = new ParentDbModel(fapp);
@@ -96,8 +131,11 @@ public void setTermID(int newTermID)
 	
 	SqlRun str = app.sqlRun();
 	oneTermDm.doUpdate(str);
+	payerofDm.doUpdate(str);
 	oneTermDm.setKey(termID);
+	payerofDm.setTemporalID(termID);
 	oneTermDm.doSelect(str);
+	payerofDm.doSelect(str);
 			
 	if (oldTermID != termID) fireTermIDChanged(oldTermID, termID);
 }

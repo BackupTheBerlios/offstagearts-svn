@@ -169,13 +169,13 @@ public SqlBufDbModel getDbModel() { return actransDb; }
 
 
 
-public void initRuntime(final FrontApp fapp, final int editMode, int actypeid, int assetid) //, boolean superuser)
+public void initRuntime(SqlRun str, final FrontApp fapp, final int editMode, int actypeid, int assetid) //, boolean superuser)
 {
 	this.fapp = fapp;
 	this.assetid = assetid;
 	this.actypeid = actypeid;
 	
-	SqlRun str = fapp.sqlRun();
+//	SqlRun str = fapp.sqlRun();
 	actransDb = new Actrans2DbModel(str);
 	str.execUpdate(new UpdTasklet2() {
 	public void run(SqlRun str) {
