@@ -151,9 +151,14 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 
 		// Set up parents
 		String parentIdSql =
-			" select distinct p.parent1id as id\n" +
+			" select distinct r.entityid0 as id\n" +
 			" from _sids\n" +
-			" inner join persons p on (_sids.id = p.entityid)\n";
+			" inner join rels_o2m r on\n" +
+			" (_sids.id = r.entityid1\n" +
+			" and r.relid = (select relid from relids where name='parent1of')\n";
+//			" select distinct p.parent1id as id\n" +
+//			" from _sids\n" +
+//			" inner join persons p on (_sids.id = p.entityid)\n";
 		sql.appendPre(
 			" create temporary table _pids (id int);\n" +
 			" insert into _pids " + parentIdSql + ";\n");
@@ -171,12 +176,17 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 			"  case when st.lastname is null then '' else st.lastname end) as st_name,\n" +
 			" (case when p1.firstname is null then '' else p1.firstname || ' ' end ||\n" +
 			"  case when p1.lastname is null then '' else p1.lastname end) as p1_name,\n" +
-			" e.entityid, e.courseid, st.parent1id, tr.payerid,\n" +
+//			" e.entityid, e.courseid, st.parent1id, tr.payerid,\n" +
+			" e.entityid, e.courseid, p1.entityid, tr.payerid,\n" +
 			" _pph_phoneid1,_pph_phone1,_pph_phoneid2,_pph_phone2\n" +
 			" from courseids c\n" +
 			" left outer join enrollments e on (c.courseid = e.courseid)\n" +
 			" left outer join persons st on (e.entityid = st.entityid)\n" +
-			" left outer join persons p1 on (st.parent1id = p1.entityid)\n" +
+			" left outer join rels_o2m rel_p1 on" +
+			"    (rel_p1.entityid1 = st.entityid" +
+			"     and rel_p1.relid = (select relid from relids where name='parent1of'))" +
+			" left outer join persons p1 on (rel_p1.entityid0 = p1.entityid)\n" +
+//			" left outer join persons p1 on (st.parent1id = p1.entityid)\n" +
 			" left outer join termregs tr on (tr.groupid = c.termid and tr.entityid = st.entityid)\n" +
 			" left outer join (" + pj.pphonesTable("_pph") + ") pph on (pph.id = p1.entityid)" +
 			" where c.courseid = " + SqlInteger.sql(courseid) +
@@ -528,8 +538,11 @@ void all_doSelect(SqlRun str)
 			if (wizard.runWizard("addbycourse")) {
 				TuitionCalc tc = new TuitionCalc(fapp, smod.getTermID());
 					tc.setPayerIDs(
-						" select parent1id from entities es" +
-						" where entityid = " + wizard.getVal("entityid"));
+						" select entityid0 from rels_o2m r" +
+						" where r.entityid1 = " + wizard.getVal("entityid") +
+						" and r.relid = (select relid from relids where name='parent1of')");
+//						" select parent1id from entities es" +
+//						" where entityid = " + wizard.getVal("entityid"));
 					tc.recalcTuition(str);
 				enrolledDb.doSelect(str);
 			}

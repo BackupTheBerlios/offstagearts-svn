@@ -58,6 +58,7 @@ public IdSqlTableModel()
 	}));
 }
 
+
 //public void executeQuery(SqlRun str, String idSql) throws SQLException {
 //	executeQuery(st, idSql, "name");
 //}
@@ -73,13 +74,14 @@ public void executeQuery(SqlRun str, SqlSet idSsql, boolean hasSortCol, String o
 	if (orderBy == null) orderBy = "name";
 	
 	// Search for appropriate set of columns, given that list of IDs.
+	String ids = str.getTableName("_ids");
 	SqlSet ssql = new SqlSet(idSsql,
 		(hasSortCol ?
-			" create temporary table _ids (id int, sort int);\n" +
-			" insert into _ids (id, sort) " + idSsql.getSql() + ";\n"
+			" create temporary table " + ids + " (id int, sort int);\n" +
+			" insert into " + ids + " (id, sort) " + idSsql.getSql() + ";\n"
 			:
-			" create temporary table _ids (id int);\n" +
-			" insert into _ids (id) " + idSsql.getSql() + ";\n"),
+			" create temporary table " + ids + " (id int);\n" +
+			" insert into " + ids + " (id) " + idSsql.getSql() + ";\n"),
 			
 		" select p.entityid," +
 		" (case when lastname is null then '' else lastname || ', ' end ||" +
@@ -94,11 +96,11 @@ public void executeQuery(SqlRun str, SqlSet idSsql, boolean hasSortCol, String o
 		" case when email is null then '' else email || '' end ||" +
 		" '</html>') as tooltip" +
 //		" p.entityid = p.primaryentityid as isprimary" +
-		" from persons p, _ids" +
-		" where p.entityid = _ids.id" +
+		" from persons p, " + ids + "" +
+		" where p.entityid = " + ids + ".id" +
 		" order by " + orderBy + ";",
 
-		" drop table _ids");
+		" drop table " + ids + "");
 	super.executeQuery(str, ssql);
 }
 

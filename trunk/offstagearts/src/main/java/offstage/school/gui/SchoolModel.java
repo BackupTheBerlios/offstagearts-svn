@@ -51,6 +51,8 @@ RelO2mDbModel parent2ofDm;
 	public SchemaBufRowModel parent2ofRm;
 RelO2mDbModel payerofDm;
 	public SchemaBufRowModel payerofRm;
+RelO2mDbModel headofDm;
+	public SchemaBufRowModel headofRm;
 
 //	public SchemaBufRowModel schoolRm;
 IntKeyedDbModel oneTermDm;
@@ -94,11 +96,19 @@ public SchoolModel(SqlRun str, App fapp)
 		}};
 	payerofDm.setKeys("payerof", -1, null);
 
+	headofDm = new RelO2mDbModel(str, app) {
+		public void setKey(Object key) {
+			super.entityid1 = (Integer)key;
+		}};
+	headofDm.setKeys("headof", -1, null);
+
+	
 	str.execUpdate(new UpdTasklet() {
 	public void run() {
 		parent1ofRm = new SchemaBufRowModel(parent1ofDm.getSchemaBuf());
 		parent2ofRm = new SchemaBufRowModel(parent2ofDm.getSchemaBuf());
 		payerofRm = new SchemaBufRowModel(payerofDm.getSchemaBuf());
+		headofRm = new SchemaBufRowModel(headofDm.getSchemaBuf());
 
 	}});
 
@@ -145,10 +155,13 @@ public int getTermID()
 public Integer getStudentID()
 	{ return (Integer)studentRm.get("entityid"); }
 public Integer getPayerID()
-	{ return (Integer)termregsRm.get("payerid"); }
+	{ return (Integer)payerofRm.get("entityid0"); }
+//	{ return (Integer)termregsRm.get("payerid"); }
 public Integer getParent1ID()
-	{ return (Integer)studentRm.get("parent1id"); }
+	{ return (Integer)parent1ofRm.get("entityid0"); }
+//	{ return (Integer)studentRm.get("parent1id"); }
 public Integer getParent2ID()
-	{ return (Integer)studentRm.get("parent2id"); }
+	{ return (Integer)parent2ofRm.get("entityid0"); }
+//	{ return (Integer)studentRm.get("parent2id"); }
 
 }

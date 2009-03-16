@@ -90,15 +90,24 @@ throws IOException
 	PhoneJoin pu = new PhoneJoin(3);
 	if (parentPhones) {
 		str.execSql(pu.pphonesSql("pph1",
-			"select distinct parent1.entityid as id" +
-			" from _ids, persons e, persons parent1" +
-			" where _ids.id = e.entityid" +
-			" and e.parent1id = parent1.entityid"));
+			"select distinct r.entityid0 as id" +
+			" from _ids, rels_o2m r" +
+			" where _ids.id = r.entityid1" +
+			" and rels_o2m.relid = (select relid from relids where name='parent1of')"));
+//			"select distinct parent1.entityid as id" +
+//			" from _ids, persons e, persons parent1" +
+//			" where _ids.id = e.entityid" +
+//			" and e.parent1id = parent1.entityid"));
 		str.execSql(pu.pphonesSql("pph2",
-			"select distinct parent2.entityid as id" +
-			" from _ids, persons e, persons parent2" +
-			" where _ids.id = e.entityid" +
-			" and e.parent2id = parent2.entityid"));
+			"select distinct r.entityid0 as id" +
+			" from _ids, rels_o2m r" +
+			" where _ids.id = r.entityid2" +
+			" and rels_o2m.relid = (select relid from relids where name='parent2of')"));
+//		str.execSql(pu.pphonesSql("pph2",
+//			"select distinct parent2.entityid as id" +
+//			" from _ids, persons e, persons parent2" +
+//			" where _ids.id = e.entityid" +
+//			" and e.parent2id = parent2.entityid"));
 	} else {
 		str.execSql(pu.pphonesSql("pphones", "select id from _ids"));
 	}
@@ -322,10 +331,23 @@ EQuery equery, final File outFile) throws Exception
 		}, new TableJoin[] {
 			new TableJoin("persons", "e", SqlQuery.JT_INNER,
 				"e.entityid = xx.id"),
+				
+			new TableJoin("rels_o2m", "rels_p1", SqlQuery.JT_LEFT_OUTER,
+				" rels_p1.entityid1 = e.entityid" +
+				" and rels_p1.relid = (select relid from relids where name = 'parent1of')"),
 			new TableJoin("persons", "parent1", SqlQuery.JT_LEFT_OUTER,
-				"e.parent1id = parent1.entityid"),
+				"rels_p1.entityid0 = parent1.entityid"),
+//			new TableJoin("persons", "parent1", SqlQuery.JT_LEFT_OUTER,
+//				"e.parent1id = parent1.entityid"),
+				
+			new TableJoin("rels_o2m", "rels_p2", SqlQuery.JT_LEFT_OUTER,
+				" rels_p2.entityid1 = e.entityid" +
+				" and rels_p2.relid = (select relid from relids where name = 'parent2of')"),
 			new TableJoin("persons", "parent2", SqlQuery.JT_LEFT_OUTER,
-				"e.parent2id = parent2.entityid"),
+				"rels_p2.entityid0 = parent2.entityid"),
+//			new TableJoin("persons", "parent2", SqlQuery.JT_LEFT_OUTER,
+//				"e.parent2id = parent2.entityid"),
+				
 			new TableJoin("shows", null, SqlQuery.JT_LEFT_OUTER,
 				"shows.groupid = " + showid + " and shows.entityid = e.entityid"),
 			new TableJoin("showids", null, SqlQuery.JT_INNER,

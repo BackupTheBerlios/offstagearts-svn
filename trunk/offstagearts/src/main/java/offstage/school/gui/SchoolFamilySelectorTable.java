@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.school.gui;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
+import offstage.db.DB;
 import offstage.swing.typed.FamilySelectorTable;
 
 /**
@@ -39,17 +40,31 @@ public void setPayerID(SqlRun str, Integer payerID)
 
 public void requery(SqlRun str)
 {
-	executeQuery(str,
-		" select e.entityid from entities e, termregs tr" +
-		" where tr.payerid = " + SqlInteger.sql(payerID) +
-		" and e.entityid = tr.entityid and tr.groupid = " + SqlInteger.sql(termid) +
-		" and not e.obsolete",
-//		" select pe.entityid from entities_school pe, entities ee, entities_school pq" +
-//		" where pq.entityid = " + SqlInteger.sql(primaryEntityID) +
-//		" and pe.adultid = pq.adultid" +
-//		" and pe.entityid = ee.entityid" +
-//		" and not ee.obsolete",
-		"isprimary desc, name");
+	if (payerID == null) {
+		executeQuery(str, "select 0 as id where 1=0;", null);
+	} else {
+		SqlSet groups = DB.listRelGroupSql(str, "payerof", -1, payerID);
+
+		SqlSet ssql = new SqlSet(groups,
+			" select xx.entityid1 as id," +
+			" case when head then 0 else 1 end as sort" +
+			" from (" + groups.getSql() + ") xx\n");
+		executeQuery(str, ssql, true, "sort, name");
+	}
+//	executeQuery(str,
+//		" select e.entityid from entities e, termregs tr" +
+//		" where tr.payerid = " + SqlInteger.sql(payerID) +
+//		" and e.entityid = tr.entityid and tr.groupid = " + SqlInteger.sql(termid) +
+//		" and not e.obsolete",
+////		" select pe.entityid from entities_school pe, entities ee, entities_school pq" +
+////		" where pq.entityid = " + SqlInteger.sql(primaryEntityID) +
+////		" and pe.adultid = pq.adultid" +
+////		" and pe.entityid = ee.entityid" +
+////		" and not ee.obsolete",
+//		"isprimary desc, name");
+//
+
+	
 }
 	
 }

@@ -75,11 +75,16 @@ extends javax.swing.JPanel {
 
 		this.model = xmodel;
 		
-		vPayerID.initRuntime(app);
-		vParent1ID.initRuntime(app);
-		
 		TypedWidgetBinder.bindRecursive(this, model, app.swingerMap());
 		new TypedWidgetBinder().bind(genderButtonGroup, xmodel);
+
+		vPayerID.initRuntime(app);
+			new TypedWidgetBinder().bind(vPayerID, dmod.payerofRm, app.swingerMap());
+		vParent1ID.initRuntime(app);
+			new TypedWidgetBinder().bind(vPayerID, dmod.parent1ofRm, app.swingerMap());
+		
+
+		
 		
 		phonePanel.initRuntime(str, dmod.getPhonesDm().getSchemaBuf(),
 			new String[] {"Type", "Number"},
@@ -483,14 +488,14 @@ extends javax.swing.JPanel {
         gridBagConstraints.weightx = 1.0;
         mainPanel.add(FirstMiddleLast, gridBagConstraints);
 
-        vPayerID.setColName("payerid"); // NOI18N
+        vPayerID.setColName("entityid0"); // NOI18N
         vPayerID.setPreferredSize(new java.awt.Dimension(200, 19));
 
         jLabel4.setText("Payer:"); // NOI18N
 
         jLabel20.setText("Parent:"); // NOI18N
 
-        vParent1ID.setColName("parent1id"); // NOI18N
+        vParent1ID.setColName("entityid0"); // NOI18N
         vParent1ID.setPreferredSize(new java.awt.Dimension(200, 19));
 
         jButton3.setText("New");

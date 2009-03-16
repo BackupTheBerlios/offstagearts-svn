@@ -211,13 +211,24 @@ throws IOException
 //			sql.addWhereClause("main.primaryentityid is not null");
 		break;
 		case DISTINCT_PARENT1ID :
-			sql.addColumn("main.parent1id as id");
-			sql.addWhereClause("main.parent1id is not null");
+			sql.addTable("rels_o2m", "heads", sql.JT_INNER,
+				" heads.relid = (select relid from relids where name = 'parent1of')\n" +
+				" and heads.entityid1 = main.entityid");
+			sql.addColumn("heads.entityid0 as id");
+//			sql.addColumn("main.parent1id as id");
+//			sql.addWhereClause("main.parent1id is not null");
 		break;
 		case DISTINCT_PAYERID :
-			sql.addColumn("termregs.payerid as id");
-			sql.addWhereClause("termregs.payerid is not null");
+			sql.addTable("rels_o2m", "heads", sql.JT_INNER,
+				" heads.relid = (select relid from relids where name = 'payerof')\n" +
+				" and heads.temporalid = termregs.groupid\n" +
+				" and heads.entityid1 = main.entityid");
+			sql.addColumn("heads.entityid0 as id");
 			addTable(schema, sql, "termregs");
+			
+//			sql.addColumn("termregs.payerid as id");
+//			sql.addWhereClause("termregs.payerid is not null");
+//			addTable(schema, sql, "termregs");
 		break;
 //		case DISTINCT_ENTITYID :
 //		default :

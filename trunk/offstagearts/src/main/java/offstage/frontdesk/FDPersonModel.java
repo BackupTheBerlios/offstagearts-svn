@@ -35,6 +35,10 @@ EntityDbModel onePerson;
 IntKeyedDbModel phones;
 // TODO: Use OCDiscModels instead if we want description of discount amounts
 public IntKeyedDbModel ocdiscs;
+RelO2mDbModel parent1ofDm;
+	public SchemaBufRowModel parent1ofRm;
+RelO2mDbModel payerofDm;
+	public SchemaBufRowModel payerofRm;
 
 public EntityDbModel getPersonDm()
 	{ return onePerson; }
@@ -47,6 +51,18 @@ public FDPersonModel(SqlRun str, citibob.app.App app)
 	SchemaSet osset = app.schemaSet();
 	logadd(onePerson = new EntityDbModel(osset.get("persons"), app));
 	logadd(phones = new IntKeyedDbModel(osset.get("phones"), "entityid"));
+	
+	logadd(payerofDm = new RelO2mDbModel(str, app) {
+		public void setKey(Object key) {
+			super.entityid1 = (Integer)key;
+		}});
+	payerofDm.setKeys("payerof", -1, null);
+
+	logadd(parent1ofDm = new RelO2mDbModel(str, app) {
+		public void setKey(Object key) {
+			super.entityid1 = (Integer)key;
+		}});
+	parent1ofDm.setKeys("parent1of", -1, null);
 	
 	ocdiscs = new IntKeyedDbModel(osset.get("ocdiscs"), "entityid");
 	logadd(ocdiscs);// = new IntKeyedDbModel(osset.get("ocdiscs"), "entityid"));

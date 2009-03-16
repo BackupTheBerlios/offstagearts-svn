@@ -255,55 +255,58 @@ public static String updateOneOf(String relName, String tmpTable, String idCol, 
  * @param entityid1
  * @return
  */
-public static SqlSet listRelGroupSql(String relName, int temporalid, int entityid1)
+public static SqlSet listRelGroupSql(SqlRun str, String relName, int temporalid, int entityid1)
 {
+	String group = str.getTableName("_group");
+	String r = str.getTableName("_r");
+	
 	return new SqlSet(
 		// pre SQL
-		// Figure out our head of household (_r.entityid0)
-		" create temporary table _r (relid int, temporalid int, entityid0 int, entityid1 int);\n" +
-		" insert into _r (relid, temporalid, entityid1)\n" +
+		// Figure out our head of household (" + r + ".entityid0)
+		" create temporary table " + r + " (relid int, temporalid int, entityid0 int, entityid1 int);\n" +
+		" insert into " + r + " (relid, temporalid, entityid1)\n" +
 		" 	select relid," + temporalid + ", " + entityid1 + "\n" +
 		" 	from relids where name=" + SqlString.sql(relName) + ";\n" +
-		" update _r set entityid0 = rels.entityid0\n" +
+		" update " + r + " set entityid0 = rels.entityid0\n" +
 		" 	from rels\n" +
-		" 	where rels.relid = _r.relid\n" +
-		" 	and rels.temporalid = _r.temporalid\n" +
-		" 	and rels.entityid1 = _r.entityid1;\n" +
-		" update _r set entityid0 = entityid1 where entityid0 is null;\n" +
+		" 	where rels.relid = " + r + ".relid\n" +
+		" 	and rels.temporalid = " + r + ".temporalid\n" +
+		" 	and rels.entityid1 = " + r + ".entityid1;\n" +
+		" update " + r + " set entityid0 = entityid1 where entityid0 is null;\n" +
 		" \n" +
-		// Find all members of household _r.entityid0
-		" create temporary table _group (entityid0 int, entityid1 int, obsolete1 bool);\n" +
-		" insert into _group (entityid1)\n" +
-		" 	(select rels.entityid1 from rels,_r\n" +
-		" 	where rels.entityid0 = _r.entityid0\n" +
-		" 	and rels.temporalid = _r.temporalid\n" +
-		" 	and rels.relid = _r.relid\n" +
+		// Find all members of household " + r + ".entityid0
+		" create temporary table " + group + " (entityid0 int, entityid1 int, obsolete1 bool);\n" +
+		" insert into " + group + " (entityid1)\n" +
+		" 	(select rels.entityid1 from rels," + r + "\n" +
+		" 	where rels.entityid0 = " + r + ".entityid0\n" +
+		" 	and rels.temporalid = " + r + ".temporalid\n" +
+		" 	and rels.relid = " + r + ".relid\n" +
 		" 		union\n" +
-		" 	select _r.entityid0 from _r);\n" +
-		" update _group set entityid0 = rels.entityid0\n" +
-		" 	from rels,_r\n" +
-		" 	where rels.entityid1 = _group.entityid1\n" +
-		" 	and rels.relid = _r.relid\n" +
-		" 	and rels.temporalid = _r.temporalid;\n" +
-		" drop table _r;" +
-		" update _group set entityid0 = entityid1 where entityid0 is null;\n" +
-//		" update _group set obsolete0 = e.obsolete from entities e where _group.entityid0 = e.entityid;\n" +
-		" update _group set obsolete1 = e.obsolete from entities e where _group.entityid1 = e.entityid;\n",
+		" 	select " + r + ".entityid0 from " + r + ");\n" +
+		" update " + group + " set entityid0 = rels.entityid0\n" +
+		" 	from rels," + r + "\n" +
+		" 	where rels.entityid1 = " + group + ".entityid1\n" +
+		" 	and rels.relid = " + r + ".relid\n" +
+		" 	and rels.temporalid = " + r + ".temporalid;\n" +
+		" drop table " + r + ";" +
+		" update " + group + " set entityid0 = entityid1 where entityid0 is null;\n" +
+//		" update " + group + " set obsolete0 = e.obsolete from entities e where " + group + ".entityid0 = e.entityid;\n" +
+		" update " + group + " set obsolete1 = e.obsolete from entities e where " + group + ".entityid1 = e.entityid;\n",
 
 		// SQL
 		" select case when entityid0=entityid1 then true else false end as head,\n" +
-		" _group.entityid1, _group.obsolete1\n" +
-		" from _group\n" +
-		" where entityid0=entityid1 or not _group.obsolete1\n" +
+		" " + group + ".entityid1, " + group + ".obsolete1\n" +
+		" from " + group + "\n" +
+		" where entityid0=entityid1 or not " + group + ".obsolete1\n" +
 		" order by head desc\n",
 //		" select case when entityid0=entityid1 then true else false end as head,\n" +
-//		" _group.entityid1, _group.obsolete1\n" +
-//		" from _group\n" +
-//		" where entityid0=entityid1 or not _group.obsolete1\n" +
+//		" " + group + ".entityid1, " + group + ".obsolete1\n" +
+//		" from " + group + "\n" +
+//		" where entityid0=entityid1 or not " + group + ".obsolete1\n" +
 //		" order by head desc;\n",
 		
 		// post SQL
-		" drop table _group;\n");
+		" drop table " + group + ";\n");
 }
 
 

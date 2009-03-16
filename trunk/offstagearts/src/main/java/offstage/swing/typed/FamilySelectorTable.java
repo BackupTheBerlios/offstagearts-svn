@@ -74,7 +74,7 @@ public void setHeadofID(SqlRun str, int headID)
 //throws SQLException
 {
 //System.out.println("***** FamilySelectorTable.setPrimaryEntityID(" + primaryEntityID + ")");
-	SqlSet groups = DB.listRelGroupSql("headof", -1, headID);
+	SqlSet groups = DB.listRelGroupSql(str, "headof", -1, headID);
 	SqlSet ssql = new SqlSet(groups,
 		" select xx.entityid1 as id," +
 		" case when head then 0 else 1 end as sort" +

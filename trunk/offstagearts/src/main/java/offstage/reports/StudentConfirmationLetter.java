@@ -55,10 +55,14 @@ throws Exception
 		idSql =
 			" select xx.entityid\n" +
 			" from (\n" +
-			" 	select distinct s.parent1id as entityid\n" +
-			" 	from termregs tr, entities s\n" +
+			"   select distinct r.entityid0 as entityid\n" +
+			"   from termregs tr, rels_o2m r\n" +
 			" 	where tr.groupid = " + termid + "\n" +
-			" 	and tr.entityid = s.entityid\n" +
+			" 	and tr.entityid = r.entityid1\n" +
+//			" 	select distinct s.parent1id as entityid\n" +
+//			" 	from termregs tr, entities s\n" +
+//			" 	where tr.groupid = " + termid + "\n" +
+//			" 	and tr.entityid = s.entityid\n" +
 			" ) xx, persons p\n" +
 			" where xx.entityid = p.entityid\n" +
 			" order by p.lastname, p.firstname";

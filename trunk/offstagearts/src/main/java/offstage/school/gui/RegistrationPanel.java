@@ -90,12 +90,13 @@ class AllStudentDbModel extends MultiDbModel
 	public AllStudentDbModel()
 	{
 		super(smod.studentDm,
-			  smod.parent1ofDm, smod.parent2ofDm, smod.payerofDm,
+			  smod.headofDm, smod.parent1ofDm, smod.parent2ofDm, smod.payerofDm,
 			  smod.termregsDm, enrolledDb);
 	}
 	public void setStudentID(Integer studentid)
 	{
 		smod.studentDm.setKey(studentid);
+		smod.headofDm.setKey(studentid);
 		smod.parent1ofDm.setKey(studentid);
 		smod.parent2ofDm.setKey(studentid);
 		smod.payerofDm.setKey(studentid);
@@ -254,17 +255,21 @@ class AllRecDbModel extends MultiDbModel
 
 		// Transfer main parent over as primary entity id (family relationships)
 		// Get household from parent1
-		final IntVal parent1id = offstage.db.DB.getHeadOf(str, (Integer)smod.studentRm.get("parent1id"));
-		str.execUpdate(new UpdTasklet2() {
-		public void run(SqlRun str) throws Exception {
+		int col = smod.parent1Rm.findColumn("entityid0_notnull");
+		if (smod.parent1Rm.valueChanged(col)) {
 			// Setting parent results in setting household info.
-			smod.studentRm.set("primaryentityid", parent1id.val);
-
-			// Do the rest
-			superDoUpdate(str);
-
-			calcTuition(str);
-		}});
+//			final IntVal parent1id = offstage.db.DB.getHeadOf(str, (Integer)smod.studentRm.get("parent1id"));
+			final IntVal parent1id = offstage.db.DB.getHeadOf(str, (Integer)smod.parent1Rm.get("entityid0"));
+			str.execUpdate(new UpdTasklet2() {
+			public void run(SqlRun str) throws Exception {
+//				smod.studentRm.set("primaryentityid", parent1id.val);
+				smod.headofRm.set("entityid1", parent1id.val);
+				
+				// Do the rest
+				superDoUpdate(str);
+				calcTuition(str);
+			}});
+		}
 		
 		return true;
 	}
@@ -272,7 +277,9 @@ class AllRecDbModel extends MultiDbModel
 
 boolean recordValid()
 {
-	return smod.studentRm.get("parent1id") != null && smod.termregsRm.get("payerid") != null;
+	return smod.parent1Rm.get("entityid0") != null
+		&& smod.payerRm.get("entityid0") != null;
+//	return smod.studentRm.get("parent1id") != null && smod.termregsRm.get("payerid") != null;
 }
 public void calcTuition(SqlRun str)
 {
@@ -412,19 +419,22 @@ str.flush();
 
 	// ===============================================================
 	// Link events when an entityid changes
-	smod.termregsRm.addColListener("payerid", new RowModel.ColAdapter() {
+//	smod.termregsRm.addColListener("payerid", new RowModel.ColAdapter() {
+	smod.payerofRm.addColListener("entityid0", new RowModel.ColAdapter() {
 	public void valueChanged(int col) {
 		if (allStudent.inSelect()) return;	// Only respond to widget changes
 		Integer payerid = smod.getPayerID();
 		allPayer.resetPayerID(fapp.sqlRun(), payerid);
 	}});
-	smod.studentRm.addColListener("parent1id", new RowModel.ColAdapter() {
+//	smod.studentRm.addColListener("parent1id", new RowModel.ColAdapter() {
+	smod.parent1ofRm.addColListener("entityid0", new RowModel.ColAdapter() {
 	public void valueChanged(int col) {
 		if (allStudent.inSelect()) return;	// Only respond to widget changes
 		Integer parent1id = smod.getParent1ID();
 		allParent1.resetParentID(fapp.sqlRun(), parent1id);
 	}});
-	smod.studentRm.addColListener("parent2id", new RowModel.ColAdapter() {
+//	smod.studentRm.addColListener("parent2id", new RowModel.ColAdapter() {
+	smod.parent2ofRm.addColListener("entityid0", new RowModel.ColAdapter() {
 	public void valueChanged(int col) {
 		if (allStudent.inSelect()) return;	// Only respond to widget changes
 		Integer parent2id = smod.getParent2ID();
@@ -488,13 +498,16 @@ str.flush();
 
 	// Display names of related entities
 	vParent1ID.initRuntime(fapp);
-		new TypedWidgetBinder().bind(vParent1ID, smod.studentRm, smap);
+		new TypedWidgetBinder().bind(vParent1ID, smod.parent1ofRm, smap);
+//		new TypedWidgetBinder().bind(vParent1ID, smod.studentRm, smap);
 	new TypedWidgetBinder().bind(lParent1ID, smod.studentRm, smap);
 	vParent2ID.initRuntime(fapp);
-		new TypedWidgetBinder().bind(vParent2ID, smod.studentRm, smap);
+		new TypedWidgetBinder().bind(vParent2ID, smod.parent2ofRm, smap);
+//		new TypedWidgetBinder().bind(vParent2ID, smod.studentRm, smap);
 	new TypedWidgetBinder().bind(lParent2ID, smod.studentRm, smap);
 	vPayerID.initRuntime(fapp);
-		new TypedWidgetBinder().bind(vPayerID, smod.termregsRm, smap);
+		new TypedWidgetBinder().bind(vPayerID, smod.payerofRm, smap);
+//		new TypedWidgetBinder().bind(vPayerID, smod.termregsRm, smap);
 	new TypedWidgetBinder().bind(lPayerID, smod.termregsRm, smap);
 
 	// ================================================================
@@ -2434,7 +2447,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
         PeopleHeader1.add(jLabel4, gridBagConstraints);
 
-        vPayerID.setColName("payerid"); // NOI18N
+        vPayerID.setColName("entityid0"); // NOI18N
         vPayerID.setPreferredSize(new java.awt.Dimension(200, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -2532,7 +2545,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
         PeopleHeader1.add(jLabel20, gridBagConstraints);
 
-        vParent1ID.setColName("parent1id"); // NOI18N
+        vParent1ID.setColName("entityid0"); // NOI18N
         vParent1ID.setPreferredSize(new java.awt.Dimension(200, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -2564,7 +2577,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 3);
         PeopleHeader1.add(jLabel21, gridBagConstraints);
 
-        vParent2ID.setColName("parent2id"); // NOI18N
+        vParent2ID.setColName("entityid0"); // NOI18N
         vParent2ID.setPreferredSize(new java.awt.Dimension(200, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -2783,13 +2796,14 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
 
 	private void bNewParent2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewParent2ActionPerformed
 	{//GEN-HEADEREND:event_bNewParent2ActionPerformed
-		newPayerAction(smod.studentRm, "parent2id");
+//		newPayerAction(smod.studentRm, "parent2id");
+		newPayerAction(smod.parent2ofRm, "entityid0");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bNewParent2ActionPerformed
 
 	private void bNewParentActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bNewParentActionPerformed
 	{//GEN-HEADEREND:event_bNewParentActionPerformed
-		this.newPayerAction(smod.studentRm, "parent1id");
+		this.newPayerAction(smod.parent1ofRm, "entityid0");
 // TODO add your handling code here:
 	}//GEN-LAST:event_bNewParentActionPerformed
 
