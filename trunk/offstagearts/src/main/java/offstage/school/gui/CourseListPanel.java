@@ -155,7 +155,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 			" from _sids\n" +
 			" inner join rels_o2m r on\n" +
 			" (_sids.id = r.entityid1\n" +
-			" and r.relid = (select relid from relids where name='parent1of')\n";
+			" and r.relid = (select relid from relids where name='parent1of'))\n";
 //			" select distinct p.parent1id as id\n" +
 //			" from _sids\n" +
 //			" inner join persons p on (_sids.id = p.entityid)\n";

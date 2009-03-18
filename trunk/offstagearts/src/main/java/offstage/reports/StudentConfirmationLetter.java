@@ -67,7 +67,12 @@ throws Exception
 			" where xx.entityid = p.entityid\n" +
 			" order by p.lastname, p.firstname";
 	} else {
-		idSql = "select parent1id from entities e where e.entityid = " + entityid;
+		idSql =
+			" select entityid0\n" +
+			" from rels_o2m r\n" +
+			" where r.entityid1 = " + entityid +
+			" and r.relid = (select relid from relids where name = 'parent1of')";
+//		idSql = "select parent1id from entities e where e.entityid = " + entityid;
 	}
 	String sql = LabelReport.getSql(idSql, null);
 	

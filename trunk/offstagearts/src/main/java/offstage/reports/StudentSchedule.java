@@ -43,7 +43,7 @@ public class StudentSchedule
 public static String getSql(int termid, int studentid)
 {
 	return
-		" select adult.lastname as alastname, adult.firstname as afirstname,\n" +
+		" select parent1.lastname as alastname, parent1.firstname as afirstname,\n" +
 		" p.lastname, p.firstname, pr.name as programname,\n" +
 		" c.dayofweek, dow.shortname as dayofweek_shortname,\n" +
 		" to_char(c.tstart,'HH:MI') as tstart,\n" +
@@ -57,14 +57,18 @@ public static String getSql(int termid, int studentid)
 		" inner join persons p on (p.entityid = en.entityid)\n" +
 		" inner join termregs tr on (t.groupid = tr.groupid and p.entityid = tr.entityid)" +
 //		" inner join entities_school ps on (p.entityid = ps.entityid)\n" +
-		" inner join entities adult on (p.parent1id = adult.entityid)\n" +
+		" inner join rels rels_p1 on (" +
+		"    rels_p1.entityid1 = p.entityid" +
+		"    and rels_p1.relid = (select relid from relids where name='parent1of'))" +
+		" inner join entities parent1 on (rels_p1.entityid0 = parent1.entityid)\n" +
+//		" inner join entities parent1 on (p.parent1id = parent1.entityid)\n" +
 		" inner join daysofweek dow on (dow.javaid = c.dayofweek)\n" +
 		" inner join locations loc on (loc.locationid = c.locationid)\n" +
 		" left outer join programids pr  on (pr.programid = tr.programid)\n" +
 		" where t.groupid=" + SqlInteger.sql(termid) + "\n" +
 		" and c.dayofweek >= 0" +
 		(studentid < 0 ? "" : " and p.entityid = " + SqlInteger.sql(studentid)) +
-		" order by adult.lastname, adult.firstname, p.lastname, p.firstname, \n" +
+		" order by parent1.lastname, parent1.firstname, p.lastname, p.firstname, \n" +
 		" c.dayofweek, c.tstart\n";
 
 }

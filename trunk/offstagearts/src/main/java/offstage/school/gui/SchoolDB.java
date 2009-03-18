@@ -174,7 +174,7 @@ public static Map<Integer,String> getStudentNames(SqlRun str, int termid, String
 		" where te.entityid = ss.entityid" +
 		" and te.groupid = " + SqlInteger.sql(termid) +
 		" and te.entityid = tr.entityid and te.groupid = tr.groupid\n" +
-		" amd tr.entityid = r.entityid1 and r.temporalid = tr.groupid\n" +
+		" and tr.entityid = r.entityid1 and r.temporalid = tr.groupid\n" +
 		" and r.relid = (select relid from relids where name = 'payerof')\n" +
 		" and pp.entityid = r.entityid0\n" +
 //		" and tr.payerid = pp.entityid" +

@@ -43,7 +43,8 @@ public void requery(SqlRun str)
 	if (payerID == null) {
 		executeQuery(str, "select 0 as id where 1=0;", null);
 	} else {
-		SqlSet groups = DB.listRelGroupSql(str, "payerof", -1, payerID);
+		SqlSet groups = DB.listRelGroupSql(str, "payerof",
+			termid == null ? -1 : termid, payerID);
 
 		SqlSet ssql = new SqlSet(groups,
 			" select xx.entityid1 as id," +

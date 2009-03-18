@@ -2500,7 +2500,7 @@
                 <Component class="citibob.swing.typed.JTypedLabel" name="lPayerID">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="jTypedLabel1" noResource="true"/>
-                    <Property name="colName" type="java.lang.String" value="payerid" noResource="true"/>
+                    <Property name="colName" type="java.lang.String" value="entityid0" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2511,7 +2511,7 @@
                 <Component class="citibob.swing.typed.JTypedLabel" name="lParent1ID">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="jTypedLabel1" noResource="true"/>
-                    <Property name="colName" type="java.lang.String" value="parent1id" noResource="true"/>
+                    <Property name="colName" type="java.lang.String" value="entityid0" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -2522,7 +2522,7 @@
                 <Component class="citibob.swing.typed.JTypedLabel" name="lParent2ID">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="jTypedLabel1" noResource="true"/>
-                    <Property name="colName" type="java.lang.String" value="parent2id" noResource="true"/>
+                    <Property name="colName" type="java.lang.String" value="entityid0" noResource="true"/>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

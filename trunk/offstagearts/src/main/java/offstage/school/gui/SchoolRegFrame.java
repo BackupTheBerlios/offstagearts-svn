@@ -552,6 +552,9 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 				" from persons e\n" +
 				" left outer join termenrolls te on e.entityid = te.entityid\n" +
 				" left outer join termregs tr on tr.entityid = te.entityid and tr.groupid = te.groupid\n" +
+				" left outer join rels rels_p1 on (\n" +
+				"    rels_p1.entityid1 = p1.entityid" +
+				"    and rels_p1.relid = (select relid from relids where name = 'parent1of'))\n" +
 				" left outer join entities p1 on p1.entityid = e.parent1id\n" +
 				" left outer join programids prg on prg.programid = tr.programid\n" +
 				" where te.groupid = " + SqlInteger.sql(termid) +

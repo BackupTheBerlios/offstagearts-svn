@@ -225,7 +225,7 @@ java.util.Date xasOfDate, int lateDays)
 		" order by isorg desc,lastname,firstname,entityid,date,amount desc;\n" +
 
 		// rss[1] = Basic tuition and scholarship info for the term
-		" select r.entity0 as payerid,sum(tuition) as tuition, sum(scholarship) as scholarship\n" +
+		" select r.entityid0 as payerid,sum(tuition) as tuition, sum(scholarship) as scholarship\n" +
 		" from termregs tr, rels_o2m r\n" +
 		" where groupid = " + termid + "\n" +
 		" and tuition is not null and tuition > 0\n" +

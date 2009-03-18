@@ -40,7 +40,7 @@ public class RelO2mDbModel extends SqlBufDbModel
 {
 	protected String relName;
 	protected Integer temporalid, entityid1;
-	
+
 	public void setKeys(String relName, Integer temporalid, Integer entityid1)
 	{
 		this.relName = relName;
@@ -54,12 +54,16 @@ public class RelO2mDbModel extends SqlBufDbModel
 		return app.schemaSet().getEnumInt("enrollments", "courserole", name);
 	}
 	
-	public RelO2mDbModel(SqlRun str, App app) {
+	public RelO2mDbModel(SqlRun str, App app, int editableCol) {
 		super(str, app, (String[])null, null, null);
+		this.editableCol = editableCol;
 	}
-	static final int COL_ENTITYID0_NOTNULL = 1;
-	static final int COL_ENTITYID1 = 2;
-	static final int[] editableCols = {COL_ENTITYID0_NOTNULL};
+	public static final int COL_ENTITYID0 = 0;
+	public static final int COL_ENTITYID0_NOTNULL = 1;
+	public static final int COL_ENTITYID1 = 2;
+	int editableCol = COL_ENTITYID0;
+	
+//	static final int[] editableCols = {COL_ENTITYID0_NOTNULL};
 	public SqlSet getSelectSql(boolean proto) {
 		return new SqlSet(
 			" select\n" +
@@ -78,11 +82,12 @@ public class RelO2mDbModel extends SqlBufDbModel
 	{
 		SchemaBuf sb = (SchemaBuf)sbuf;
 
-		if (sbuf.valueChanged(row, editableCols)) {
-			Integer Entityid0 = (Integer)sbuf.getValueAt(row, "entityid0_notnull");
+		if (sbuf.valueChanged(row, editableCol)) {
+			Integer Entityid0 = (Integer)sbuf.getValueAt(row, editableCol);
 			String sql =  "select w_rels_o2m_set(" +
 				"(select relid from relids where name = " + SqlString.sql(relName) + "), " +
-				temporalid + ", " + SqlInteger.sql(Entityid0) + ", " + entityid1 + ");";
+				temporalid + ", " + SqlInteger.sql(Entityid0) + ", " + entityid1 + ", " +
+				(editableCol == COL_ENTITYID0_NOTNULL ? "true" : "false") + ");";
 			str.execSql(sql);
 			sbuf.setStatus(row, 0);
 			return true;

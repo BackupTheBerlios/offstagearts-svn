@@ -256,11 +256,11 @@ class AllRecDbModel extends MultiDbModel
 
 		// Transfer main parent over as primary entity id (family relationships)
 		// Get household from parent1
-		int col = smod.parent1Rm.findColumn("entityid0_notnull");
-		if (smod.parent1Rm.valueChanged(col)) {
+		int col = smod.parent1ofRm.findColumn("entityid0_notnull");
+		if (smod.parent1ofRm.valueChanged(col)) {
 			// Setting parent results in setting household info.
 //			final IntVal parent1id = offstage.db.DB.getHeadOf(str, (Integer)smod.studentRm.get("parent1id"));
-			final IntVal parent1id = offstage.db.DB.getHeadOf(str, (Integer)smod.parent1Rm.get("entityid0"));
+			final IntVal parent1id = offstage.db.DB.getHeadOf(str, (Integer)smod.parent1ofRm.get("entityid0"));
 			str.execUpdate(new UpdTasklet2() {
 			public void run(SqlRun str) throws Exception {
 //				smod.studentRm.set("primaryentityid", parent1id.val);
@@ -270,6 +270,9 @@ class AllRecDbModel extends MultiDbModel
 				superDoUpdate(str);
 				calcTuition(str);
 			}});
+		} else {
+			superDoUpdate(str);
+			calcTuition(str);
 		}
 		
 		return true;
@@ -278,17 +281,17 @@ class AllRecDbModel extends MultiDbModel
 
 boolean recordValid()
 {
-	return smod.parent1Rm.get("entityid0") != null
-		&& smod.payerRm.get("entityid0") != null;
+	return smod.parent1ofRm.get("entityid0") != null
+		&& smod.payerofRm.get("entityid0") != null;
 //	return smod.studentRm.get("parent1id") != null && smod.termregsRm.get("payerid") != null;
 }
 public void calcTuition(SqlRun str)
 {
 	// Calculate the tuition
 //	int col = smod.termregsRm.findColumn("payerid");
-	int col = smod.payerRm.findColumn("entityid0");
-	Integer Oldpayerid = (Integer)smod.payerRm.getOrigValue(col);
-	Integer Payerid = (Integer)smod.payerRm.get(col);
+	int col = smod.payerofRm.findColumn("entityid0");
+	Integer Oldpayerid = (Integer)smod.payerofRm.getOrigValue(col);
+	Integer Payerid = (Integer)smod.payerofRm.get(col);
 
 	int termid = smod.getTermID();
 	String payerIdSql = null;
@@ -502,15 +505,15 @@ str.flush();
 	vParent1ID.initRuntime(fapp);
 		new TypedWidgetBinder().bind(vParent1ID, smod.parent1ofRm, smap);
 //		new TypedWidgetBinder().bind(vParent1ID, smod.studentRm, smap);
-	new TypedWidgetBinder().bind(lParent1ID, smod.studentRm, smap);
+	new TypedWidgetBinder().bind(lParent1ID, smod.parent1ofRm, smap);
 	vParent2ID.initRuntime(fapp);
 		new TypedWidgetBinder().bind(vParent2ID, smod.parent2ofRm, smap);
 //		new TypedWidgetBinder().bind(vParent2ID, smod.studentRm, smap);
-	new TypedWidgetBinder().bind(lParent2ID, smod.studentRm, smap);
+	new TypedWidgetBinder().bind(lParent2ID, smod.parent2ofRm, smap);
 	vPayerID.initRuntime(fapp);
 		new TypedWidgetBinder().bind(vPayerID, smod.payerofRm, smap);
 //		new TypedWidgetBinder().bind(vPayerID, smod.termregsRm, smap);
-	new TypedWidgetBinder().bind(lPayerID, smod.termregsRm, smap);
+	new TypedWidgetBinder().bind(lPayerID, smod.payerofRm, smap);
 
 	// ================================================================
 	// Payer
@@ -2604,7 +2607,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         PeopleHeader1.add(bNewParent2, gridBagConstraints);
 
         lPayerID.setText("jTypedLabel1"); // NOI18N
-        lPayerID.setColName("payerid"); // NOI18N
+        lPayerID.setColName("entityid0"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
@@ -2612,7 +2615,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         PeopleHeader1.add(lPayerID, gridBagConstraints);
 
         lParent1ID.setText("jTypedLabel1"); // NOI18N
-        lParent1ID.setColName("parent1id"); // NOI18N
+        lParent1ID.setColName("entityid0"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
@@ -2620,7 +2623,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         PeopleHeader1.add(lParent1ID, gridBagConstraints);
 
         lParent2ID.setText("jTypedLabel1"); // NOI18N
-        lParent2ID.setColName("parent2id"); // NOI18N
+        lParent2ID.setColName("entityid0"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 3;

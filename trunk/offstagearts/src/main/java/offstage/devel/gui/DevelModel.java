@@ -107,7 +107,7 @@ public DevelModel(FrontApp app)
 	logger = app.queryLogger();
 	SchemaSet osset = app.schemaSet();
 	logadd(onePerson = new EntityDbModel(osset.get("persons"), app));
-	add(headofDm = new RelO2mDbModel(app.sqlRun(), app) {
+	add(headofDm = new RelO2mDbModel(app.sqlRun(), app, RelO2mDbModel.COL_ENTITYID0_NOTNULL) {
 		public void setKey(Object key) {
 			super.entityid1 = (Integer)key;
 		}});

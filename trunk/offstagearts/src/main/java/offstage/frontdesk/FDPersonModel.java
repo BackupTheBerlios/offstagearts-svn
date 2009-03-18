@@ -52,13 +52,13 @@ public FDPersonModel(SqlRun str, citibob.app.App app)
 	logadd(onePerson = new EntityDbModel(osset.get("persons"), app));
 	logadd(phones = new IntKeyedDbModel(osset.get("phones"), "entityid"));
 	
-	logadd(payerofDm = new RelO2mDbModel(str, app) {
+	logadd(payerofDm = new RelO2mDbModel(str, app, RelO2mDbModel.COL_ENTITYID0) {
 		public void setKey(Object key) {
 			super.entityid1 = (Integer)key;
 		}});
 	payerofDm.setKeys("payerof", -1, null);
 
-	logadd(parent1ofDm = new RelO2mDbModel(str, app) {
+	logadd(parent1ofDm = new RelO2mDbModel(str, app, RelO2mDbModel.COL_ENTITYID0) {
 		public void setKey(Object key) {
 			super.entityid1 = (Integer)key;
 		}});

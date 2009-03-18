@@ -71,13 +71,14 @@ primary key(relid,temporalid,entityid1)
 
 -- Function: w_rels_o2m_set(integer, integer, integer, integer)
 
--- DROP FUNCTION w_rels_o2m_set(integer, integer, integer, integer);
+-- DROP FUNCTION w_rels_o2m_set(integer, integer, integer, integer, bool);
 
-CREATE OR REPLACE FUNCTION w_rels_o2m_set(xrelid integer, xtemporalid integer, xentityid0 integer, xentityid1 integer)
+CREATE OR REPLACE FUNCTION w_rels_o2m_set(xrelid integer, xtemporalid integer,
+xentityid0 integer, xentityid1 integer, nullifequal bool)
   RETURNS void AS
 '
 BEGIN
-	if xentityid0 = xentityid1 or xentityid0 is null then
+	if (nullifequal and xentityid0 = xentityid1) or xentityid0 is null then
 		delete from rels where relid = xrelid and temporalid = xtemporalid and entityid1 = xentityid1;
 	elseif xentityid1 is null then
 		delete from rels where relid = xrelid and temporalid = xtemporalid and entityid0 = xentityid0;
@@ -97,7 +98,28 @@ END
   LANGUAGE 'plpgsql' VOLATILE;
 
 
+-- Modify old version of this function
+-- DROP FUNCTION w_student_register(integer, integer, date);
 
+CREATE OR REPLACE FUNCTION w_student_register(xtermid integer, studentid integer, xdtregistered date)
+  RETURNS void AS
+'
+
+BEGIN
+    BEGIN
+    insert into termregs (groupid, entityid, dtregistered) values
+	(xtermid, studentid, xdtregistered);
+    EXCEPTION WHEN unique_violation THEN
+            -- do nothing
+    END;
+
+	execute w_rels_o2m_set(
+		(select relid from relids where name = ''payerof''), xtermid,
+		studentid, studentid, false);
+
+END;
+'
+  LANGUAGE 'plpgsql' VOLATILE;
 
 
 -- We don't need these (for now)
@@ -208,6 +230,9 @@ drop function w_queries_new_persons(character varying, character varying);
 ALTER TABLE entities DROP COLUMN primaryentityid;
 ALTER TABLE entities DROP COLUMN relprimarytypeid;
 drop table relprimarytypes;
+ALTER TABLE entities DROP COLUMN parent1id;
+ALTER TABLE entities DROP COLUMN parent2id;
+ALTER TABLE termregs DROP COLUMN payerid;
 
 
 

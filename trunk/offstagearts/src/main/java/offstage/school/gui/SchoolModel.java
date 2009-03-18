@@ -78,25 +78,25 @@ public SchoolModel(SqlRun str, App fapp)
 	studentDm = new StudentDbModel(fapp);
 		studentRm = new SchemaBufRowModel(studentDm.personDb.getSchemaBuf());
 
-	parent1ofDm = new RelO2mDbModel(str, app) {
+	parent1ofDm = new RelO2mDbModel(str, app, RelO2mDbModel.COL_ENTITYID0) {
 		public void setKey(Object key) {
 			super.entityid1 = (Integer)key;
 		}};
 	parent1ofDm.setKeys("parent1of", -1, null);
 
-	parent2ofDm = new RelO2mDbModel(str, app) {
+	parent2ofDm = new RelO2mDbModel(str, app, RelO2mDbModel.COL_ENTITYID0) {
 		public void setKey(Object key) {
 			super.entityid1 = (Integer)key;
 		}};
 	parent2ofDm.setKeys("parent2of", -1, null);
 
-	payerofDm = new RelO2mDbModel(str, app) {
+	payerofDm = new RelO2mDbModel(str, app, RelO2mDbModel.COL_ENTITYID0) {
 		public void setKey(Object key) {
 			super.entityid1 = (Integer)key;
 		}};
 	payerofDm.setKeys("payerof", -1, null);
 
-	headofDm = new RelO2mDbModel(str, app) {
+	headofDm = new RelO2mDbModel(str, app, RelO2mDbModel.COL_ENTITYID0_NOTNULL) {
 		public void setKey(Object key) {
 			super.entityid1 = (Integer)key;
 		}};
