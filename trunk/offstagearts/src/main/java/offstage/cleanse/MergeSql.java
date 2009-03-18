@@ -161,7 +161,7 @@ public void mergeEntities(Integer entityid0, Integer entityid1)
 //	searchAndReplace(sset.get("entities_school"), "parentid", entityid0, entityid1);
 //	searchAndReplace(sset.get("entities_school"), "parent2id", entityid0, entityid1);
 	moveRows(sset.get("termregs"), "entityid", entityid0, entityid1);
-	searchAndReplace(sset.get("termregs"), "payerid", entityid0, entityid1);
+//	searchAndReplace(sset.get("termregs"), "payerid", entityid0, entityid1);
 	moveRows(sset.get("payertermregs"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("enrollments"), "entityid", entityid0, entityid1);
 	moveRows(sset.get("subs"), "entityid", entityid0, entityid1);

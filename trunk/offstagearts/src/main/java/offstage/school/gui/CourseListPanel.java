@@ -177,7 +177,7 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 			" (case when p1.firstname is null then '' else p1.firstname || ' ' end ||\n" +
 			"  case when p1.lastname is null then '' else p1.lastname end) as p1_name,\n" +
 //			" e.entityid, e.courseid, st.parent1id, tr.payerid,\n" +
-			" e.entityid, e.courseid, p1.entityid, tr.payerid,\n" +
+			" e.entityid, e.courseid, p1.entityid as parent1id, rel_py.entityid0 as payerid,\n" +
 			" _pph_phoneid1,_pph_phone1,_pph_phoneid2,_pph_phone2\n" +
 			" from courseids c\n" +
 			" left outer join enrollments e on (c.courseid = e.courseid)\n" +
@@ -188,6 +188,9 @@ public void initRuntime(FrontApp xfapp, SchoolModel smod, SqlRun str)
 			" left outer join persons p1 on (rel_p1.entityid0 = p1.entityid)\n" +
 //			" left outer join persons p1 on (st.parent1id = p1.entityid)\n" +
 			" left outer join termregs tr on (tr.groupid = c.termid and tr.entityid = st.entityid)\n" +
+			" left outer join rels_o2m rel_py on" +
+			"    (rel_py.entityid1 = tr.entityid and rel_py.temporalid = tr.groupid\n" +
+			"    and rel_py.relid = (select relid from relids where name='payerof'))" +
 			" left outer join (" + pj.pphonesTable("_pph") + ") pph on (pph.id = p1.entityid)" +
 			" where c.courseid = " + SqlInteger.sql(courseid) +
 			" order by e.courserole,st.lastname,st.firstname;\n");

@@ -81,8 +81,12 @@ public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 		" create temporary table _students (entityid int);\n" +
 		" insert into _students\n" +
 		" select distinct tr.entityid\n" +
-		" from termregs tr, entities e, _payers\n" +
-		" where tr.payerid = _payers.entityid\n" +
+		" from termregs tr, rels_o2m r, entities e, _payers\n" +
+//		" where tr.payerid = _payers.entityid\n" +
+		" where tr.entityid = r.entityid1 and tr.groupid = r.temporalid\n" +
+		" and r.relid = (select relid from relids where name = 'payerof')\n" +
+		" and r.entityid0 = _payers.entityid\n" +
+//		"tr.payerid = _payers.entityid\n" +
 		" and tr.groupid = " + SqlInteger.sql(termid) + "\n" +
 		" and tr.entityid = e.entityid\n" +
 		" and not e.obsolete;\n" +
@@ -130,12 +134,14 @@ public TuitionData(SqlRun str, int termid, String payerIdSql, TimeZone tz)
 		" and not e.obsolete;\n" +
 		
 		// rss[3]: Students
-		" select _students.entityid, tr.payerid, e.lastname, e.firstname,\n" +
+		" select _students.entityid, r.entityid0 as payerid, e.lastname, e.firstname,\n" +
 		" tr.scholarship, tr.scholarshippct, tr.tuition, tr.defaulttuition, tr.tuitionoverride\n" +
-		" from _students, entities e, termregs tr\n" +
+		" from _students, entities e, termregs tr, rels_o2m r\n" +
 //		"     entities e left outer join entities_school es on (e.entityid = es.entityid),\n" +
 //		"     termregs tr\n" +
 		" where tr.groupid = " + SqlInteger.sql(termid) + "\n" +
+		" and tr.entityid = r.entityid1 and tr.groupid = r.temporalid\n" +
+		" and r.relid = (select relid from relids where name = 'payerof')\n" +
 		" and _students.entityid = tr.entityid\n" +
 		" and _students.entityid = e.entityid\n" +
 		" and not e.obsolete;\n" +

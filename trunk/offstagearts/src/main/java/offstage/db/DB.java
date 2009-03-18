@@ -213,9 +213,8 @@ public static IntVal getOneOf(SqlRun str, String relName, int temporalid, int en
 		" e.obsolete\n" +
 		" from entities e\n" +
 		" left outer join rels on (e.entityid = rels.entityid1 " +
-			" and rels.temporalid=" + temporalid + ")\n" +
-		" left outer join relids on (rels.relid = relids.relid " +
-			" and relids.name=" + SqlString.sql(relName) + ")\n" +
+			" and rels.temporalid=" + temporalid +
+			" and rels.relid in (select relid from relids where name=" + SqlString.sql(relName) + "))\n" +
 		" where e.entityid=" + entityid1;
 	str.execSql(sql, new RsTasklet2() {
 	public void run(SqlRun str, ResultSet rs) throws Exception {

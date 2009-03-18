@@ -250,7 +250,8 @@ class AllRecDbModel extends MultiDbModel
 		}
 
 		// Make sure payer has record in school system
-		Integer payerid = (Integer)smod.termregsRm.get("payerid");
+//		Integer payerid = (Integer)smod.termregsRm.get("payerid");
+		Integer payerid = (Integer)smod.getPayerID();
 		if (payerid != null) str.execSql(SchoolDB.registerPayerSql(smod.getTermID(), payerid));
 
 		// Transfer main parent over as primary entity id (family relationships)
@@ -284,9 +285,10 @@ boolean recordValid()
 public void calcTuition(SqlRun str)
 {
 	// Calculate the tuition
-	int col = smod.termregsRm.findColumn("payerid");
-	Integer Oldpayerid = (Integer)smod.termregsRm.getOrigValue(col);
-	Integer Payerid = (Integer)smod.termregsRm.get(col);
+//	int col = smod.termregsRm.findColumn("payerid");
+	int col = smod.payerRm.findColumn("entityid0");
+	Integer Oldpayerid = (Integer)smod.payerRm.getOrigValue(col);
+	Integer Payerid = (Integer)smod.payerRm.get(col);
 
 	int termid = smod.getTermID();
 	String payerIdSql = null;

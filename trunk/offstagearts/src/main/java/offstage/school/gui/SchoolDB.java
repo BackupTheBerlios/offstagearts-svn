@@ -169,12 +169,15 @@ public static Map<Integer,String> getStudentNames(SqlRun str, int termid, String
 {
 	String sql =
 		" select pp.entityid as payerid, ss.lastname, ss.firstname" +
-		" from persons pp, persons ss, termenrolls te, termregs tr\n" +
+		" from persons pp, persons ss, termenrolls te, termregs tr, rels_o2m r\n" +
 		(payerIdSql == null ? "" : ", (" + payerIdSql + ") xx\n") +
 		" where te.entityid = ss.entityid" +
 		" and te.groupid = " + SqlInteger.sql(termid) +
 		" and te.entityid = tr.entityid and te.groupid = tr.groupid\n" +
-		" and tr.payerid = pp.entityid" +
+		" amd tr.entityid = r.entityid1 and r.temporalid = tr.groupid\n" +
+		" and r.relid = (select relid from relids where name = 'payerof')\n" +
+		" and pp.entityid = r.entityid0\n" +
+//		" and tr.payerid = pp.entityid" +
 		(payerIdSql == null ? "" : " and pp.entityid = xx.id") +
 		"\n order by pp.entityid";
 	final Map<Integer,String> map = new TreeMap();

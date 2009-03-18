@@ -35,11 +35,11 @@ public class EQuerySchema extends QuerySchema
 public EQuerySchema(SchemaSet sset, DataTabSet tabs) throws SQLException
 {
 	super();
-	addSchema(sset.get("entities"),
+	addSchema(sset.get("entities"), null,
 		"entities.entityid = main.entityid");
-	addSchema(sset.get("org"),
+	addSchema(sset.get("org"), null,
 		"organizations.entityid = main.entityid");
-	addSchema(sset.get("persons"),
+	addSchema(sset.get("persons"), null,
 		"persons.entityid = main.entityid");
 //	addSchema(sset.get("events"),
 //		"events.entityid = main.entityid");
@@ -47,16 +47,17 @@ public EQuerySchema(SchemaSet sset, DataTabSet tabs) throws SQLException
 //		"donations.entityid = main.entityid");
 //	addSchema(sset.get("notes"),
 //		"notes.entityid = main.entityid");
-	addSchema(sset.get("phones"),
+	addSchema(sset.get("phones"), null,
 		"phones.entityid = main.entityid");
 //	addSchema(sset.get("classes"),
 //		"classes.entityid = main.entityid");
 //	addSchema(sset.get("termenrolls"),
 //		"termenrolls.entityid = main.entityid");
-	addSchema(sset.get("termregs"),
+	addSchema(sset.get("termregs"), null,
 		"termregs.entityid = termenrolls.entityid and termregs.groupid = termenrolls.groupid",
 		"termenrolls");
-	addSchema(sset.get("enrollments"),
+
+	addSchema(sset.get("enrollments"), null,
 		"enrollments.entityid = main.entityid");
 	super.getCol("enrollments.courseid").typer = new ColTyper() {
 	public JType getType(EClause clause, Element el, QuerySchema.Col col) {
@@ -135,7 +136,7 @@ private static final String[] aliases = {
 	"termregs.scholarship", "scholarship",
 	"termregs.dtsigned", "registration-signed",
 	"termregs.dtregistered", "date-registered",
-	"termregs.payerid", "payer",
+//	"termregs.payerid", "payer",
 //	"interests.groupid", "interests",
 //	"ticketeventsales.groupid", "tickets",
 //	"ticketeventsales.date", "tix-date",

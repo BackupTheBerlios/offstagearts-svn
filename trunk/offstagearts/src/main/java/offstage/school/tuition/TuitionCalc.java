@@ -70,8 +70,13 @@ public void setPayerIDs(Set<Integer> payerIDs)
 public void setAllPayerIDs()
 {
 	setPayerIDs(
-		" select distinct payerid from termregs tr, entities es" +
+//		" select distinct payerid from termregs tr, entities es" +
+//		" select distinct payerid from termregs tr, rels_o2m r, entities es" +
+		" select distinct r.entityid0 as payerid\n" +
+		" from termregs tr, rels_o2m r, entities es" +
 		" where tr.groupid = " + SqlInteger.sql(termid) +
+		" and r.temporalid = tr.groupid and r.entityid1 = tr.entityid\n" +
+		" and r.relid = (select relid from relids where name = 'payerof')\n" +
 		" and tr.entityid = es.entityid");
 }
 

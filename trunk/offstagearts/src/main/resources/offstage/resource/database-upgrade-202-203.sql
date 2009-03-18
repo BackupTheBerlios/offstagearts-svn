@@ -179,21 +179,21 @@ select relids.relid, -1, e.parent1id, e.entityid
 from entities e, relids
 where relids.name='parent1of'
 and e.parent1id is not null;
-//and e.parent1id <> e.entityid;
+--and e.parent1id <> e.entityid;
 
 insert into rels_o2m (relid,temporalid,entityid0,entityid1)
 select relids.relid, -1, e.parent2id, e.entityid
 from entities e, relids
 where relids.name='parent2of'
 and e.parent2id is not null;
-//and e.parent2id <> e.entityid;
+--and e.parent2id <> e.entityid;
 
 insert into rels_o2m (relid,temporalid,entityid0,entityid1)
 select relids.relid, tr.groupid, tr.payerid, tr.entityid
 from termregs tr,relids
 where relids.name='payerof'
 and tr.payerid is not null;
-//and tr.payerid <> e.entityid;
+--and tr.payerid <> e.entityid;
 
 -- Drop primaryentityid from the schema
 drop function rfi_primaryentityid();

@@ -69,7 +69,7 @@ public String getOrderClause()
 /** Override this for complex/unusual cases */
 public void addToEQuerySchema(EQuerySchema eschema)
 {
-	eschema.addSchema(schema,
+	eschema.addSchema(schema, null,
 		getTableName() + ".entityid = main.entityid");
 }
 

@@ -28,6 +28,7 @@ import citibob.swing.typed.SwingerMap;
 import java.sql.SQLException;
 import javax.swing.JTabbedPane;
 import offstage.devel.gui.DevelModel;
+import offstage.equery.EQuerySchema;
 import offstage.gui.GroupPanel;
 import offstage.schema.TermenrollsSchema;
 
@@ -59,4 +60,12 @@ JTabbedPane groupPanels, SwingerMap smap)
 	panel.setEnabled(false);
 	return panel;
 }
+
+public void addToEQuerySchema(EQuerySchema eschema)
+{
+	eschema.addSchema(schema, "termenrolls.groupid as termid",
+		"termenrolls.entityid = main.entityid");
+}
+
+
 }

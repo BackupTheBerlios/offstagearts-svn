@@ -101,26 +101,36 @@ static String currentCustomersIdSql =
 	" where te.groupid = t.groupid\n" +
 	" and t.iscurrent\n" +
 	" 	union\n" +
-	" select distinct tr.payerid as id\n" +
-	" from termenrolls te, termids t, termregs tr\n" +
+	" select r.entityid0 as id" +
+	" from termenrolls te, termids t, rels_o2m r, relids\n" +
 	" where te.groupid = t.groupid\n" +
-	" and te.entityid = tr.entityid\n" +
+	" and te.entityid = r.entityid1\n" +
 	" and t.iscurrent\n" +
 	" and tr.payerid is not null\n" +
-	" 	union\n" +
-	" select distinct e.parent1id as id\n" +
-	" from termenrolls te, termids t, entities e\n" +
-	" where te.groupid = t.groupid\n" +
-	" and te.entityid = e.entityid\n" +
-	" and t.iscurrent\n" +
-	" and e.parent1id is not null\n" +
-	" 	union\n" +
-	" select distinct e.parent2id as id\n" +
-	" from termenrolls te, termids t, entities e\n" +
-	" where te.groupid = t.groupid\n" +
-	" and te.entityid = e.entityid\n" +
-	" and t.iscurrent\n" +
-	" and e.parent2id is not null\n";
+	" and r.relid = relids.relid\n" +
+	" and (r.temporalid = t.groupid or r.temporalid = -1)\n" +
+	" and relids.name in ('payerof', 'parent1of', 'parent2of')";
+
+//	" select distinct tr.payerid as id\n" +
+//	" from termenrolls te, termids t, termregs tr\n" +
+//	" where te.groupid = t.groupid\n" +
+//	" and te.entityid = tr.entityid\n" +
+//	" and t.iscurrent\n" +
+//	" and tr.payerid is not null\n" +
+//	" 	union\n" +
+//	" select distinct e.parent1id as id\n" +
+//	" from termenrolls te, termids t, entities e\n" +
+//	" where te.groupid = t.groupid\n" +
+//	" and te.entityid = e.entityid\n" +
+//	" and t.iscurrent\n" +
+//	" and e.parent1id is not null\n" +
+//	" 	union\n" +
+//	" select distinct e.parent2id as id\n" +
+//	" from termenrolls te, termids t, entities e\n" +
+//	" where te.groupid = t.groupid\n" +
+//	" and te.entityid = e.entityid\n" +
+//	" and t.iscurrent\n" +
+//	" and e.parent2id is not null\n";
 
 public static String checkSchoolEmailQuery(String idSql)
 {

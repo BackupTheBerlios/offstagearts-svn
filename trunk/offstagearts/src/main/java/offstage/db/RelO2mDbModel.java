@@ -69,9 +69,8 @@ public class RelO2mDbModel extends SqlBufDbModel
 			" e.obsolete\n" +
 			" from entities e\n" +
 			" left outer join rels on (e.entityid = rels.entityid1 " +
-				" and rels.temporalid=" + temporalid + ")\n" +
-			" left outer join relids on (rels.relid = relids.relid " +
-				" and relids.name=" + SqlString.sql(relName) + ")\n" +
+				" and rels.temporalid=" + temporalid + "\n" +
+				" and rels.relid = (select relid from relids where name = " + SqlString.sql(relName) + "))\n" +
 			" where e.entityid=" + SqlInteger.sql(entityid1));
 	}
 

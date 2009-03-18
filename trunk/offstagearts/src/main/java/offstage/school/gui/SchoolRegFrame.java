@@ -362,7 +362,8 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			int termid = schoolModel.getTermID();
-			Integer payerid = (Integer)schoolModel.termregsRm.get("payerid");
+//			Integer payerid = (Integer)schoolModel.termregsRm.get("payerid");
+			Integer payerid = schoolModel.getPayerID();
 			if (payerid == null) JOptionPane.showMessageDialog(SchoolRegFrame.this,
 				"You must have a student selected for this report!", "", JOptionPane.OK_OPTION);
 			else AcctStatement.doAccountStatementsAndLabels(str, fapp, termid, payerid, new java.util.Date());
@@ -414,15 +415,26 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 				String idSql =
 					" select xx.entityid\n" +
 					" from (\n" +
-					" 	select distinct tr.payerid as entityid\n" +
-					" 	from termregs tr,\n" + // entities s\n" +
+					" 	select distinct r.entityid0 as entityid\n" +	// payerid or parent1id
+					" 	from termregs tr, rels_o2m r\n" + // entities s\n" +
 					" 	where tr.groupid = " + termid + "\n" +
+					"   and r.entityid1 = tr.entityid\n" +
+					"   and ((" +
+					"		r.temporalid = tr.groupid\n" +
+					"		and r.relid = (select relid from relids where name = 'payerof')\n" +
+					"     ) or (\n" +
+					"		r.relid = (select relid from relids where name = 'parent1of')\n" +
+					"   ))\n" +
+
+//					" 	select distinct tr.payerid as entityid\n" +
+//					" 	from termregs tr,\n" + // entities s\n" +
+//					" 	where tr.groupid = " + termid + "\n" +
+////					" 	and tr.entityid = s.entityid\n" +
+//					"          UNION\n" +
+//					" 	select distinct s.parent1id as entityid\n" +
+//					" 	from termregs tr, entities s\n" +
+//					" 	where tr.groupid = " + termid + "\n" +
 //					" 	and tr.entityid = s.entityid\n" +
-					"          UNION\n" +
-					" 	select distinct s.parent1id as entityid\n" +
-					" 	from termregs tr, entities s\n" +
-					" 	where tr.groupid = " + termid + "\n" +
-					" 	and tr.entityid = s.entityid\n" +
 					" ) xx, persons p\n" +
 					" where xx.entityid = p.entityid\n" +
 					" order by p.lastname, p.firstname";

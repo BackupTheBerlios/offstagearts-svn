@@ -85,8 +85,9 @@ protected void addTable(QuerySchema schema, ConsSqlQuery sql, String tableName)
 		}
 
 		// Add this table (AFTER dependencies; required for SQL)
+//		tab.addTable(sql);
 		sql.addTable(tableName, null, SqlQuery.JT_INNER, tab.joinClause);
-
+		if (tab.columns != null) sql.addColumn(tab.columns);
 	}
 }
 ///** Creates a standard ConsSqlQuery out of the data in this query. */

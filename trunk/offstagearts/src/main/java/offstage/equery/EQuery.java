@@ -118,6 +118,14 @@ throws IOException
 //	}
 }
 // -----------------------------------------------
+/**
+ *
+ * @param schema
+ * @param sql Add tables (and columns) to this query as necessary.
+ * @param clause
+ * @return
+ * @throws java.io.IOException
+ */
 public String getWhereSql(QuerySchema schema, ConsSqlQuery sql, EClause clause)
 throws IOException
 {
@@ -145,6 +153,7 @@ throws IOException
 {
 	if (clause.elements.size() == 0) return null;
 	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
+	sql.setDistinct(true);
 	sql.addTable("entities as main");
 	if (this.dbid != null) sql.addWhereClause("main.dbid = " + dbid);		// For now, only select out of main database!
 	String ewhere = getWhereSql(schema, sql, clause);
@@ -158,7 +167,7 @@ throws IOException
 	
 	// Add the group by and order by stuff
 	StringBuffer sb = new StringBuffer(ssql + "\n");
-	sb.append(" group by main.entityid\n");
+//	sb.append(" group by main.entityid\n");
 	if (clause.minDups == null && clause.maxDups == null) {
 		// Nothing here is equivalent to distinct
 //		sb.append(" having count(*) = 1");		// Equivalent to distinct
@@ -190,7 +199,9 @@ throws IOException
 	String sql0 = getSqlNoDistinct(schema, clause);
 	if (sql0 == null) return null;
 
-	if (distinctType == DISTINCT_ENTITYID) return sql0;
+	if (distinctType == DISTINCT_ENTITYID) {
+		return "select id from (" + sql0 + ") yy";
+	}
 	
 	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
 	sql.addTable("entities as main");
@@ -219,12 +230,20 @@ throws IOException
 //			sql.addWhereClause("main.parent1id is not null");
 		break;
 		case DISTINCT_PAYERID :
+
+//PROBLEM: the termid for which this is relevant is not available in the outer query.
+//Possible solutions:
+//	a) Use single-level query, don't nest sql0
+//	b) Fish out appropriate term from sql0
+//	c) make termenrolls.groupid available to outside in sql0
+
+//			addTable(schema, sql, "termregs");
+//			addTable(schema, sql, "termenrolls");
 			sql.addTable("rels_o2m", "heads", sql.JT_INNER,
 				" heads.relid = (select relid from relids where name = 'payerof')\n" +
-				" and heads.temporalid = termregs.groupid\n" +
+				" and heads.temporalid = yy.termid\n" +
 				" and heads.entityid1 = main.entityid");
 			sql.addColumn("heads.entityid0 as id");
-			addTable(schema, sql, "termregs");
 			
 //			sql.addColumn("termregs.payerid as id");
 //			sql.addWhereClause("termregs.payerid is not null");

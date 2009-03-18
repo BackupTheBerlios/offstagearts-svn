@@ -89,6 +89,7 @@ public static class Tab
 	public String table;
 	public String joinClause;
 	public String[] requiredTables;		// Other tables we must join when joining this one.
+	public String columns;				// Columns we select when we add this table.
 }
 // -----------------------------------------------
 public JEnum getColsJType() { return colsJType; }
@@ -130,7 +131,7 @@ private void addTypeComparator(Class klass, Comp... vals)
 }
 public Comp getComp(String saveName) { return compsBySaveName.get(saveName); }
 // --------------------------------------------------
-public void addSchema(SqlSchema sc, String joinClause, String... requiredTables)
+public void addSchema(SqlSchema sc, String columns, String joinClause, String... requiredTables)
 {
 	String table = sc.getDefaultTable();
 	Tab tab = new Tab();
@@ -138,6 +139,7 @@ public void addSchema(SqlSchema sc, String joinClause, String... requiredTables)
 	tab.joinClause = joinClause;
 	tab.table = table;
 	tab.requiredTables = requiredTables;
+	tab.columns = columns;
 	tabs.put(table, tab);
 	for (int i=0; i<sc.size(); ++i) {
 		Col col = new Col();
