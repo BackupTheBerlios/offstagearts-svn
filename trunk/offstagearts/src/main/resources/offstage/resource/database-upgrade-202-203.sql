@@ -107,15 +107,15 @@ CREATE OR REPLACE FUNCTION w_student_register(xtermid integer, studentid integer
 
 BEGIN
     BEGIN
-    insert into termregs (groupid, entityid, dtregistered) values
-	(xtermid, studentid, xdtregistered);
+		insert into termregs (groupid, entityid, dtregistered) values
+			(xtermid, studentid, xdtregistered);
+		execute w_rels_o2m_set(
+			(select relid from relids where name = ''payerof''), xtermid,
+			studentid, studentid, false);
     EXCEPTION WHEN unique_violation THEN
             -- do nothing
     END;
 
-	execute w_rels_o2m_set(
-		(select relid from relids where name = ''payerof''), xtermid,
-		studentid, studentid, false);
 
 END;
 '
