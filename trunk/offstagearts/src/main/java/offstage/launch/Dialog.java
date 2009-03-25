@@ -29,9 +29,8 @@ package offstage.launch;
 
 import citibob.config.ConfigMaker;
 import citibob.config.DialogConfigMaker;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import citibob.config.MultiConfigMaker;
+import java.io.File;
 import offstage.FrontApp;
 //import com.jgoodies.looks.plastic.theme.*;
 
@@ -44,34 +43,13 @@ public class Dialog {
 	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
-		ConfigMaker cmaker = new DialogConfigMaker("offstage/demo");
-
-//OutputStream out = new FileOutputStream("oa.log");
-//PrintStream pout = new PrintStream(out);
-//System.setOut(pout);
-//System.setErr(pout);
+		ConfigMaker cmaker;
+		if (args.length == 0) {
+			cmaker = new DialogConfigMaker("offstage/demo");
+		} else {
+			cmaker = new MultiConfigMaker(new Object[]{new File(args[0])});
+		}
 		FrontApp.launch(cmaker);
-//		int ctType;
-//		String configName;
-//		
-//		
-//		if (args.length == 0) {
-//			ctType = FrontApp.CT_CONFIGCHOOSE;
-//			configName = null;
-//		} else {
-//			if ("--demo".equals(args[0])) {
-//				ctType = FrontApp.CT_DEMO;
-//				configName = null;		// Means use default
-//			} else if ("--oalaunch".equals(args[0])) {
-//				ctType = FrontApp.CT_OALAUNCH;
-//				configName = args[1];
-//			} else {
-//				ctType = FrontApp.CT_CONFIGSET;
-//				configName = args[0];
-//			}
-//		}
-//		
-//		launch(ctType, configName);
     }
 
 }

@@ -7,6 +7,7 @@ import offstage.launch.Demo;
 import offstage.launch.Dialog;
 import offstage.licensor.Licensor;
 import citibob.licensor.MakeLauncher;
+import offstage.launch.Custom;
 import offstage.licensor.WriteJarList;
 
 
@@ -19,6 +20,7 @@ public class Main {
 public static void main(String[] args) throws Exception {
 
 	AppLauncher.launch("offstagearts", new Class[] {
+		Custom.class,
 		Dialog.class,
 		Demo.class,
 		ConfigsFile.class,

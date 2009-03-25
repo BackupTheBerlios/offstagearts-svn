@@ -67,13 +67,13 @@ public class EnrolledDbModel extends SqlBufDbModel
 	}
 	public SqlSet getSelectSql(boolean proto) {
 		return new SqlSet(
-			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
-			" from " + enrollTable + " e, courseids c" +
-			" where e.courseid = c.courseid" +
+			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext\n" +
+			" from " + enrollTable + " e, courseids c\n" +
+			" where e.courseid = c.courseid\n" +
 			" and c.termid = " + SqlInteger.sql(termid) + //smod.getTermID()) +
 			(role == null ? "" : " and courserole = " + SqlInteger.sql(role)) +
 			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(entityid)) + //smod.getStudentID())) +
-			" order by dayofweek, tstart, name");
+			" order by dayofweek, tstart, name\n");
 	}
 // =====================================================================
 public void removeEnrollment(SqlRun str, int entityid, int courseid)

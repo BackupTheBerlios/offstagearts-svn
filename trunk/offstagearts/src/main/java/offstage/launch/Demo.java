@@ -47,7 +47,7 @@ public class Demo {
 	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
-		ConfigMaker cmaker = new MultiConfigMaker("offstage/demo");
+		ConfigMaker cmaker = new MultiConfigMaker(new Object[]{"offstage/demo"});
 		FrontApp.launch(cmaker);
 		
 //		System.out.println("DemoLauncher running!");

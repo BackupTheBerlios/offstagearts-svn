@@ -101,7 +101,7 @@ public class ConfigsFile {
 		}
 		
 		// Launch the program!
-		ConfigMaker cmaker = new MultiConfigMaker(config);
+		ConfigMaker cmaker = new MultiConfigMaker(new Object[] {config});
 		FrontApp.launch(cmaker);
     }
 

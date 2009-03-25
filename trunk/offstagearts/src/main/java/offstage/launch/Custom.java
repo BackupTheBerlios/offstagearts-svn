@@ -28,15 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.launch;
 
 import citibob.config.ConfigMaker;
-import citibob.config.DirConfig;
+import citibob.config.DialogConfigMaker;
 import citibob.config.MultiConfigMaker;
-import java.sql.*;
-import javax.swing.*;
-import java.util.prefs.*;
-import citibob.swing.prefs.*;
-import citibob.jschema.swing.*;
-import citibob.gui.*;
-import citibob.sql.*;
 import java.io.File;
 import offstage.FrontApp;
 //import com.jgoodies.looks.plastic.theme.*;
@@ -45,16 +38,14 @@ import offstage.FrontApp;
  *
  * @author citibob
  */
-public class ConfigDir {
+public class Custom {
 
 	public static boolean exitAfterMain = false;
 	public static void main(String[] args) throws Exception
     {
-		File configDir = new File(args[0]);
-		DirConfig config = new DirConfig(configDir);
-			
-		// Launch the program!
-		ConfigMaker cmaker = new MultiConfigMaker(config);
+		ConfigMaker cmaker;
+		File f = new File("/export/home/citibob/mvn/oamisc/bdw/offstagearts-bdw.jar");
+		cmaker = new MultiConfigMaker(new Object[]{f});
 		FrontApp.launch(cmaker);
     }
 

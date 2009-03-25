@@ -84,17 +84,18 @@ public void executeQuery(SqlRun str, SqlSet idSsql, boolean hasSortCol, String o
 			" insert into " + ids + " (id) " + idSsql.getSql() + ";\n"),
 			
 		" select p.entityid," +
-		" (case when lastname is null then '' else lastname || ', ' end ||" +
-		" case when firstname is null then '' else firstname || ' ' end ||" +
-		" case when middlename is null then '' else middlename end ||" +
-		" case when orgname is null then '' else ' (' || orgname || ')' end" +
-		" ) as name," +
+		" (case when lastname is null then '' else lastname || ', ' end ||\n" +
+		" case when firstname is null then '' else firstname || ' ' end ||\n" +
+		" case when middlename is null then '' else middlename end ||\n" +
+		" case when orgname is null then '' else ' (' || orgname || ')' end ||\n" +
+		" case when obsolete then '*' else '' end\n" +
+		" ) as name,\n" +
 		" ('<html>' ||" +
 		" case when city is null then '' else city || ', ' end ||" +
 		" case when state is null then '' else state end || '<br>' ||" +
 		" case when occupation is null then '' else occupation || '<br>' end ||" +
 		" case when email is null then '' else email || '' end ||" +
-		" '</html>') as tooltip" +
+		" '</html>') as tooltip\n" +
 //		" p.entityid = p.primaryentityid as isprimary" +
 		" from persons p, " + ids + "" +
 		" where p.entityid = " + ids + ".id" +
