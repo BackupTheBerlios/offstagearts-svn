@@ -308,5 +308,14 @@ public static SqlSet listRelGroupSql(SqlRun str, String relName, int temporalid,
 		" drop table " + group + ";\n");
 }
 
+public static String nameColSql(String tableName)
+{
+	return
+		"(case when " + tableName + ".lastname is null then '' else " + tableName + ".lastname || ', ' end ||" +
+		" case when " + tableName + ".firstname is null then '' else " + tableName + ".firstname || ' ' end ||" +
+		" case when " + tableName + ".middlename is null then '' else " + tableName + ".middlename end ||" +
+		" case when " + tableName + ".orgname is null then '' else ' (' || " + tableName + ".orgname || ')' end ||" +
+		" case when " + tableName + ".obsolete then '*' else '' end)";
+}
 
 }

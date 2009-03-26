@@ -20,7 +20,7 @@ CREATE TABLE relids
    relcategoryid int not null,
    reltype int not null default 0,	-- 0=m2m, 1=o2m  NOTE USED: 2=m2o, 3=o2o
    sym boolean not null default false,	-- symmetrical?
-   explicit boolean not null default true,	-- true if we add this epxlicitly to the rels table, rather than seeing it in a view
+   explicit boolean not null default true,	-- true if we add this epxlicitly to the rels table, rather than seeing it in a view (OBSOLETE)
 --   temporal boolean not null default false,	-- true if this relationship is good for one term or show or something
 --   temptable varchar(50),	-- Table of temporal relationship (eg 'termids')
 	req0 boolean not null default true,	-- Is entityid0 required to be non-obsolete?

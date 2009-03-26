@@ -4,7 +4,7 @@
   <groupId>org.citibob</groupId>
   <artifactId>offstagearts</artifactId>
   <packaging>jar</packaging>
-  <version>1.10.1</version>
+  <version>1.10.2</version>
   <name>offstagearts</name>
   <url>http://maven.apache.org</url>
   <build>
@@ -141,7 +141,7 @@ lib/xstream-1.2.2.jar
     <dependency>
             <groupId>org.citibob</groupId>
             <artifactId>holyokefw</artifactId>
-            <version>1.2.5</version>
+            <version>1.2.6</version>
             <scope>compile</scope>
     </dependency>
     <dependency>
