@@ -7,6 +7,9 @@
 package offstage.gui;
 
 import citibob.app.App;
+import citibob.sql.SqlRun;
+import citibob.util.ObjectUtil;
+import offstage.FrontApp;
 
 /**
  *
@@ -19,20 +22,56 @@ App app;
 public static final int ACTION_CANCEL = 0;
 public static final int ACTION_OK = 1;
 public static final int ACTION_DELETE = 2;
-
 protected int action = ACTION_CANCEL;	// How this dialog was exited
 
-	/** Creates new form RelEditorDialog */
-	public RelEditDialog(java.awt.Frame parent) {
-		super(parent, true);
-		initComponents();
+Integer thisID;			// EntityID of the currently-editing record.
+
+public static final int MODE_EDIT = 0;	// Edit an existing relationship
+public static final int MODE_NEW = 1;	// Add new relationship
+
+int editMode;
+
+/** Creates new form RelEditorDialog */
+public RelEditDialog(java.awt.Frame parent) {
+	super(parent, true);
+	initComponents();
+}
+
+public void initRuntime(FrontApp app)
+{
+	entityid0.initRuntime(app);
+	entityid1.initRuntime(app);
+}
+
+public void setThisID(Integer thisID)
+	{ this.thisID = thisID; }
+
+public void setEditMode(int editMode, Integer thisID,
+Integer eid0, Integer relid, Integer eid1)
+{
+	entityid0.setValue(eid0);
+	relids.setValue(relid);
+	entityid1.setValue(eid1);
+
+	if (editMode == MODE_EDIT) {
+		entityid0.setEnabled(!ObjectUtil.eq(eid0, thisID));
+		relids.setEnabled(false);
+		entityid1.setEnabled(!ObjectUtil.eq(eid1, thisID));
+	} else {
+		// New item: let them edit everything
+		entityid0.setEnabled(true);
+		relids.setEnabled(true);
+		entityid1.setEnabled(true);
 	}
-	
-	public void initRuntime(App app)
-	{
-		entityid0.initRuntime(app);
-	}
-	
+
+}
+
+/** Store the just-edited relation in the database */
+public void storeRel(SqlRun str)
+{
+//	DB.
+}
+
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
@@ -44,7 +83,7 @@ protected int action = ACTION_CANCEL;	// How this dialog was exited
         jPanel1 = new javax.swing.JPanel();
         entityid0 = new offstage.swing.typed.EntityIDDropdown();
         entityid1 = new offstage.swing.typed.EntityIDDropdown();
-        lRel = new citibob.swing.typed.JTypedLabel();
+        relids = new citibob.swing.typed.JKeyedComboBox();
         jPanel2 = new javax.swing.JPanel();
         bOK = new javax.swing.JButton();
         bDelete = new javax.swing.JButton();
@@ -62,7 +101,9 @@ protected int action = ACTION_CANCEL;	// How this dialog was exited
         entityid1.setColName("entityid0"); // NOI18N
         entityid1.setPreferredSize(new java.awt.Dimension(200, 19));
 
-        lRel.setText("jTypedLabel1");
+        relids.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        relids.setColName("rbplan"); // NOI18N
+        relids.setPreferredSize(new java.awt.Dimension(120, 19));
 
         org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -71,11 +112,11 @@ protected int action = ACTION_CANCEL;	// How this dialog was exited
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(entityid1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                    .add(entityid1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                    .add(entityid0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(12, 12, 12)
-                        .add(lRel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE))
-                    .add(entityid0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE))
+                        .add(relids, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -84,7 +125,7 @@ protected int action = ACTION_CANCEL;	// How this dialog was exited
                 .addContainerGap()
                 .add(entityid0, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(lRel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(relids, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(11, 11, 11)
                 .add(entityid1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -138,7 +179,7 @@ protected int action = ACTION_CANCEL;	// How this dialog was exited
     protected offstage.swing.typed.EntityIDDropdown entityid1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    protected citibob.swing.typed.JTypedLabel lRel;
+    protected citibob.swing.typed.JKeyedComboBox relids;
     // End of variables declaration//GEN-END:variables
 	
 }

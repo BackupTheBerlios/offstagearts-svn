@@ -52,6 +52,8 @@ public void setRelIdSql(String relIdSql) {
 public void setEntityID(Integer entityid) {
 	this.entityid = entityid;
 }
+public Integer getEntityID()
+	{ return entityid; }
 
 public RelDbModel(SqlRun str, App app) {
 	super();
@@ -82,14 +84,14 @@ public SqlSet getSelectSql(boolean proto) {
 		" and (r.entityid0 = " + entityid + " or r.entityid1 = " + entityid + ")");
 }
 // =====================================================================
-public void setRel_o2m(SqlRun str, String srelid, String stemporalid,
-int entityid0, int entityid1)
-{
-	str.execSql(
-		" select w_rels_o2m_set(" +
-		srelid + ", " + stemporalid + ", " + entityid0 + ", " + entityid1 + ");");
-	doSelect(str);
-}
+//public void setRel_o2m(SqlRun str, String srelid, String stemporalid,
+//int entityid0, int entityid1)
+//{
+//	str.execSql(
+//		" select w_rels_o2m_set(" +
+//		srelid + ", " + stemporalid + ", " + entityid0 + ", " + entityid1 + ");");
+//	doSelect(str);
+//}
 
 
 }

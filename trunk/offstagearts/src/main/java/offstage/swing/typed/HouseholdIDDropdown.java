@@ -23,18 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.swing.typed;
 
-import javax.swing.*;
-import javax.swing.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.sql.*;
-import citibob.exception.*;
-import citibob.sql.*;
-import citibob.swing.typed.*;
-import citibob.app.*;
-import citibob.sql.pgsql.*;
 import citibob.sql.*;
 import citibob.util.IntVal;
+import citibob.util.ObjectUtil;
 
 public class HouseholdIDDropdown extends EntityIDDropdown
 {
@@ -73,6 +64,9 @@ public void propertyChange(java.beans.PropertyChangeEvent evt)
 /** Resolve this to a primary entity id */
 public void setValue(Object o)
 {
+	// Don't repeat!
+	if (ObjectUtil.eq(o, getValue())) return;
+
 	if (o == null) {
 		super.setValue(o);
 		return;

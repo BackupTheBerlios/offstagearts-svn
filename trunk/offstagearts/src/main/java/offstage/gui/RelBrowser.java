@@ -11,6 +11,7 @@ import citibob.sql.DbKeyedModel;
 import citibob.sql.SqlRun;
 import citibob.sql.UpdTasklet2;
 import citibob.swing.WidgetTree;
+import citibob.util.ObjectUtil;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import offstage.FrontApp;
@@ -24,6 +25,7 @@ public class RelBrowser extends javax.swing.JPanel {
 RelDbModel relDb;
 DbKeyedModel relidsKm;
 RelEditDialog edit;
+Integer defaultTemporalID;
 
 /** Creates new form RelBrowser */
 public RelBrowser() {
@@ -32,51 +34,89 @@ public RelBrowser() {
 	edit = new RelEditDialog(WidgetTree.getJFrame(this));
 }
 
-public void initRuntime(SqlRun str, final FrontApp app, String relIdSql, String temporalIdSql)
+public void initRuntime(SqlRun str, final FrontApp app, String relIdSql,
+String temporalIdSql, Integer defaultTemporalID)
 {
-	edit.initRuntime(app);
-
-	// Set up list of relationships we can access
-	String sql =
-		" select relid,name,0\n" +
-		" from (" + relIdSql + ") xx, relids\n" +
-		" where xx.id = relids.relid";
-	relidsKm = new DbKeyedModel(str, null, null, sql, "<No Relationship>");
-	relids.setKeyedModel(relidsKm);
-	edit.lRel.setJType(relidsKm, (String)relidsKm.getNullValue());
-	// TODO: Change KeyedSFormat to get the null value out of the KeyedModel
-	// Rationalize null value handling between KeyedModel, DbKeyedModel, etc.
-	
-	relDb = new RelDbModel(str, app) {
-	public void setKey(Object... keys) {
-	}};
-	
-	relDb.setRelIdSql(relIdSql);
-	relDb.setTemporalIdSql(temporalIdSql);
-	
-	str.execUpdate(new UpdTasklet2() {		// Set up table AFTER enrolledDb has been initialized
-	public void run(SqlRun str) {
-		// RSSchema schema = (RSSchema)relDb.getSchemaBuf().getSchema();
-		rels.setModelU(app.swingerMap(), relDb.getTableModel(),
-			new String[] {"Description"},
-			new String[] {"description"});
-		rels.setEditable(false);
-		
-		rels.getSelectionModel().addListSelectionListener(
-		new ListSelectionListener() {
-		public void valueChanged(ListSelectionEvent e) {
-			editRow(e.getFirstIndex());
-		}});
-	}});
+//	edit.initRuntime(app);
+//
+//	// Set up list of relationships we can access
+//	String sql =
+//		" select relid,name,0\n" +
+//		" from (" + relIdSql + ") xx, relids\n" +
+//		" where xx.id = relids.relid";
+//	relidsKm = new DbKeyedModel(str, null, null, sql, "<No Relationship>");
+//	edit.relids.setKeyedModel(relidsKm);
+//	//edit.lRel.setJType(relidsKm, (String)relidsKm.getNullValue());
+//	// TODO: Change KeyedSFormat to get the null value out of the KeyedModel
+//	// Rationalize null value handling between KeyedModel, DbKeyedModel, etc.
+//
+//	relDb = new RelDbModel(str, app) {
+//	public void setKey(Object... keys) {
+//	}};
+//
+//	relDb.setRelIdSql(relIdSql);
+//	relDb.setTemporalIdSql(temporalIdSql);
+//
+//	str.execUpdate(new UpdTasklet2() {		// Set up table AFTER enrolledDb has been initialized
+//	public void run(SqlRun str) {
+//		// RSSchema schema = (RSSchema)relDb.getSchemaBuf().getSchema();
+//		rels.setModelU(app.swingerMap(), relDb.getTableModel(),
+//			new String[] {"Description"},
+//			new String[] {"description"});
+//		rels.setEditable(false);
+//
+//		rels.getSelectionModel().addListSelectionListener(
+//		new ListSelectionListener() {
+//		public void valueChanged(ListSelectionEvent e) {
+//			editRow(e.getFirstIndex());
+//		}});
+//	}});
 }
 
 
-void editRow(int row)
+void editRow(SqlRun str, int row)
 {
-	SchemaBuf sbuf = relDb.getSchemaBuf();
-	edit.entityid0.setValue(sbuf.getValueAt(row, "entityid0"));
-	edit.entityid1.setValue(sbuf.getValueAt(row, "entityid1"));
+//	SchemaBuf sbuf = relDb.getSchemaBuf();
+//	Integer thisID = relDb.getEntityID();
+//
+//	Integer eid0 = (Integer)sbuf.getValueAt(row, "entityid0");
+//	Integer eid1 = (Integer)sbuf.getValueAt(row, "entityid1");
+//	Integer relid = (Integer)sbuf.getValueAt(row, "relid");
+//	edit.setEditMode(edit.MODE_EDIT, thisID,
+//		eid0, relid, eid1);
+//	edit.setVisible(true);
+//
+//	switch(edit.action) {
+//		case RelEditDialog.ACTION_OK : {
+//
+//		} break;
+//		case RelEditDialog.ACTION_DELETE : {
+//			String sql =
+//				" delete from rels" +
+//				" where entityid0 = "
+//		} break;
+//	}
+//	if (edit.action == edit.)
+//
+//	edit.setThisID(thisID)
+//
+//	edit.entityid0.setValue(eid0);
+//	if (ObjectUtil.eq(eid0, thisID)) edit.entityid0.setEnabled(false);
+//
+//	edit.entityid1.setValue(eid1);
+//	if (ObjectUtil.eq(eid1, thisID)) edit.entityid1.setEnabled(false);
 }
+
+
+public void setRel_o2m(SqlRun str, String srelid, String stemporalid,
+int entityid0, int entityid1)
+{
+//	str.execSql(
+//		" select w_rels_o2m_set(" +
+//		srelid + ", " + stemporalid + ", " + entityid0 + ", " + entityid1 + ");");
+//	doSelect(str);
+}
+
 
 	/** This method is called from within the constructor to
 	 * initialize the form.

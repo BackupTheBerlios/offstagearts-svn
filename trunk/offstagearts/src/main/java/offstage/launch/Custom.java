@@ -44,7 +44,8 @@ public class Custom {
 	public static void main(String[] args) throws Exception
     {
 		ConfigMaker cmaker;
-		File f = new File("/export/home/citibob/mvn/oamisc/bdw/offstagearts-bdw.jar");
+//		File f = new File("/export/home/citibob/mvn/oamisc/bdw/offstagearts-bdw.jar");
+		File f = new File("/Users/citibob/offstagearts/launchers/offstagearts-bdw.jar");
 		cmaker = new MultiConfigMaker(new Object[]{f});
 		FrontApp.launch(cmaker);
     }
