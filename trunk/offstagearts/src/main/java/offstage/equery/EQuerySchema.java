@@ -32,9 +32,8 @@ public class EQuerySchema extends QuerySchema
 {
 
 // --------------------------------------------------
-public EQuerySchema(SchemaSet sset, DataTabSet tabs) throws SQLException
+public void init(SchemaSet sset, DataTabSet tabs) throws SQLException
 {
-	super();
 	addSchema(sset.get("entities"), null,
 		"entities.entityid = main.entityid");
 	addSchema(sset.get("org"), null,
@@ -88,13 +87,18 @@ public EQuerySchema(SchemaSet sset, DataTabSet tabs) throws SQLException
 	
 	
 	List<String[]> aliasLists = new ArrayList();
-	aliasLists.add(aliases);
+	addMainAliasList(aliasLists);
 	for (DataTab tab : tabs.equeryTabs) {
 		aliasLists.add(tab.getAliases());
 	}
 	doAlias(aliasLists);
 }
 
+/** Override this in custom subclass. */
+protected void addMainAliasList(List<String[]> aliasLists)
+{
+	aliasLists.add(aliases);
+}
 // --------------------------------------------------------------------
 private static final String[] aliases = {
 	"persons.isorg", "isorg",

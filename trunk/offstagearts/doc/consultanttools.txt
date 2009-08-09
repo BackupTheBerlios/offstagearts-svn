@@ -1,0 +1,15 @@
+1. Program to dump from a launcher:
+ a) certificates
+ b) hostname
+ c) username and password
+
+2. Program to connect to a database using launcher:
+ a) Grab certificates, etc. from launcher
+ b) Open an stunnel using those certificates
+ c) Launch psql on the stunnel, using appropriate username and password
+ d) Pipe stdin/stdout to/from psql
+
+1. Grab certificates, etc. from launcher
+2. ssh tunnel to database using certificates
+3. Clear database, create new OA schema, dump database, etc.
+

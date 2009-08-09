@@ -364,7 +364,7 @@ throws Exception
 	name = "OffstageArts";
 	
 	// Make sure we have the right version
-	version = new Version("1.10.5");
+	version = new Version("1.10.6");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
@@ -612,13 +612,13 @@ public boolean checkResources()  throws Exception
 }
 
 /** Finishes initialization, things that require a functional database. */
-public void initWithDatabase()
+public void initWithDatabase(String siteCodeFileName)
 {
 	try {
 		SqlRun str = sqlRun();
 
 		// First look for sitecode.jar described in our configuration files
-		String siteCodeFileName = props().getProperty("sitecode.jar");
+		if (siteCodeFileName == null) siteCodeFileName = props().getProperty("sitecode.jar");
 		if ("<none>".equals(siteCodeFileName)) {
 			// Ensure there is NO sitecode.
 			siteCode = getClass().getClassLoader();
@@ -710,7 +710,8 @@ public void initWithDatabase()
 	//		equeries = new EQueryModel2(st, mailings, sset);
 	//	simpleSearchResults = new EntityListTableModel(this.getSqlTypeSet());
 
-		equerySchema = new EQuerySchema(schemaSet(), dataTabSet);
+		equerySchema = (EQuerySchema)newSiteInstance(EQuerySchema.class);
+		equerySchema.init(schemaSet(), dataTabSet);
 		str.flush();
 		// ================
 
@@ -723,8 +724,11 @@ public void initWithDatabase()
 }
 
 // =================================================================
-/** Creates a new instance of FrameSetX */
 public static void launch(ConfigMaker configMaker) throws Exception {
+	launch(configMaker, null);
+}
+/** Creates a new instance of FrameSetX */
+public static void launch(ConfigMaker configMaker, String siteCodeFileName) throws Exception {
 	/* see:
 	http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6604109
 	http://www.jasperforge.org/sf/go/artf2423
@@ -742,7 +746,7 @@ public static void launch(ConfigMaker configMaker) throws Exception {
 	try {
 		final FrontApp app = new FrontApp(configMaker); //new File("/export/home/citibob/svn/offstage/config"));
 		boolean resGood = app.checkResources();
-		app.initWithDatabase();
+		app.initWithDatabase(siteCodeFileName);
 
 		if (resGood) {
 			app.frameSet().openFrame("maintenance");
