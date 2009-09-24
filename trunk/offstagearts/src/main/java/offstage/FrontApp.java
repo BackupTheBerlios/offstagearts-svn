@@ -364,7 +364,7 @@ throws Exception
 	name = "OffstageArts";
 	
 	// Make sure we have the right version
-	version = new Version("1.10.6");
+	version = new Version("1.10.7");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
@@ -384,7 +384,7 @@ throws Exception
 	Config mainConfig = configMaker.newConfig(this);
 	if (mainConfig == null) System.exit(-1);
 	config = new MultiConfig(
-		new PBEConfig(mainConfig, new DialogPBEAuth(null, "Please enter configuration password.")),
+		new PBEConfig(mainConfig, new DialogPBEAuth(null, "Please enter configuration password.", null)),
 		new ResourceConfig("offstage/defaultconfig"));
 //	// Choose the configuration directory, so we can get the rest of
 //	// the configuration

@@ -21,8 +21,6 @@ import java.util.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
-import citibob.swing.typed.*;
-import java.sql.*;
 import citibob.types.*;
 import citibob.types.KeyedModel.Item;
 import java.io.File;
@@ -33,6 +31,7 @@ import offstage.equery.compare.Comp;
 import offstage.equery.compare.InFileComp;
 import offstage.equery.compare.JEnum_InComp;
 import offstage.equery.compare.String_InComp;
+import offstage.types.SqlPhone;
 
 public class QuerySchema
 {
@@ -242,6 +241,9 @@ protected QuerySchema()
 	addTypeComparator(SqlNumeric.class, eqCP, gtCP, ltCP, geqCP, leqCP, neqCP);
 	addTypeComparator(SqlEnum.class, eqCP, neqCP, inCP_JEnum, ninCP_JEnum);
 	addTypeComparator(SqlString.class, eqCP,
+			inCP_String, ninCP_String, inFileCP, ninFileCP,
+			neqCP, ilikeCP, nilikeCP, similarCP, nsimilarCP);
+	addTypeComparator(SqlPhone.class, eqCP,
 			inCP_String, ninCP_String, inFileCP, ninFileCP,
 			neqCP, ilikeCP, nilikeCP, similarCP, nsimilarCP);
 	addTypeComparator(SqlTimestamp.class, eqCP, gtCP, ltCP, geqCP, leqCP, neqCP);
