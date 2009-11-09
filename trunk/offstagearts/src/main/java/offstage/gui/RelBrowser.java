@@ -72,7 +72,9 @@ static class ComponentRenderer implements TableCellRenderer
 		int row, int column)
 	{
 //		component.setSelected(isSelected && hasFocus);
-		component.setSelected(row == selectedRow);
+		boolean selected = (row == selectedRow);
+//		System.out.println("row = " + row + ", selectedRow = " + selectedRow);
+		component.setSelected(selected);
 		return component;
 	}
 }
@@ -157,44 +159,44 @@ System.out.println("Edit col = " + stm.getModel().findColumnU("Edit"));
 		final int editCol = jtm.findColumnU("Edit");
 		final int deleteCol = jtm.findColumn("Delete");
 		
-		rels.addMouseListener(
-		new MouseAdapter() {
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// Figure out the row and column we clicked on
-				Point point = e.getPoint();
-				int row = rels.rowAtPoint(point);
-				int col = rels.columnAtPoint(point);
-
-				editRend.selectedRow = row;
-				model.fireTableCellUpdated(row, col);
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				Point point = e.getPoint();
-				int row = rels.rowAtPoint(point);
-				int col = rels.columnAtPoint(point);
-
-				editRend.selectedRow = -1;
-				model.fireTableCellUpdated(row, col);
-			}
-
-			public void mouseClicked(MouseEvent e) {
-				// Figure out the row and column we clicked on
-				Point point = e.getPoint();
-				int col = rels.columnAtPoint(point);
-				int row = rels.rowAtPoint(point);
-
-				System.out.println("Clicked on row=" + row + ", col=" + col);
-				if (col == editCol) {
-					System.out.println("EDIT");
-				} else if (col == deleteCol) {
-					System.out.println("DELETE");
-				}
-			}
-		});
+//		rels.addMouseListener(
+//		new MouseAdapter() {
+//
+//			@Override
+//			public void mousePressed(MouseEvent e) {
+//				// Figure out the row and column we clicked on
+//				Point point = e.getPoint();
+//				int row = rels.rowAtPoint(point);
+//				int col = rels.columnAtPoint(point);
+//
+//				editRend.selectedRow = row;
+//				model.fireTableCellUpdated(row, col);
+//			}
+//
+//			@Override
+//			public void mouseReleased(MouseEvent e) {
+//				Point point = e.getPoint();
+//				int row = rels.rowAtPoint(point);
+//				int col = rels.columnAtPoint(point);
+//
+//				editRend.selectedRow = -1;
+//				model.fireTableCellUpdated(row, col);
+//			}
+//
+//			public void mouseClicked(MouseEvent e) {
+//				// Figure out the row and column we clicked on
+//				Point point = e.getPoint();
+//				int col = rels.columnAtPoint(point);
+//				int row = rels.rowAtPoint(point);
+//
+//				System.out.println("Clicked on row=" + row + ", col=" + col);
+//				if (col == editCol) {
+//					System.out.println("EDIT");
+//				} else if (col == deleteCol) {
+//					System.out.println("DELETE");
+//				}
+//			}
+//		});
 
 //
 //		rels.getSelectionModel().addListSelectionListener(
