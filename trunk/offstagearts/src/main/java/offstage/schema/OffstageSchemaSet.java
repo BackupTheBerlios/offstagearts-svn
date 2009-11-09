@@ -88,6 +88,8 @@ throws SQLException
 //	map.put("entities_school", new EntitiesSchoolSchema(str, change));
 	map.put("actrans2", new Actrans2Schema(str, change, tz));
 	map.put("actrans2amt", new Actrans2AmtSchema(str, change, tz));
+	map.put("acbal2", new Acbal2Schema(str, change));
+	map.put("acbal2amt", new Acbal2AmtSchema(str, change));
 //	map.put("cashpayments", new CashpaymentsSchema(str, change,tz));
 //	map.put("checkpayments", new CheckpaymentsSchema(str, change,tz));
 //	map.put("ccpayments", new CcpaymentsSchema(str, change,tz));

@@ -296,6 +296,8 @@ displayTabs.remove(editTab);
         rightButtonPanel = new javax.swing.JPanel();
         bSubordinate1 = new javax.swing.JButton();
         bSubordinate0 = new javax.swing.JButton();
+        bMergeAllTo0 = new javax.swing.JButton();
+        bMergeAllTo1 = new javax.swing.JButton();
         displayTabs = new javax.swing.JTabbedPane();
         editTab = new javax.swing.JPanel();
         entityPanel0 = new offstage.devel.gui.EntityPanel();
@@ -530,7 +532,7 @@ displayTabs.remove(editTab);
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         rightButtonPanel.add(bSubordinate1, gridBagConstraints);
 
@@ -543,9 +545,35 @@ displayTabs.remove(editTab);
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         rightButtonPanel.add(bSubordinate0, gridBagConstraints);
+
+        bMergeAllTo0.setText("<- Merge All");
+        bMergeAllTo0.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bMergeAllTo0ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        rightButtonPanel.add(bMergeAllTo0, gridBagConstraints);
+
+        bMergeAllTo1.setText("Merge All ->");
+        bMergeAllTo1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bMergeAllTo1ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
+        rightButtonPanel.add(bMergeAllTo1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -702,10 +730,24 @@ void doAction(SqlRun str, int action) throws IOException
 	
 	int row = dupTable.getSelectedRow();
 	dupDm.getSchemaBuf().removeRow(row);
-//	dupTable.setSelectedRow(row);
 	reselect(str);
 
 }
+
+void doDbAllAction(SqlRun str, int action) throws IOException
+{
+	SchemaBuf sb = dupDm.getSchemaBuf();
+	int e0_col = sb.findColumn("entityid0");
+	int e1_col = sb.findColumn("entityid1");
+//	int action_col = sb.findColumn("action");
+	for (int row = 0; row < sb.getRowCount(); ++row) {
+		Integer entityid0 = (Integer)sb.getValueAt(row, e0_col);
+		Integer entityid1 = (Integer)sb.getValueAt(row, e1_col);
+//		Integer action = (Integer)sb.getValueAt(row, action_col);
+		doDbAction(str, action, entityid0, entityid1);
+	}
+}
+
 void doDbAction(SqlRun str, int action, int entityid0, int entityid1) throws IOException
 {
 	switch(action) {
@@ -742,9 +784,6 @@ private void dupOKAction(SqlRun str)
 	allDm.doUpdate(str);
 	refresh(str);
 	dupOKDbAction(str, entityid0, entityid1);
-//	int row = dupTable.getSelectedRow();
-//	dupDm.getSchemaBuf().removeRow(row);
-//	dupTable.setSelectedRow(row);
 }
 
 private void deleteDbAction(SqlRun str, final int action, int entityid0, int entityid1)
@@ -798,9 +837,6 @@ private boolean deleteAction(SqlRun str, final int action)
 
 	refresh(str);
 	return true;
-//	int row = dupTable.getSelectedRow();
-//	dupDm.getSchemaBuf().removeRow(row);
-//	dupTable.setSelectedRow(row);
 }
 	private void bDelete1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bDelete1ActionPerformed
 	{//GEN-HEADEREND:event_bDelete1ActionPerformed
@@ -971,17 +1007,54 @@ private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 			int e1_col = sb.findColumn("entityid1");
 			int action_col = sb.findColumn("action");
 			for (int row = 0; row < sb.getRowCount(); ++row) {
-				Integer entityid0 = (Integer)sb.getValueAt(row, e0_col);
-				Integer entityid1 = (Integer)sb.getValueAt(row, e1_col);
-				Integer action = (Integer)sb.getValueAt(row, action_col);
-				doDbAction(str, action, entityid0, entityid1);
+			    Integer entityid0 = (Integer)sb.getValueAt(row, e0_col);
+			    Integer entityid1 = (Integer)sb.getValueAt(row, e1_col);
+			    Integer action = (Integer)sb.getValueAt(row, action_col);
+			    doDbAction(str, action, entityid0, entityid1);
+			    str.flush();
 			}
+//			str.flush();
+			
+			dupDm.setIdSql(null);
+			dupDm.doSelect(str);
+//System.out.println("=============== Not executing SQL =================\n");
+//System.out.println(str.clear());
+//System.out.println("=============== Finished Not executing SQL =================\n");
+
+		}});
+		// TODO add your handling code here:
+}//GEN-LAST:event_bApproveAllActionPerformed
+
+	private void bMergeAllTo0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bMergeAllTo0ActionPerformed
+		app.guiRun().run(CleansePanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
+			if (JOptionPane.showConfirmDialog(CleansePanel.this,
+				"Do you really wish to merge all records <-\n?", "Merge All <-",
+				JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
+
+			doDbAllAction(str, MC_MERGE_TO_0);
+			str.flush();
+			
+			dupDm.setIdSql(null);
+			dupDm.doSelect(str);
+
+		}});
+}//GEN-LAST:event_bMergeAllTo0ActionPerformed
+
+	private void bMergeAllTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bMergeAllTo1ActionPerformed
+		app.guiRun().run(CleansePanel.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
+			if (JOptionPane.showConfirmDialog(CleansePanel.this,
+				"Do you really wish to merge all records ->\n?", "Merge All ->",
+				JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) return;
+
+			doDbAllAction(str, MC_MERGE_TO_1);
 			
 			dupDm.setIdSql(null);
 			dupDm.doSelect(str);
 		}});
-		// TODO add your handling code here:
-}//GEN-LAST:event_bApproveAllActionPerformed
+
+}//GEN-LAST:event_bMergeAllTo1ActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -991,6 +1064,8 @@ private void bMergeTo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JButton bDelete1;
     private javax.swing.JButton bDeleteBoth;
     private javax.swing.JButton bDupOK;
+    private javax.swing.JButton bMergeAllTo0;
+    private javax.swing.JButton bMergeAllTo1;
     private javax.swing.JButton bMergeTo0;
     private javax.swing.JButton bMergeTo1;
     private javax.swing.JButton bRefreshList;
@@ -1100,17 +1175,6 @@ public SqlSet getSelectSql(boolean proto)
 			" eid1 int, headid1 int," +
 			" action integer);\n");
 	postSql.append("drop table _d;\n");
-//	preSql.append(
-//		" insert into _d (eid0, eid1)" +
-//		" select dups.entityid0, dups.entityid1" +
-//		" from dups, entities e0, entities e1, mergelog ml\n" +
-//		(idSql == null ? "" : ", _ids_dups as ids0, _ids_dups as ids1\n") +
-//		" where dups.entityid0 = e0.entityid\n" +
-//		" and dups.entityid1 = e1.entityid\n" +
-//		" and e0.dbid = " + SqlInteger.sql(dbid0) + " and e1.dbid = " + SqlInteger.sql(dbid1) +
-//		" and ((dups.entityid0 = ml.entityid0 and dups.entityid1 = ml.entityid1)\n" +
-//		"    or (dups.entityid0 = ml.entityid1 and dups.entityid1 = ml.entityid0))\n" +
-//		(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid;\n\n"));
 
 	if (cleanseMode == M_APPROVE) {
 		preSql.append(
@@ -1137,7 +1201,7 @@ public SqlSet getSelectSql(boolean proto)
 			" and dups.entityid1 = e1.entityid" +
 			" and e0.dbid = " + SqlInteger.sql(dbid0) + " and e1.dbid = " + SqlInteger.sql(dbid1) +
 			" and not e0.obsolete and not e1.obsolete" +
-			" and score <= 1.0" +
+			" and score <= 1.01" +
 			(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid") +
 			";\n");
 

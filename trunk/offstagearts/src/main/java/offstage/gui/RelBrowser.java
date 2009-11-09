@@ -14,19 +14,18 @@ import citibob.sql.SqlRun;
 import citibob.sql.UpdTasklet2;
 import citibob.swing.WidgetTree;
 import citibob.swing.table.ColPermuteTableModel;
+import citibob.swing.table.DataCols;
 import citibob.swing.table.DelegateStyledTM;
 import citibob.swing.table.FixedColTableModel;
 import citibob.swing.table.JTypeTableModel;
 import citibob.swing.table.MultiJTypeTableModel;
 import citibob.swing.table.RenderEditCols;
+import citibob.swing.table.StyledTM.ButtonListener;
 import citibob.swingers.DefaultRenderEdit;
 import citibob.types.JType;
 import citibob.types.JavaJType;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTable;
@@ -147,6 +146,21 @@ System.out.println("Edit col = " + stm.getModel().findColumnU("Edit"));
 		re.setFormatU("Del",
 			new DefaultRenderEdit(new ComponentRenderer(new MyButton("Del")), null));
 
+		DataCols<ButtonListener> listenerCols = new DataCols(ButtonListener.class, model.getColumnCount());
+		listenerCols.setColumn(model.findColumnU("Edit"),
+			new ButtonListener() {
+			public void onClicked(int row, int col, int modifiers) {
+				System.out.println("******* EDIT " + row);
+			}}
+		);
+		listenerCols.setColumn(model.findColumnU("Del"),
+			new ButtonListener() {
+			public void onClicked(int row, int col, int modifiers) {
+				System.out.println("******* DELETE " + row);
+			}}
+		);
+		stm.setButtonListenerModel(listenerCols);
+		
 		rels.setStyledTM(stm);
 
 //		// RSSchema schema = (RSSchema)relDb.getSchemaBuf().getSchema();

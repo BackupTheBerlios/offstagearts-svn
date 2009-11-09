@@ -50,7 +50,8 @@ insert into relids (name, reltype, explicit, req0, req1, relcategoryid) values
 	('payerof', 1, false,  true, false,
 	(select relcategoryid from relcategoryids where name='term'));
 
--- many-to-many relationships
+-- parent relationships table.  DO NOT insert in here direcly
+-- (it won't be handled by merge logic).
 CREATE TABLE rels
 (
    relid integer NOT NULL, 
@@ -67,6 +68,8 @@ create table rels_o2m (
 primary key(relid,temporalid,entityid1)
 ) inherits (rels);
 
+-- NOTE: Many-to-many relationships must go in a rels_m2m table!!!!
+-- NOT in the main rels table.
 
 
 -- Function: w_rels_o2m_set(integer, integer, integer, integer)

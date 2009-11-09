@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.cleanse;
 
 import citibob.app.App;
+import citibob.config.ConfigMaker;
+import citibob.config.DialogConfigMaker;
 import citibob.reflect.ClassPathUtils;
 import citibob.sql.pgsql.*;
 import java.sql.*;
@@ -254,17 +256,25 @@ final Writer out)
 		out.flush();
 	}});
 }
-//public static void main(String[] args) throws Exception
-//{
+
+public static void main(String[] args) throws Exception
+{
+
 //	final FrontApp app = new FrontApp(FrontApp.CT_CONFIGCHOOSE, null); //new File("/export/home/citibob/svn/offstage/config"));
 //	boolean resGood = app.checkResources();
 //	app.initWithDatabase();
-//	File dir = ClassPathUtils.getMavenProjectRoot();
-//	Writer out = new FileWriter(new File(dir, "dups.sql"));
-//	new MergePurge(app).findDups(app.sqlRun(), 2, 0, .95, out);
-////	new MergePurge(app).findDups(app.sqlRun(), 0, 0, .95, out);
-//	app.sqlRun().flush();
-//	out.close();
-//}
+//	
+//	
+	ConfigMaker cmaker;
+	cmaker = new DialogConfigMaker("offstage/demo");
+	final FrontApp app = new FrontApp(cmaker);
+	File dir = ClassPathUtils.getMavenProjectRoot();
+	Writer out = new FileWriter(new File(dir, "dups.sql"));
+//	new MergePurge(app).findDups(app.sqlRun(), 1, 0, .95, out);
+	new MergePurge(app).findDups(app.sqlRun(), 1, 1, .95, out);
+//	new MergePurge(app).findDups(app.sqlRun(), 0, 0, .95, out);
+	app.sqlRun().flush();
+	out.close();
+}
 
 }

@@ -174,8 +174,8 @@ public void mergeEntities(Integer entityid0, Integer entityid1)
 	if (entityid1 > entityid0) swapEntityID(entityid0, entityid1);
 	
 
-// TODO: Merge relationships!
-throw new NullPointerException();
+	// TODO: Merge m2m relationships!
+	//throw new NullPointerException();
 }
 
 public void swapEntityID(Integer entityid0, Integer entityid1)
