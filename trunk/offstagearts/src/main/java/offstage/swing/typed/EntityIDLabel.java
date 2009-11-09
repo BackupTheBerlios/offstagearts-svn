@@ -23,20 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.swing.typed;
 
-import java.text.DateFormat;
-import java.util.Date;
-import javax.swing.*;
-import javax.swing.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.sql.*;
-import citibob.exception.*;
-import citibob.sql.*;
-import citibob.swing.typed.*;
-import citibob.app.*;
+import citibob.sql.RsTasklet2;
+import citibob.sql.SqlRun;
 import citibob.sql.pgsql.*;
-import citibob.types.*;
-import citibob.text.*;
+import citibob.swing.typed.JTypedLabelDB;
+import citibob.swing.typed.TextTypedWidget;
+import citibob.text.DBFormat;
+import citibob.text.SFormat;
 
 public class EntityIDLabel extends JTypedLabelDB
 {

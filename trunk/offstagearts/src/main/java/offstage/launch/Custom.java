@@ -49,7 +49,7 @@ System.out.println("********************** Custom");
 		if (args.length > 0) {
 			f = new File(args[0]);
 		} else {
-			f = new File("/export/home/citibob/offstagearts/launchers/offstagearts-stwc.jar");	
+			f = new File("/Users/citibob/offstagearts/launchers/offstagearts-stwc.jar");
 		}
 //		File f = new File("/export/home/citibob/mvn/oamisc/bdw/offstagearts-bdw.jar");
 //		File f = new File("/Users/citibob/offstagearts/launchers/offstagearts-bdw.jar");

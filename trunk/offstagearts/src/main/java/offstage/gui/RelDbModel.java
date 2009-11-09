@@ -41,10 +41,18 @@ private String temporalIdSql;
 private String relIdSql;		// Only display these relationships
 private Integer entityid;			// Only display rels involving this entityid
 
+/**
+ *
+ * @param temporalIdSql If null, only do "forever" relations
+ */
 public void setTemporalIdSql(String temporalIdSql) {
 	if (temporalIdSql == null) temporalIdSql = "select -1 as id";
 	this.temporalIdSql = temporalIdSql;
 }
+/**
+ *
+ * @param relIdSql Can be null; if null, do all relids.
+ */
 public void setRelIdSql(String relIdSql) {
 	if (relIdSql == null) relIdSql = "select relid as id from relids";
 	this.relIdSql = relIdSql;
@@ -58,9 +66,9 @@ public Integer getEntityID()
 public RelDbModel(SqlRun str, App app) {
 	super();
 	init(str, app,
-		new String[] {"rels"},
+		new String[] {"rels"},		// TypeSchemas
 		null,
-		new String[] {"rels"});
+		new String[] {"rels"});		// UpdateSchemas
 }
 
 public SqlSet getSelectSql(boolean proto) {
@@ -69,10 +77,10 @@ public SqlSet getSelectSql(boolean proto) {
 		" rclass.relname as tablename,\n" +
 		" relids.reltype,req0,req1,\n" +
 		" e0.obsolete as obsolete0, e1.obsolete as obsolete1,\n" +
-		" case when e0.entityid = " + entityid + " then 'this' else\n" +
+		" case when e0.entityid = " + entityid + " then '== I am ==' else\n" +
 		DB.nameColSql("e0") + "end as name0,\n" +
 		"  relids.name as relname,\n" +
-		" case when e0.entityid = " + entityid + " then 'this' else\n" +
+		" case when e1.entityid = " + entityid + " then '== me ==' else\n" +
 		DB.nameColSql("e1") + "end as name1\n" +
 		" from rels r\n" +
 		" inner join pg_class rclass on r.tableoid = rclass.oid\n" +

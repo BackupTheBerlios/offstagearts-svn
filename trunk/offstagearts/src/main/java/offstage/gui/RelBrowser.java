@@ -6,14 +6,31 @@
 
 package offstage.gui;
 
+import citibob.config.ConfigMaker;
+import citibob.config.DialogConfigMaker;
 import citibob.jschema.SchemaBuf;
 import citibob.sql.DbKeyedModel;
 import citibob.sql.SqlRun;
 import citibob.sql.UpdTasklet2;
 import citibob.swing.WidgetTree;
-import citibob.util.ObjectUtil;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import citibob.swing.table.ColPermuteTableModel;
+import citibob.swing.table.DelegateStyledTM;
+import citibob.swing.table.FixedColTableModel;
+import citibob.swing.table.JTypeTableModel;
+import citibob.swing.table.MultiJTypeTableModel;
+import citibob.swing.table.RenderEditCols;
+import citibob.swingers.DefaultRenderEdit;
+import citibob.types.JType;
+import citibob.types.JavaJType;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 import offstage.FrontApp;
 
 /**
@@ -27,94 +44,212 @@ DbKeyedModel relidsKm;
 RelEditDialog edit;
 Integer defaultTemporalID;
 
+public RelDbModel getDbModel() { return relDb; }
+
 /** Creates new form RelBrowser */
 public RelBrowser() {
 	initComponents();
 	rels.setHighlightMouseover(true);
-	edit = new RelEditDialog(WidgetTree.getJFrame(this));
 }
 
+
+static class MyButton extends JButton {
+	MyButton(String text) { super(text); }
+	public void setForeground(Color c) {}
+	public void setBackground(Color c) {}
+}
+
+static class ComponentRenderer implements TableCellRenderer
+{
+	public int selectedRow = -1;
+
+	JButton component;
+	ComponentRenderer(JButton component) {
+		this.component = component;
+	}
+	public Component getTableCellRendererComponent(JTable table, Object value,
+		boolean isSelected, boolean hasFocus,
+		int row, int column)
+	{
+//		component.setSelected(isSelected && hasFocus);
+		component.setSelected(row == selectedRow);
+		return component;
+	}
+}
+
+
+/**
+ *
+ * @param str
+ * @param app
+ * @param relIdSql  If null, only do "forever" relations
+ * @param temporalIdSql Can be null; if null, do all relids.
+ * @param defaultTemporalID Unused...
+ */
 public void initRuntime(SqlRun str, final FrontApp app, String relIdSql,
 String temporalIdSql, Integer defaultTemporalID)
 {
-//	edit.initRuntime(app);
-//
-//	// Set up list of relationships we can access
-//	String sql =
-//		" select relid,name,0\n" +
-//		" from (" + relIdSql + ") xx, relids\n" +
-//		" where xx.id = relids.relid";
-//	relidsKm = new DbKeyedModel(str, null, null, sql, "<No Relationship>");
-//	edit.relids.setKeyedModel(relidsKm);
-//	//edit.lRel.setJType(relidsKm, (String)relidsKm.getNullValue());
-//	// TODO: Change KeyedSFormat to get the null value out of the KeyedModel
-//	// Rationalize null value handling between KeyedModel, DbKeyedModel, etc.
-//
-//	relDb = new RelDbModel(str, app) {
-//	public void setKey(Object... keys) {
-//	}};
-//
-//	relDb.setRelIdSql(relIdSql);
-//	relDb.setTemporalIdSql(temporalIdSql);
-//
-//	str.execUpdate(new UpdTasklet2() {		// Set up table AFTER enrolledDb has been initialized
-//	public void run(SqlRun str) {
+	edit = new RelEditDialog(WidgetTree.getJFrame(this));
+	edit.initRuntime(app);
+
+	// Set up list of relationships we can access
+	if (relIdSql == null) relIdSql = "select relid as id from relids";
+	String sql =
+		" select relid,name,0\n" +
+		" from (" + relIdSql + ") xx, relids\n" +
+		" where xx.id = relids.relid";
+	relidsKm = new DbKeyedModel(str, null, null, sql, "<No Relationship>");
+	edit.relids.setKeyedModel(relidsKm);
+	//edit.lRel.setJType(relidsKm, (String)relidsKm.getNullValue());
+	// TODO: Change KeyedSFormat to get the null value out of the KeyedModel
+	// Rationalize null value handling between KeyedModel, DbKeyedModel, etc.
+
+	relDb = new RelDbModel(str, app) {
+	public void setKey(Object... keys) {
+	}};
+	relDb.setRelIdSql(relIdSql);
+	relDb.setTemporalIdSql(temporalIdSql);
+
+	str.execUpdate(new UpdTasklet2() {		// Set up table AFTER enrolledDb has been initialized
+	public void run(final SqlRun str) {
+		// Make a simple table model to for "button" columns
+		final FixedColTableModel buttonCols = new FixedColTableModel(
+		new String[] {"Edit", "Del"},
+		new JType[] {JavaJType.jtString, JavaJType.jtString},
+		new boolean[] {false, false}) {
+			public int getRowCount() {
+				return relDb.getTableModel().getRowCount();
+			}
+			public Object getValueAt(int rowIndex, int columnIndex) {
+				switch(columnIndex) {
+					case 0 : return "<Edit>";
+					case 1 : return "<Delete>";
+				}
+				return null;
+			}
+		};
+
+		final MultiJTypeTableModel multi = new MultiJTypeTableModel(relDb.getTableModel(), buttonCols);
+
+		// Now make a StyledTM from our multi model
+		DelegateStyledTM stm = new DelegateStyledTM(multi);
+		final ColPermuteTableModel model = stm.setColumns(app.swingerMap(),
+			new String[] {"Person1", "relation", "Person2", "Edit", "Del"},
+			new String[] {"name0", "relname", "name1", "Edit", "Del"});
+		stm.setEditable(false, false, false, false, false);
+		RenderEditCols re = stm.setRenderEditCols(app.swingerMap());
+System.out.println("Edit col = " + stm.getModel().findColumnU("Edit"));
+		final ComponentRenderer editRend = new ComponentRenderer(new MyButton("Edit"));
+		re.setFormatU("Edit",
+			new DefaultRenderEdit(editRend, null));
+		re.setFormatU("Del",
+			new DefaultRenderEdit(new ComponentRenderer(new MyButton("Del")), null));
+
+		rels.setStyledTM(stm);
+
 //		// RSSchema schema = (RSSchema)relDb.getSchemaBuf().getSchema();
-//		rels.setModelU(app.swingerMap(), relDb.getTableModel(),
-//			new String[] {"Description"},
-//			new String[] {"description"});
-//		rels.setEditable(false);
+//		rels.setModelU(app.swingerMap(), multi,
+//			new String[] {"Person1", "relation", "Person2", "Edit", "Delete"},
+//			new String[] {"name0", "relname", "name1", "Edit", "Delete"});
+//		rels.setEditable(false, false, false, false, false);
+
+		JTypeTableModel jtm = rels.getCBModel();
+		final int editCol = jtm.findColumnU("Edit");
+		final int deleteCol = jtm.findColumn("Delete");
+		
+		rels.addMouseListener(
+		new MouseAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// Figure out the row and column we clicked on
+				Point point = e.getPoint();
+				int row = rels.rowAtPoint(point);
+				int col = rels.columnAtPoint(point);
+
+				editRend.selectedRow = row;
+				model.fireTableCellUpdated(row, col);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				Point point = e.getPoint();
+				int row = rels.rowAtPoint(point);
+				int col = rels.columnAtPoint(point);
+
+				editRend.selectedRow = -1;
+				model.fireTableCellUpdated(row, col);
+			}
+
+			public void mouseClicked(MouseEvent e) {
+				// Figure out the row and column we clicked on
+				Point point = e.getPoint();
+				int col = rels.columnAtPoint(point);
+				int row = rels.rowAtPoint(point);
+
+				System.out.println("Clicked on row=" + row + ", col=" + col);
+				if (col == editCol) {
+					System.out.println("EDIT");
+				} else if (col == deleteCol) {
+					System.out.println("DELETE");
+				}
+			}
+		});
+
 //
 //		rels.getSelectionModel().addListSelectionListener(
 //		new ListSelectionListener() {
 //		public void valueChanged(ListSelectionEvent e) {
-//			editRow(e.getFirstIndex());
+//			editRow(str, e.getFirstIndex());
 //		}});
-//	}});
+	}});
 }
 
 
 void editRow(SqlRun str, int row)
 {
-//	SchemaBuf sbuf = relDb.getSchemaBuf();
-//	Integer thisID = relDb.getEntityID();
-//
-//	Integer eid0 = (Integer)sbuf.getValueAt(row, "entityid0");
-//	Integer eid1 = (Integer)sbuf.getValueAt(row, "entityid1");
-//	Integer relid = (Integer)sbuf.getValueAt(row, "relid");
-//	edit.setEditMode(edit.MODE_EDIT, thisID,
-//		eid0, relid, eid1);
-//	edit.setVisible(true);
-//
-//	switch(edit.action) {
-//		case RelEditDialog.ACTION_OK : {
-//
-//		} break;
-//		case RelEditDialog.ACTION_DELETE : {
-//			String sql =
-//				" delete from rels" +
-//				" where entityid0 = "
-//		} break;
-//	}
-//	if (edit.action == edit.)
-//
-//	edit.setThisID(thisID)
-//
-//	edit.entityid0.setValue(eid0);
-//	if (ObjectUtil.eq(eid0, thisID)) edit.entityid0.setEnabled(false);
-//
-//	edit.entityid1.setValue(eid1);
-//	if (ObjectUtil.eq(eid1, thisID)) edit.entityid1.setEnabled(false);
+System.out.println("RelBrowser.editRow()");
+	SchemaBuf sbuf = relDb.getSchemaBuf();
+	Integer thisID = relDb.getEntityID();
+
+	Integer eid0 = (Integer)sbuf.getValueAt(row, "entityid0");
+	Integer eid1 = (Integer)sbuf.getValueAt(row, "entityid1");
+	Integer relid = (Integer)sbuf.getValueAt(row, "relid");
+	Integer temporalid = (Integer)sbuf.getValueAt(row, "temporalid");
+//System.out.println("RelBrowser: eid0 = " + eid0 + ", eid1 = " + eid1 + ", thisID = " + thisID);
+//System.out.println("eq0 = " + ObjectUtil.eq(eid0, thisID));
+//System.out.println("eq1 = " + ObjectUtil.eq(eid1, thisID));
+	edit.setEditMode(edit.MODE_EDIT, thisID,
+		eid0, relid, eid1);
+	edit.setVisible(true);
+
+	switch(edit.action) {
+		case RelEditDialog.ACTION_CANCEL : {
+
+		}
+		case RelEditDialog.ACTION_OK : {
+			// TODO: Insert or update
+			// Use the appropriate stored procedures!
+		} break;
+		case RelEditDialog.ACTION_DELETE : {
+			String sql =
+				" delete from rels" +
+				" where temporalid = " + temporalid +
+				" and entityid0 = " + eid0 +
+				" and entityid1 = " + eid1 +
+				" and relid = " + relid;
+		} break;
+	}
 }
 
 
 public void setRel_o2m(SqlRun str, String srelid, String stemporalid,
 int entityid0, int entityid1)
 {
-//	str.execSql(
-//		" select w_rels_o2m_set(" +
-//		srelid + ", " + stemporalid + ", " + entityid0 + ", " + entityid1 + ");");
-//	doSelect(str);
+	str.execSql(
+		" select w_rels_o2m_set(" +
+		srelid + ", " + stemporalid + ", " + entityid0 + ", " + entityid1 + ");");
+	relDb.doSelect(str);
 }
 
 
@@ -192,5 +327,32 @@ int entityid0, int entityid1)
 
 	
 // =================================================================
+public static void main(String[] args) throws Exception
+{
+
+	ConfigMaker cmaker = new DialogConfigMaker("offstage/demo");
+	final FrontApp app = new FrontApp(cmaker);
+	app.checkResources();
+	app.initWithDatabase(null);
+
+	// Construct GUI widgets
+	JFrame frame = new JFrame();
+	RelBrowser rb = new RelBrowser();
+	frame.getContentPane().add(rb);
+
+	// Initialize GUI widgets
+	rb.initRuntime(app.sqlRun(), app, null, null, 0);
+	app.sqlRun().flush();
+
+	// Get data into our model
+	RelDbModel dm = rb.getDbModel();
+	dm.setEntityID(12633);
+	dm.doSelect(app.sqlRun());
+	app.sqlRun().flush();
+
+	// Display it all
+	frame.pack();
+	frame.setVisible(true);
+}
 	
 }

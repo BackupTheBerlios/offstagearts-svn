@@ -308,6 +308,7 @@ public static SqlSet listRelGroupSql(SqlRun str, String relName, int temporalid,
 		" drop table " + group + ";\n");
 }
 
+/** Return the name of a person */
 public static String nameColSql(String tableName)
 {
 	return

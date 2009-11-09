@@ -23,12 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.swing.typed;
 
-import javax.swing.*;
-import javax.swing.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.sql.*;
-import citibob.exception.*;
 import citibob.sql.*;
 import citibob.swing.typed.*;
 import citibob.app.*;

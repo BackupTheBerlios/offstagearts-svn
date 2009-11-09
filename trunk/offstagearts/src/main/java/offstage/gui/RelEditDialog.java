@@ -39,6 +39,7 @@ public RelEditDialog(java.awt.Frame parent) {
 
 public void initRuntime(FrontApp app)
 {
+	this.app = app;
 	entityid0.initRuntime(app);
 	entityid1.initRuntime(app);
 }
@@ -64,6 +65,7 @@ Integer eid0, Integer relid, Integer eid1)
 		entityid1.setEnabled(true);
 	}
 
+	app.sqlRun().flush();
 }
 
 /** Store the just-edited relation in the database */

@@ -364,7 +364,7 @@ throws Exception
 	name = "OffstageArts";
 	
 	// Make sure we have the right version
-	version = new Version("1.10.7");
+	version = new Version("1.10.8");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
@@ -611,7 +611,15 @@ public boolean checkResources()  throws Exception
 	return ret;
 }
 
-/** Finishes initialization, things that require a functional database. */
+/**
+ * Finishes initialization, things that require a functional database.
+ @param siteCodeFileName The sitecode.jar file to use.<ul>
+ * <li>If null, then look at property name "sitecode.jar" for direction.</li>
+ * <li>If "<none>" make sure NO sitecode is used, not even from the database.</li>
+ * <li>If still null, then do standard loading of sitecode.jar from database.</li>
+ * <li>Otherwise, load the named sitecode.jar file</li>
+ * </ul>
+ */
 public void initWithDatabase(String siteCodeFileName)
 {
 	try {
