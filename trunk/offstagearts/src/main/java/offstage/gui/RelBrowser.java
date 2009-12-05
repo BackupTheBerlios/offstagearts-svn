@@ -29,6 +29,7 @@ import java.awt.Component;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 import offstage.FrontApp;
 
@@ -87,7 +88,7 @@ static class ComponentRenderer implements TableCellRenderer
  * @param temporalIdSql Can be null; if null, do all relids.
  * @param defaultTemporalID Unused...
  */
-public void initRuntime(SqlRun str, final FrontApp app, String relIdSql,
+public void initRuntime(final SqlRun str, final FrontApp app, String relIdSql,
 String temporalIdSql, Integer defaultTemporalID)
 {
 	edit = new RelEditDialog(WidgetTree.getJFrame(this));
@@ -135,92 +136,30 @@ String temporalIdSql, Integer defaultTemporalID)
 		// Now make a StyledTM from our multi model
 		DelegateStyledTM stm = new DelegateStyledTM(multi);
 		final ColPermuteTableModel model = stm.setColumns(app.swingerMap(),
-			new String[] {"Person1", "relation", "Person2", "Edit", "Del"},
-			new String[] {"name0", "relname", "name1", "Edit", "Del"});
+			new String[] {"Person1", "relation", "Person2", "**"},
+			new String[] {"name0", "relname", "name1", "Edit"});
 		stm.setEditable(false, false, false, false, false);
 		RenderEditCols re = stm.setRenderEditCols(app.swingerMap());
-System.out.println("Edit col = " + stm.getModel().findColumnU("Edit"));
 		final ComponentRenderer editRend = new ComponentRenderer(new MyButton("Edit"));
-		re.setFormatU("Edit",
-			new DefaultRenderEdit(editRend, null));
-		re.setFormatU("Del",
-			new DefaultRenderEdit(new ComponentRenderer(new MyButton("Del")), null));
+		re.setFormatU("Edit", new DefaultRenderEdit(editRend, null));
 
 		DataCols<ButtonListener> listenerCols = new DataCols(ButtonListener.class, model.getColumnCount());
 		listenerCols.setColumn(model.findColumnU("Edit"),
 			new ButtonListener() {
 			public void onClicked(int row, int col, int modifiers) {
 				System.out.println("******* EDIT " + row);
-			}}
-		);
-		listenerCols.setColumn(model.findColumnU("Del"),
-			new ButtonListener() {
-			public void onClicked(int row, int col, int modifiers) {
-				System.out.println("******* DELETE " + row);
+				editRow(str, row);
 			}}
 		);
 		stm.setButtonListenerModel(listenerCols);
 		
 		rels.setStyledTM(stm);
 
-//		// RSSchema schema = (RSSchema)relDb.getSchemaBuf().getSchema();
-//		rels.setModelU(app.swingerMap(), multi,
-//			new String[] {"Person1", "relation", "Person2", "Edit", "Delete"},
-//			new String[] {"name0", "relname", "name1", "Edit", "Delete"});
-//		rels.setEditable(false, false, false, false, false);
-
 		JTypeTableModel jtm = rels.getCBModel();
 		final int editCol = jtm.findColumnU("Edit");
 		final int deleteCol = jtm.findColumn("Delete");
-		
-//		rels.addMouseListener(
-//		new MouseAdapter() {
-//
-//			@Override
-//			public void mousePressed(MouseEvent e) {
-//				// Figure out the row and column we clicked on
-//				Point point = e.getPoint();
-//				int row = rels.rowAtPoint(point);
-//				int col = rels.columnAtPoint(point);
-//
-//				editRend.selectedRow = row;
-//				model.fireTableCellUpdated(row, col);
-//			}
-//
-//			@Override
-//			public void mouseReleased(MouseEvent e) {
-//				Point point = e.getPoint();
-//				int row = rels.rowAtPoint(point);
-//				int col = rels.columnAtPoint(point);
-//
-//				editRend.selectedRow = -1;
-//				model.fireTableCellUpdated(row, col);
-//			}
-//
-//			public void mouseClicked(MouseEvent e) {
-//				// Figure out the row and column we clicked on
-//				Point point = e.getPoint();
-//				int col = rels.columnAtPoint(point);
-//				int row = rels.rowAtPoint(point);
-//
-//				System.out.println("Clicked on row=" + row + ", col=" + col);
-//				if (col == editCol) {
-//					System.out.println("EDIT");
-//				} else if (col == deleteCol) {
-//					System.out.println("DELETE");
-//				}
-//			}
-//		});
-
-//
-//		rels.getSelectionModel().addListSelectionListener(
-//		new ListSelectionListener() {
-//		public void valueChanged(ListSelectionEvent e) {
-//			editRow(str, e.getFirstIndex());
-//		}});
 	}});
 }
-
 
 void editRow(SqlRun str, int row)
 {
@@ -345,6 +284,8 @@ int entityid0, int entityid1)
 // =================================================================
 public static void main(String[] args) throws Exception
 {
+//	System.setProperty("swing.metalTheme", "ocean");
+	UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
 
 	ConfigMaker cmaker = new DialogConfigMaker("offstage/demo");
 	final FrontApp app = new FrontApp(cmaker);

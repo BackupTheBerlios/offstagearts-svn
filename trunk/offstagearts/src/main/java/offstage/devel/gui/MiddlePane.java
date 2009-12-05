@@ -151,7 +151,7 @@ public class MiddlePane extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         GenderPane.add(jLabel2, gridBagConstraints);
 
-        obsolete.setText("obsolete");
+        obsolete.setText("deleted");
         obsolete.setColName("obsolete");
         obsolete.setEnabled(false);
         obsolete.setMargin(new java.awt.Insets(0, 0, 0, 0));

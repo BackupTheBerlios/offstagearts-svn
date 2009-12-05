@@ -30,7 +30,7 @@ import citibob.sql.pgsql.*;
 import citibob.types.*;
 import offstage.FrontApp;
 
-public class EntityIDDropdown extends JTypedDropdownDB
+public class EntityIDDropdown extends JTypedPopupDB
 {
 
 
