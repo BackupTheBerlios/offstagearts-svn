@@ -52,6 +52,7 @@ public IdSqlTableModel()
 	// the computed columns.  So we must set the column types ourselves.
 	setSchema(new ConstSchema(new Column[] {
 		new SqlCol("entityid", new SqlInteger(true)),
+		new SqlCol("dotdotdot", new SqlString(false)),
 		new SqlCol("name", new SqlString(true)),
 		new SqlCol("tooltip", new SqlString(true)),
 		new SqlCol("isprimary", new SqlBool(true))
@@ -84,6 +85,7 @@ public void executeQuery(SqlRun str, SqlSet idSsql, boolean hasSortCol, String o
 			" insert into " + ids + " (id) " + idSsql.getSql() + ";\n"),
 			
 		" select p.entityid," +
+		" '...' as dotdotdot, " +
 		" (case when lastname is null then '' else lastname || ', ' end ||\n" +
 		" case when firstname is null then '' else firstname || ' ' end ||\n" +
 		" case when middlename is null then '' else middlename end ||\n" +

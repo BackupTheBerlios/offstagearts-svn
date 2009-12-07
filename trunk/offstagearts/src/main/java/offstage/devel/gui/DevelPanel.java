@@ -40,6 +40,7 @@ import citibob.sql.*;
 import java.beans.PropertyChangeListener;
 import offstage.reports.SummaryReport;
 import offstage.swing.typed.EntitySelector;
+import offstage.swing.typed.IdSqlTable.PopupListener;
 
 /**
  *
@@ -63,7 +64,14 @@ public EntitySelector getEntitySelector() { return entitySelector; }
 		this.app = fapp;
 		this.dmod = xdmod;
 		entityPanel.initRuntime(str, fapp, dmod);
-		entitySelector.initRuntime(app);
+		entitySelector.initRuntime(app, -1, new String[] {"Merge with %"},
+		new PopupListener() {
+			public void onMenuSelected(int menuIndex, String menuString, int entityID) {
+				System.out.println("Merge selected!!!!! menuIndex=" + menuIndex + ", entityID = " + entityID);
+		}});
+
+		
+		
 		entitySelector.setAutoSelectOnOne(true);
 		entitySelector.addPropertyChangeListener(new PropertyChangeListener() {
 		public void propertyChange(final java.beans.PropertyChangeEvent evt) {

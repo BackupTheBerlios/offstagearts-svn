@@ -20,12 +20,14 @@ import citibob.swing.table.FixedColTableModel;
 import citibob.swing.table.JTypeTableModel;
 import citibob.swing.table.MultiJTypeTableModel;
 import citibob.swing.table.RenderEditCols;
+import citibob.swing.table.StyledTM.ButtonAdapter;
 import citibob.swing.table.StyledTM.ButtonListener;
 import citibob.swingers.DefaultRenderEdit;
 import citibob.types.JType;
 import citibob.types.JavaJType;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTable;
@@ -145,8 +147,9 @@ String temporalIdSql, Integer defaultTemporalID)
 
 		DataCols<ButtonListener> listenerCols = new DataCols(ButtonListener.class, model.getColumnCount());
 		listenerCols.setColumn(model.findColumnU("Edit"),
-			new ButtonListener() {
-			public void onClicked(int row, int col, int modifiers) {
+			new ButtonAdapter() {
+			public void onClicked(int row, int col, MouseEvent me) {
+				if (me.getButton() != MouseEvent.BUTTON1) return;
 				System.out.println("******* EDIT " + row);
 				editRow(str, row);
 			}}

@@ -27,35 +27,97 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
+import citibob.swing.table.StyledTM.ButtonAdapter;
+import citibob.swing.table.StyledTM.ButtonListener;
 import offstage.db.*;
 import java.awt.event.*;
 import citibob.swing.typed.*;
 import javax.swing.table.*;
 import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 
 /**
  *
  * @author  citibob
  */
 public class IdSqlTable extends SingleSelectStyledTable {
+
+int popupEntityID;		// The entityID implied when the user popped up a menu
+JPopupMenu popup;		// The popup menu (if any)
+private IdSqlStyledTM myModel;
+String[] menuKeys;		// Original menu items to display
+JMenuItem[] menuItems;
+
+// =====================================================================
+/** Events also via the "value" property */
+public static interface PopupListener {
+	void onMenuSelected(int menuIndex, String menuString, int entityID);
+}
 	
-//protected IdSqlTableModel searchResults;
-//citibob.app.App app;
+public void addPopupMenu(String[] keys, final PopupListener listener)
+{
+	menuKeys = keys;
+	popup = new JPopupMenu();
+	menuItems = new JMenuItem[keys.length];
+	for (int i=0; i<keys.length; ++i) {
+		final int index = i;
+		final String key = keys[i];
+		JMenuItem mi = new JMenuItem(key);
+		menuItems[i] = mi;
+		
+		mi.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			int col = getModelU().findColumn("entityid");
+			listener.onMenuSelected(index, key, popupEntityID);
+		}});
+
+		popup.add(mi);
+	}
+
+	// Set up to receive right-click events
+	// .... maybe just do this a simpler way, with a simple MouseListener
+	ButtonListener buttonListener = new ButtonAdapter() {
+		public void onPressed(int row, int col, MouseEvent me) {
+			// TODO: This doesn't really work on Macintosh, because
+			// Ctrl-BUTTON1 conflicts with changing the selection in
+			// the standard JTable.
+			if (!(me.getButton() == MouseEvent.BUTTON3 ||
+				(me.getButton() == MouseEvent.BUTTON1 &&
+					(0 != (me.getModifiersEx() & InputEvent.CTRL_DOWN_MASK))))) return;
+
+			int entityIDCol = getModelU().findColumn("entityid");
+			popupEntityID = (Integer)getModelU().getValueAt(row, entityIDCol);
+			System.out.println("dropdown context menu...");
+			
+			// Customize the menu items
+			int nameCol = getModelU().findColumn("name");
+			String name = (String)getModelU().getValueAt(row, nameCol);
+			for (int i=0; i<menuKeys.length; ++i) {
+				String key = menuKeys[i];
+				if (key.indexOf('%') < 0) continue;
+				key = key.replace("%", name);
+				menuItems[i].setLabel(key);
+			}
+			
+			// Show the menu
+			popup.show(me.getComponent(), me.getX(), me.getY());
+		}
+	};
+	DataCols<ButtonListener> listenerCols = new DataCols(
+		ButtonListener.class, myModel.getModel().getColumnCount());
+	listenerCols.setColumn(0, buttonListener);
+	myModel.setButtonListenerModel(listenerCols);
+
+
+}
 
 public void initRuntime(citibob.app.App app) //SqlRun str, FullEntityDbModel dm)
 {
-	super.setStyledTM(new IdSqlStyledTM(app.swingerMap()));
-//	this.app = app;
-//	searchResults = new IdSqlTableModel();
-//		
-//	// Add the model (with tooltips)
-//	setModelU(searchResults,
-//		new String[] {"Name"},
-//		new String[] {"name"},
-//		new String[] {"tooltip"},
-//		new boolean[] {false},
-//		app.swingerMap());
-//	setValueColU("entityid");
+	myModel = new IdSqlStyledTM(app.swingerMap());
+	super.setStyledTM(myModel);
 }
 
 /** Re-query */
@@ -73,5 +135,44 @@ public void executeQuery(SqlRun str, final SqlSet idSql, boolean hasSortCol, Str
 }
 
 // ----------------------------------------------------------------------
+// ================================================================
+public class IdSqlStyledTM extends DelegateStyledTM
+{
+	public IdSqlStyledTM(SwingerMap smap)
+	{
+		super(new IdSqlTableModel());
+		RenderEditCols re = super.setColumns(smap,
+//			"dotdotdot", "", false, null,
+			"name", "Name", false, null);
+		int ncol = re.getColumnCount();
+
+
+	}
+	
+	// ---------------------------------------------------
+	public boolean isEditable(int row, int col) { return false; }
+//	setValueColU("entityid");
+}
+// ======================================================
+static class ComponentRenderer implements TableCellRenderer
+{
+	public int selectedRow = -1;
+
+	JButton component;
+	ComponentRenderer(JButton component) {
+		this.component = component;
+	}
+	public Component getTableCellRendererComponent(JTable table, Object value,
+		boolean isSelected, boolean hasFocus,
+		int row, int column)
+	{
+//		component.setSelected(isSelected && hasFocus);
+		boolean selected = (row == selectedRow);
+//		System.out.println("row = " + row + ", selectedRow = " + selectedRow);
+		component.setSelected(selected);
+		return component;
+	}
+}
+
 
 }

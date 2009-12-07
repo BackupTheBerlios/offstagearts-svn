@@ -27,6 +27,8 @@ import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
 import citibob.swing.table.*;
+import citibob.swing.table.StyledTM.ButtonAdapter;
+import citibob.swing.table.StyledTM.ButtonListener;
 import citibob.task.*;
 import offstage.db.*;
 import java.awt.event.*;
@@ -37,6 +39,7 @@ import java.awt.*;
 import offstage.FrontApp;
 import offstage.equery.EQuery;
 import offstage.equery.swing.EQueryWizard;
+import offstage.swing.typed.IdSqlTable.PopupListener;
 
 /**
  *
@@ -51,9 +54,10 @@ boolean inDropDown;			// True if this widget is being used in a dropdown
 
 private boolean autoSelectOnOne = false;		// If true, auto-select if we get only one element in our search results
 
+
 /** Creates new form SimpleSearchPanel */
 public EntitySelector() {
-	initComponents();
+	initComponents();	
 }
 
 public void setDropDown(boolean dropDown)
@@ -64,30 +68,24 @@ public void setDropDown(boolean dropDown)
  its own DB transaction. */
 public void propertyChange(final java.beans.PropertyChangeEvent evt)
 {
-		// We were started by mouse click (or some semblance thereof)
-		// But don't do a busy cursor if we're within a dropdown
-//		if (inDropDown) {
-			app.sqlRun().pushFlush();
-			EntitySelector.super.propertyChange(evt);
-			app.sqlRun().popFlush();
-//System.out.println("Event source = " + evt.getSource());
-//		} else {
-//			app.guiRun().run(EntitySelector.this, new SqlTask() {
-//			public void run(SqlRun str) throws Exception {
-//				EntitySelector.super.propertyChange(evt);
-//			}});
-//		}
-//	} else {
-//		// We're just in the middle of a long line of cascading events
-//		EntitySelector.super.propertyChange(evt);		
-//	}
+	app.sqlRun().pushFlush();
+	EntitySelector.super.propertyChange(evt);
+	app.sqlRun().popFlush();
 }	
 
 
 public void initRuntime(FrontApp xapp) //Statement st, FullEntityDbModel dm)
-{ initRuntime(xapp, -1); }
+{
+	initRuntime(xapp, -1, null, null);
+}
 
-public void initRuntime(FrontApp xapp, int termid) //Statement st, FullEntityDbModel dm)
+
+public void initRuntime(FrontApp xapp, int termid)
+{
+	initRuntime(xapp, termid, null, null);
+}
+
+public void initRuntime(FrontApp xapp, int termid, String[] popupItems, PopupListener listener)
 {
 	this.termid = termid;
 	this.app = xapp;
@@ -110,6 +108,10 @@ public void initRuntime(FrontApp xapp, int termid) //Statement st, FullEntityDbM
 			}});
 		}
 	}});
+
+	if (popupItems != null && listener != null)
+		searchResultsTable.addPopupMenu(popupItems, listener);
+
 }
 
 public void setSearchIdSql(SqlRun str, String idSql)
@@ -264,13 +266,6 @@ public void requestTextFocus()
     private offstage.swing.typed.IdSqlTable searchResultsTable;
     private javax.swing.JTextField searchWord;
     // End of variables declaration//GEN-END:variables
-// ===========================================================
-///** Pass along change in value from underlying typed widget --- but only
-// if new value is non-null.   This widget can onl*/
-//public void propertyChange(java.beans.PropertyChangeEvent evt) {
-//	Object newval = evt.getNewValue();
-//	firePropertyChange("value", evt.getOldValue(), newval);
-//}	
 // ===========================================================
 
 	
