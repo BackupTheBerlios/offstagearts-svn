@@ -57,6 +57,27 @@ public static interface PopupListener {
 	void onMenuSelected(int menuIndex, String menuString, int entityID);
 }
 	
+protected void showPopup(int row, int col, MouseEvent me)
+{
+	int entityIDCol = getModelU().findColumn("entityid");
+	popupEntityID = (Integer)getModelU().getValueAt(row, entityIDCol);
+	System.out.println("dropdown context menu...");
+
+	// Customize the menu items
+	int nameCol = getModelU().findColumn("name");
+	String name = (String)getModelU().getValueAt(row, nameCol);
+	for (int i=0; i<menuKeys.length; ++i) {
+		String key = menuKeys[i];
+		if (key.indexOf('%') < 0) continue;
+		key = key.replace("%", name);
+		menuItems[i].setText(key);
+	}
+
+	// Show the menu
+	popup.show(me.getComponent(), me.getX(), me.getY());
+}
+	
+
 public void addPopupMenu(String[] keys, final PopupListener listener)
 {
 	menuKeys = keys;
@@ -79,31 +100,15 @@ public void addPopupMenu(String[] keys, final PopupListener listener)
 
 	// Set up to receive right-click events
 	// .... maybe just do this a simpler way, with a simple MouseListener
-	ButtonListener buttonListener = new ButtonAdapter() {
+	ButtonListener buttonListener = new ButtonListener() {
+		public void onClicked(int row, int col, MouseEvent me) {
+			if (me.isPopupTrigger()) showPopup(row,col,me);	
+		}
 		public void onPressed(int row, int col, MouseEvent me) {
-			// TODO: This doesn't really work on Macintosh, because
-			// Ctrl-BUTTON1 conflicts with changing the selection in
-			// the standard JTable.
-			if (!(me.getButton() == MouseEvent.BUTTON3 ||
-				(me.getButton() == MouseEvent.BUTTON1 &&
-					(0 != (me.getModifiersEx() & InputEvent.CTRL_DOWN_MASK))))) return;
-
-			int entityIDCol = getModelU().findColumn("entityid");
-			popupEntityID = (Integer)getModelU().getValueAt(row, entityIDCol);
-			System.out.println("dropdown context menu...");
-			
-			// Customize the menu items
-			int nameCol = getModelU().findColumn("name");
-			String name = (String)getModelU().getValueAt(row, nameCol);
-			for (int i=0; i<menuKeys.length; ++i) {
-				String key = menuKeys[i];
-				if (key.indexOf('%') < 0) continue;
-				key = key.replace("%", name);
-				menuItems[i].setLabel(key);
-			}
-			
-			// Show the menu
-			popup.show(me.getComponent(), me.getX(), me.getY());
+			if (me.isPopupTrigger()) showPopup(row,col,me);	
+		}
+		public void onReleased(int row, int col, MouseEvent me) {
+			if (me.isPopupTrigger()) showPopup(row,col,me);	
 		}
 	};
 	DataCols<ButtonListener> listenerCols = new DataCols(
@@ -116,6 +121,7 @@ public void addPopupMenu(String[] keys, final PopupListener listener)
 
 public void initRuntime(citibob.app.App app) //SqlRun str, FullEntityDbModel dm)
 {
+//	setFocusable(false);
 	myModel = new IdSqlStyledTM(app.swingerMap());
 	super.setStyledTM(myModel);
 }
