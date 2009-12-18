@@ -40,13 +40,13 @@ public class CleanseFrame extends javax.swing.JFrame {
 	public void initRuntime(SqlRun str, FrontApp fapp, int dbid0, int dbid1, int cleanseMode)
 	{
 		switch(cleanseMode) {
-			case CleansePanel.M_PROVISIONAL :
+			case MergeActions.M_PROVISIONAL :
 				setTitle("Duplicates (provisional)");
 			break;
-			case CleansePanel.M_APPROVE :
+			case MergeActions.M_APPROVE :
 				setTitle("Approve Duplicates");
 			break;
-			case CleansePanel.M_REGULAR :
+			case MergeActions.M_REGULAR :
 				setTitle("Duplicates");
 			break;
 		}

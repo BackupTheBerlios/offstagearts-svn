@@ -101,9 +101,12 @@ void mergeDOB(Integer entityid0, Integer entityid1)
 }
 
 /** Merges data FROM dm0 TO dm1.  NOTE: When changing this, also change
- the changeEntityID() method below. */
-public void mergeEntities(Integer entityid0, Integer entityid1)
+ the changeEntityID() method below.
+ @return entityID of the resulting merged record */
+public Integer mergeEntities(Integer entityid0, Integer entityid1)
 {
+	if (entityid0.intValue() == entityid1.intValue()) return null;
+
 // ONE MORE THING: need to tell mergeOneRow() about columns that default to entityid.
 // This can be done in a special update statement after-the-fact.
 // Also need to do a simple search-and-replace of entityid0 -> entityid1 on primaryentityid, adultid, etc.
@@ -171,7 +174,12 @@ public void mergeEntities(Integer entityid0, Integer entityid1)
 	moveRows(sset.get("rels_o2m"), "entityid1", entityid0, entityid1);
 
 	// Now make sure we re-use the lowest-valued entityid
-	if (entityid1 > entityid0) swapEntityID(entityid0, entityid1);
+	if (entityid1 <= entityid0) {
+		return entityid1;
+	} else {
+		swapEntityID(entityid0, entityid1);
+		return entityid0;
+	}
 	
 
 	// TODO: Merge m2m relationships!
