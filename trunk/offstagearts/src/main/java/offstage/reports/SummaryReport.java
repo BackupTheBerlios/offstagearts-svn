@@ -78,20 +78,32 @@ throws IOException
 public String getHtml(DevelModel dmod)
 throws IOException
 {
-//	// Get the StringTemplate...
-//	InputStream in = SummaryReport.class.getClassLoader().getResourceAsStream("offstage/reports/summary.stg");
-//	StringTemplateGroup stg = new StringTemplateGroup(new InputStreamReader(in));
-//	in.close();
-//	StringTemplate st = stg.getInstanceOf("summary");
+//	StringTemplate st = getTemplate(stg, "offstage/reports/summary");
 
-//	// Get the StringTemplate...
+	// Read main portion of the template off the disk
+	String templateName = "offstage/reports/summary";
+	InputStream in = app.getSiteResourceAsStream(templateName + ".st");
+	StringBuffer template = new StringBuffer(
+		IOUtils.readerToString(new InputStreamReader(in)));
+	
+	// Add the DataTabs to the template
+	for (DataTab tab : app.dataTabSet().allTabs()) {
+		String tabSummary = tab.getSummary_st();
+		if (tabSummary == null) continue;
+		
+		template.append(
+			"\n" +
+			"$if(_" +  tab.getTableName()+ ")$\n" +
+			"<hr>\n" +
+			"<h3>" + tab.getTitle() + "</h3>\n" +
+			tabSummary + "\n" +
+			"$endif$\n");
+	}
+
+	// Now define it as a template
 	StringTemplateGroup stg = new StringTemplateGroup("summaryGroup");//, app.siteCode());
-//	InputStream in = app.getSiteResourceAsStream("offstage/reports/summary.st");
-//	String template = IOUtils.readerToString(new InputStreamReader(in));
-//	stg.defineTemplate("offstage/summary/summary", template);
-//	StringTemplate st = stg.getInstanceOf("offstage/reports/summary");
-//
-	StringTemplate st = getTemplate(stg, "offstage/reports/summary");
+	stg.defineTemplate(templateName, template.toString());
+	StringTemplate st = stg.getInstanceOf(templateName);
 	
 	// Format the columns...
 	SFormatMap sfmap = app.sFormatMap();

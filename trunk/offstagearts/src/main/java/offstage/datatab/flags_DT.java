@@ -46,6 +46,12 @@ throws SQLException
 	equeryAliases = new String[] {
 		"flags.groupid", "flags"
 	};
+	summary_st =
+		"<table>\n" +
+		"$flags:{it |\n" +
+		"<tr><td>$it.groupid$</td></tr>\n" +
+		"}$\n" +
+		"</table>\n";
 }
 	
 }

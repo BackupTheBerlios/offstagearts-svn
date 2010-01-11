@@ -57,27 +57,21 @@ public EntitySelector getEntitySelector() { return entitySelector; }
 	{
 		this.app = fapp;
 		this.dmod = xdmod;
-		entityPanel.initRuntime(str, fapp, dmod);
+		entityPanel.initRuntime(app.sqlRun(), fapp, dmod);
 		entitySelector.initRuntime(app, -1, new String[] {"Merge with %"},
-
 		new PopupListener() {
-		public void onMenuSelected(final int menuIndex, String menuString, final int entityID) {
-			app.guiRun().run(DevelPanel.this, new SqlTask() {
-			public void run(SqlRun str) throws Exception {
-				System.out.println("Merge selected!!!!! menuIndex=" + menuIndex + ", entityID = " + entityID);
-				MergeDialog md = new MergeDialog(str, app,
-					WidgetTree.getJFrame(DevelPanel.this));
-				md.setEntityIDs(str, dmod.getEntityId(), entityID);
-				md.setVisible(true);
-				
-				// Set to merged ID, if we followed through with merge.
-				Integer mergedID = md.getMergedID();
-				if (mergedID != null) {
-					dmod.setKey(mergedID);
-					refresh(str);
-				}
-				
-			}});
+		public void onMenuSelected(int menuIndex, String menuString, int entityID) {
+			MergeDialog mdialog = new MergeDialog(app.sqlRun(), app,
+				WidgetTree.getJFrame(DevelPanel.this));
+			mdialog.setEntityIDs(app.sqlRun(), dmod.getEntityId(), entityID);
+			mdialog.setVisible(true);
+			Integer mergedID = mdialog.getMergedID();
+			if (mergedID != null) {
+				dmod.setKey(mergedID);
+				refresh(app.sqlRun());
+			}
+			app.sqlRun().flush();
+//			System.out.println("Merge selected!!!!! menuIndex=" + menuIndex + ", entityID = " + entityID);
 		}});
 
 		

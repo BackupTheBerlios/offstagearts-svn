@@ -48,6 +48,12 @@ throws SQLException
 	equeryAliases = new String[] {
 		"interests.groupid", "interests",
 	};
+	summary_st =
+		"<table>\n" +
+		"$interests:{it |\n" +
+		"<tr><td>$it.groupid$</td></tr>\n" +
+		"}$\n" +
+		"</table>\n";
 	
 }
 }

@@ -40,6 +40,32 @@ public class DataTab //implements Comparable<DataTab>
 {
 
 protected String title;		// The name to give the tab in the GUI
+
+/** StringTemplate snipped used to format this table in the
+ * summary.st main HTML summary screen.
+ If NULL, then don't format in HTML.
+ eg:
+ 
+ $notes:{it |
+<p><b>$it.date$</b>: $it.note$</p>
+}$
+ 
+ or
+ 
+ <table>
+<tr><th>Type</th><th>Date</th><th>Amount</th></tr>
+$donations:{it |
+<tr><td><b>$it.groupid$</b></td><td>$it.date$</td><td align="right">$it.amount$</td></tr>
+}$
+</table>
+
+ */
+protected String summary_st = null;
+
+/** StringTemplate snipped used to format this DataTab in the
+ * fdSummary.st Front Desk HTML summary screen. */
+//protected String fdSummary_st = null;
+
 protected SqlSchema schema;
 protected String idCol = "groupid";
 protected String orderClause = "groupid";
@@ -100,12 +126,17 @@ public String getIDCol()
 	{ return idCol; }
 public String getTitle()
 	{ return title; }
+/** @return Portion of String Template used to display this DataTab
+ * in HTML summary.
+ * Returns null if it is not to be displayed in HTML summary.
+ */
+public String getSummary_st()
+	{ return summary_st; }
 //public DbModel getDbModel()
 //	{ return dbModel; }
 //
 //public SchemaBuf getSchemaBuf()
 //	{ return dbModel.getSchemaBuf(); }
-
 
 
 /** Returns name of the resource (in classloader)

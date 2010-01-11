@@ -56,6 +56,8 @@ throws SQLException
 		"activities.startdate", "activity-start",
 		"activities.enddate", "activity-end"
 	};
+	summary_st = null;
+
 }
 
 

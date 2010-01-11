@@ -53,6 +53,16 @@ throws SQLException
 		"ticketeventsales.offercodeid", "offercode",
 		"ticketeventsales.perftypeid", "performance-type"
 	};
+	summary_st =
+		"<table>\n" +
+		"<tr><th>Show</th><th>Type</th><th>Venue</th><th>Perf</th><th>#Tix</th>\n" +
+		"<th>Payment</th><th>Offer Code</th></tr>\n" +
+		"$ticketeventsales:{it |\n" +
+		"<tr><td><b>$it.groupid$</b></td><td>$it.tickettypeid$</td><td>$it.venueid$</td>\n" +
+		"<td>$it.perftypeid$</td><td align=\"right\">$it.numberoftickets$</td><td align=\"right\">$it.payment$</td>\n" +
+		"<td>$it.offercodeid$</td></tr>\n" +
+		"}$\n" +
+		"</table>\n";
 }
 	
 }

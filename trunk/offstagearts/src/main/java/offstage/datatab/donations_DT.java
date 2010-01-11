@@ -48,6 +48,16 @@ throws SQLException
 		"donations.date", "donation-date",
 		"donations.amount", "donation-amount"
 	};
+	summary_st =
+		"<hr>\n" +
+		"<h3>Donations</h3>\n" +
+		"<table>\n" +
+		"<tr><th>Type</th><th>Date</th><th>Amount</th></tr>\n" +
+		"$donations:{it |\n" +
+		"<tr><td><b>$it.groupid$</b></td><td>$it.date$</td><td align=\"right\">$it.amount$</td></tr>\n" +
+		"}$\n" +
+		"</table>\n";
+
 }
 	
 }

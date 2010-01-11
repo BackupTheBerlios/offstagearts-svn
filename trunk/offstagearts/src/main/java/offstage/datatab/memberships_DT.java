@@ -56,6 +56,7 @@ throws SQLException
 		"memberships.startdate", "membership-start",
 		"memberships.enddate", "memberships-end"
 	};
+	summary_st = null;
 }
 
 

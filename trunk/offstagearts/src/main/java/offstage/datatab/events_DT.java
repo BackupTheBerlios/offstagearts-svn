@@ -45,5 +45,13 @@ throws SQLException
 	equeryAliases = new String[] {
 		"events.groupid", "event-type"
 	};
+	
+	summary_st =
+		"<table>\n" +
+		"$events:{it |\n" +
+		"<tr><td><b>$it.groupid$</b></td></tr>\n" +
+		"}$\n" +
+		"</table>\n";
+
 }
 }

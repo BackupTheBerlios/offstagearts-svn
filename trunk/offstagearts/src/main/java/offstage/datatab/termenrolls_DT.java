@@ -51,6 +51,13 @@ throws SQLException
 		"termenrolls.groupid", "terms",
 		"termenrolls.courserole", "termrole",
 	};
+	summary_st =
+		"<table>\n" +
+		"$termenrolls:{it |\n" +
+		"<tr><td><b>$it.groupid$</b></td><td>$it.courserole$</td></tr>\n" +
+		"}$\n" +
+		"</table>\n";
+
 }
 
 public GroupPanel addToGroupPanels(SqlRun str, DevelModel dm,

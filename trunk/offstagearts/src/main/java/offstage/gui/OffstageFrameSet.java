@@ -34,6 +34,7 @@ import offstage.accounts.gui.AccountFrame;
 import offstage.cleanse.CleanseFrame;
 import offstage.cleanse.CleansePanel;
 import citibob.config.dialog.ResourcesFrame;
+import offstage.cleanse.MergeActions;
 import offstage.devel.gui.DevelFrame;
 import offstage.frontdesk.FrontDeskFrame;
 import offstage.school.gui.SchoolRegFrame;
@@ -115,7 +116,7 @@ public JFrame newFrame() throws Exception {
 	final CleanseFrame f = new CleanseFrame();
 	SqlRun str = fapp.sqlRun();
 //	f.initRuntime(str, fapp, "n", CleansePanel.M_PROVISIONAL);
-	f.initRuntime(str, fapp, 0, 0, CleansePanel.M_PROVISIONAL);
+	f.initRuntime(str, fapp, 0, 0, MergeActions.M_PROVISIONAL);
 	str.flush();
 	return f;
 //	SqlRun str = fapp.getBatchSet();
@@ -131,7 +132,7 @@ public JFrame newFrame() throws Exception {
 	final CleanseFrame f = new CleanseFrame();
 	SqlRun str = fapp.sqlRun();
 //	f.initRuntime(str, fapp, "n", CleansePanel.M_APPROVE);
-	f.initRuntime(str, fapp, 0, 0, CleansePanel.M_APPROVE);
+	f.initRuntime(str, fapp, 0, 0, MergeActions.M_APPROVE);
 	str.flush();
 	return f;
 }});

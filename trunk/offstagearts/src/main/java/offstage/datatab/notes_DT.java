@@ -47,6 +47,10 @@ throws SQLException
 		"notes.date", "note-date",
 		"notes.note", "note"
 	};
+	summary_st =
+		"$notes:{it |\n" +
+		"<p><b>$it.date$</b>: $it.note$</p>\n" +
+		"}$\n";
 }
 	
 }

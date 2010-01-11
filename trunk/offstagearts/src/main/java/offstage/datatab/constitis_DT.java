@@ -54,6 +54,7 @@ throws SQLException
 	equeryAliases = new String[] {
 		"constits.groupid", "constit",
 	};
+	summary_st = null;
 }
 
 
