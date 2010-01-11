@@ -23,21 +23,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.devel.gui;
 
-import java.sql.*;
 import javax.swing.*;
-import javax.swing.table.*;
-import citibob.jschema.*;
-import citibob.jschema.swing.*;
 //import citibob.jschema.swing.JSchemaWidgetTree;
-import citibob.swing.table.*;
-import java.awt.*;
-import java.awt.event.*;
 import offstage.FrontApp;
 import offstage.devel.gui.DevelModel;
 import citibob.task.*;
-import offstage.school.gui.*;
 import citibob.sql.*;
+import citibob.swing.WidgetTree;
 import java.beans.PropertyChangeListener;
+import offstage.cleanse.MergeDialog;
 import offstage.reports.SummaryReport;
 import offstage.swing.typed.EntitySelector;
 import offstage.swing.typed.IdSqlTable.PopupListener;
@@ -65,9 +59,25 @@ public EntitySelector getEntitySelector() { return entitySelector; }
 		this.dmod = xdmod;
 		entityPanel.initRuntime(str, fapp, dmod);
 		entitySelector.initRuntime(app, -1, new String[] {"Merge with %"},
+
 		new PopupListener() {
-			public void onMenuSelected(int menuIndex, String menuString, int entityID) {
+		public void onMenuSelected(final int menuIndex, String menuString, final int entityID) {
+			app.guiRun().run(DevelPanel.this, new SqlTask() {
+			public void run(SqlRun str) throws Exception {
 				System.out.println("Merge selected!!!!! menuIndex=" + menuIndex + ", entityID = " + entityID);
+				MergeDialog md = new MergeDialog(str, app,
+					WidgetTree.getJFrame(DevelPanel.this));
+				md.setEntityIDs(str, dmod.getEntityId(), entityID);
+				md.setVisible(true);
+				
+				// Set to merged ID, if we followed through with merge.
+				Integer mergedID = md.getMergedID();
+				if (mergedID != null) {
+					dmod.setKey(mergedID);
+					refresh(str);
+				}
+				
+			}});
 		}});
 
 		

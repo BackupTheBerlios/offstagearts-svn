@@ -85,7 +85,8 @@ public void initRuntime(FrontApp xapp, int termid)
 	initRuntime(xapp, termid, null, null);
 }
 
-public void initRuntime(FrontApp xapp, int termid, String[] popupItems, PopupListener listener)
+public void initRuntime(FrontApp xapp, int termid,
+String[] popupItems, PopupListener listener)
 {
 	this.termid = termid;
 	this.app = xapp;
@@ -111,6 +112,10 @@ public void initRuntime(FrontApp xapp, int termid, String[] popupItems, PopupLis
 
 	if (popupItems != null && listener != null)
 		searchResultsTable.addPopupMenu(popupItems, listener);
+
+searchResultsTable.setRowSelectionAllowed(false);
+System.out.println("Row selection allowed = " +
+		searchResultsTable.getRowSelectionAllowed());
 
 }
 
