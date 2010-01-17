@@ -364,7 +364,7 @@ throws Exception
 	name = "OffstageArts";
 	
 	// Make sure we have the right version
-	version = new Version("1.10.10");
+	version = new Version("1.10.11");
 //	version = new Version(WriteJNLP.getReleaseVersion3());
 	String resourceName = "offstage/version.txt";
 	SvnVersion svers = new SvnVersion(getClass().getClassLoader().getResourceAsStream(resourceName));	
