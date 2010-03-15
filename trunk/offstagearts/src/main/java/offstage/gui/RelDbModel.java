@@ -22,13 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.gui;
 
-import offstage.school.gui.*;
 import citibob.app.App;
-import citibob.jschema.SchemaBuf;
 import citibob.jschema.SqlBufDbModel;
+import citibob.sql.DbKeyedModel;
 import citibob.sql.SqlRun;
 import citibob.sql.SqlSet;
-import citibob.sql.pgsql.SqlInteger;
+import citibob.types.KeyedModel;
 import offstage.db.DB;
 
 /**
@@ -40,35 +39,56 @@ public class RelDbModel extends SqlBufDbModel
 private String temporalIdSql;
 private String relIdSql;		// Only display these relationships
 private Integer entityid;			// Only display rels involving this entityid
+private Integer temporalID;
+
+private DbKeyedModel relIdKm;	// Set only at construction
 
 /**
  *
  * @param temporalIdSql If null, only do "forever" relations
  */
-public void setTemporalIdSql(String temporalIdSql) {
+private void setTemporalIdSql(String temporalIdSql) {
 	if (temporalIdSql == null) temporalIdSql = "select -1 as id";
 	this.temporalIdSql = temporalIdSql;
 }
+
+public Integer getTemporalID()
+	{ return temporalID; }
 /**
  *
  * @param relIdSql Can be null; if null, do all relids.
  */
-public void setRelIdSql(String relIdSql) {
-	if (relIdSql == null) relIdSql = "select relid as id from relids";
-	this.relIdSql = relIdSql;
+
+public KeyedModel getRelIdKm() { return relIdKm; }
+
+public void setKey(Object key) {
+	this.entityid = (Integer)key;
 }
-public void setEntityID(Integer entityid) {
-	this.entityid = entityid;
-}
+
 public Integer getEntityID()
 	{ return entityid; }
 
-public RelDbModel(SqlRun str, App app) {
+public RelDbModel(SqlRun str, App app, String _relIdSql, Integer temporalID) {
 	super();
 	init(str, app,
 		new String[] {"rels"},		// TypeSchemas
 		null,
 		new String[] {"rels"});		// UpdateSchemas
+
+	// Set up the (permanent) temporal ID
+	this.temporalID = temporalID;
+	this.temporalIdSql = "select " + temporalID + " as id";
+
+	// Set up the (permanent) relids keyed model
+	relIdSql = (_relIdSql == null ? "select relid as id from relids" : _relIdSql);
+
+	String sql =
+		" select relid,name,0\n" +
+		" from (" + relIdSql + ") xx, relids\n" +
+		" where xx.id = relids.relid\n" +
+		" order by name";
+	relIdKm = new DbKeyedModel(str, null, null, sql, "<No Relationship>");
+
 }
 
 public SqlSet getSelectSql(boolean proto) {
@@ -89,7 +109,8 @@ public SqlSet getSelectSql(boolean proto) {
 		" inner join entities e1 on e1.entityid = r.entityid1\n" +
 		" where r.temporalid in (" + temporalIdSql + ")\n" +
 		" and r.relid in (" + relIdSql + ")\n" +
-		" and (r.entityid0 = " + entityid + " or r.entityid1 = " + entityid + ")");
+		" and (r.entityid0 = " + entityid + " or r.entityid1 = " + entityid + ")" +
+		" order by relname, name0, name1");
 }
 // =====================================================================
 //public void setRel_o2m(SqlRun str, String srelid, String stemporalid,

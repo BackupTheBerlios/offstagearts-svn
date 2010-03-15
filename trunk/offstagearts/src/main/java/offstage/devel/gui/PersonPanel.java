@@ -24,14 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package offstage.devel.gui;
 
 import citibob.swing.RowModel;
-import java.sql.*;
-import javax.swing.*;
-import javax.swing.table.*;
 import citibob.jschema.*;
-import citibob.jschema.swing.*;
 import citibob.swing.typed.*;
 //import citibob.jschema.swing.JSchemaWidgetTree;
-import citibob.swing.table.*;
 import offstage.FrontApp;
 import offstage.devel.gui.DevelModel;
 import citibob.task.*;
@@ -84,21 +79,25 @@ extends javax.swing.JPanel {
 	/** Creates new form PersonPanel */
 	public PersonPanel() {
 		initComponents();
-		
-		familyTable.addPropertyChangeListener("value", new PropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent evt) {
+
+		// Navigate around as needed
+		PropertyChangeListener pcl = new PropertyChangeListener() {
+		public void propertyChange(final PropertyChangeEvent evt) {
+System.out.println("PCL property changed!");
 			app.guiRun().run(PersonPanel.this, new SqlTask() {
 			public void run(SqlRun str) throws Exception {
-				Integer EntityID = (Integer)familyTable.getValue();
+//				Integer EntityID = (Integer)familyTable.getValue();
+				Integer EntityID = (Integer)evt.getNewValue();
 				if (EntityID == null) return;
 				dmod.setKey(EntityID);
 				dmod.doSelect(str);
 			}});
-		}});
-		
-//		familyTable.addMouseListener(new DClickTableMouseListener(familyTable) {
-//		public void doubleClicked(final int row) {
-//		}});
+		}};
+
+		// Move the screen to a new value when we select something
+		// from the family table or relationship browser
+		familyTable.addPropertyChangeListener("value", pcl);
+		relBrowser.addPropertyChangeListener("value", pcl);
 
 	}
 	
@@ -107,11 +106,22 @@ extends javax.swing.JPanel {
 	{
 		this.app = xfapp;
 		this.dmod = dm;
+
+
 		mainRm = new SchemaBufRowModel(dm.getPersonSb());
 		str.execUpdate(new UpdTasklet() {
 		public void run() {
 			headofRm = new SchemaBufRowModel(dm.getHeadofSb());
-			
+
+//			mainRm.addColListener(mainRm.findColumn("entityid"), new RowModel.ColAdapter() {
+//			public void curRowChanged(final int col) {
+//				if (mainRm.getCurRow() < 0) return;		// Nothing selected
+//				Integer OrigEntityID = (Integer)mainRm.getOrigValue(col);
+//				Integer EntityID = (Integer)mainRm.get(col);
+//				if (EntityID == null) return;
+//				if (ObjectUtil.eq(OrigEntityID, EntityID))
+//			}});
+
 			// Change family table contents when user re-reads from db
 			headofRm.addColListener(headofRm.findColumn("entityid0_notnull"), new RowModel.ColAdapter() {
 			public void curRowChanged(final int col) {
@@ -119,6 +129,9 @@ extends javax.swing.JPanel {
 				str.pushFlush();
 					if (headofRm.getCurRow() < 0) return;
 					Integer OrigEntityID = (Integer)headofRm.getOrigValue(col);
+//					relBrowser.getDbModel().setEntityID(OrigEntityID);
+
+
 					Integer EntityID = (Integer)headofRm.get(col);
 					if (EntityID == null) return;
 					if (OrigEntityID != null && OrigEntityID.intValue() == EntityID.intValue()) {
@@ -134,7 +147,7 @@ extends javax.swing.JPanel {
 		
 		// Bind the Family Table thingy (it's special)
 		familyTable.initRuntime(app);
-		
+		relBrowser.initRuntime(str, xfapp, dm.relDm);
 
 		mainRm.addColListener(mainRm.findColumn("entityid"), new RowModel.ColAdapter() {
 		public void curRowChanged(final int col) {
@@ -155,8 +168,8 @@ extends javax.swing.JPanel {
 		}});
 
 		middlePane = (MiddlePane)xfapp.newSiteInstance(MiddlePane.class);
-		MiddleXPane.removeAll();
-		MiddleXPane.add(middlePane);
+		MiddlePane.removeAll();
+		MiddlePane.add(middlePane);
 		middlePane.initRuntime(mainRm);
 		
 		TypedWidgetBinder.bindRecursive(this, mainRm, app.swingerMap());
@@ -184,6 +197,8 @@ extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        jSplitPane1 = new javax.swing.JSplitPane();
+        LeftPanel1 = new javax.swing.JPanel();
         FirstMiddleLast = new javax.swing.JPanel();
         lFirst = new javax.swing.JLabel();
         lMiddle = new javax.swing.JLabel();
@@ -194,6 +209,9 @@ extends javax.swing.JPanel {
         lastname = new citibob.swing.typed.JTypedTextField();
         lastname2 = new citibob.swing.typed.JTypedTextField();
         lLast2 = new javax.swing.JLabel();
+        MiddlePane = new javax.swing.JPanel();
+        middlePane = new offstage.devel.gui.MiddlePane();
+        LeftPanel = new javax.swing.JPanel();
         MiscInfo = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
@@ -212,13 +230,6 @@ extends javax.swing.JPanel {
         lLast1 = new javax.swing.JLabel();
         nickname = new citibob.swing.typed.JTypedTextField();
         jBoolCheckbox1 = new citibob.swing.typed.JBoolCheckbox();
-        FamilyPane = new javax.swing.JPanel();
-        FamilyScrollPanel = new javax.swing.JScrollPane();
-        familyTable = new offstage.swing.typed.FamilySelectorTable();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        vHouseholdID = new offstage.swing.typed.HouseholdIDDropdown();
-        bEmancipate = new javax.swing.JButton();
         AddrPanel = new javax.swing.JPanel();
         addressPanel = new javax.swing.JPanel();
         address1 = new citibob.swing.typed.JTypedTextField();
@@ -237,13 +248,25 @@ extends javax.swing.JPanel {
         jPanel4 = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         dbid = new citibob.swing.typed.JTypedLabel();
+        Padding = new javax.swing.JPanel();
+        SpacerPanel = new javax.swing.JPanel();
+        RightPanel = new javax.swing.JPanel();
         PhonePane = new javax.swing.JPanel();
         phonePanel = new offstage.gui.GroupPanel();
         lPhoneNumbers = new javax.swing.JLabel();
-        MiddleXPane = new javax.swing.JPanel();
-        middlePane = new offstage.devel.gui.MiddlePane();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        FamilyPane = new javax.swing.JPanel();
+        FamilyScrollPanel = new javax.swing.JScrollPane();
+        familyTable = new offstage.swing.typed.FamilySelectorTable();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        vHouseholdID = new offstage.swing.typed.HouseholdIDDropdown();
+        bEmancipate = new javax.swing.JButton();
+        relBrowser = new offstage.gui.RelBrowser();
 
-        setLayout(new java.awt.GridBagLayout());
+        setLayout(new java.awt.BorderLayout());
+
+        LeftPanel1.setLayout(new java.awt.GridBagLayout());
 
         FirstMiddleLast.setLayout(new java.awt.GridBagLayout());
 
@@ -321,12 +344,30 @@ extends javax.swing.JPanel {
         FirstMiddleLast.add(lLast2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 2);
-        add(FirstMiddleLast, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 4);
+        LeftPanel1.add(FirstMiddleLast, gridBagConstraints);
+
+        MiddlePane.setPreferredSize(new java.awt.Dimension(150, 148));
+        MiddlePane.setLayout(new java.awt.BorderLayout());
+        MiddlePane.add(middlePane, java.awt.BorderLayout.CENTER);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 4, 0, 4);
+        LeftPanel1.add(MiddlePane, gridBagConstraints);
+
+        LeftPanel.setLayout(new java.awt.GridBagLayout());
 
         MiscInfo.setLayout(new java.awt.GridBagLayout());
 
@@ -495,83 +536,11 @@ extends javax.swing.JPanel {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.3;
-        add(MiscInfo, gridBagConstraints);
-
-        FamilyPane.setMinimumSize(new java.awt.Dimension(200, 42));
-        FamilyPane.setPreferredSize(new java.awt.Dimension(150, 100));
-        FamilyPane.setLayout(new java.awt.GridBagLayout());
-
-        FamilyScrollPanel.setPreferredSize(new java.awt.Dimension(300, 64));
-
-        familyTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        FamilyScrollPanel.setViewportView(familyTable);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        FamilyPane.add(FamilyScrollPanel, gridBagConstraints);
-
-        jLabel8.setText("Family Members");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        FamilyPane.add(jLabel8, gridBagConstraints);
-
-        jLabel12.setText("Household:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
-        FamilyPane.add(jLabel12, gridBagConstraints);
-
-        vHouseholdID.setColName("entityid0_notnull");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        FamilyPane.add(vHouseholdID, gridBagConstraints);
-
-        bEmancipate.setText("Emancipate");
-        bEmancipate.setMargin(new java.awt.Insets(0, 2, 0, 2));
-        bEmancipate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bEmancipateActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        FamilyPane.add(bEmancipate, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.2;
-        add(FamilyPane, gridBagConstraints);
+        LeftPanel.add(MiscInfo, gridBagConstraints);
 
         AddrPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -709,15 +678,35 @@ extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         AddrPanel.add(jPanel4, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.weightx = 1.0;
+        AddrPanel.add(Padding, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.3;
+        gridBagConstraints.weightx = 1.0;
+        LeftPanel.add(AddrPanel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.weighty = 1.0;
-        add(AddrPanel, gridBagConstraints);
+        LeftPanel.add(SpacerPanel, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.2;
+        LeftPanel1.add(LeftPanel, gridBagConstraints);
+
+        jSplitPane1.setLeftComponent(LeftPanel1);
+
+        RightPanel.setLayout(new java.awt.GridBagLayout());
 
         PhonePane.setMinimumSize(new java.awt.Dimension(150, 56));
         PhonePane.setPreferredSize(new java.awt.Dimension(200, 100));
@@ -738,26 +727,89 @@ extends javax.swing.JPanel {
         PhonePane.add(lPhoneNumbers, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.3;
+        RightPanel.add(PhonePane, gridBagConstraints);
+
+        FamilyPane.setMinimumSize(new java.awt.Dimension(200, 42));
+        FamilyPane.setPreferredSize(new java.awt.Dimension(150, 100));
+        FamilyPane.setLayout(new java.awt.GridBagLayout());
+
+        FamilyScrollPanel.setPreferredSize(new java.awt.Dimension(300, 64));
+
+        familyTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        FamilyScrollPanel.setViewportView(familyTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        add(PhonePane, gridBagConstraints);
+        FamilyPane.add(FamilyScrollPanel, gridBagConstraints);
 
-        MiddleXPane.setLayout(new java.awt.BorderLayout());
-        MiddleXPane.add(middlePane, java.awt.BorderLayout.CENTER);
+        jLabel8.setText("Family Members");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        FamilyPane.add(jLabel8, gridBagConstraints);
 
+        jLabel12.setText("Household:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        FamilyPane.add(jLabel12, gridBagConstraints);
+
+        vHouseholdID.setColName("entityid0_notnull");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(2, 4, 0, 4);
-        add(MiddleXPane, gridBagConstraints);
+        gridBagConstraints.weightx = 1.0;
+        FamilyPane.add(vHouseholdID, gridBagConstraints);
+
+        bEmancipate.setText("Emancipate");
+        bEmancipate.setMargin(new java.awt.Insets(0, 2, 0, 2));
+        bEmancipate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bEmancipateActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        FamilyPane.add(bEmancipate, gridBagConstraints);
+
+        jTabbedPane1.addTab("Family", FamilyPane);
+        jTabbedPane1.addTab("Relationships", relBrowser);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 0.8;
+        RightPanel.add(jTabbedPane1, gridBagConstraints);
+        jTabbedPane1.getAccessibleContext().setAccessibleName("Family");
+
+        jSplitPane1.setRightComponent(RightPanel);
+
+        add(jSplitPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 	private void bLaunchEmailActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bLaunchEmailActionPerformed
@@ -786,9 +838,14 @@ extends javax.swing.JPanel {
     private javax.swing.JPanel FamilyPane;
     private javax.swing.JScrollPane FamilyScrollPanel;
     private javax.swing.JPanel FirstMiddleLast;
-    private javax.swing.JPanel MiddleXPane;
+    private javax.swing.JPanel LeftPanel;
+    private javax.swing.JPanel LeftPanel1;
+    private javax.swing.JPanel MiddlePane;
     private javax.swing.JPanel MiscInfo;
+    private javax.swing.JPanel Padding;
     private javax.swing.JPanel PhonePane;
+    private javax.swing.JPanel RightPanel;
+    private javax.swing.JPanel SpacerPanel;
     private citibob.swing.typed.JTypedTextField address1;
     private citibob.swing.typed.JTypedTextField address2;
     private javax.swing.JPanel addressPanel;
@@ -819,6 +876,8 @@ extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lFirst;
     private javax.swing.JLabel lLast;
     private javax.swing.JLabel lLast1;
@@ -834,6 +893,7 @@ extends javax.swing.JPanel {
     private citibob.swing.typed.JTypedTextField occupation;
     private citibob.swing.typed.JTypedTextField orgname;
     private offstage.gui.GroupPanel phonePanel;
+    private offstage.gui.RelBrowser relBrowser;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField state;
     private citibob.swing.typed.JTypedTextField title;

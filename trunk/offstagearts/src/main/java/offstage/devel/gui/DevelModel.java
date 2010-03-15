@@ -19,14 +19,12 @@ package offstage.devel.gui;
 
 import citibob.jschema.*;
 import citibob.sql.*;
-import citibob.sql.pgsql.SqlInteger;
 import java.util.*;
-import java.sql.*;
 import offstage.db.*;
-import offstage.schema.*;
 import citibob.jschema.log.*;
 import offstage.FrontApp;
 import offstage.datatab.DataTab;
+import offstage.gui.RelDbModel;
 
 /** Query one person record and all the stuff related to it.
  Users of this class should use the setKey(Object) method, where the key is
@@ -44,6 +42,8 @@ QueryLogger logger;
 EntityDbModel onePerson;
 RelO2mDbModel headofDm;				// The person who is head of our household.
 IntKeyedDbModel phones;
+RelDbModel relDm;					// Relationships to others
+
 //IntKeyedDbModel donations;
 //IntKeyedDbModel flags;
 //IntKeyedDbModel notes;
@@ -114,7 +114,16 @@ public DevelModel(FrontApp app)
 	headofDm.setKeys("headof", -1, null);
 	
 	logadd(phones = new IntKeyedDbModel(osset.get("phones"), "entityid"));
-		
+
+
+	// Relationships to others
+	String relIdSql =
+		"select relid as id from relids where relcategoryid = " +
+		"(select relcategoryid from relcategoryids where name = 'devel')";
+	relDm = new RelDbModel(app.sqlRun(), app, relIdSql, -1);
+	add(relDm);
+
+	// Add tabs
 	for (DataTab tab : app.dataTabSet().allTabs()) {
 		IntKeyedDbModel dm = tab.newDbModel(logger);
 		dm.setOrderClause(tab.getOrderClause());

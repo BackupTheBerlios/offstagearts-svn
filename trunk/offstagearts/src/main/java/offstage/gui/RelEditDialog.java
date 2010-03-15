@@ -9,6 +9,7 @@ package offstage.gui;
 import citibob.app.App;
 import citibob.sql.SqlRun;
 import citibob.util.ObjectUtil;
+import javax.swing.JOptionPane;
 import offstage.FrontApp;
 
 /**
@@ -30,6 +31,7 @@ public static final int MODE_EDIT = 0;	// Edit an existing relationship
 public static final int MODE_NEW = 1;	// Add new relationship
 
 int editMode;
+//int editMode;
 
 /** Creates new form RelEditorDialog */
 public RelEditDialog(java.awt.Frame parent) {
@@ -44,12 +46,19 @@ public void initRuntime(FrontApp app)
 	entityid1.initRuntime(app);
 }
 
-public void setThisID(Integer thisID)
-	{ this.thisID = thisID; }
+//public void setThisID(Integer thisID)
+//	{ this.thisID = thisID; }
+
+public Integer getEntityID0() { return (Integer)entityid0.getValue(); }
+public Integer getEntityID1() { return (Integer)entityid1.getValue(); }
+public Integer getRelID() { return (Integer)relids.getValue(); }
 
 public void setEditMode(int editMode, Integer thisID,
 Integer eid0, Integer relid, Integer eid1)
 {
+	this.editMode = editMode;
+	this.thisID = thisID;
+
 	entityid0.setValue(eid0);
 	relids.setValue(relid);
 	entityid1.setValue(eid1);
@@ -81,6 +90,7 @@ public void storeRel(SqlRun str)
 	 */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
         entityid0 = new offstage.swing.typed.EntityIDDropdown();
@@ -88,6 +98,7 @@ public void storeRel(SqlRun str)
         relids = new citibob.swing.typed.JKeyedComboBox();
         jPanel2 = new javax.swing.JPanel();
         bOK = new javax.swing.JButton();
+        bDelete1 = new javax.swing.JButton();
         bDelete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -114,11 +125,11 @@ public void storeRel(SqlRun str)
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(entityid1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                    .add(entityid0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                    .add(entityid1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                    .add(entityid0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
                     .add(jPanel1Layout.createSequentialGroup()
                         .add(12, 12, 12)
-                        .add(relids, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)))
+                        .add(relids, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -130,10 +141,12 @@ public void storeRel(SqlRun str)
                 .add(relids, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(11, 11, 11)
                 .add(entityid1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
         bOK.setText("OK");
         bOK.addActionListener(new java.awt.event.ActionListener() {
@@ -141,7 +154,19 @@ public void storeRel(SqlRun str)
                 bOKActionPerformed(evt);
             }
         });
-        jPanel2.add(bOK);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        jPanel2.add(bOK, gridBagConstraints);
+
+        bDelete1.setText("Cancel");
+        bDelete1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bDelete1ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, 3, 0, 3);
+        jPanel2.add(bDelete1, gridBagConstraints);
 
         bDelete.setText("Delete");
         bDelete.addActionListener(new java.awt.event.ActionListener() {
@@ -149,7 +174,9 @@ public void storeRel(SqlRun str)
                 bDeleteActionPerformed(evt);
             }
         });
-        jPanel2.add(bDelete);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, 19, 0, 0);
+        jPanel2.add(bDelete, gridBagConstraints);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
 
@@ -163,6 +190,17 @@ public void storeRel(SqlRun str)
 }//GEN-LAST:event_bDeleteActionPerformed
 
 	private void bOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bOKActionPerformed
+		if (getRelID() == null) {
+			JOptionPane.showMessageDialog(this, "You must select a relationship!");
+			return;
+		}
+
+		if (!ObjectUtil.eq(entityid0.getValue(), thisID) &&
+			!ObjectUtil.eq(entityid1.getValue(), thisID))
+		{
+			JOptionPane.showMessageDialog(this, "At least one of the people must\nbe the person being edited.");
+			return;
+		}
 		action = ACTION_OK;
 		setVisible(false);
 		// TODO add your handling code here:
@@ -172,10 +210,17 @@ public void storeRel(SqlRun str)
 		action = ACTION_CANCEL;
 		// TODO add your handling code here:
 	}//GEN-LAST:event_formWindowClosing
+
+	private void bDelete1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bDelete1ActionPerformed
+		// TODO add your handling code here:
+		action = ACTION_CANCEL;
+		setVisible(false);
+	}//GEN-LAST:event_bDelete1ActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bDelete;
+    private javax.swing.JButton bDelete1;
     private javax.swing.JButton bOK;
     protected offstage.swing.typed.EntityIDDropdown entityid0;
     protected offstage.swing.typed.EntityIDDropdown entityid1;

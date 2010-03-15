@@ -6,10 +6,8 @@
 
 package offstage.gui;
 
-import citibob.config.ConfigMaker;
-import citibob.config.DialogConfigMaker;
+import citibob.app.App;
 import citibob.jschema.SchemaBuf;
-import citibob.sql.DbKeyedModel;
 import citibob.sql.SqlRun;
 import citibob.sql.UpdTasklet2;
 import citibob.swing.WidgetTree;
@@ -23,15 +21,17 @@ import citibob.swing.table.RenderEditCols;
 import citibob.swing.table.StyledTM.ButtonAdapter;
 import citibob.swing.table.StyledTM.ButtonListener;
 import citibob.swingers.DefaultRenderEdit;
+import citibob.task.SqlTask;
 import citibob.types.JType;
 import citibob.types.JavaJType;
+import citibob.util.ObjectUtil;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JTable;
-import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
 import offstage.FrontApp;
 
@@ -41,10 +41,12 @@ import offstage.FrontApp;
  */
 public class RelBrowser extends javax.swing.JPanel {
 
+App app;
 RelDbModel relDb;
-DbKeyedModel relidsKm;
 RelEditDialog edit;
-Integer defaultTemporalID;
+Integer selectedOtherEntityID;			// Selected row
+//PropertyChangeSupport selectedOtherPCS = new PropertyChangeSupport( this );
+
 
 public RelDbModel getDbModel() { return relDb; }
 
@@ -52,11 +54,16 @@ public RelDbModel getDbModel() { return relDb; }
 public RelBrowser() {
 	initComponents();
 	rels.setHighlightMouseover(true);
+//	rels.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	rels.setRowSelectionAllowed(false);
 }
 
 
 static class MyButton extends JButton {
-	MyButton(String text) { super(text); }
+	MyButton(String text) {
+		super(text);
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+	}
 	public void setForeground(Color c) {}
 	public void setBackground(Color c) {}
 }
@@ -86,33 +93,23 @@ static class ComponentRenderer implements TableCellRenderer
  *
  * @param str
  * @param app
- * @param relIdSql  If null, only do "forever" relations
+ * @param relIdSql  If null, do all relations
  * @param temporalIdSql Can be null; if null, do all relids.
- * @param defaultTemporalID Unused...
+ * @param temporalID Restrict consideration to relationships of this temporal nature (-1 == all time)
  */
-public void initRuntime(final SqlRun str, final FrontApp app, String relIdSql,
-String temporalIdSql, Integer defaultTemporalID)
+public void initRuntime(final SqlRun str, final FrontApp app, RelDbModel _relDb)
 {
+	this.app = app;
+	this.relDb = _relDb;
+
 	edit = new RelEditDialog(WidgetTree.getJFrame(this));
 	edit.initRuntime(app);
 
 	// Set up list of relationships we can access
-	if (relIdSql == null) relIdSql = "select relid as id from relids";
-	String sql =
-		" select relid,name,0\n" +
-		" from (" + relIdSql + ") xx, relids\n" +
-		" where xx.id = relids.relid";
-	relidsKm = new DbKeyedModel(str, null, null, sql, "<No Relationship>");
-	edit.relids.setKeyedModel(relidsKm);
+	edit.relids.setKeyedModel(relDb.getRelIdKm());
 	//edit.lRel.setJType(relidsKm, (String)relidsKm.getNullValue());
 	// TODO: Change KeyedSFormat to get the null value out of the KeyedModel
 	// Rationalize null value handling between KeyedModel, DbKeyedModel, etc.
-
-	relDb = new RelDbModel(str, app) {
-	public void setKey(Object... keys) {
-	}};
-	relDb.setRelIdSql(relIdSql);
-	relDb.setTemporalIdSql(temporalIdSql);
 
 	str.execUpdate(new UpdTasklet2() {		// Set up table AFTER enrolledDb has been initialized
 	public void run(final SqlRun str) {
@@ -140,28 +137,103 @@ String temporalIdSql, Integer defaultTemporalID)
 		final ColPermuteTableModel model = stm.setColumns(app.swingerMap(),
 			new String[] {"Person1", "relation", "Person2", "**"},
 			new String[] {"name0", "relname", "name1", "Edit"});
+//		stm.setTooltips("name0", "relname", "name1", null);
 		stm.setEditable(false, false, false, false, false);
 		RenderEditCols re = stm.setRenderEditCols(app.swingerMap());
 		final ComponentRenderer editRend = new ComponentRenderer(new MyButton("Edit"));
 		re.setFormatU("Edit", new DefaultRenderEdit(editRend, null));
 
 		DataCols<ButtonListener> listenerCols = new DataCols(ButtonListener.class, model.getColumnCount());
+
+		final int eid0Col = relDb.getTableModel().findColumnU("entityid0");
+		final int eid1Col = relDb.getTableModel().findColumnU("entityid1");
+		ButtonListener chooseListener = new ButtonAdapter() {
+			public boolean onClicked(int row, int col, MouseEvent me) {
+				if (row < 0 || row >= model.getRowCount()) return true;
+
+				JTypeTableModel model = relDb.getTableModel();
+				Integer eid0 = (Integer)model.getValueAt(row, eid0Col);
+				Integer eid1 = (Integer)model.getValueAt(row, eid1Col);
+
+				Integer old = selectedOtherEntityID;
+				selectedOtherEntityID = eid0;
+				if (ObjectUtil.eq(eid0, relDb.getEntityID()))
+					selectedOtherEntityID = eid1;
+
+				// Avoid spurious repeat events
+				if (ObjectUtil.eq(old, selectedOtherEntityID)) return true;
+
+	System.out.println("RelBrowser setting value from " + old + " to " + selectedOtherEntityID);
+				rels.getSelectionModel().clearSelection();
+				firePropertyChange("value",
+					old, selectedOtherEntityID);
+				return true;
+			}
+		};
+		for (int i=0; i<listenerCols.getColumnCount(); ++i)
+			listenerCols.setColumn(i, chooseListener);
+
 		listenerCols.setColumn(model.findColumnU("Edit"),
 			new ButtonAdapter() {
-			public void onClicked(int row, int col, MouseEvent me) {
-				if (me.getButton() != MouseEvent.BUTTON1) return;
+//			public boolean onPressed(int row, int col, MouseEvent me)
+//				{ return true; }
+//			public boolean onReleased(int row, int col, MouseEvent me)
+//				{ return true; }
+			public boolean onPressed(int row, int col, MouseEvent me) {
+				if (me.getButton() != MouseEvent.BUTTON1) return false;
 				System.out.println("******* EDIT " + row);
 				editRow(str, row);
+				str.flush();
+				return true;
 			}}
 		);
+
+
 		stm.setButtonListenerModel(listenerCols);
-		
 		rels.setStyledTM(stm);
 
 		JTypeTableModel jtm = rels.getCBModel();
 		final int editCol = jtm.findColumnU("Edit");
 		final int deleteCol = jtm.findColumn("Delete");
+
+
+//		// Add selection stuff
+//		final int eid0Col = relDb.getTableModel().findColumnU("entityid0");
+//		final int eid1Col = relDb.getTableModel().findColumnU("entityid1");
+//		rels.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+//		public void valueChanged(ListSelectionEvent e) {
+//			int selectedRow = e.getFirstIndex();
+//			if (selectedRow < 0 || selectedRow >= model.getRowCount()) return;
+//
+//			JTypeTableModel model = relDb.getTableModel();
+//			Integer eid0 = (Integer)model.getValueAt(selectedRow, eid0Col);
+//			Integer eid1 = (Integer)model.getValueAt(selectedRow, eid1Col);
+//
+//			Integer old = selectedOtherEntityID;
+//			selectedOtherEntityID = eid0;
+//			if (ObjectUtil.eq(eid0, relDb.getEntityID()))
+//				selectedOtherEntityID = eid1;
+//
+//			// Avoid spurious repeat events
+//			if (ObjectUtil.eq(old, selectedOtherEntityID)) return;
+//
+//System.out.println("RelBrowser setting value from " + old + " to " + selectedOtherEntityID);
+//			rels.getSelectionModel().clearSelection();
+//			firePropertyChange("value",
+//				old, selectedOtherEntityID);
+//		}});
 	}});
+}
+
+void deleteRel(SqlRun str, int temporalid, int eid0, int eid1, int relid)
+{
+	String sql =
+		" delete from rels" +
+		" where temporalid = " + temporalid +
+		" and entityid0 = " + eid0 +
+		" and entityid1 = " + eid1 +
+		" and relid = " + relid;
+	str.execSql(sql);
 }
 
 void editRow(SqlRun str, int row)
@@ -179,34 +251,46 @@ System.out.println("RelBrowser.editRow()");
 //System.out.println("eq1 = " + ObjectUtil.eq(eid1, thisID));
 	edit.setEditMode(edit.MODE_EDIT, thisID,
 		eid0, relid, eid1);
+	edit.setLocationRelativeTo(RelBrowser.this);
 	edit.setVisible(true);
 
 	switch(edit.action) {
 		case RelEditDialog.ACTION_CANCEL : {
-
 		}
 		case RelEditDialog.ACTION_OK : {
 			// TODO: Insert or update
 			// Use the appropriate stored procedures!
+			deleteRel(str, temporalid, eid0, eid1, relid);
+			setRel_o2m(str, relid, temporalid,
+				edit.getEntityID0(), edit.getEntityID1());
+			refresh(str);
 		} break;
 		case RelEditDialog.ACTION_DELETE : {
-			String sql =
-				" delete from rels" +
-				" where temporalid = " + temporalid +
-				" and entityid0 = " + eid0 +
-				" and entityid1 = " + eid1 +
-				" and relid = " + relid;
+			deleteRel(str, temporalid, eid0, eid1, relid);
+			refresh(str);
 		} break;
 	}
 }
 
 
-public void setRel_o2m(SqlRun str, String srelid, String stemporalid,
+/**
+ * @param str
+ * @param srelid relid, as a String
+ * @param stemporalid temporalid, as a String
+ * @param entityid0
+ * @param entityid1
+ */
+public void setRel_o2m(SqlRun str, int relid, int temporalid,
 int entityid0, int entityid1)
 {
 	str.execSql(
 		" select w_rels_o2m_set(" +
-		srelid + ", " + stemporalid + ", " + entityid0 + ", " + entityid1 + ");");
+		relid + ", " + temporalid + ", " + entityid0 + ", " + entityid1 + ");");
+	refresh(str);
+}
+
+void refresh(SqlRun str)
+{
 	relDb.doSelect(str);
 }
 
@@ -218,13 +302,11 @@ int entityid0, int entityid1)
 	 */
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
         GroupScrollPanel = new javax.swing.JScrollPane();
         rels = new citibob.swing.StyledTable();
         jPanel2 = new javax.swing.JPanel();
-        relids = new citibob.swing.typed.JKeyedComboBox();
         bAddRel = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
@@ -250,15 +332,7 @@ int entityid0, int entityid1)
 
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        relids.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        relids.setColName("rbplan"); // NOI18N
-        relids.setPreferredSize(new java.awt.Dimension(120, 19));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel2.add(relids, gridBagConstraints);
-
-        bAddRel.setText("+");
+        bAddRel.setText("Add Relationship");
         bAddRel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bAddRelActionPerformed(evt);
@@ -270,6 +344,35 @@ int entityid0, int entityid1)
     }// </editor-fold>//GEN-END:initComponents
 
 	private void bAddRelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAddRelActionPerformed
+		SqlRun str = app.sqlRun();
+		SchemaBuf sbuf = relDb.getSchemaBuf();
+		Integer thisID = relDb.getEntityID();
+
+//		final Integer temporalid = temporalID;
+	//System.out.println("RelBrowser: eid0 = " + eid0 + ", eid1 = " + eid1 + ", thisID = " + thisID);
+	//System.out.println("eq0 = " + ObjectUtil.eq(eid0, thisID));
+	//System.out.println("eq1 = " + ObjectUtil.eq(eid1, thisID));
+		edit.setEditMode(edit.MODE_NEW, thisID,
+			thisID, null, thisID);
+		edit.setVisible(true);
+
+	app.guiRun().run(new SqlTask() {
+	public void run(SqlRun str) throws Exception {
+		switch(edit.action) {
+			case RelEditDialog.ACTION_CANCEL : {
+			} break;
+			case RelEditDialog.ACTION_OK : {
+				setRel_o2m(str, edit.getRelID(), relDb.getTemporalID(),
+					edit.getEntityID0(), edit.getEntityID1());
+				refresh(str);
+			} break;
+//				case RelEditDialog.ACTION_DELETE : {
+//
+//					deleteRel(str, temporalid, eid0, eid1, relid);
+//					refresh(str);
+//				} break;
+		}
+	}});
 		// TODO add your handling code here:
 }//GEN-LAST:event_bAddRelActionPerformed
 	
@@ -279,40 +382,40 @@ int entityid0, int entityid1)
     private javax.swing.JButton bAddRel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private citibob.swing.typed.JKeyedComboBox relids;
     private citibob.swing.StyledTable rels;
     // End of variables declaration//GEN-END:variables
 
 	
 // =================================================================
-public static void main(String[] args) throws Exception
-{
-//	System.setProperty("swing.metalTheme", "ocean");
-	UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-
-	ConfigMaker cmaker = new DialogConfigMaker("offstage/demo");
-	final FrontApp app = new FrontApp(cmaker);
-	app.checkResources();
-	app.initWithDatabase(null);
-
-	// Construct GUI widgets
-	JFrame frame = new JFrame();
-	RelBrowser rb = new RelBrowser();
-	frame.getContentPane().add(rb);
-
-	// Initialize GUI widgets
-	rb.initRuntime(app.sqlRun(), app, null, null, 0);
-	app.sqlRun().flush();
-
-	// Get data into our model
-	RelDbModel dm = rb.getDbModel();
-	dm.setEntityID(12633);
-	dm.doSelect(app.sqlRun());
-	app.sqlRun().flush();
-
-	// Display it all
-	frame.pack();
-	frame.setVisible(true);
-}
+//public static void main(String[] args) throws Exception
+//{
+////	System.setProperty("swing.metalTheme", "ocean");
+//	UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+//
+//	ConfigMaker cmaker = new DialogConfigMaker("offstage/demo");
+//	final FrontApp app = new FrontApp(cmaker);
+//	app.checkResources();
+//	app.initWithDatabase(null);
+//
+//	// Construct GUI widgets
+//	JFrame frame = new JFrame();
+//	RelBrowser rb = new RelBrowser();
+//	frame.getContentPane().add(rb);
+//
+//	// Initialize GUI widgets
+////	rb.initRuntime(app.sqlRun(), app, null, null, 0);
+//	rb.initRuntime(app.sqlRun(), app, relDb);
+//	app.sqlRun().flush();
+//
+//	// Get data into our model
+//	RelDbModel dm = rb.getDbModel();
+//	dm.setEntityID(12633);
+//	dm.doSelect(app.sqlRun());
+//	app.sqlRun().flush();
+//
+//	// Display it all
+//	frame.pack();
+//	frame.setVisible(true);
+//}
 	
 }

@@ -101,14 +101,25 @@ public void addPopupMenu(String[] keys, final PopupListener listener)
 	// Set up to receive right-click events
 	// .... maybe just do this a simpler way, with a simple MouseListener
 	ButtonListener buttonListener = new ButtonListener() {
-		public void onClicked(int row, int col, MouseEvent me) {
-			if (me.isPopupTrigger()) showPopup(row,col,me);	
+		boolean hasPopup = false;
+		public boolean onPressed(int row, int col, MouseEvent me) {
+			if (!me.isPopupTrigger()) {
+				hasPopup = true;
+				return false;
+			}
+			hasPopup = true;
+			showPopup(row,col,me);
+			return true;
 		}
-		public void onPressed(int row, int col, MouseEvent me) {
-			if (me.isPopupTrigger()) showPopup(row,col,me);	
+		public boolean onReleased(int row, int col, MouseEvent me) {
+			if (!me.isPopupTrigger()) return hasPopup;
+			showPopup(row,col,me);
+			return true;
 		}
-		public void onReleased(int row, int col, MouseEvent me) {
-			if (me.isPopupTrigger()) showPopup(row,col,me);	
+		public boolean onClicked(int row, int col, MouseEvent me) {
+			if (!me.isPopupTrigger()) return hasPopup;
+			showPopup(row,col,me);
+			return true;
 		}
 	};
 	DataCols<ButtonListener> listenerCols = new DataCols(
