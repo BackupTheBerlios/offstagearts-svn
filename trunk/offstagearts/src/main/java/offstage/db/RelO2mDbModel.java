@@ -34,6 +34,8 @@ import citibob.sql.pgsql.SqlString;
 
 /**
  * A Model that gives the "parentof" or "headof" relationship.  Just one row.
+ * Used for "legacy" relationships where they're hard-wired into the logic:
+ * parent1of, payerof, etc.
  * @author citibob
  */
 public class RelO2mDbModel extends SqlBufDbModel

@@ -261,7 +261,7 @@ System.out.println("RelBrowser.editRow()");
 			// TODO: Insert or update
 			// Use the appropriate stored procedures!
 			deleteRel(str, temporalid, eid0, eid1, relid);
-			setRel_o2m(str, relid, temporalid,
+			setRel(str, relid, temporalid,
 				edit.getEntityID0(), edit.getEntityID1());
 			refresh(str);
 		} break;
@@ -280,11 +280,11 @@ System.out.println("RelBrowser.editRow()");
  * @param entityid0
  * @param entityid1
  */
-public void setRel_o2m(SqlRun str, int relid, int temporalid,
+private void setRel(SqlRun str, int relid, int temporalid,
 int entityid0, int entityid1)
 {
 	str.execSql(
-		" select w_rels_o2m_set(" +
+		" select w_rels_set(" +
 		relid + ", " + temporalid + ", " + entityid0 + ", " + entityid1 + ");");
 	refresh(str);
 }
@@ -362,7 +362,7 @@ void refresh(SqlRun str)
 			case RelEditDialog.ACTION_CANCEL : {
 			} break;
 			case RelEditDialog.ACTION_OK : {
-				setRel_o2m(str, edit.getRelID(), relDb.getTemporalID(),
+				setRel(str, edit.getRelID(), relDb.getTemporalID(),
 					edit.getEntityID0(), edit.getEntityID1());
 				refresh(str);
 			} break;
