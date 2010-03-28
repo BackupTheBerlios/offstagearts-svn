@@ -31,9 +31,12 @@ import citibob.sql.SqlRun;
 import citibob.sql.UpdTasklet2;
 import citibob.sql.pgsql.SqlInteger;
 import citibob.swing.table.JTypeTableModel;
+import citibob.util.Day;
+import citibob.wizard.Wizard;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
+import java.util.Calendar;
 import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
@@ -387,20 +390,19 @@ System.out.println("asofdate: " + (java.util.Date)wizard.getVal("asofdate"));
 	{//GEN-HEADEREND:event_miStudentAccountsActionPerformed
 		fapp.guiRun().run(SchoolRegFrame.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			int termid = schoolModel.getTermID();
-//			Calendar cal = Calendar.getInstance(fapp.getTimeZone());
-//				cal.set(Calendar.HOUR_OF_DAY, 0);
-//				cal.set(Calendar.MINUTE, 0);
-//				cal.set(Calendar.SECOND, 0);
-//				cal.set(Calendar.MILLISECOND, 0);
-//				cal.add(Calendar.DAY_OF_MONTH, -30);
-			final SchoolAccounts rep = new SchoolAccounts(fapp, str, fapp.timeZone(),
-				termid, new java.util.Date(), 30);
-			str.execUpdate(new UpdTasklet2() {
-			public void run(SqlRun str) throws Exception {
-				Reports reports = fapp.reports(); //new OffstageReports(fapp);
-				reports.viewXls(rep.model, null, "StudentAccounts.xls", 0); //schoolModel.getTermID());
-			}});
+			Wizard wizard = new offstage.reports.ReportWizard(fapp, SchoolRegFrame.this);
+			if (wizard.runWizard("schoolaccounts")) {
+				int termid = schoolModel.getTermID();
+				Day asOfDay = (Day)wizard.getVal("asOfDay");
+				java.util.Date asOfDate = asOfDay.toDate(Calendar.getInstance(fapp.timeZone()));
+				final SchoolAccounts rep = new SchoolAccounts(fapp, str, fapp.timeZone(),
+					termid, asOfDate, 30);
+				str.execUpdate(new UpdTasklet2() {
+				public void run(SqlRun str) throws Exception {
+					Reports reports = fapp.reports(); //new OffstageReports(fapp);
+					reports.viewXls(rep.model, null, "StudentAccounts.xls", 0); //schoolModel.getTermID());
+				}});
+			}
 		}});
 // TODO add your handling code here:
 	}//GEN-LAST:event_miStudentAccountsActionPerformed

@@ -22,20 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package offstage.swing.typed;
-import java.sql.*;
 import citibob.sql.*;
-import citibob.sql.pgsql.*;
-import citibob.jschema.*;
-import citibob.swing.table.*;
-import citibob.swing.table.StyledTM.ButtonAdapter;
-import citibob.swing.table.StyledTM.ButtonListener;
 import citibob.task.*;
 import offstage.db.*;
 import java.awt.event.*;
-import citibob.swing.typed.*;
 import citibob.types.KeyedModel;
-import javax.swing.table.*;
-import java.awt.*;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import javax.swing.JPanel;
 import offstage.FrontApp;
 import offstage.equery.EQuery;
 import offstage.equery.swing.EQueryWizard;
@@ -172,8 +167,10 @@ public void requestTextFocus()
         jPanel1 = new javax.swing.JPanel();
         searchWord = new javax.swing.JTextField();
         bSearch = new javax.swing.JButton();
-        bAdvanced = new javax.swing.JButton();
         cbDbid = new citibob.swing.typed.JKeyedComboBox();
+        jPanel2 = new javax.swing.JPanel();
+        bAdvanced2 = new javax.swing.JButton();
+        bExportEmails2 = new javax.swing.JButton();
         FamilyScrollPanel = new javax.swing.JScrollPane();
         searchResultsTable = new offstage.swing.typed.IdSqlTable();
 
@@ -199,20 +196,6 @@ public void requestTextFocus()
         gridBagConstraints.gridy = 1;
         jPanel1.add(bSearch, gridBagConstraints);
 
-        bAdvanced.setText("Advanced");
-        bAdvanced.setPreferredSize(new java.awt.Dimension(100, 25));
-        bAdvanced.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bAdvancedActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel1.add(bAdvanced, gridBagConstraints);
-
         cbDbid.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -220,6 +203,37 @@ public void requestTextFocus()
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         jPanel1.add(cbDbid, gridBagConstraints);
+
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        bAdvanced2.setText("Advanced");
+        bAdvanced2.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        bAdvanced2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bAdvanced2ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 2);
+        jPanel2.add(bAdvanced2, gridBagConstraints);
+
+        bExportEmails2.setText("*emails*");
+        bExportEmails2.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        bExportEmails2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bExportEmails2ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(0, 2, 0, 2);
+        jPanel2.add(bExportEmails2, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel1.add(jPanel2, gridBagConstraints);
 
         add(jPanel1, java.awt.BorderLayout.SOUTH);
 
@@ -250,7 +264,7 @@ public void requestTextFocus()
 		}});
 	}//GEN-LAST:event_bSearchActionPerformed
 
-	private void bAdvancedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAdvancedActionPerformed
+	private void bAdvanced2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAdvanced2ActionPerformed
 		app.guiRun().run(EntitySelector.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
 			EQueryWizard wizard = new EQueryWizard(app, EntitySelector.this);
@@ -258,16 +272,35 @@ public void requestTextFocus()
 			EQuery equery = (EQuery)wizard.getVal("equery");
 			setSearchIdSql(str, equery.getSql(app.equerySchema()));
 		}});
+
 		// TODO add your handling code here:
-}//GEN-LAST:event_bAdvancedActionPerformed
+}//GEN-LAST:event_bAdvanced2ActionPerformed
+
+	private void bExportEmails2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExportEmails2ActionPerformed
+		app.guiRun().run(EntitySelector.this, new SqlTask() {
+		public void run(SqlRun str) throws Exception {
+			JPanel p;
+			Toolkit toolkit = java.awt.Toolkit.getDefaultToolkit();
+			Clipboard cb = toolkit.getSystemClipboard();
+
+			IdSqlTableModel model = searchResultsTable.getIdSqlTableModel();
+			String emails = model.getEmailList();
+
+			StringSelection sel = new StringSelection(emails);
+			cb.setContents(sel, sel);
+		}});
+		// TODO add your handling code here:
+}//GEN-LAST:event_bExportEmails2ActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane FamilyScrollPanel;
-    private javax.swing.JButton bAdvanced;
+    private javax.swing.JButton bAdvanced2;
+    private javax.swing.JButton bExportEmails2;
     private javax.swing.JButton bSearch;
     private citibob.swing.typed.JKeyedComboBox cbDbid;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private offstage.swing.typed.IdSqlTable searchResultsTable;
     private javax.swing.JTextField searchWord;
     // End of variables declaration//GEN-END:variables

@@ -137,6 +137,9 @@ public void initRuntime(citibob.app.App app) //SqlRun str, FullEntityDbModel dm)
 	super.setStyledTM(myModel);
 }
 
+IdSqlTableModel getIdSqlTableModel()
+	{ return (IdSqlTableModel)getModelU(); }
+
 /** Re-query */
 public void executeQuery(SqlRun str, final String idSql, String orderBy)// throws SQLException
 {

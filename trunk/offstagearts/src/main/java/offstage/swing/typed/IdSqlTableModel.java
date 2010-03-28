@@ -26,18 +26,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.swing.typed;
 
-import java.sql.*;
 import citibob.sql.*;
 import citibob.sql.pgsql.*;
 import citibob.jschema.*;
-import citibob.swing.table.*;
-import offstage.FrontApp;
-import offstage.devel.gui.DevelModel;
-import offstage.db.*;
-import java.awt.event.*;
-import citibob.swing.typed.*;
-import javax.swing.table.*;
-import java.awt.*;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Given an idSql statement, produces a table model of those people
@@ -55,7 +49,7 @@ public IdSqlTableModel()
 		new SqlCol("dotdotdot", new SqlString(false)),
 		new SqlCol("name", new SqlString(true)),
 		new SqlCol("tooltip", new SqlString(true)),
-		new SqlCol("isprimary", new SqlBool(true))
+		new SqlCol("email", new SqlString(true))
 	}));
 }
 
@@ -97,7 +91,8 @@ public void executeQuery(SqlRun str, SqlSet idSsql, boolean hasSortCol, String o
 		" case when state is null then '' else state end || '<br>' ||" +
 		" case when occupation is null then '' else occupation || '<br>' end ||" +
 		" case when email is null then '' else email || '' end ||" +
-		" '</html>') as tooltip\n" +
+		" '</html>') as tooltip,\n" +
+		" p.email as email\n" +
 //		" p.entityid = p.primaryentityid as isprimary" +
 		" from persons p, " + ids + "" +
 		" where p.entityid = " + ids + ".id" +
@@ -107,4 +102,49 @@ public void executeQuery(SqlRun str, SqlSet idSsql, boolean hasSortCol, String o
 	super.executeQuery(str, ssql);
 }
 
+/** Constructs a string representing the email addresses of everyone
+ * in the IdSqlTableModel. */
+public String getEmailList()
+{
+	// email -> Name mapping
+	LinkedHashMap<String, String> emailMap = new LinkedHashMap();
+	
+	// Get our set of email->Name mappings
+	int nameCol = this.findColumn("name");
+	int emailCol = this.findColumn("email");
+	for (int row=0; row<getRowCount(); ++row) {
+		String name = (String)getValueAt(row, nameCol);
+		String email = (String)getValueAt(row, emailCol);
+		if (email == null) continue;
+		
+		// Scan through possibility of compoint emails in one field
+		String[] emails = email.split(",");
+		for (int i=0; i<emails.length; ++i) {
+			String em = emails[i].trim();
+			if (em.length() == 0) continue;
+
+			// We have a name/email pair.  Add it in!
+			emailMap.put(em, name);
+		}
+	}
+
+	// Scan through the map to generate emails
+	if (emailMap.size() == 0) return "";
+	StringBuffer ret = new StringBuffer();
+	Iterator<Map.Entry<String,String>> ii = emailMap.entrySet().iterator();
+	for (;;) {
+		// Add the name/email pair
+		Map.Entry<String,String> entry = ii.next();
+		String email = entry.getKey();
+		String name = entry.getValue();
+		ret.append(name + " <" + email + ">");
+		
+		// Append the comma
+		if (!ii.hasNext()) break;
+		ret.append(", ");
+	}
+
+
+	return ret.toString();
+}
 }

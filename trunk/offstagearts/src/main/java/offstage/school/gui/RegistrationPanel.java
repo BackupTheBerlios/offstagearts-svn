@@ -518,7 +518,7 @@ str.flush();
 	// ================================================================
 	// Payer
 	TypedWidgetBinder.bindRecursive(PayerPanel, smod.payerRm, smap);
-	payerPhonePanel.initRuntime(str, smod.payerDm.phoneDb.getSchemaBuf(),
+	PayerPhonePanel.initRuntime(str, smod.payerDm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, true, smap);
 	payerCCInfo.initRuntime(fapp.keyRing());
@@ -545,8 +545,8 @@ str.flush();
 	
 	// ===============================================================
 	// Parents
-	TypedWidgetBinder.bindRecursive(ParentPanel, smod.parent1Rm, smap);
-	ParentPhonePanel.initRuntime(str, smod.parent1Dm.phoneDb.getSchemaBuf(),
+	TypedWidgetBinder.bindRecursive(Parent1Panel, smod.parent1Rm, smap);
+	Parent1PhonePanel.initRuntime(str, smod.parent1Dm.phoneDb.getSchemaBuf(),
 			new String[] {"Type", "Number"},
 			new String[] {"groupid", "phone"}, true, smap);
 //	SchemaBufRowModel parent2Rm = new SchemaBufRowModel(smod.parent2Dm.personDb.getSchemaBuf());
@@ -705,7 +705,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         lastname = new citibob.swing.typed.JTypedTextField();
         PayerTabs = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
-        payerPhonePanel = new offstage.gui.GroupPanel();
+        PayerPhonePanel = new offstage.gui.GroupPanel();
         jPanel5 = new javax.swing.JPanel();
         payerCCInfo = new offstage.swing.typed.CryptCCInfo();
         jLabel16 = new javax.swing.JLabel();
@@ -724,64 +724,66 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         lFirst5 = new javax.swing.JLabel();
         orgname = new citibob.swing.typed.JTypedTextField();
         isorg = new citibob.swing.typed.JBoolCheckbox();
-        ParentPanel = new javax.swing.JPanel();
-        FirstMiddleLast3 = new javax.swing.JPanel();
-        lFirst3 = new javax.swing.JLabel();
-        lMiddle3 = new javax.swing.JLabel();
-        lLast3 = new javax.swing.JLabel();
-        salutation3 = new citibob.swing.typed.JTypedTextField();
-        firstname3 = new citibob.swing.typed.JTypedTextField();
-        middlename3 = new citibob.swing.typed.JTypedTextField();
-        lastname3 = new citibob.swing.typed.JTypedTextField();
-        jTabbedPane4 = new javax.swing.JTabbedPane();
-        jPanel18 = new javax.swing.JPanel();
-        ParentPhonePanel = new offstage.gui.GroupPanel();
-        jPanel21 = new javax.swing.JPanel();
-        jPanel22 = new javax.swing.JPanel();
-        jLabel22 = new javax.swing.JLabel();
-        jLabel23 = new javax.swing.JLabel();
-        entityid2 = new citibob.swing.typed.JTypedTextField();
-        lastupdated2 = new citibob.swing.typed.JTypedTextField();
-        addressPanel2 = new javax.swing.JPanel();
-        address5 = new citibob.swing.typed.JTypedTextField();
-        address6 = new citibob.swing.typed.JTypedTextField();
-        city2 = new citibob.swing.typed.JTypedTextField();
-        state2 = new citibob.swing.typed.JTypedTextField();
-        zip2 = new citibob.swing.typed.JTypedTextField();
-        jLabel24 = new javax.swing.JLabel();
-        EmailPanel2 = new javax.swing.JPanel();
-        jLabel25 = new javax.swing.JLabel();
-        email3 = new citibob.swing.typed.JTypedTextField();
-        bLaunchEmail2 = new javax.swing.JButton();
+        Parent1Panel = new javax.swing.JPanel();
+        FirstMiddleLast2 = new javax.swing.JPanel();
+        lFirst2 = new javax.swing.JLabel();
+        lMiddle2 = new javax.swing.JLabel();
+        lLast2 = new javax.swing.JLabel();
+        salutation2 = new citibob.swing.typed.JTypedTextField();
+        firstname2 = new citibob.swing.typed.JTypedTextField();
+        middlename2 = new citibob.swing.typed.JTypedTextField();
+        lastname2 = new citibob.swing.typed.JTypedTextField();
+        PayerTabs1 = new javax.swing.JTabbedPane();
+        jPanel6 = new javax.swing.JPanel();
+        Parent1PhonePanel = new offstage.gui.GroupPanel();
+        jPanel7 = new javax.swing.JPanel();
+        payerCCInfo1 = new offstage.swing.typed.CryptCCInfo();
+        jLabel17 = new javax.swing.JLabel();
+        addressPanel5 = new javax.swing.JPanel();
+        address22 = new citibob.swing.typed.JTypedTextField();
+        address23 = new citibob.swing.typed.JTypedTextField();
+        city5 = new citibob.swing.typed.JTypedTextField();
+        state5 = new citibob.swing.typed.JTypedTextField();
+        zip5 = new citibob.swing.typed.JTypedTextField();
+        jLabel7 = new javax.swing.JLabel();
+        EmailPanel4 = new javax.swing.JPanel();
+        jLabel34 = new javax.swing.JLabel();
+        email_parent1 = new citibob.swing.typed.JTypedTextField();
+        bLaunchEmail4 = new javax.swing.JButton();
+        Org1 = new javax.swing.JPanel();
+        lFirst6 = new javax.swing.JLabel();
+        orgname1 = new citibob.swing.typed.JTypedTextField();
+        isorg1 = new citibob.swing.typed.JBoolCheckbox();
         Parent2Panel = new javax.swing.JPanel();
-        FirstMiddleLast4 = new javax.swing.JPanel();
-        lFirst4 = new javax.swing.JLabel();
-        lMiddle4 = new javax.swing.JLabel();
-        lLast4 = new javax.swing.JLabel();
-        salutation4 = new citibob.swing.typed.JTypedTextField();
-        firstname4 = new citibob.swing.typed.JTypedTextField();
-        middlename4 = new citibob.swing.typed.JTypedTextField();
-        lastname4 = new citibob.swing.typed.JTypedTextField();
-        jTabbedPane5 = new javax.swing.JTabbedPane();
-        jPanel23 = new javax.swing.JPanel();
+        FirstMiddleLast7 = new javax.swing.JPanel();
+        lFirst8 = new javax.swing.JLabel();
+        lMiddle5 = new javax.swing.JLabel();
+        lLast5 = new javax.swing.JLabel();
+        salutation5 = new citibob.swing.typed.JTypedTextField();
+        firstname5 = new citibob.swing.typed.JTypedTextField();
+        middlename5 = new citibob.swing.typed.JTypedTextField();
+        lastname5 = new citibob.swing.typed.JTypedTextField();
+        PayerTabs2 = new javax.swing.JTabbedPane();
+        jPanel14 = new javax.swing.JPanel();
         Parent2PhonePanel = new offstage.gui.GroupPanel();
-        jPanel25 = new javax.swing.JPanel();
-        jPanel26 = new javax.swing.JPanel();
-        jLabel26 = new javax.swing.JLabel();
-        jLabel27 = new javax.swing.JLabel();
-        entityid3 = new citibob.swing.typed.JTypedTextField();
-        lastupdated3 = new citibob.swing.typed.JTypedTextField();
-        addressPanel3 = new javax.swing.JPanel();
-        address7 = new citibob.swing.typed.JTypedTextField();
-        address8 = new citibob.swing.typed.JTypedTextField();
-        city3 = new citibob.swing.typed.JTypedTextField();
-        state3 = new citibob.swing.typed.JTypedTextField();
-        zip3 = new citibob.swing.typed.JTypedTextField();
-        jLabel28 = new javax.swing.JLabel();
-        EmailPanel3 = new javax.swing.JPanel();
-        jLabel29 = new javax.swing.JLabel();
-        email4 = new citibob.swing.typed.JTypedTextField();
-        bLaunchEmail3 = new javax.swing.JButton();
+        jPanel16 = new javax.swing.JPanel();
+        payerCCInfo2 = new offstage.swing.typed.CryptCCInfo();
+        jLabel35 = new javax.swing.JLabel();
+        addressPanel6 = new javax.swing.JPanel();
+        address24 = new citibob.swing.typed.JTypedTextField();
+        address25 = new citibob.swing.typed.JTypedTextField();
+        city6 = new citibob.swing.typed.JTypedTextField();
+        state6 = new citibob.swing.typed.JTypedTextField();
+        zip6 = new citibob.swing.typed.JTypedTextField();
+        jLabel8 = new javax.swing.JLabel();
+        EmailPanel5 = new javax.swing.JPanel();
+        jLabel37 = new javax.swing.JLabel();
+        email_parent2 = new citibob.swing.typed.JTypedTextField();
+        bLaunchEmail5 = new javax.swing.JButton();
+        Org2 = new javax.swing.JPanel();
+        lFirst22 = new javax.swing.JLabel();
+        orgname2 = new citibob.swing.typed.JTypedTextField();
+        isorg2 = new citibob.swing.typed.JBoolCheckbox();
         MedPanel = new javax.swing.JPanel();
         FirstMiddleLast5 = new javax.swing.JPanel();
         jBoolCheckbox1 = new citibob.swing.typed.JBoolCheckbox();
@@ -1053,17 +1055,17 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
 
         PayerTabs.setFont(new java.awt.Font("Dialog", 1, 10));
 
-        payerPhonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
+        PayerPhonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
 
         org.jdesktop.layout.GroupLayout jPanel4Layout = new org.jdesktop.layout.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(payerPhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .add(PayerPhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(payerPhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .add(PayerPhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
         PayerTabs.addTab("Phone", jPanel4);
@@ -1233,66 +1235,68 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
 
         AdultTabs.addTab("Payer", PayerPanel);
 
-        ParentPanel.setLayout(new java.awt.GridBagLayout());
+        Parent1Panel.setLayout(new java.awt.GridBagLayout());
 
-        FirstMiddleLast3.setLayout(new java.awt.GridBagLayout());
+        FirstMiddleLast2.setMinimumSize(new java.awt.Dimension(290, 34));
+        FirstMiddleLast2.setPreferredSize(new java.awt.Dimension(217, 34));
+        FirstMiddleLast2.setLayout(new java.awt.GridBagLayout());
 
-        lFirst3.setText("First"); // NOI18N
+        lFirst2.setText("First"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        FirstMiddleLast3.add(lFirst3, gridBagConstraints);
+        FirstMiddleLast2.add(lFirst2, gridBagConstraints);
 
-        lMiddle3.setText("Mid"); // NOI18N
+        lMiddle2.setText("Mid"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        FirstMiddleLast3.add(lMiddle3, gridBagConstraints);
+        FirstMiddleLast2.add(lMiddle2, gridBagConstraints);
 
-        lLast3.setText("Last"); // NOI18N
+        lLast2.setText("Last"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        FirstMiddleLast3.add(lLast3, gridBagConstraints);
+        FirstMiddleLast2.add(lLast2, gridBagConstraints);
 
-        salutation3.setColName("salutation"); // NOI18N
-        salutation3.setPreferredSize(new java.awt.Dimension(40, 19));
+        salutation2.setColName("salutation"); // NOI18N
+        salutation2.setPreferredSize(new java.awt.Dimension(40, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        FirstMiddleLast3.add(salutation3, gridBagConstraints);
+        FirstMiddleLast2.add(salutation2, gridBagConstraints);
 
-        firstname3.setColName("firstname"); // NOI18N
+        firstname2.setColName("firstname"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;
-        FirstMiddleLast3.add(firstname3, gridBagConstraints);
+        FirstMiddleLast2.add(firstname2, gridBagConstraints);
 
-        middlename3.setColName("middlename"); // NOI18N
+        middlename2.setColName("middlename"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        FirstMiddleLast3.add(middlename3, gridBagConstraints);
+        FirstMiddleLast2.add(middlename2, gridBagConstraints);
 
-        lastname3.setColName("lastname"); // NOI18N
-        lastname3.setPreferredSize(new java.awt.Dimension(10, 19));
+        lastname2.setColName("lastname"); // NOI18N
+        lastname2.setPreferredSize(new java.awt.Dimension(10, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;
-        FirstMiddleLast3.add(lastname3, gridBagConstraints);
+        FirstMiddleLast2.add(lastname2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1300,82 +1304,55 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        ParentPanel.add(FirstMiddleLast3, gridBagConstraints);
+        Parent1Panel.add(FirstMiddleLast2, gridBagConstraints);
 
-        jTabbedPane4.setFont(new java.awt.Font("Dialog", 1, 10));
+        PayerTabs1.setFont(new java.awt.Font("Dialog", 1, 10));
 
-        ParentPhonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
+        Parent1PhonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
 
-        org.jdesktop.layout.GroupLayout jPanel18Layout = new org.jdesktop.layout.GroupLayout(jPanel18);
-        jPanel18.setLayout(jPanel18Layout);
-        jPanel18Layout.setHorizontalGroup(
-            jPanel18Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(ParentPhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+        org.jdesktop.layout.GroupLayout jPanel6Layout = new org.jdesktop.layout.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(Parent1PhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
-        jPanel18Layout.setVerticalGroup(
-            jPanel18Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(ParentPhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(Parent1PhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane4.addTab("Phone", jPanel18);
+        PayerTabs1.addTab("Phone", jPanel6);
 
-        jPanel22.setLayout(new java.awt.GridBagLayout());
-
-        jLabel22.setText("ID"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel22.add(jLabel22, gridBagConstraints);
-
-        jLabel23.setText("Last Modified"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel22.add(jLabel23, gridBagConstraints);
-
-        entityid2.setEditable(false);
-        entityid2.setColName("entityid"); // NOI18N
-        entityid2.setPreferredSize(new java.awt.Dimension(100, 19));
+        jPanel7.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel22.add(entityid2, gridBagConstraints);
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+        jPanel7.add(payerCCInfo1, gridBagConstraints);
 
-        lastupdated2.setEditable(false);
-        lastupdated2.setColName("lastupdated"); // NOI18N
+        jLabel17.setText("Billing Type:"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel22.add(lastupdated2, gridBagConstraints);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        jPanel7.add(jLabel17, gridBagConstraints);
 
-        org.jdesktop.layout.GroupLayout jPanel21Layout = new org.jdesktop.layout.GroupLayout(jPanel21);
-        jPanel21.setLayout(jPanel21Layout);
-        jPanel21Layout.setHorizontalGroup(
-            jPanel21Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-        );
-        jPanel21Layout.setVerticalGroup(
-            jPanel21Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel21Layout.createSequentialGroup()
-                .add(jPanel22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(153, Short.MAX_VALUE))
-        );
-
-        jTabbedPane4.addTab("Misc.", jPanel21);
+        PayerTabs1.addTab("Billing", jPanel7);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        ParentPanel.add(jTabbedPane4, gridBagConstraints);
+        Parent1Panel.add(PayerTabs1, gridBagConstraints);
 
-        addressPanel2.setLayout(new java.awt.GridBagLayout());
+        addressPanel5.setLayout(new java.awt.GridBagLayout());
 
-        address5.setColName("address1"); // NOI18N
+        address22.setColName("address1"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -1383,9 +1360,9 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        addressPanel2.add(address5, gridBagConstraints);
+        addressPanel5.add(address22, gridBagConstraints);
 
-        address6.setColName("address2"); // NOI18N
+        address23.setColName("address2"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -1393,146 +1370,186 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        addressPanel2.add(address6, gridBagConstraints);
+        addressPanel5.add(address23, gridBagConstraints);
 
-        city2.setColName("city"); // NOI18N
+        city5.setColName("city"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        addressPanel2.add(city2, gridBagConstraints);
+        addressPanel5.add(city5, gridBagConstraints);
 
-        state2.setColName("state"); // NOI18N
-        state2.setPreferredSize(new java.awt.Dimension(30, 19));
+        state5.setColName("state"); // NOI18N
+        state5.setPreferredSize(new java.awt.Dimension(30, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        addressPanel2.add(state2, gridBagConstraints);
+        addressPanel5.add(state5, gridBagConstraints);
 
-        zip2.setColName("zip"); // NOI18N
-        zip2.setPreferredSize(new java.awt.Dimension(80, 19));
+        zip5.setColName("zip"); // NOI18N
+        zip5.setPreferredSize(new java.awt.Dimension(80, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        addressPanel2.add(zip2, gridBagConstraints);
+        addressPanel5.add(zip5, gridBagConstraints);
 
-        jLabel24.setText("Address / City,State,Zip"); // NOI18N
+        jLabel7.setText("Address / City,State,Zip"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        addressPanel2.add(jLabel24, gridBagConstraints);
+        addressPanel5.add(jLabel7, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        ParentPanel.add(addressPanel2, gridBagConstraints);
+        Parent1Panel.add(addressPanel5, gridBagConstraints);
 
-        EmailPanel2.setLayout(new java.awt.GridBagLayout());
+        EmailPanel4.setLayout(new java.awt.GridBagLayout());
 
-        jLabel25.setText("Email"); // NOI18N
+        jLabel34.setText("Email"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 2);
-        EmailPanel2.add(jLabel25, gridBagConstraints);
+        EmailPanel4.add(jLabel34, gridBagConstraints);
 
-        email3.setColName("email"); // NOI18N
+        email_parent1.setColName("email"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
-        EmailPanel2.add(email3, gridBagConstraints);
+        EmailPanel4.add(email_parent1, gridBagConstraints);
 
-        bLaunchEmail2.setText("*"); // NOI18N
-        bLaunchEmail2.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        bLaunchEmail2.setPreferredSize(new java.awt.Dimension(14, 19));
+        bLaunchEmail4.setText("*"); // NOI18N
+        bLaunchEmail4.setMargin(new java.awt.Insets(1, 1, 1, 1));
+        bLaunchEmail4.setPreferredSize(new java.awt.Dimension(14, 19));
+        bLaunchEmail4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bLaunchEmail4ActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        EmailPanel2.add(bLaunchEmail2, gridBagConstraints);
+        EmailPanel4.add(bLaunchEmail4, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        Parent1Panel.add(EmailPanel4, gridBagConstraints);
+
+        Org1.setLayout(new java.awt.GridBagLayout());
+
+        lFirst6.setText("Org Name"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        Org1.add(lFirst6, gridBagConstraints);
+
+        orgname1.setColName("orgname"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.5;
+        Org1.add(orgname1, gridBagConstraints);
+
+        isorg1.setText("is Org?"); // NOI18N
+        isorg1.setColName("isorg"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        Org1.add(isorg1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        ParentPanel.add(EmailPanel2, gridBagConstraints);
+        Parent1Panel.add(Org1, gridBagConstraints);
 
-        AdultTabs.addTab("Parent 1", ParentPanel);
+        AdultTabs.addTab("Parent1", Parent1Panel);
 
         Parent2Panel.setLayout(new java.awt.GridBagLayout());
 
-        FirstMiddleLast4.setLayout(new java.awt.GridBagLayout());
+        FirstMiddleLast7.setMinimumSize(new java.awt.Dimension(290, 34));
+        FirstMiddleLast7.setPreferredSize(new java.awt.Dimension(217, 34));
+        FirstMiddleLast7.setLayout(new java.awt.GridBagLayout());
 
-        lFirst4.setText("First"); // NOI18N
+        lFirst8.setText("First"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        FirstMiddleLast4.add(lFirst4, gridBagConstraints);
+        FirstMiddleLast7.add(lFirst8, gridBagConstraints);
 
-        lMiddle4.setText("Mid"); // NOI18N
+        lMiddle5.setText("Mid"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        FirstMiddleLast4.add(lMiddle4, gridBagConstraints);
+        FirstMiddleLast7.add(lMiddle5, gridBagConstraints);
 
-        lLast4.setText("Last"); // NOI18N
+        lLast5.setText("Last"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        FirstMiddleLast4.add(lLast4, gridBagConstraints);
+        FirstMiddleLast7.add(lLast5, gridBagConstraints);
 
-        salutation4.setColName("salutation"); // NOI18N
-        salutation4.setPreferredSize(new java.awt.Dimension(40, 19));
+        salutation5.setColName("salutation"); // NOI18N
+        salutation5.setPreferredSize(new java.awt.Dimension(40, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        FirstMiddleLast4.add(salutation4, gridBagConstraints);
+        FirstMiddleLast7.add(salutation5, gridBagConstraints);
 
-        firstname4.setColName("firstname"); // NOI18N
+        firstname5.setColName("firstname"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;
-        FirstMiddleLast4.add(firstname4, gridBagConstraints);
+        FirstMiddleLast7.add(firstname5, gridBagConstraints);
 
-        middlename4.setColName("middlename"); // NOI18N
+        middlename5.setColName("middlename"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        FirstMiddleLast4.add(middlename4, gridBagConstraints);
+        FirstMiddleLast7.add(middlename5, gridBagConstraints);
 
-        lastname4.setColName("lastname"); // NOI18N
-        lastname4.setPreferredSize(new java.awt.Dimension(10, 19));
+        lastname5.setColName("lastname"); // NOI18N
+        lastname5.setPreferredSize(new java.awt.Dimension(10, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;
-        FirstMiddleLast4.add(lastname4, gridBagConstraints);
+        FirstMiddleLast7.add(lastname5, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1540,82 +1557,55 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        Parent2Panel.add(FirstMiddleLast4, gridBagConstraints);
+        Parent2Panel.add(FirstMiddleLast7, gridBagConstraints);
 
-        jTabbedPane5.setFont(new java.awt.Font("Dialog", 1, 10));
+        PayerTabs2.setFont(new java.awt.Font("Dialog", 1, 10));
 
         Parent2PhonePanel.setPreferredSize(new java.awt.Dimension(453, 180));
 
-        org.jdesktop.layout.GroupLayout jPanel23Layout = new org.jdesktop.layout.GroupLayout(jPanel23);
-        jPanel23.setLayout(jPanel23Layout);
-        jPanel23Layout.setHorizontalGroup(
-            jPanel23Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        org.jdesktop.layout.GroupLayout jPanel14Layout = new org.jdesktop.layout.GroupLayout(jPanel14);
+        jPanel14.setLayout(jPanel14Layout);
+        jPanel14Layout.setHorizontalGroup(
+            jPanel14Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(Parent2PhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
-        jPanel23Layout.setVerticalGroup(
-            jPanel23Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+        jPanel14Layout.setVerticalGroup(
+            jPanel14Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(Parent2PhonePanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
-        jTabbedPane5.addTab("Phone", jPanel23);
+        PayerTabs2.addTab("Phone", jPanel14);
 
-        jPanel26.setLayout(new java.awt.GridBagLayout());
-
-        jLabel26.setText("ID"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel26.add(jLabel26, gridBagConstraints);
-
-        jLabel27.setText("Last Modified"); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        jPanel26.add(jLabel27, gridBagConstraints);
-
-        entityid3.setEditable(false);
-        entityid3.setColName("entityid"); // NOI18N
-        entityid3.setPreferredSize(new java.awt.Dimension(100, 19));
+        jPanel16.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel26.add(entityid3, gridBagConstraints);
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+        jPanel16.add(payerCCInfo2, gridBagConstraints);
 
-        lastupdated3.setEditable(false);
-        lastupdated3.setColName("lastupdated"); // NOI18N
+        jLabel35.setText("Billing Type:"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        jPanel26.add(lastupdated3, gridBagConstraints);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        jPanel16.add(jLabel35, gridBagConstraints);
 
-        org.jdesktop.layout.GroupLayout jPanel25Layout = new org.jdesktop.layout.GroupLayout(jPanel25);
-        jPanel25.setLayout(jPanel25Layout);
-        jPanel25Layout.setHorizontalGroup(
-            jPanel25Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-        );
-        jPanel25Layout.setVerticalGroup(
-            jPanel25Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel25Layout.createSequentialGroup()
-                .add(jPanel26, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(153, Short.MAX_VALUE))
-        );
-
-        jTabbedPane5.addTab("Misc.", jPanel25);
+        PayerTabs2.addTab("Billing", jPanel16);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        Parent2Panel.add(jTabbedPane5, gridBagConstraints);
+        Parent2Panel.add(PayerTabs2, gridBagConstraints);
 
-        addressPanel3.setLayout(new java.awt.GridBagLayout());
+        addressPanel6.setLayout(new java.awt.GridBagLayout());
 
-        address7.setColName("address1"); // NOI18N
+        address24.setColName("address1"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -1623,9 +1613,9 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        addressPanel3.add(address7, gridBagConstraints);
+        addressPanel6.add(address24, gridBagConstraints);
 
-        address8.setColName("address2"); // NOI18N
+        address25.setColName("address2"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -1633,85 +1623,128 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        addressPanel3.add(address8, gridBagConstraints);
+        addressPanel6.add(address25, gridBagConstraints);
 
-        city3.setColName("city"); // NOI18N
+        city6.setColName("city"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        addressPanel3.add(city3, gridBagConstraints);
+        addressPanel6.add(city6, gridBagConstraints);
 
-        state3.setColName("state"); // NOI18N
-        state3.setPreferredSize(new java.awt.Dimension(30, 19));
+        state6.setColName("state"); // NOI18N
+        state6.setPreferredSize(new java.awt.Dimension(30, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        addressPanel3.add(state3, gridBagConstraints);
+        addressPanel6.add(state6, gridBagConstraints);
 
-        zip3.setColName("zip"); // NOI18N
-        zip3.setPreferredSize(new java.awt.Dimension(80, 19));
+        zip6.setColName("zip"); // NOI18N
+        zip6.setPreferredSize(new java.awt.Dimension(80, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        addressPanel3.add(zip3, gridBagConstraints);
+        addressPanel6.add(zip6, gridBagConstraints);
 
-        jLabel28.setText("Address / City,State,Zip"); // NOI18N
+        jLabel8.setText("Address / City,State,Zip"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        addressPanel3.add(jLabel28, gridBagConstraints);
+        addressPanel6.add(jLabel8, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        Parent2Panel.add(addressPanel3, gridBagConstraints);
+        Parent2Panel.add(addressPanel6, gridBagConstraints);
 
-        EmailPanel3.setLayout(new java.awt.GridBagLayout());
+        EmailPanel5.setLayout(new java.awt.GridBagLayout());
 
-        jLabel29.setText("Email"); // NOI18N
+        jLabel37.setText("Email"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 2);
-        EmailPanel3.add(jLabel29, gridBagConstraints);
+        EmailPanel5.add(jLabel37, gridBagConstraints);
 
-        email4.setColName("email"); // NOI18N
+        email_parent2.setColName("email"); // NOI18N
+        email_parent2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                email_parent2ActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
-        EmailPanel3.add(email4, gridBagConstraints);
+        EmailPanel5.add(email_parent2, gridBagConstraints);
 
-        bLaunchEmail3.setText("*"); // NOI18N
-        bLaunchEmail3.setMargin(new java.awt.Insets(1, 1, 1, 1));
-        bLaunchEmail3.setPreferredSize(new java.awt.Dimension(14, 19));
+        bLaunchEmail5.setText("*"); // NOI18N
+        bLaunchEmail5.setMargin(new java.awt.Insets(1, 1, 1, 1));
+        bLaunchEmail5.setPreferredSize(new java.awt.Dimension(14, 19));
+        bLaunchEmail5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bLaunchEmail5ActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        EmailPanel3.add(bLaunchEmail3, gridBagConstraints);
+        EmailPanel5.add(bLaunchEmail5, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        Parent2Panel.add(EmailPanel5, gridBagConstraints);
+
+        Org2.setLayout(new java.awt.GridBagLayout());
+
+        lFirst22.setText("Org Name"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        Org2.add(lFirst22, gridBagConstraints);
+
+        orgname2.setColName("orgname"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.5;
+        Org2.add(orgname2, gridBagConstraints);
+
+        isorg2.setText("is Org?"); // NOI18N
+        isorg2.setColName("isorg"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        Org2.add(isorg2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        Parent2Panel.add(EmailPanel3, gridBagConstraints);
+        Parent2Panel.add(Org2, gridBagConstraints);
 
-        AdultTabs.addTab("Parent 2", Parent2Panel);
+        AdultTabs.addTab("Parent2", Parent2Panel);
 
         MedPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -2053,6 +2086,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
         jPanel17.add(AdultTabs, gridBagConstraints);
+        AdultTabs.getAccessibleContext().setAccessibleName("Parent2");
 
         StudentAccounts.setLayout(new java.awt.GridBagLayout());
 
@@ -2267,7 +2301,7 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 2534, Short.MAX_VALUE)
+            .add(0, 2535, Short.MAX_VALUE)
         );
 
         jTabbedPane3.addTab("Family", jPanel9);
@@ -2987,6 +3021,20 @@ private void doUpdateSelect(SqlRun str) throws Exception
 	private void jBoolCheckbox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBoolCheckbox2ActionPerformed
 		// TODO add your handling code here:
 	}//GEN-LAST:event_jBoolCheckbox2ActionPerformed
+
+	private void bLaunchEmail4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLaunchEmail4ActionPerformed
+		citibob.gui.BareBonesMailto.mailto((String)email_parent1.getValue());
+		// TODO add your handling code here:
+	}//GEN-LAST:event_bLaunchEmail4ActionPerformed
+
+	private void bLaunchEmail5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bLaunchEmail5ActionPerformed
+		citibob.gui.BareBonesMailto.mailto((String)email_parent2.getValue());
+		// TODO add your handling code here:
+	}//GEN-LAST:event_bLaunchEmail5ActionPerformed
+
+	private void email_parent2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_email_parent2ActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_email_parent2ActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2995,27 +3043,32 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JTabbedPane AdultTabs;
     private javax.swing.JPanel EmailPanel;
     private javax.swing.JPanel EmailPanel1;
-    private javax.swing.JPanel EmailPanel2;
-    private javax.swing.JPanel EmailPanel3;
+    private javax.swing.JPanel EmailPanel4;
+    private javax.swing.JPanel EmailPanel5;
     private javax.swing.JTabbedPane EnrollmentTab;
     private javax.swing.JScrollPane FamilyScrollPanel;
     private javax.swing.JPanel FirstMiddleLast;
     private javax.swing.JPanel FirstMiddleLast1;
-    private javax.swing.JPanel FirstMiddleLast3;
-    private javax.swing.JPanel FirstMiddleLast4;
+    private javax.swing.JPanel FirstMiddleLast2;
     private javax.swing.JPanel FirstMiddleLast5;
     private javax.swing.JPanel FirstMiddleLast6;
+    private javax.swing.JPanel FirstMiddleLast7;
     private javax.swing.JScrollPane GroupScrollPanel;
     private javax.swing.JPanel HouseholdPanel;
     private javax.swing.JPanel MedPanel;
     private javax.swing.JPanel ObsoleteStuff;
     private javax.swing.JPanel Org;
+    private javax.swing.JPanel Org1;
+    private javax.swing.JPanel Org2;
+    private javax.swing.JPanel Parent1Panel;
+    private offstage.gui.GroupPanel Parent1PhonePanel;
     private javax.swing.JPanel Parent2Panel;
     private offstage.gui.GroupPanel Parent2PhonePanel;
-    private javax.swing.JPanel ParentPanel;
-    private offstage.gui.GroupPanel ParentPhonePanel;
     private javax.swing.JPanel PayerPanel;
+    private offstage.gui.GroupPanel PayerPhonePanel;
     private javax.swing.JTabbedPane PayerTabs;
+    private javax.swing.JTabbedPane PayerTabs1;
+    private javax.swing.JTabbedPane PayerTabs2;
     private javax.swing.JPanel PeopleHeader;
     private javax.swing.JPanel PeopleHeader1;
     private javax.swing.JPanel PeopleMain;
@@ -3036,18 +3089,18 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JTypedTextField address2;
     private citibob.swing.typed.JTypedTextField address20;
     private citibob.swing.typed.JTypedTextField address21;
+    private citibob.swing.typed.JTypedTextField address22;
+    private citibob.swing.typed.JTypedTextField address23;
+    private citibob.swing.typed.JTypedTextField address24;
+    private citibob.swing.typed.JTypedTextField address25;
     private citibob.swing.typed.JTypedTextField address3;
     private citibob.swing.typed.JTypedTextField address4;
-    private citibob.swing.typed.JTypedTextField address5;
-    private citibob.swing.typed.JTypedTextField address6;
-    private citibob.swing.typed.JTypedTextField address7;
-    private citibob.swing.typed.JTypedTextField address8;
     private citibob.swing.typed.JTypedTextField address9;
     private javax.swing.JPanel addressPanel;
     private javax.swing.JPanel addressPanel1;
-    private javax.swing.JPanel addressPanel2;
-    private javax.swing.JPanel addressPanel3;
     private javax.swing.JPanel addressPanel4;
+    private javax.swing.JPanel addressPanel5;
+    private javax.swing.JPanel addressPanel6;
     private javax.swing.JButton bAddEnrollment;
     private javax.swing.JButton bCash;
     private javax.swing.JButton bCc;
@@ -3055,8 +3108,8 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JButton bEmancipate;
     private javax.swing.JButton bLaunchEmail;
     private javax.swing.JButton bLaunchEmail1;
-    private javax.swing.JButton bLaunchEmail2;
-    private javax.swing.JButton bLaunchEmail3;
+    private javax.swing.JButton bLaunchEmail4;
+    private javax.swing.JButton bLaunchEmail5;
     private javax.swing.JButton bNewHousehold;
     private javax.swing.JButton bNewParent;
     private javax.swing.JButton bNewParent2;
@@ -3070,28 +3123,28 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JPanel cardPanel;
     private citibob.swing.typed.JTypedTextField city;
     private citibob.swing.typed.JTypedTextField city1;
-    private citibob.swing.typed.JTypedTextField city2;
-    private citibob.swing.typed.JTypedTextField city3;
     private citibob.swing.typed.JTypedTextField city4;
+    private citibob.swing.typed.JTypedTextField city5;
+    private citibob.swing.typed.JTypedTextField city6;
     private javax.swing.JPanel controller1;
     private citibob.swing.typed.JTypedDateChooser dtSigned;
     private citibob.swing.typed.JTypedTextField email1;
     private citibob.swing.typed.JTypedTextField email2;
-    private citibob.swing.typed.JTypedTextField email3;
-    private citibob.swing.typed.JTypedTextField email4;
+    private citibob.swing.typed.JTypedTextField email_parent1;
+    private citibob.swing.typed.JTypedTextField email_parent2;
     private citibob.jschema.swing.StatusTable enrollments;
     private citibob.swing.typed.JTypedTextField entityid1;
-    private citibob.swing.typed.JTypedTextField entityid2;
-    private citibob.swing.typed.JTypedTextField entityid3;
     private offstage.school.gui.SchoolFamilySelectorTable familyTable;
     private citibob.swing.typed.JTypedTextField firstname;
     private citibob.swing.typed.JTypedTextField firstname1;
-    private citibob.swing.typed.JTypedTextField firstname3;
-    private citibob.swing.typed.JTypedTextField firstname4;
+    private citibob.swing.typed.JTypedTextField firstname2;
+    private citibob.swing.typed.JTypedTextField firstname5;
     private citibob.swing.typed.JTypedTextField firstname7;
     private citibob.swing.typed.JTypedTextField firstname8;
     private offstage.gui.GroupPanel householdPhonePanel;
     private citibob.swing.typed.JBoolCheckbox isorg;
+    private citibob.swing.typed.JBoolCheckbox isorg1;
+    private citibob.swing.typed.JBoolCheckbox isorg2;
     private citibob.swing.typed.JBoolCheckbox jBoolCheckbox1;
     private citibob.swing.typed.JBoolCheckbox jBoolCheckbox2;
     private javax.swing.JLabel jLabel1;
@@ -3102,50 +3155,44 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel34;
+    private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel17;
-    private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel20;
-    private javax.swing.JPanel jPanel21;
-    private javax.swing.JPanel jPanel22;
-    private javax.swing.JPanel jPanel23;
-    private javax.swing.JPanel jPanel25;
-    private javax.swing.JPanel jPanel26;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JTabbedPane jTabbedPane3;
-    private javax.swing.JTabbedPane jTabbedPane4;
-    private javax.swing.JTabbedPane jTabbedPane5;
     private javax.swing.JTabbedPane jTabbedPane6;
     private javax.swing.JToolBar jToolBar1;
     private citibob.swing.typed.JTypedLabel lDtregistered;
@@ -3162,53 +3209,56 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JLabel lFirst17;
     private javax.swing.JLabel lFirst18;
     private javax.swing.JLabel lFirst19;
+    private javax.swing.JLabel lFirst2;
     private javax.swing.JLabel lFirst20;
     private javax.swing.JLabel lFirst21;
-    private javax.swing.JLabel lFirst3;
-    private javax.swing.JLabel lFirst4;
+    private javax.swing.JLabel lFirst22;
     private javax.swing.JLabel lFirst5;
+    private javax.swing.JLabel lFirst6;
     private javax.swing.JLabel lFirst7;
+    private javax.swing.JLabel lFirst8;
     private javax.swing.JLabel lFirst9;
     private javax.swing.JLabel lLast;
     private javax.swing.JLabel lLast1;
-    private javax.swing.JLabel lLast3;
-    private javax.swing.JLabel lLast4;
+    private javax.swing.JLabel lLast2;
+    private javax.swing.JLabel lLast5;
     private javax.swing.JLabel lMiddle;
     private javax.swing.JLabel lMiddle1;
-    private javax.swing.JLabel lMiddle3;
-    private javax.swing.JLabel lMiddle4;
+    private javax.swing.JLabel lMiddle2;
+    private javax.swing.JLabel lMiddle5;
     private citibob.swing.typed.JTypedLabel lParent1ID;
     private citibob.swing.typed.JTypedLabel lParent2ID;
     private citibob.swing.typed.JTypedLabel lPayerID;
     private citibob.swing.typed.JTypedLabel lTuition1;
     private citibob.swing.typed.JTypedTextField lastname;
     private citibob.swing.typed.JTypedTextField lastname1;
-    private citibob.swing.typed.JTypedTextField lastname3;
-    private citibob.swing.typed.JTypedTextField lastname4;
+    private citibob.swing.typed.JTypedTextField lastname2;
+    private citibob.swing.typed.JTypedTextField lastname5;
     private citibob.swing.typed.JTypedTextField lastupdated1;
-    private citibob.swing.typed.JTypedTextField lastupdated2;
-    private citibob.swing.typed.JTypedTextField lastupdated3;
     private citibob.swing.typed.JTypedTextField middlename;
     private citibob.swing.typed.JTypedTextField middlename1;
-    private citibob.swing.typed.JTypedTextField middlename3;
-    private citibob.swing.typed.JTypedTextField middlename4;
+    private citibob.swing.typed.JTypedTextField middlename2;
+    private citibob.swing.typed.JTypedTextField middlename5;
     private citibob.swing.typed.JTypedTextField orgname;
+    private citibob.swing.typed.JTypedTextField orgname1;
+    private citibob.swing.typed.JTypedTextField orgname2;
     private offstage.swing.typed.CryptCCInfo payerCCInfo;
-    private offstage.gui.GroupPanel payerPhonePanel;
+    private offstage.swing.typed.CryptCCInfo payerCCInfo1;
+    private offstage.swing.typed.CryptCCInfo payerCCInfo2;
     private citibob.swing.typed.JKeyedComboBox programs;
     private citibob.swing.typed.JKeyedComboBox rbPlans;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField salutation1;
-    private citibob.swing.typed.JTypedTextField salutation3;
-    private citibob.swing.typed.JTypedTextField salutation4;
+    private citibob.swing.typed.JTypedTextField salutation2;
+    private citibob.swing.typed.JTypedTextField salutation5;
     private citibob.swing.typed.JTypedTextField scholarship;
     private citibob.swing.typed.JTypedTextField scholarshippct;
     private offstage.swing.typed.EntitySelector searchBox;
     private citibob.swing.typed.JTypedTextField state;
     private citibob.swing.typed.JTypedTextField state1;
-    private citibob.swing.typed.JTypedTextField state2;
-    private citibob.swing.typed.JTypedTextField state3;
     private citibob.swing.typed.JTypedTextField state4;
+    private citibob.swing.typed.JTypedTextField state5;
+    private citibob.swing.typed.JTypedTextField state6;
     private offstage.accounts.gui.TransRegPanel transRegister;
     private citibob.swing.typed.JTypedTextField tuitionOverride;
     private offstage.swing.typed.EntityIDDropdown vParent1ID;
@@ -3217,9 +3267,9 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private offstage.swing.typed.EntityIDLabel vStudentID;
     private citibob.swing.typed.JTypedTextField zip;
     private citibob.swing.typed.JTypedTextField zip1;
-    private citibob.swing.typed.JTypedTextField zip2;
-    private citibob.swing.typed.JTypedTextField zip3;
     private citibob.swing.typed.JTypedTextField zip4;
+    private citibob.swing.typed.JTypedTextField zip5;
+    private citibob.swing.typed.JTypedTextField zip6;
     // End of variables declaration//GEN-END:variables
 
 //public static void showFrame(SqlRun str, final FrontApp fapp, String dupType, final String title)

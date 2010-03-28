@@ -229,6 +229,18 @@ throws IOException
 //			sql.addColumn("main.parent1id as id");
 //			sql.addWhereClause("main.parent1id is not null");
 		break;
+		case DISTINCT_PARENT2ID :
+			sql.addTable("rels_o2m", "heads", sql.JT_INNER,
+				" heads.relid = (select relid from relids where name = 'parent2of')\n" +
+				" and heads.entityid1 = main.entityid");
+			sql.addColumn("heads.entityid0 as id");
+		break;
+		case DISTINCT_BOTHPARENTSID :
+			sql.addTable("rels_o2m", "heads", sql.JT_INNER,
+				" heads.relid in (select relid from relids where name in ('parent1of', 'parent2of'))\n" +
+				" and heads.entityid1 = main.entityid");
+			sql.addColumn("heads.entityid0 as id");
+		break;
 		case DISTINCT_PAYERID :
 
 //PROBLEM: the termid for which this is relevant is not available in the outer query.

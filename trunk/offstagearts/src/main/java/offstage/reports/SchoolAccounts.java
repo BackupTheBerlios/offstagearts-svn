@@ -175,7 +175,7 @@ boolean isZero(double amt) { return Math.abs(amt) < .01; }
  @param lateDays Something is late if it was billed before xlateAsOfDate - lateDays and is not yet paid.
  */
 public SchoolAccounts(App app, SqlRun str, TimeZone tz, final int termid,
-java.util.Date xasOfDate, int lateDays)
+final java.util.Date xasOfDate, int lateDays)
 //int xlateDays, java.util.Date xlateAsOf)
 {
 	this.lateDays = lateDays;
@@ -357,7 +357,7 @@ java.util.Date xasOfDate, int lateDays)
 		// Add miscellaneous stuff
 		if (rss[2].next()) {
 			model.put("sterm", rss[2].getString("name"));
-			model.put("date", new java.util.Date());
+			model.put("date", xasOfDate);
 			model.put("lateasofdate", new java.util.Date());
 			model.put("regfee", new Double(25));
 		} else {

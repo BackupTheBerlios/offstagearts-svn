@@ -45,9 +45,11 @@ public abstract class Query {
 public static final int DISTINCT_ENTITYID = 0;
 public static final int DISTINCT_HEADID = 1;
 public static final int DISTINCT_PARENT1ID = 2;
-public static final int DISTINCT_PAYERID = 3;
+public static final int DISTINCT_PARENT2ID = 3;
+public static final int DISTINCT_BOTHPARENTSID = 4;
+public static final int DISTINCT_PAYERID = 5;
 public static final KeyedModel distinctKmodel = KeyedModel.intKeys(
-		"Main Person", "Head of Household", "Parent", "Payer");
+		"Main Person", "Head of Household", "Parent1", "Parent2", "Both Parents", "Payer");
 
 //protected QuerySchema schema;
 //
@@ -75,6 +77,7 @@ public static final KeyedModel distinctKmodel = KeyedModel.intKeys(
 /** Used in constructing queries... */
 protected void addTable(QuerySchema schema, ConsSqlQuery sql, String tableName)
 {
+
 	QuerySchema.Tab tab = schema.getTab(tableName);
 	if (sql.getTables(tableName) == null) {
 		// This table hasn't been added yet
