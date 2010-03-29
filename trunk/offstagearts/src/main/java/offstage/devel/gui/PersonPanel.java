@@ -172,7 +172,7 @@ System.out.println("PCL property changed!");
 		MiddlePane.add(middlePane);
 		middlePane.initRuntime(mainRm);
 		
-		TypedWidgetBinder.bindRecursive(this, mainRm, app.swingerMap());
+//		TypedWidgetBinder.bindRecursive(this, mainRm, app.swingerMap());
 		TypedWidgetBinder.bindRecursive(this, mainRm, app.swingerMap());
 		
 		phonePanel.initRuntime(str, dm.getPhonesSb(),

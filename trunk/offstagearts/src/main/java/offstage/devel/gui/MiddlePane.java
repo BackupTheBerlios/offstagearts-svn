@@ -40,7 +40,7 @@ public class MiddlePane extends javax.swing.JPanel {
 		genderButtonGroup.add(null, unknownGenderButton);
 	}
 
-	void initRuntime(SchemaRowModel xmodel)
+	public void initRuntime(SchemaRowModel xmodel)
 	{
 			new TypedWidgetBinder().bind(genderButtonGroup, xmodel);
 //		new IsPrimaryBinder().bind(cbIsPrimary, model);	// Should just do a regular listener as above; this is read-only
