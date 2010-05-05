@@ -59,6 +59,7 @@ SchoolModel smod;
 
 //public JoinedSchemaBufDbModel enrolledDb;
 public EnrolledDbModel enrolledDb;
+public LevelHistoryModel levelHistoryDb;
 //public IntKeyedDbModel actransDb;
 
 
@@ -91,7 +92,7 @@ class AllStudentDbModel extends MultiDbModel
 	{
 		super(smod.studentDm,
 			  smod.headofDm, smod.parent1ofDm, smod.parent2ofDm, smod.payerofDm,
-			  smod.termregsDm, enrolledDb);
+			  smod.termregsDm, enrolledDb, levelHistoryDb);
 	}
 	public void setStudentID(Integer studentid)
 	{
@@ -102,6 +103,7 @@ class AllStudentDbModel extends MultiDbModel
 		smod.payerofDm.setKey(studentid);
 		smod.termregsDm.setKey("entityid", studentid);
 		enrolledDb.setEntityID(studentid);
+		levelHistoryDb.setKey(studentid);
 	}
 	public Integer getStudentID()
 		{ return (Integer)smod.studentDm.getKey(); }
@@ -375,20 +377,7 @@ str.flush();
 	// =====================================================================
 	// Enrollments
 	enrolledDb = new EnrolledDbModel(str, fapp, "enrollments", "student");
-//	enrolledDb = new SqlBufDbModel(str, fapp,
-//		new String[] {"courseids", "enrollments"},
-//		null,
-//		new String[] {"enrollments"}) {
-//	int termID, studentID;
-//	public String getSelectSql(boolean proto) {
-//		return
-//			" select e.*,c.name,c.dayofweek,c.tstart,c.tnext" +
-//			" from enrollments e, courseids c" +
-//			" where e.courseid = c.courseid" +
-//			" and c.termid = " + SqlInteger.sql(termID) + //smod.getTermID()) +
-//			(proto ? " and false" : " and e.entityid = " + SqlInteger.sql(studentID)) + //smod.getStudentID())) +
-//			" order by dayofweek, tstart, name";
-//	}};
+	levelHistoryDb = new LevelHistoryModel(str, fapp);
 
 	// =============================================
 	// Payer Group
@@ -410,6 +399,13 @@ str.flush();
 			new boolean[] {false, false, false, false,
 				true, true, true, false}, fapp.swingerMap());
 		enrollments.setFormatU("dayofweek", new DayOfWeekKeyedModel());
+
+		// Set up LevelHistory Table
+		schema = (RSSchema)levelHistoryDb.getSchemaBuf().getSchema();
+		levelHistory.setModelU(fapp.swingerMap(), levelHistoryDb.getTableModel(),
+			new String[] {"Term", "Level"},
+			new String[] {"termname", "programname"});
+		levelHistory.setEditable(false, false);
 	}});
 	
 	// ==============================================================
@@ -835,6 +831,9 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
         bCc = new javax.swing.JButton();
         bOtherTrans = new javax.swing.JButton();
         transRegister = new offstage.accounts.gui.TransRegPanel();
+        LevelHistoryPane = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        levelHistory = new citibob.swing.StyledTable();
         jTabbedPane6 = new javax.swing.JTabbedPane();
         FamilyScrollPanel = new javax.swing.JScrollPane();
         familyTable = new offstage.school.gui.SchoolFamilySelectorTable();
@@ -2135,6 +2134,25 @@ public void changeStudent(SqlRun str, Integer entityid)// throws SQLException
 
         AccountTab.addTab("Account History", AccountPane);
 
+        LevelHistoryPane.setLayout(new java.awt.BorderLayout());
+
+        levelHistory.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(levelHistory);
+
+        LevelHistoryPane.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        AccountTab.addTab("Level History", LevelHistoryPane);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -3055,6 +3073,7 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JPanel FirstMiddleLast7;
     private javax.swing.JScrollPane GroupScrollPanel;
     private javax.swing.JPanel HouseholdPanel;
+    private javax.swing.JPanel LevelHistoryPane;
     private javax.swing.JPanel MedPanel;
     private javax.swing.JPanel ObsoleteStuff;
     private javax.swing.JPanel Org;
@@ -3192,6 +3211,7 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTabbedPane jTabbedPane6;
     private javax.swing.JToolBar jToolBar1;
@@ -3235,6 +3255,7 @@ private void doUpdateSelect(SqlRun str) throws Exception
     private citibob.swing.typed.JTypedTextField lastname2;
     private citibob.swing.typed.JTypedTextField lastname5;
     private citibob.swing.typed.JTypedTextField lastupdated1;
+    private citibob.swing.StyledTable levelHistory;
     private citibob.swing.typed.JTypedTextField middlename;
     private citibob.swing.typed.JTypedTextField middlename1;
     private citibob.swing.typed.JTypedTextField middlename2;

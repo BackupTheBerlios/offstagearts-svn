@@ -32,20 +32,16 @@ import offstage.*;
 import citibob.swing.html.*;
 import java.util.*;
 import citibob.task.*;
-import offstage.wizards.newrecord.*;
-import citibob.swing.*;
-import javax.swing.*;
-import offstage.cleanse.*;
 import citibob.sql.*;
 import java.io.File;
 import offstage.email.VettEmail;
 import offstage.equery.EQuery;
 import offstage.equery.swing.EQueryWizard;
+import offstage.reports.AlumReport;
 import offstage.reports.ClauseReport;
 import offstage.reports.DonationReport;
 import offstage.reports.MailMerge;
 import offstage.reports.SegmentationReport;
-import offstage.school.gui.SchoolSetupFrame;
 
 /**
  *
@@ -162,6 +158,18 @@ throws org.xml.sax.SAXException, java.io.IOException
 		if (wizard.runClauseReport()) {
 			EQuery equery = (EQuery)wizard.getVal("equery");
 			ClauseReport.writeCastingCSV(fapp, str,
+				(EQuery)wizard.getVal("equery"),
+				(File)wizard.getVal("file"));
+		}
+	}}));
+
+	actionMap.put("alumreport", new Job("", new SqlTask() {
+	public void run(SqlRun str) throws Exception {
+//		JFrame root = (javax.swing.JFrame)WidgetTree.getRoot(getThis());
+		EQueryWizard wizard = new EQueryWizard(fapp, DevelActionPanel.this);
+		if (wizard.runClauseReport()) {
+			EQuery equery = (EQuery)wizard.getVal("equery");
+			AlumReport.writeAlumCSV(fapp, str,
 				(EQuery)wizard.getVal("equery"),
 				(File)wizard.getVal("file"));
 		}

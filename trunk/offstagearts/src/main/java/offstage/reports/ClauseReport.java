@@ -101,8 +101,8 @@ throws IOException
 		str.execSql(pu.pphonesSql("pph2",
 			"select distinct r.entityid0 as id" +
 			" from _ids, rels_o2m r" +
-			" where _ids.id = r.entityid2" +
-			" and rels_o2m.relid = (select relid from relids where name='parent2of')"));
+			" where _ids.id = r.entityid1" +
+			" and r.relid = (select relid from relids where name='parent2of')"));
 //		str.execSql(pu.pphonesSql("pph2",
 //			"select distinct parent2.entityid as id" +
 //			" from _ids, persons e, persons parent2" +
@@ -389,5 +389,12 @@ EQuery equery, final File outFile) throws Exception
 		rr.writeCSV(stm, outFile);
 	}});
 }
+
+
+
+
+
+
+
 
 }

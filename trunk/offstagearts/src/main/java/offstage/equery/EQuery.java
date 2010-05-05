@@ -200,7 +200,7 @@ throws IOException
 	if (sql0 == null) return null;
 
 	if (distinctType == DISTINCT_ENTITYID) {
-		return "select id from (" + sql0 + ") yy";
+		return "select distinct id from (" + sql0 + ") yy";
 	}
 	
 	ConsSqlQuery sql = new ConsSqlQuery(ConsSqlQuery.SELECT);
@@ -260,6 +260,17 @@ throws IOException
 //			sql.addColumn("termregs.payerid as id");
 //			sql.addWhereClause("termregs.payerid is not null");
 //			addTable(schema, sql, "termregs");
+		break;
+		case DISTINCT_ALLADULTSID :
+			sql.addTable("rels_o2m", "heads", sql.JT_INNER,
+				" ((heads.relid = (select relid from relids where name = 'payerof')\n" +
+				" and heads.temporalid = yy.termid)\n" +
+				" or\n" +
+				" (heads.relid in (select relid from relids\n" +
+				"      where name in ('parent1of', 'parent2of'))\n" +
+				" ))\n" +
+				" and heads.entityid1 = main.entityid");
+			sql.addColumn("heads.entityid0 as id");
 		break;
 //		case DISTINCT_ENTITYID :
 //		default :

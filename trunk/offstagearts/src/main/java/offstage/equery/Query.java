@@ -48,8 +48,10 @@ public static final int DISTINCT_PARENT1ID = 2;
 public static final int DISTINCT_PARENT2ID = 3;
 public static final int DISTINCT_BOTHPARENTSID = 4;
 public static final int DISTINCT_PAYERID = 5;
+public static final int DISTINCT_ALLADULTSID = 6;
 public static final KeyedModel distinctKmodel = KeyedModel.intKeys(
-		"Main Person", "Head of Household", "Parent1", "Parent2", "Both Parents", "Payer");
+		"Main Person", "Head of Household", "Parent1", "Parent2",
+		"Both Parents", "Payer", "All Adults");
 
 //protected QuerySchema schema;
 //
