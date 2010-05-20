@@ -30,14 +30,22 @@ import citibob.reports.Reports;
 import citibob.sql.ConsSqlQuery;
 import citibob.sql.ConsSqlQuery.TableJoin;
 import citibob.sql.RSTableModel;
+import citibob.sql.RssTasklet;
 import citibob.sql.SqlQuery;
 import citibob.sql.SqlRun;
 import citibob.sql.UpdTasklet;
+import citibob.swing.table.DefaultJTypeTableModel;
 import citibob.swing.table.JTypeTableModel;
+import citibob.swing.table.MultiJTypeTableModel;
 import citibob.swing.table.StringTableModel;
 import citibob.text.SFormat;
+import citibob.types.JType;
+import citibob.types.JavaJType;
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 import offstage.FrontApp;
 import offstage.equery.EQuery;
 import offstage.types.PhoneSFormat;
@@ -64,7 +72,7 @@ public class AlumReport
  * @param phoneDistinctType Set to EQuery.DISTINCT_househeadID if you want
  * the parent phones; otherwise, set to EQuery.DISTINCT_PRIMARYENTITYID
  */
-public static JTypeTableModel newAlumReport(FrontApp fapp, SqlRun str, EQuery equery)
+public static JTypeTableModel newAlumReport(final FrontApp fapp, SqlRun str, EQuery equery)
 throws IOException
 {
 	String idSql = equery.getSql(fapp.equerySchema());
@@ -121,13 +129,60 @@ throws IOException
 	StringBuffer sql = new StringBuffer(csql.getSql());
 	sql.append(";\n");
 
-	RSTableModel model = new RSTableModel(fapp.sqlTypeSet());
-	model.executeQuery(str, sql.toString());
+	sql.append(
+		" select termenrolls.groupid as termid, termenrolls.entityid, termenrolls.name as termname\n" +
+		" from termenrolls, _ids\n" +
+		" where termenrolls.entityid = _ids.id\n" +
+		" and courserole = (select courseroleid from courseroles where name='student')'\n" +
+		" order by firstdate");
+
+	final MultiJTypeTableModel multi = new MultiJTypeTableModel();
+	str.execSql(sql.toString(), new RssTasklet() {
+	public void run(ResultSet[] rss) throws SQLException {
+		// The main table
+		final RSTableModel model0 = new RSTableModel(fapp.sqlTypeSet());
+		model0.executeQuery(rss[0]);
+
+		// The additional terms
+		// Set up a map for easy lookup
+		ResultSet rs = rss[1];
+		HashMap<Integer,StringBuffer> rsmap = new HashMap();
+		while (rs.next()) {
+			Integer entityid = (Integer)rs.getObject("entityid");
+			String termname = rs.getString("termname");
+			StringBuffer sb = rsmap.get(entityid);
+			if (sb == null) {
+				sb = new StringBuffer(termname);
+				rsmap.put(entityid, sb);
+			} else {
+				sb.append(',');
+				sb.append(termname);
+			}
+		}
+
+		// Use the map to finish setting up our result set
+		final JTypeTableModel model1 = new DefaultJTypeTableModel(
+			new String[] {"terms"},
+			new JType[] {JavaJType.jtString},
+			model0.getRowCount());
+		int term_col = model1.findColumnU("terms");
+		int entityid_col = model0.findColumnU("me_entityid");
+		for (int row=0; row<model0.getRowCount(); ++row) {
+			Integer entityid = (Integer)model0.getValueAt(row, entityid_col);
+			StringBuffer terms = rsmap.get(entityid);
+			if (terms != null) model1.setValueAt(terms.toString(), row, entityid_col);
+		}
+
+		// Combine the two together
+		multi.init(model0, model1);
+	}});
+
+
 
 	str.execSql("drop table me");
 	str.execSql("drop table head");
 
-	return model;
+	return multi;
 }
 
 
