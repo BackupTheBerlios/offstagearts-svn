@@ -360,13 +360,14 @@ System.out.println("PCL property changed!");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 4, 0, 4);
         LeftPanel1.add(MiddlePane, gridBagConstraints);
 
+        LeftPanel.setPreferredSize(new java.awt.Dimension(228, 307));
         LeftPanel.setLayout(new java.awt.GridBagLayout());
 
         MiscInfo.setLayout(new java.awt.GridBagLayout());
