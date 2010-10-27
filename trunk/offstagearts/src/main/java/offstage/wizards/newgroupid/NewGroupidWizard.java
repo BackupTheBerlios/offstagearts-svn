@@ -26,17 +26,12 @@ package offstage.wizards.newgroupid;
  * Open. You can then make changes to the template in the Source Editor.
  */
 
-import citibob.sql.pgsql.SqlInteger;
+import citibob.sql.ansi.SqlDay;
 import citibob.swing.html.*;
 import citibob.wizard.*;
-import javax.swing.*;
-import java.sql.*;
-import offstage.db.*;
 import offstage.wizards.*;
-import offstage.*;
-import citibob.sql.*;
 import citibob.sql.pgsql.*;
-import citibob.jschema.*;
+import citibob.util.Day;
 import java.awt.Component;
 
 /**
@@ -79,6 +74,8 @@ addStartState(new AbstractWizState("grouplist", null, "catname") {
 		String table = v.getString("submit");
 		v.put("table", table);
 		if ("donationids".equals(table)) stateName = "donationname";
+		else if ("eventids".equals(table)) stateName = "eventname";
+		else if ("ticketeventids".equals(table)) stateName = "ticketname";
 		else stateName = "catname";
 	}
 });
@@ -117,6 +114,46 @@ addState(new AbstractWizState("donationname", "grouplist", "finished") {
 System.out.println(sql);
 		con.str.execSql(sql);
 		fapp.dbChange().fireTableWillChange(con.str, "donationids");
+	}
+});
+// ---------------------------------------------
+// Query for name of new event category
+addState(new AbstractWizState("eventname", "grouplist", "finished") {
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
+		{ return new EventNameWiz(frame, app); }
+	public void process(Wizard.Context con) throws Exception
+	{
+		String catname = v.getString("catname");
+		if (catname == null || "".equals(catname)) return;
+		Day date = (Day)v.get("date");
+		SqlDay sqlday = new SqlDay();
+		String sql =
+			" insert into eventids" +
+			" (name, date) values (" +
+			SqlString.sql(catname) + ", " + sqlday.toSql(date) + ")";
+System.out.println(sql);
+		con.str.execSql(sql);
+		fapp.dbChange().fireTableWillChange(con.str, "eventids");
+	}
+});
+// ---------------------------------------------
+// Query for name of new event category
+addState(new AbstractWizState("ticketname", "grouplist", "finished") {
+	public HtmlWiz newWiz(Wizard.Context con) throws Exception
+		{ return new EventNameWiz(frame, app); }
+	public void process(Wizard.Context con) throws Exception
+	{
+		String catname = v.getString("catname");
+		if (catname == null || "".equals(catname)) return;
+		Day startdate = (Day)v.get("startdate");
+		SqlDay sqlday = new SqlDay();
+		String sql =
+			" insert into eventids" +
+			" (name, startdate) values (" +
+			SqlString.sql(catname) + ", " + sqlday.toSql(startdate) + ")";
+System.out.println(sql);
+		con.str.execSql(sql);
+		fapp.dbChange().fireTableWillChange(con.str, "ticketeventids");
 	}
 });
 // ---------------------------------------------

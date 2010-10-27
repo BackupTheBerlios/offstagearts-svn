@@ -32,7 +32,7 @@ throws SQLException
 {
 	table = "donations";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"donationids", "groupid", "name", "name", null);
+		"donationids", "groupid", "name || ' (FY ' || fiscalyear || ')'", "fiscalyear desc,name", null);
 	KeyedModel dtKmodel = new DbKeyedModel(str, change,
 		"donationtypeids", "donationtypeid", "name", "name", null);
 	cols = new SqlCol[] {
@@ -41,7 +41,9 @@ throws SQLException
 		new SqlCol(new SqlEnum(dtKmodel), "donationtypeid", false),
 		new SqlCol(new SqlInteger(false), "entityid", false),
 		new ColumnDefaultNow(new SqlDate(tz, false), "date", false),
-		new SqlCol(new SqlNumeric(9, 2), "amount", false)
+		new SqlCol(new SqlNumeric(9, 2), "amount", false),
+		new SqlCol(new SqlNumeric(9, 2), "amountnondeduct", false),
+		new SqlCol(new SqlInteger(false), "numberoftickets", false)
 	};
 }
 

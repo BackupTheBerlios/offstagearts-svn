@@ -80,7 +80,7 @@ public DonationReport(App app, String idSql, int minYear, int maxYear)
 //	for (int i=0; i<years.length; ++i) cols[i] = new Col(""+years[i], new JavaJType(Double.class));
 	for (int i=0; i<years.length; ++i) cols[i] = new Column(""+years[i], new SqlNumeric(10,2,true));
 	sql =
-		" select d.entityid, di.fiscalyear, sum(amount) as amount" +
+		" select d.entityid, di.fiscalyear, sum(amount) as amountdeduct, sum(amountnondeduct) as amountnondeduct" +
 		" from donations d, donationids di, ids_donor ids" +
 		" where d.entityid = ids.id" +
 		" and d.groupid = di.groupid" +
@@ -96,9 +96,9 @@ public DonationReport(App app, String idSql, int minYear, int maxYear)
 				int year = rs.getInt("fiscalyear");
 				//int col = findColumn(""+year);
 				int col = Arrays.binarySearch(years, year); //findColumn(""+year);
-System.out.println("(" + row + ", " + col + ") = " + rs.getDouble("amount"));
+System.out.println("(" + row + ", " + col + ") = " + rs.getDouble("amountdeduct"));
 System.out.println("year = " + year);
-				setValueAt(rs.getDouble("amount"), row, col);
+				setValueAt(rs.getDouble("amountdeduct"), row, col);
 			}
 		});
 	this.add(model);

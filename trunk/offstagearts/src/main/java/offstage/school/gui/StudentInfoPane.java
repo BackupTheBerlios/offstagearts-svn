@@ -26,8 +26,8 @@ package offstage.school.gui;
 import citibob.sql.SqlRun;
 import citibob.swing.typed.JKeyedComboBox;
 import citibob.swing.typed.TypedWidgetBinder;
-import citibob.types.KeyedModel;
 import offstage.FrontApp;
+import offstage.schema.PersonsSchema;
 
 /**
  *
@@ -37,17 +37,11 @@ public class StudentInfoPane extends ExtensiblePane {
 
 	public void initRuntime(SqlRun str, FrontApp fapp, SchoolModel schoolModel) {}
 
-	protected static final KeyedModel genderKmodel;
-	static {
-		genderKmodel = new KeyedModel();
-			genderKmodel.addItem(null, "<Unknown>");
-			genderKmodel.addItem("M", "Male");
-			genderKmodel.addItem("F", "Female");
-	}
+
 	
 	protected void bindGender(JKeyedComboBox gender, SchoolModel schoolModel)
 	{
-		gender.setKeyedModel(genderKmodel, null);
+		gender.setKeyedModel(PersonsSchema.genderKmodel, null);
 		new TypedWidgetBinder().bind(gender, schoolModel.studentRm,
 				"gender", TypedWidgetBinder.BT_READWRITE);
 		

@@ -114,6 +114,7 @@ public String getEmailList()
 	int emailCol = this.findColumn("email");
 	for (int row=0; row<getRowCount(); ++row) {
 		String name = (String)getValueAt(row, nameCol);
+		name = name.replace(",", "");
 		String email = (String)getValueAt(row, emailCol);
 		if (email == null) continue;
 		

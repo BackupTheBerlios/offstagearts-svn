@@ -27,6 +27,14 @@ import java.sql.*;
 public class PersonsSchema extends EntitiesSchema
 {
 
+public static final KeyedModel genderKmodel;
+static {
+	genderKmodel = new KeyedModel();
+		genderKmodel.addItem(null, "<Unknown>");
+		genderKmodel.addItem("M", "Male");
+		genderKmodel.addItem("F", "Female");
+}
+
 public PersonsSchema(citibob.sql.SqlRun str, DbChangeModel change, java.util.TimeZone tz)
 throws SQLException
 {

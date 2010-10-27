@@ -33,7 +33,7 @@ throws SQLException
 	super();
 	table = "ticketeventsales";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"ticketeventids", "groupid", "name", "name", null);
+		"ticketeventids", "groupid", "name", "startdate desc, name", null);
 	KeyedModel kTicketTypes = new DbKeyedModel(str, change,
 		"tickettypes", "tickettypeid", "name", "name", "<Not Known>");
 	KeyedModel kVenues = new DbKeyedModel(str, change,

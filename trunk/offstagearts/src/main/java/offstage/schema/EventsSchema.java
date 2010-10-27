@@ -33,7 +33,7 @@ throws SQLException
 	super();
 	table = "events";
 	KeyedModel kmodel = new DbKeyedModel(str, change,
-		"eventids", "groupid", "name", "name", null);
+		"eventids", "groupid", "name || ' (' || date || ')'", "date desc, name", null);
 	cols = new SqlCol[] {
 		new SqlCol(new SqlEnum(kmodel), "groupid", true),
 		new SqlCol(new SqlInteger(false), "entityid", true)

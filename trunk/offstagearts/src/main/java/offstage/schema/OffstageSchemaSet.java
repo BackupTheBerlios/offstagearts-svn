@@ -29,6 +29,7 @@ package offstage.schema;
 
 import citibob.sql.*;
 import citibob.jschema.*;
+import citibob.types.KeyedModel;
 import java.sql.*;
 
 /**

@@ -133,7 +133,7 @@ throws IOException
 		" select termenrolls.groupid as termid, termenrolls.entityid, termenrolls.name as termname\n" +
 		" from termenrolls, _ids\n" +
 		" where termenrolls.entityid = _ids.id\n" +
-		" and courserole = (select courseroleid from courseroles where name='student')'\n" +
+		" and courserole = (select courseroleid from courseroles where name='student')\n" +
 		" order by firstdate");
 
 	final MultiJTypeTableModel multi = new MultiJTypeTableModel();

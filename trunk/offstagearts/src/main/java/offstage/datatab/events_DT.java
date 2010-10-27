@@ -37,7 +37,7 @@ public class events_DT extends DataTab
 public events_DT(SqlRun str, App app)
 throws SQLException
 {
-	title = "Events";
+	title = "Events (deprecated)";
 	schema = new EventsSchema(str, app.dbChange());
 //	orderClause = "firstdate desc,name";
 	displayColTitles = new String[] {"Event"};
