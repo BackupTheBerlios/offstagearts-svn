@@ -63,8 +63,9 @@ public void setDisplayValue(SqlRun str, final Object value)
 		" select " +
 			" (case when firstname is null then '' else firstname || ' ' end ||" +
 			" case when middlename is null then '' else middlename || ' ' end ||" +
-			" case when lastname is null then '' else lastname end" +
+			" case when lastname is null then '' else lastname end ||" +
 //			" case when orgname is null then '' else ' (' || orgname || ')' end" +
+			" case when obsolete then ' **(DELETED)**' else '' end" +
 			" ) as name" +
 		" from entities" +
 		" where entityid = " + SqlInteger.sql((Integer)value);

@@ -30,6 +30,14 @@ public class InterestsSchema extends ConstSqlSchema
 //KeyedModel kmodel;
 //public KeyedModel getKeyedModel() { return kmodel; }
 
+ /** User Interests2Schema instead.  This is kept around for compatibility
+  * with old site code
+ * @param str
+ * @param change
+ * @throws SQLException
+ * @deprecated
+ */
+@Deprecated
 public InterestsSchema(citibob.sql.SqlRun str, DbChangeModel change)
 throws SQLException
 {

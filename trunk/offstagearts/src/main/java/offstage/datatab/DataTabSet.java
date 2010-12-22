@@ -98,7 +98,7 @@ throws Exception
 	addTab(new donations_DT(str, app));
 	addTab(new events_DT(str, app));
 	addTab(new flags_DT(str, app));
-	addTab(new interests_DT(str, app.dbChange()));
+	addTab(new interests2_DT(str, app));
 	addTab(new notes_DT(str, app));
 	addTab(new termenrolls_DT(str, app));
 	addTab(new ticketeventsales_DT(str, app));

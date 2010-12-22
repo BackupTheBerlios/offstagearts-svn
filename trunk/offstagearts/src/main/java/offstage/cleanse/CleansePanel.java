@@ -861,21 +861,22 @@ public SqlSet getSelectSql(boolean proto)
 			(idSql == null ? "" : " and ids0.id = e0.entityid and ids1.id = e1.entityid") +
 			";\n");
 
+// This needs to be rethought...
 		// Remove items already merged
 		preSql.append(
 			" delete from _d\n" +
-			" using mergelog ml\n" + 
-			" where (_d.eid0 = ml.entityid0 and _d.eid1 = ml.entityid1)\n" +
-			" or (_d.eid1 = ml.entityid0 and _d.eid0 = ml.entityid1);\n");
+			" using mergelog ml\n" +
+			" where ml.provisional and ((_d.eid0 = ml.entityid0 and _d.eid1 = ml.entityid1)\n" +
+			" or (_d.eid1 = ml.entityid0 and _d.eid0 = ml.entityid1));\n");
 
-		// Eliminate children from different households.  Should really be done in original dup finding.
-		preSql.append(
-			DB.updateOneOf("headof", "_d", "eid0", "headid0") +
-			DB.updateOneOf("headof", "_d", "eid0", "headid0"));
-		preSql.append(
-			" delete from _d where not\n" +
-			" ((eid0 = headid0 or eid1 = headid1)" +
-			" or headid0 = headid1);\n");
+//		// Eliminate children from different households.  Should really be done in original dup finding.
+//		preSql.append(
+//			DB.updateOneOf("headof", "_d", "eid0", "headid0") +
+//			DB.updateOneOf("headof", "_d", "eid0", "headid0"));
+//		preSql.append(
+//			" delete from _d where not\n" +
+//			" ((eid0 = headid0 or eid1 = headid1)" +
+//			" or headid0 = headid1);\n");
 	}
 
 	// Do our final select

@@ -28,12 +28,12 @@ import java.sql.SQLException;
 import offstage.schema.InterestsSchema;
 
 /**
- *
+ * Kept around for compatibility with old site code.
  * @author citibob
  */
+@Deprecated
 public class interests_DT extends DataTab
 {
-
 public interests_DT(SqlRun str, DbChangeModel change)
 throws SQLException
 {

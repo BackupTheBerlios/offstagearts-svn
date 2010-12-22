@@ -23,22 +23,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.equery.swing;
 
-import citibob.app.App;
-import citibob.swing.*;
 import citibob.swing.table.*;
 import citibob.swing.typed.*;
 import java.sql.*;
-import javax.swing.table.*;
-import javax.swing.event.*;
 import javax.swing.*;
-import java.awt.*;
-import java.util.*;
-import citibob.jschema.*;
 import offstage.equery.*;
-import java.io.*;
-import java.text.*;
 import citibob.sql.pgsql.*;
-import citibob.types.*;
+import citibob.task.ETask;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import offstage.FrontApp;
+import offstage.swing.typed.IdSqlTableModel;
 
 /**
  *
@@ -47,7 +43,7 @@ import citibob.types.*;
 public class EQueryEditor extends javax.swing.JPanel
 implements TypedWidget
 {
-
+	FrontApp fapp;
 	EQueryTableModel model;
 
     /** Creates new form EQueryEditor */
@@ -57,9 +53,10 @@ implements TypedWidget
 		eClauseScrollPane.setRowHeaderView(new TableRowHeader(eClauseScrollPane, eQueryTable, 15));
     }
 
-	public void initRuntime(App app, EQueryTableModel qm)
+	public void initRuntime(FrontApp app, EQueryTableModel qm)
 	throws SQLException
 	{
+		this.fapp = app;
 		this.model = qm;
 //		eQueryTable.setModel(new EQueryTableModel());
 		eQueryTable.setModel(qm);
@@ -91,6 +88,7 @@ implements TypedWidget
         bAddClause = new javax.swing.JButton();
         bAddElement = new javax.swing.JButton();
         bRemoveRow = new javax.swing.JButton();
+        bCopySql = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         cbDistinctType = new citibob.swing.typed.JKeyedComboBox();
         jLabel1 = new javax.swing.JLabel();
@@ -144,6 +142,17 @@ implements TypedWidget
             }
         });
         jToolBar1.add(bRemoveRow);
+
+        bCopySql.setText("Copy SQL");
+        bCopySql.setFocusable(false);
+        bCopySql.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bCopySql.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bCopySql.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bCopySqlActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(bCopySql);
 
         jPanel1.add(jToolBar1, java.awt.BorderLayout.WEST);
 
@@ -230,10 +239,24 @@ private void bAddElementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
 	model.insertElement(getSelectedRow(), new Element());
 }//GEN-LAST:event_bAddElementActionPerformed
 
+private void bCopySqlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCopySqlActionPerformed
+	fapp.guiRun().run(EQueryEditor.this, new ETask() {
+	public void run() throws Exception {
+		String sql = EQueryEditor.this.getEQuery().getSql(fapp.equerySchema());
+
+		Toolkit toolkit = java.awt.Toolkit.getDefaultToolkit();
+		Clipboard cb = toolkit.getSystemClipboard();
+
+		StringSelection sel = new StringSelection(sql);
+		cb.setContents(sel, sel);
+	}});
+}//GEN-LAST:event_bCopySqlActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bAddClause;
     private javax.swing.JButton bAddElement;
+    private javax.swing.JButton bCopySql;
     private javax.swing.JButton bRemoveRow;
     private citibob.swing.typed.JKeyedComboBox cbDbid;
     private citibob.swing.typed.JKeyedComboBox cbDistinctType;

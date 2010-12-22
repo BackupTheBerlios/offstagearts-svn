@@ -110,6 +110,8 @@ public SqlSet getSelectSql(boolean proto) {
 		" where r.temporalid in (" + temporalIdSql + ")\n" +
 		" and r.relid in (" + relIdSql + ")\n" +
 		" and (r.entityid0 = " + entityid + " or r.entityid1 = " + entityid + ")" +
+		" and (e0.entityid = " + entityid + " or not e0.obsolete)" +
+		" and (e1.entityid = " + entityid + " or not e1.obsolete)" +
 		" order by relname, name0, name1");
 }
 // =====================================================================

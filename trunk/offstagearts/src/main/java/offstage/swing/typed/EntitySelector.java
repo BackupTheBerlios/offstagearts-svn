@@ -279,7 +279,7 @@ public void requestTextFocus()
 	private void bExportEmails2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bExportEmails2ActionPerformed
 		app.guiRun().run(EntitySelector.this, new SqlTask() {
 		public void run(SqlRun str) throws Exception {
-			JPanel p;
+//			JPanel p;
 			Toolkit toolkit = java.awt.Toolkit.getDefaultToolkit();
 			Clipboard cb = toolkit.getSystemClipboard();
 
