@@ -139,6 +139,7 @@ public EntitySelector getEntitySelector() { return entitySelector; }
         jToolBar1.add(bUndo);
 
         bDelete.setText("Delete");
+        bDelete.setEnabled(false);
         bDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bDeleteActionPerformed(evt);

@@ -40,7 +40,7 @@ throws SQLException
 	title = "Donations";
 	schema = new DonationsSchema(str, app.dbChange(), app.timeZone());
 	orderClause = "date desc";
-	displayColTitles = new String[] {"Group", "Type", "Date", "#Tix", "$-deduct", "$-not-deduct"};
+	displayColTitles = new String[] {"Group", "Type", "Date", "#Tix", "$", "$ not-deduct"};
 	displayCols = new String[] {"groupid", "donationtypeid", "date", "numberoftickets", "amount", "amountnondeduct"};
 	equeryAliases = new String[] {
 		"donations.groupid", "donation",

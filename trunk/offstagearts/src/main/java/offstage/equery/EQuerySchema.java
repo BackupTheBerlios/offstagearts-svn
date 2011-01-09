@@ -110,6 +110,7 @@ private static final String[] aliases = {
 	"persons.occupation", "occupation",
 	"persons.orgname", "orgname",
 	"persons.dob", "dob",
+	"persons.deceased", "deceased",
 	"entities.address1", "address1",
 	"entities.address2", "address2",
 	"entities.city", "city",
