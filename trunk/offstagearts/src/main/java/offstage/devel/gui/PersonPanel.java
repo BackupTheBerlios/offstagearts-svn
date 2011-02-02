@@ -142,6 +142,23 @@ System.out.println("PCL property changed!");
 					}
 				str.popFlush();
 			}});
+
+
+			// Disable this panel when the record is in eTapestry
+			int etapidCol = mainRm.findColumn("sc_etapid");
+			if (etapidCol >= 0) {
+				// Change family table contents when user re-reads from db
+				mainRm.addColListener(etapidCol, new RowModel.ColAdapter() {
+					@Override
+					public void curRowChanged(int col) {
+						Integer Etapid = (Integer)mainRm.get(col);
+						boolean enabled = (Etapid == null);
+						setEditable(enabled);
+					}
+				});
+			}
+
+
 		}});
 		this.vHouseholdID.initRuntime(xfapp);
 		
@@ -175,9 +192,9 @@ System.out.println("PCL property changed!");
 //		TypedWidgetBinder.bindRecursive(this, mainRm, app.swingerMap());
 		TypedWidgetBinder.bindRecursive(this, mainRm, app.swingerMap());
 		
-		phonePanel.initRuntime(str, dm.getPhonesSb(),
+		phonePanel.initRuntime(str, dm.getPhonesSb(), "groupid",
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, true, app.swingerMap());
+			new String[] {"groupid", "phone"}, app.swingerMap());
 		
 			
 //		phonesTable.initRuntime(dm.getPhonesSb());
@@ -188,6 +205,33 @@ System.out.println("PCL property changed!");
 //		familyTable.setModel(dm.getFamily());
 //		familyTable.initRuntime(dm.getPersonDb().getFamily());
 	}
+
+
+	void setEditable(boolean editable)
+	{
+		salutation.setEditable(editable);
+		firstname.setEditable(editable);
+		middlename.setEditable(editable);
+		lastname.setEditable(editable);
+		suffix.setEditable(editable);
+		dob.setEnabled(editable);
+		dobapprox.setEnabled(editable);
+		nickname.setEditable(editable);
+		occupation.setEditable(editable);
+		title.setEditable(editable);
+		orgname.setEditable(editable);
+		email.setEditable(editable);
+		url.setEditable(editable);
+		customaddressto.setEditable(editable);
+		address1.setEditable(editable);
+		address2.setEditable(editable);
+		city.setEditable(editable);
+		state.setEditable(editable);
+		zip.setEditable(editable);
+		middlePane.setEnabled(editable);
+		phonePanel.setEditable(editable);
+	}
+
 	/** This method is called from within the constructor to
 	 * initialize the form.
 	 * WARNING: Do NOT modify this code. The content of this method is
@@ -206,8 +250,8 @@ System.out.println("PCL property changed!");
         salutation = new citibob.swing.typed.JTypedTextField();
         firstname = new citibob.swing.typed.JTypedTextField();
         middlename = new citibob.swing.typed.JTypedTextField();
+        suffix = new citibob.swing.typed.JTypedTextField();
         lastname = new citibob.swing.typed.JTypedTextField();
-        lastname2 = new citibob.swing.typed.JTypedTextField();
         lLast2 = new javax.swing.JLabel();
         MiddlePane = new javax.swing.JPanel();
         middlePane = new offstage.devel.gui.MiddlePane();
@@ -223,13 +267,13 @@ System.out.println("PCL property changed!");
         dob = new citibob.swing.typed.JTypedDateChooser();
         orgname = new citibob.swing.typed.JTypedTextField();
         jLabel9 = new javax.swing.JLabel();
-        email1 = new citibob.swing.typed.JTypedTextField();
+        email = new citibob.swing.typed.JTypedTextField();
         jLabel11 = new javax.swing.JLabel();
         bLaunchEmail = new javax.swing.JButton();
         bLaunchBrowser = new javax.swing.JButton();
         lLast1 = new javax.swing.JLabel();
         nickname = new citibob.swing.typed.JTypedTextField();
-        jBoolCheckbox1 = new citibob.swing.typed.JBoolCheckbox();
+        dobapprox = new citibob.swing.typed.JBoolCheckbox();
         AddrPanel = new javax.swing.JPanel();
         addressPanel = new javax.swing.JPanel();
         address1 = new citibob.swing.typed.JTypedTextField();
@@ -318,22 +362,22 @@ System.out.println("PCL property changed!");
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         FirstMiddleLast.add(middlename, gridBagConstraints);
 
-        lastname.setColName("suffix");
-        lastname.setPreferredSize(new java.awt.Dimension(40, 19));
+        suffix.setColName("suffix");
+        suffix.setPreferredSize(new java.awt.Dimension(40, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        FirstMiddleLast.add(lastname, gridBagConstraints);
+        FirstMiddleLast.add(suffix, gridBagConstraints);
 
-        lastname2.setColName("lastname");
-        lastname2.setPreferredSize(new java.awt.Dimension(10, 19));
+        lastname.setColName("lastname");
+        lastname.setPreferredSize(new java.awt.Dimension(10, 19));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.5;
-        FirstMiddleLast.add(lastname2, gridBagConstraints);
+        FirstMiddleLast.add(lastname, gridBagConstraints);
 
         lLast2.setText("Last");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -462,7 +506,7 @@ System.out.println("PCL property changed!");
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 2);
         MiscInfo.add(jLabel9, gridBagConstraints);
 
-        email1.setColName("email");
+        email.setColName("email");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
@@ -470,7 +514,7 @@ System.out.println("PCL property changed!");
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(1, 0, 1, 0);
-        MiscInfo.add(email1, gridBagConstraints);
+        MiscInfo.add(email, gridBagConstraints);
 
         jLabel11.setText("Email");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -527,13 +571,13 @@ System.out.println("PCL property changed!");
         gridBagConstraints.weightx = 0.5;
         MiscInfo.add(nickname, gridBagConstraints);
 
-        jBoolCheckbox1.setText("(approx.)");
-        jBoolCheckbox1.setColName("dobapprox");
+        dobapprox.setText("(approx.)");
+        dobapprox.setColName("dobapprox");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        MiscInfo.add(jBoolCheckbox1, gridBagConstraints);
+        MiscInfo.add(dobapprox, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -615,6 +659,11 @@ System.out.println("PCL property changed!");
         AddrPanel.add(jLabel10, gridBagConstraints);
 
         customaddressto.setColName("customaddressto");
+        customaddressto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customaddresstoActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
@@ -815,7 +864,7 @@ System.out.println("PCL property changed!");
 
 	private void bLaunchEmailActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bLaunchEmailActionPerformed
 	{//GEN-HEADEREND:event_bLaunchEmailActionPerformed
-		citibob.gui.BareBonesMailto.mailto((String)email1.getValue());
+		citibob.gui.BareBonesMailto.mailto((String)email.getValue());
 	}//GEN-LAST:event_bLaunchEmailActionPerformed
 
 	private void bEmancipateActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_bEmancipateActionPerformed
@@ -832,6 +881,10 @@ System.out.println("PCL property changed!");
 	{//GEN-HEADEREND:event_bLaunchBrowserActionPerformed
 		citibob.gui.BareBonesBrowserLaunch.openURL((String)url.getValue());
 	}//GEN-LAST:event_bLaunchBrowserActionPerformed
+
+	private void customaddresstoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customaddresstoActionPerformed
+		// TODO add your handling code here:
+	}//GEN-LAST:event_customaddresstoActionPerformed
 	
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -857,11 +910,11 @@ System.out.println("PCL property changed!");
     private citibob.swing.typed.JTypedTextField customaddressto;
     private citibob.swing.typed.JTypedLabel dbid;
     private citibob.swing.typed.JTypedDateChooser dob;
-    private citibob.swing.typed.JTypedTextField email1;
+    private citibob.swing.typed.JBoolCheckbox dobapprox;
+    private citibob.swing.typed.JTypedTextField email;
     private citibob.swing.typed.JTypedTextField entityid;
     private offstage.swing.typed.FamilySelectorTable familyTable;
     private citibob.swing.typed.JTypedTextField firstname;
-    private citibob.swing.typed.JBoolCheckbox jBoolCheckbox1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -886,7 +939,6 @@ System.out.println("PCL property changed!");
     private javax.swing.JLabel lMiddle;
     private javax.swing.JLabel lPhoneNumbers;
     private citibob.swing.typed.JTypedTextField lastname;
-    private citibob.swing.typed.JTypedTextField lastname2;
     private citibob.swing.typed.JTypedTextField lastupdated;
     private offstage.devel.gui.MiddlePane middlePane;
     private citibob.swing.typed.JTypedTextField middlename;
@@ -897,6 +949,7 @@ System.out.println("PCL property changed!");
     private offstage.gui.RelBrowser relBrowser;
     private citibob.swing.typed.JTypedTextField salutation;
     private citibob.swing.typed.JTypedTextField state;
+    private citibob.swing.typed.JTypedTextField suffix;
     private citibob.swing.typed.JTypedTextField title;
     private citibob.swing.typed.JTypedTextField url;
     private offstage.swing.typed.HouseholdIDDropdown vHouseholdID;

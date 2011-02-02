@@ -23,10 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package offstage.devel.gui;
 
+import citibob.jschema.SchemaBuf;
 import javax.swing.*;
 //import citibob.jschema.swing.JSchemaWidgetTree;
 import offstage.FrontApp;
-import offstage.devel.gui.DevelModel;
 import citibob.task.*;
 import citibob.sql.*;
 import citibob.swing.WidgetTree;
@@ -234,8 +234,14 @@ private void bNewPersonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
 private void bSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSaveActionPerformed
 	app.guiRun().run(this, new SqlTask() {
 	public void run(SqlRun str) throws Exception {
-		offstage.devel.gui.DevelPanel.this.dmod.doUpdate(str);
-		refresh(str);
+//		if (dmod.onePerson.inEtap()) {
+//		    JOptionPane.showMessageDialog(offstage.devel.gui.DevelPanel.this,
+//				"Cannot edit records that are in eTapestry", "Error",
+//				JOptionPane.ERROR_MESSAGE);
+//		} else {
+			offstage.devel.gui.DevelPanel.this.dmod.doUpdate(str);
+			refresh(str);
+//		}
 	}});
 }//GEN-LAST:event_bSaveActionPerformed
 	

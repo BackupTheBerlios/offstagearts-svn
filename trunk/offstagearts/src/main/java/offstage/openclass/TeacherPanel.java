@@ -144,9 +144,9 @@ public void initRuntime(SqlRun str, FrontApp xapp, SchoolModel xsmod)
 		
 		// =====================
 		// Phone #s
-		phonePanel.initRuntime(str, teacherDm.phones.getSchemaBuf(),
+		phonePanel.initRuntime(str, teacherDm.phones.getSchemaBuf(), "groupid",
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, true, app.swingerMap());
+			new String[] {"groupid", "phone"}, app.swingerMap());
 
 
 		// =====================================================================

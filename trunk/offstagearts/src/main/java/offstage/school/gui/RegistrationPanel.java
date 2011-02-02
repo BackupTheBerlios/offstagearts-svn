@@ -515,8 +515,9 @@ str.flush();
 	// Payer
 	TypedWidgetBinder.bindRecursive(PayerPanel, smod.payerRm, smap);
 	PayerPhonePanel.initRuntime(str, smod.payerDm.phoneDb.getSchemaBuf(),
-			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, true, smap);
+		"groupid",
+		new String[] {"Type", "Number"},
+		new String[] {"groupid", "phone"}, smap);
 	payerCCInfo.initRuntime(fapp.keyRing());
 	RowModel.ColListener payerCCListener = new RowModel.ColAdapter() {
 		public void valueChanged(final int col) {
@@ -542,14 +543,14 @@ str.flush();
 	// ===============================================================
 	// Parents
 	TypedWidgetBinder.bindRecursive(Parent1Panel, smod.parent1Rm, smap);
-	Parent1PhonePanel.initRuntime(str, smod.parent1Dm.phoneDb.getSchemaBuf(),
+	Parent1PhonePanel.initRuntime(str, smod.parent1Dm.phoneDb.getSchemaBuf(), "groupid",
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, true, smap);
+			new String[] {"groupid", "phone"}, smap);
 //	SchemaBufRowModel parent2Rm = new SchemaBufRowModel(smod.parent2Dm.personDb.getSchemaBuf());
 	TypedWidgetBinder.bindRecursive(Parent2Panel, smod.parent2Rm, smap);
-	Parent2PhonePanel.initRuntime(str, smod.parent2Dm.phoneDb.getSchemaBuf(),
+	Parent2PhonePanel.initRuntime(str, smod.parent2Dm.phoneDb.getSchemaBuf(), "groupid",
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, true, smap);
+			new String[] {"groupid", "phone"}, smap);
 	
 	// ================================================================
 	// Global Stuff

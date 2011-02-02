@@ -24,11 +24,14 @@ package offstage.datatab;
 
 import offstage.devel.gui.*;
 import citibob.jschema.IntKeyedDbModel;
+import citibob.jschema.SchemaBufRowModel;
 import citibob.jschema.SqlSchema;
 import citibob.jschema.log.QueryLogger;
 import citibob.sql.SqlRun;
+import citibob.swing.RowModel;
 import citibob.swing.typed.SwingerMap;
 import javax.swing.JTabbedPane;
+import offstage.db.EntityBuf;
 import offstage.equery.EQuerySchema;
 import offstage.gui.GroupPanel;
 
@@ -66,6 +69,7 @@ protected String summary_st = null;
  * fdSummary.st Front Desk HTML summary screen. */
 //protected String fdSummary_st = null;
 
+DevelModel develModel;
 protected SqlSchema schema;
 protected String idCol = "groupid";
 protected String orderClause = "groupid";
@@ -73,6 +77,9 @@ protected String orderClause = "groupid";
 // EntityPanel...
 public String[] displayColTitles;	// Titles to display to user
 public String[] displayCols;	// Columns to show to user
+//protected GroupPanel groupPanel;
+public boolean setEditable = true;		// Should this tab be enabled when it's created?
+public boolean disableWhenInEtap = false;	// Disable this tab when a record is in eTapestry?
 
 //boolean inGui = true;	// Do we display in the devel screen?
 //boolean inEQuerySchema = true;
@@ -99,16 +106,44 @@ public void addToEQuerySchema(EQuerySchema eschema)
 		getTableName() + ".entityid = main.entityid");
 }
 
+/** Called from EntityPanel.initRuntime() */
 public GroupPanel addToGroupPanels(SqlRun str, DevelModel dm,
 JTabbedPane groupPanels, SwingerMap smap)
 {
-	GroupPanel panel = new GroupPanel();
-	panel.initRuntime(str, dm.getTabSb(getTableName()),
-		displayColTitles, displayCols,
-		true, smap);
-	groupPanels.insertTab(getTitle(), null, panel, null,
+	this.develModel = dm;
+
+	// Add basic stuff
+	final GroupPanel groupPanel = new GroupPanel();
+	groupPanel.initRuntime(str, dm.getTabSb(getTableName()), "groupid",
+		displayColTitles, displayCols, smap);
+
+	if (!setEditable) groupPanel.setEditable(false);
+	
+	// Set up stuff to listen to the sc_etapid column and disable
+	// the groupPanel if this ends up being in etapid.
+	if (disableWhenInEtap) {
+		EntityBuf personSb = develModel.getPersonSb();
+		int etapidCol = personSb.findColumn("sc_etapid");
+		if (etapidCol >= 0) {
+			final SchemaBufRowModel personRm = new SchemaBufRowModel(personSb);
+
+			// Change family table contents when user re-reads from db
+			personRm.addColListener(etapidCol, new RowModel.ColAdapter() {
+				@Override
+				public void curRowChanged(int col) {
+					Integer Etapid = (Integer)personRm.get(col);
+					boolean enabled = (Etapid == null);
+					groupPanel.setEditable(enabled);
+				}
+			});
+		}
+	}
+
+
+	// Insert into our tabs
+	groupPanels.insertTab(getTitle(), null, groupPanel, null,
 		groupPanels.getTabCount());	
-	return panel;
+	return groupPanel;
 }
 
 public IntKeyedDbModel newDbModel(QueryLogger logger)

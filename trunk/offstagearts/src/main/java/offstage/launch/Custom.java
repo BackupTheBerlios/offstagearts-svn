@@ -37,6 +37,9 @@ import offstage.FrontApp;
 /**
  *
  * @author citibob
+ *
+ * java -cp target/executable-netbeans.dir/offstagearts-1.10.23.jar offstage.launch.Custom ~/offstagearts/launchers/offstagearts-ballettheatre.jar ~/mvn/oamisc/ballettheatre/oa_jmbt/target/oa_jmbt-1.2.0.jar
+ * 
  */
 public class Custom {
 
@@ -44,22 +47,29 @@ public class Custom {
 	public static void main(String[] args) throws Exception
     {
 		ConfigMaker cmaker;
-System.out.println("********************** Custom");
-		File f;
+		File launcherFile;
 		if (args.length > 0) {
-			f = new File(args[0]);
+			launcherFile = new File(args[0]);
 		} else {
 			String home = System.getProperty("user.home");
 //			System.out.println("Home Direcotry = " + home);
-			f = new File(home, "offstagearts/launchers/offstagearts-ballettheatre.jar");
+			launcherFile = new File(home, "offstagearts/launchers/offstagearts-ballettheatre.jar");
 		}
-//		File f = new File("/export/home/citibob/mvn/oamisc/bdw/offstagearts-bdw.jar");
-//		File f = new File("/Users/citibob/offstagearts/launchers/offstagearts-bdw.jar");
-		cmaker = new MultiConfigMaker(new Object[]{f});
+//		File launcherFile = new File("/export/home/citibob/mvn/oamisc/bdw/offstagearts-bdw.jar");
+//		File launcherFile = new File("/Users/citibob/offstagearts/launchers/offstagearts-bdw.jar");
+		cmaker = new MultiConfigMaker(new Object[]{launcherFile});
 
+		// Null = load from database
+		// <file> = use a file
+		// "<none>" = Don't use any site code
 		String siteCodeFileName = null;
 		if (args.length > 1) siteCodeFileName = args[1];
-		
+
+//		siteCodeFileName = "<none>";
+
+		System.out.println("********************** Custom, args.length = " + args.length);
+		System.out.println("Launcher = " + launcherFile + ", siteCode = " + siteCodeFileName);
+
 		FrontApp.launch(cmaker, siteCodeFileName);
     }
 

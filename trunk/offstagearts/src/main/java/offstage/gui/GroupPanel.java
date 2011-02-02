@@ -41,6 +41,9 @@ public class GroupPanel extends javax.swing.JPanel {
 	
 SchemaBuf groupSb;
 String sGroupCol;
+boolean enabled;		// Are we in enabled state?
+//DataCols<Boolean> editableEnabled;	// Editable status when we're enabled
+DataCols<Boolean> editableDisabled;	// Editable status when we're disabled
 
 	/** Creates new form GroupPanel */
 	public GroupPanel() {
@@ -49,31 +52,54 @@ String sGroupCol;
 
 	public GroupsTable getTable() { return groupTable; }
 	
-	public void initRuntime(SqlRun str, SchemaBuf groupSb,
-	String[] colNames, String[] sColMap, boolean editable, citibob.swing.typed.SwingerMap swingers)
-	{
-		initRuntime(str, groupSb, "groupid", colNames, sColMap, editable, swingers);
-	}
 	// st good
-	public void initRuntime(SqlRun str, SchemaBuf groupSb, String sGroupCol,
-	String[] colNames, String[] sColMap, boolean editable, citibob.swing.typed.SwingerMap swingers)
+	public void initRuntime(SqlRun str, SchemaBuf groupSb,
+		String sGroupCol,
+		String[] colNames, String[] sColMap,
+		citibob.swing.typed.SwingerMap swingers)
 	//throws java.sql.SQLException
 	{
+		this.enabled = true;
 		this.sGroupCol = sGroupCol;
 		
-		// Set up array of which columns will be editable...
-		boolean[] xeditable = null;
-		if (!editable) {
-			xeditable = new boolean[colNames.length];
-			for (int i=0; i<xeditable.length; ++i) xeditable[i] = false;
-			remove(controller);
-		}
-		
+		// Set up model for column editing when we're enabled.
+		// Use defaults...
 		JEnum addJType = (JEnum)groupSb.getSchema().getCol(sGroupCol).getType();
-		groupTable.setModelU(groupSb, colNames, sColMap, xeditable, swingers);
+		groupTable.setModelU(groupSb, colNames, sColMap, null, swingers);
+		//editableEnabled = (DataCols<Boolean>)groupTable.getDelegateStyledTM().getEditableModel();
+
+		// Set up model for column eding when we're disabled.
+		// Copy the enabled model, set all to false.
+		int ncol = sColMap.length + 1;
+		editableDisabled = new DataCols<Boolean>(Boolean.class, ncol);
+		for (int i=0; i<ncol; ++i) editableDisabled.setColumn(i, Boolean.FALSE);
+
+		// groupTable.getDelegateStyledTM().setEditable(xeditable);
+
 		initRuntime(str, groupSb, addJType, groupTable, swingers);
 	}
-	
+
+	public void setEditable(boolean enabled)
+	{
+		addBtn.setEnabled(enabled);
+		delBtn.setEnabled(enabled);
+		addType.setEnabled(enabled);
+
+		if (enabled == this.enabled) return;
+		this.enabled = enabled;
+		if (enabled) {
+			//add(controller);
+			groupTable.getDelegateStyledTM().setEditableModel(null);
+			//validate();
+		} else {
+			//remove(controller);
+			groupTable.getDelegateStyledTM().setEditableModel(editableDisabled);
+			//validate();
+		}
+	}
+
+	/** @param addJType Type of column that should appear in the drop-down next
+	to the "add row" (+) button */
 	public void initRuntime(SqlRun str, SchemaBuf groupSb, JEnum addJType,
 	GroupsTable groupTable, SwingerMap swingers)
 	//throws java.sql.SQLException

@@ -86,13 +86,13 @@ extends javax.swing.JPanel {
 
 		
 		
-		phonePanel.initRuntime(str, dmod.getPhonesDm().getSchemaBuf(),
+		phonePanel.initRuntime(str, dmod.getPhonesDm().getSchemaBuf(), "groupid",
 			new String[] {"Type", "Number"},
-			new String[] {"groupid", "phone"}, true, app.swingerMap());
+			new String[] {"groupid", "phone"}, app.swingerMap());
 
 		ocdiscPanel.initRuntime(str, dmod.ocdiscs.getSchemaBuf(), "ocdiscid",
 			new String[] {"Discount", "Start Date", "End Date"},
-			new String[] {"ocdiscid", "dstart", "dend"}, true, app.swingerMap());
+			new String[] {"ocdiscid", "dstart", "dend"}, app.swingerMap());
 
 		
 //                ParentPayer.initRuntime(str, app);

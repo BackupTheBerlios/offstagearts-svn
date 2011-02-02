@@ -46,6 +46,19 @@ public class EntityDbModel extends IntKeyedDbModel
 		setDoInsertKeys(false);
 	}
 
+
+//	/** Checks if the current record is duplicated in eTapestry. */
+//	public boolean inEtap()
+//	{
+//		SchemaBuf sb = getSchemaBuf();
+//
+//		int etapid_col = sb.findColumn("sc_etapid");
+//		if (etapid_col < 0) return false;
+//
+//		return sb.getOrigValueAt(0, etapid_col) != null;
+//	}
+
+
 //	/** Override insert stuff */
 //	public void doInsert(SqlRun str)
 //	{

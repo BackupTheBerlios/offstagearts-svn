@@ -64,7 +64,7 @@ public GroupPanel addToGroupPanels(SqlRun str, DevelModel dm,
 JTabbedPane groupPanels, SwingerMap smap)
 {
 	GroupPanel panel = super.addToGroupPanels(str, dm, groupPanels, smap);
-	panel.setEnabled(false);
+	panel.setEditable(false);
 	return panel;
 }
 
